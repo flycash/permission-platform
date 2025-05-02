@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package permission.v1;
+
+option go_package = "gitee.com/flycash/permission-platform/api/gen/permission/v1;permissionpb";
+
+service ABACService {
+  // 在这里定义和 RBAC 有关的接口，如授予权限
+}

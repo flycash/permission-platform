@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package permission.v1;
+
+option go_package = "gitee.com/flycash/permission-platform/api/gen/permission/v1;permissionpb";
+
+// 操作类型枚举（可根据业务需求扩展）
+enum ActionType {
+  ACTION_UNSPECIFIED = 0;
+  READ = 1;
+  WRITE = 2;
+  // DELETE = 3;
+  // EXECUTE = 4;
+  // 可在此处继续添加其他操作类型...
+}
+
+// 权限定义（资源 + 操作）
+message Permission {
+  int64 resource_id = 1; // 资源标识符
+  repeated ActionType actions = 2; // 允许的操作列表
+}
+
+// 权限检查请求
+message CheckPermissionRequest {
+  // 某人是否具有某个权限。目前来说只需要支持某个人具有某个权限的判定就可以了
+  int64 uid = 1;
+  // 检查的权限
+  Permission permission = 2;
+}
+
+// 权限检查响应
+message CheckPermissionResponse {
+  bool allowed = 1; // 是否允许操作
+}
+
+// 权限服务定义
+service PermissionService {
+  // 权限校验
+  rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+}
