@@ -38,3 +38,12 @@ service PermissionService {
   // 权限校验
   rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
 }
+
+message Resource {
+  int64 id = 1;
+  string key = 2;
+  // 和 Resource 有关的内容，是业务方在创建 Resource 的时候传入的内容
+  // 原封不动的返回
+  string metadata = 3;
+  // 其它字段你随便加
+}
