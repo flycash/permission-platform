@@ -57,7 +57,7 @@ func (m *Permission) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ResourceId
+	// no validation rules for ResourceKey
 
 	if len(errors) > 0 {
 		return PermissionMultiError(errors)

@@ -16,7 +16,7 @@ enum ActionType {
 
 // 权限定义（资源 + 操作）
 message Permission {
-  int64 resource_id = 1; // 资源标识符
+  string resource_key = 1; // 资源标识符，类似于 /xxx/xxx/xxx 的格式
   repeated ActionType actions = 2; // 允许的操作列表
 }
 

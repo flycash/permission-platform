@@ -74,7 +74,7 @@ func (ActionType) EnumDescriptor() ([]byte, []int) {
 // 权限定义（资源 + 操作）
 type Permission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ResourceId    int64                  `protobuf:"varint,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`              // 资源标识符
+	ResourceKey   string                 `protobuf:"bytes,1,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`            // 资源标识符，类似于 /xxx/xxx/xxx 的格式
 	Actions       []ActionType           `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=permission.v1.ActionType" json:"actions,omitempty"` // 允许的操作列表
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -110,11 +110,11 @@ func (*Permission) Descriptor() ([]byte, []int) {
 	return file_permission_v1_permission_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Permission) GetResourceId() int64 {
+func (x *Permission) GetResourceKey() string {
 	if x != nil {
-		return x.ResourceId
+		return x.ResourceKey
 	}
-	return 0
+	return ""
 }
 
 func (x *Permission) GetActions() []ActionType {
@@ -228,11 +228,10 @@ var File_permission_v1_permission_proto protoreflect.FileDescriptor
 
 const file_permission_v1_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"b\n" +
+	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"d\n" +
 	"\n" +
-	"Permission\x12\x1f\n" +
-	"\vresource_id\x18\x01 \x01(\x03R\n" +
-	"resourceId\x123\n" +
+	"Permission\x12!\n" +
+	"\fresource_key\x18\x01 \x01(\tR\vresourceKey\x123\n" +
 	"\aactions\x18\x02 \x03(\x0e2\x19.permission.v1.ActionTypeR\aactions\"e\n" +
 	"\x16CheckPermissionRequest\x12\x10\n" +
 	"\x03uid\x18\x01 \x01(\x03R\x03uid\x129\n" +
