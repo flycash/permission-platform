@@ -1,4 +1,3 @@
 package domain
 
-type ResourceMetadata struct {
-}
+type ResourceMetadata struct{}

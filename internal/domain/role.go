@@ -1,6 +1,3 @@
 package domain
 
-type RoleMetadata struct{
-
-}
-
+type RoleMetadata struct{}

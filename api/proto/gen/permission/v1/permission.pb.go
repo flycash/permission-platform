@@ -272,6 +272,7 @@ var (
 		(*CheckPermissionResponse)(nil), // 3: permission.v1.CheckPermissionResponse
 	}
 )
+
 var file_permission_v1_permission_proto_depIdxs = []int32{
 	0, // 0: permission.v1.Permission.actions:type_name -> permission.v1.ActionType
 	1, // 1: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission

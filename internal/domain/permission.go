@@ -1,4 +1,3 @@
 package domain
 
-type PermissionMetadata struct {
-}
+type PermissionMetadata struct{}

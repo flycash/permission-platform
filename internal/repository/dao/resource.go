@@ -1,8 +1,12 @@
 package dao
 
 import (
+	"context"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"github.com/ecodeclub/ekit/sqlx"
+	"github.com/ego-component/egorm"
 )
 
 // Resource 资源表 RBAC 与 ABAC 共享此表
@@ -20,4 +24,99 @@ type Resource struct {
 
 func (Resource) TableName() string {
 	return "resources"
+}
+
+// ResourceDAO 资源数据访问接口
+type ResourceDAO interface {
+	// GetByID 根据ID获取资源
+	GetByID(ctx context.Context, id int64) (Resource, error)
+	// GetByIDs 根据多个ID批量获取资源
+	GetByIDs(ctx context.Context, ids []int64) (map[int64]Resource, error)
+	// FindByBizID 查找特定业务下的资源
+	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error)
+	// FindByBizIDAndType 查找特定业务下指定类型的资源
+	FindByBizIDAndType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Resource, error)
+	// FindByBizIDAndKey 查找特定业务下指定Key的资源
+	FindByBizIDAndKey(ctx context.Context, bizID int64, key string) (Resource, error)
+	// Create 创建资源
+	Create(ctx context.Context, resource Resource) (Resource, error)
+	// Update 更新资源
+	Update(ctx context.Context, resource Resource) error
+	// Delete 删除资源
+	Delete(ctx context.Context, id int64) error
+}
+
+// resourceDAO 资源数据访问实现
+type resourceDAO struct {
+	db *egorm.Component
+}
+
+// NewResourceDAO 创建资源数据访问对象
+func NewResourceDAO(db *egorm.Component) ResourceDAO {
+	return &resourceDAO{
+		db: db,
+	}
+}
+
+func (r *resourceDAO) GetByID(ctx context.Context, id int64) (Resource, error) {
+	var resource Resource
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&resource).Error
+	return resource, err
+}
+
+func (r *resourceDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Resource, error) {
+	var resources []Resource
+	err := r.db.WithContext(ctx).Where("id IN (?)", ids).Find(&resources).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[int64]Resource, len(resources))
+	for _, resource := range resources {
+		result[resource.ID] = resource
+	}
+	return result, nil
+}
+
+func (r *resourceDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error) {
+	var resources []Resource
+	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&resources).Error
+	return resources, err
+}
+
+func (r *resourceDAO) FindByBizIDAndType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Resource, error) {
+	var resources []Resource
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ?", bizID, resourceType).Offset(offset).Limit(limit).Find(&resources).Error
+	return resources, err
+}
+
+func (r *resourceDAO) FindByBizIDAndKey(ctx context.Context, bizID int64, key string) (Resource, error) {
+	var resource Resource
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND key = ?", bizID, key).First(&resource).Error
+	return resource, err
+}
+
+func (r *resourceDAO) Create(ctx context.Context, resource Resource) (Resource, error) {
+	now := time.Now().UnixMilli()
+	resource.Ctime = now
+	resource.Utime = now
+	err := r.db.WithContext(ctx).Create(&resource).Error
+	return resource, err
+}
+
+func (r *resourceDAO) Update(ctx context.Context, resource Resource) error {
+	resource.Utime = time.Now().UnixMilli()
+	return r.db.WithContext(ctx).
+		Model(&Resource{}).
+		Where("id = ?", resource.ID).
+		Updates(map[string]interface{}{
+			"name":        resource.Name,
+			"description": resource.Description,
+			"metadata":    resource.Metadata,
+			"utime":       resource.Utime,
+		}).Error
+}
+
+func (r *resourceDAO) Delete(ctx context.Context, id int64) error {
+	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&Resource{}).Error
 }
