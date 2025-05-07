@@ -7,10 +7,11 @@
 package permissionv1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -28,14 +29,16 @@ const file_permission_v1_abac_proto_rawDesc = "" +
 	"\vABACServiceB\xc3\x01\n" +
 	"\x11com.permission.v1B\tAbacProtoP\x01ZNgitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionv1\xa2\x02\x03PXX\xaa\x02\rPermission.V1\xca\x02\rPermission\\V1\xe2\x02\x19Permission\\V1\\GPBMetadata\xea\x02\x0ePermission::V1b\x06proto3"
 
-var file_permission_v1_abac_proto_goTypes = []any{}
-var file_permission_v1_abac_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
-}
+var (
+	file_permission_v1_abac_proto_goTypes = []any{}
+	file_permission_v1_abac_proto_depIdxs = []int32{
+		0, // [0:0] is the sub-list for method output_type
+		0, // [0:0] is the sub-list for method input_type
+		0, // [0:0] is the sub-list for extension type_name
+		0, // [0:0] is the sub-list for extension extendee
+		0, // [0:0] is the sub-list for field type_name
+	}
+)
 
 func init() { file_permission_v1_abac_proto_init() }
 func file_permission_v1_abac_proto_init() {

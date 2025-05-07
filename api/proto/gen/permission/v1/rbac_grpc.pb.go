@@ -18,8 +18,7 @@ const _ = grpc.SupportPackageIsVersion9
 // RBACServiceClient is the client API for RBACService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RBACServiceClient interface {
-}
+type RBACServiceClient interface{}
 
 type rBACServiceClient struct {
 	cc grpc.ClientConnInterface
@@ -32,8 +31,7 @@ func NewRBACServiceClient(cc grpc.ClientConnInterface) RBACServiceClient {
 // RBACServiceServer is the server API for RBACService service.
 // All implementations should embed UnimplementedRBACServiceServer
 // for forward compatibility.
-type RBACServiceServer interface {
-}
+type RBACServiceServer interface{}
 
 // UnimplementedRBACServiceServer should be embedded to have
 // forward compatible implementations.

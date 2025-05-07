@@ -18,8 +18,7 @@ const _ = grpc.SupportPackageIsVersion9
 // ABACServiceClient is the client API for ABACService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ABACServiceClient interface {
-}
+type ABACServiceClient interface{}
 
 type aBACServiceClient struct {
 	cc grpc.ClientConnInterface
@@ -32,8 +31,7 @@ func NewABACServiceClient(cc grpc.ClientConnInterface) ABACServiceClient {
 // ABACServiceServer is the server API for ABACService service.
 // All implementations should embed UnimplementedABACServiceServer
 // for forward compatibility.
-type ABACServiceServer interface {
-}
+type ABACServiceServer interface{}
 
 // UnimplementedABACServiceServer should be embedded to have
 // forward compatible implementations.

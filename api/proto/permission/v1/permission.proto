@@ -30,7 +30,7 @@ message CheckPermissionRequest {
 
 // 权限检查响应
 message CheckPermissionResponse {
-  bool allowed = 1; // 是否允许操作
+  optional bool allowed = 1; // 是否允许操作
 }
 
 // 权限服务定义
