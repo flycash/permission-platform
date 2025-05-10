@@ -10,16 +10,14 @@ import (
 
 // BusinessConfig 业务配置表
 type BusinessConfig struct {
-	ID             int64  `gorm:"primaryKey;type:BIGINT;comment:'业务标识'"`
-	OwnerID        int64  `gorm:"type:BIGINT;comment:'业务方'"`
-	OwnerType      string `gorm:"type:ENUM('person', 'organization');comment:'业务方类型：person-个人,organization-组织'"`
-	ChannelConfig  string `gorm:"type:JSON;comment:'{\"channels\":[{\"channel\":\"SMS\", \"priority\":\"1\",\"enabled\":\"true\"},{\"channel\":\"EMAIL\", \"priority\":\"2\",\"enabled\":\"true\"}]}'"`
-	TxnConfig      string `gorm:"type:JSON;comment:'事务配置'"`
-	RateLimit      int    `gorm:"type:INT;DEFAULT:1000;comment:'每秒最大请求数'"`
-	Quota          string `gorm:"type:JSON;comment:'{\"monthly\":{\"SMS\":100000,\"EMAIL\":500000}}'"`
-	CallbackConfig string `gorm:"type:JSON;comment:'回调配置，通知平台回调业务方通知异步请求结果'"`
-	Ctime          int64
-	Utime          int64
+	ID        int64  `gorm:"primaryKey;autoIncrement;comment:'业务ID'"`
+	OwnerID   int64  `gorm:"type:BIGINT;comment:'业务方ID'"`
+	OwnerType string `gorm:"type:ENUM('person', 'organization');comment:'业务方类型：person-个人,organization-组织'"`
+	Name      string `gorm:"type:VARCHAR(100);NOT NULL;comment:'业务名称'"`
+	RateLimit int    `gorm:"type:INT;DEFAULT:1000;comment:'每秒最大请求数'"`
+	Token     string `gorm:"type:TXT;NOT NULL;comment:'业务方Token，内部包含uid也就是上方的ownerID'"`
+	Ctime     int64
+	Utime     int64
 }
 
 // TableName 重命名表
@@ -105,11 +103,7 @@ func (b *businessConfigDAO) SaveConfig(ctx context.Context, config BusinessConfi
 		DoUpdates: clause.AssignmentColumns([]string{
 			"owner_id",
 			"owner_type",
-			"channel_config",
-			"txn_config",
 			"rate_limit",
-			"quota",
-			"callback_config",
 			"utime",
 		}), // 只更新指定的非空列
 	}).Create(&config)

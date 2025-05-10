@@ -32,11 +32,11 @@ ut:
 # 集成测试
 .PHONY: e2e_up
 e2e_up:
-	@docker compose -p notification-platform -f scripts/test_docker_compose.yml up -d
+	@docker compose -p permission-platform -f scripts/test_docker_compose.yml up -d
 
 .PHONY: e2e_down
 e2e_down:
-	@docker compose -p notification-platform -f scripts/test_docker_compose.yml down -v
+	@docker compose -p permission-platform -f scripts/test_docker_compose.yml down -v
 
 .PHONY: e2e
 e2e:

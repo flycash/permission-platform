@@ -35,7 +35,7 @@ type RolePermissionDAO interface {
 	// FindByBizID 查找特定业务下的角色权限关联
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error)
 	// FindByRoleID 查找特定角色的所有权限关联
-	FindByRoleID(ctx context.Context, roleID int64) ([]RolePermission, error)
+	FindByRoleID(ctx context.Context, bizID int64, roleID int64) ([]RolePermission, error)
 	// FindByPermissionID 查找拥有特定权限的所有角色关联
 	FindByPermissionID(ctx context.Context, permissionID int64) ([]RolePermission, error)
 	// FindByBizIDAndRoleType 查找特定业务下指定角色类型的权限关联
@@ -86,8 +86,8 @@ func (r *rolePermissionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int6
 	}
 
 	result := make(map[int64]RolePermission, len(rolePermissions))
-	for _, rp := range rolePermissions {
-		result[rp.ID] = rp
+	for i := range rolePermissions {
+		result[rolePermissions[i].ID] = rolePermissions[i]
 	}
 	return result, nil
 }
@@ -98,9 +98,9 @@ func (r *rolePermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset
 	return rolePermissions, err
 }
 
-func (r *rolePermissionDAO) FindByRoleID(ctx context.Context, roleID int64) ([]RolePermission, error) {
+func (r *rolePermissionDAO) FindByRoleID(ctx context.Context, bizID, roleID int64) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
-	err := r.db.WithContext(ctx).Where("role_id = ?", roleID).Find(&rolePermissions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id = ?", bizID, roleID).Find(&rolePermissions).Error
 	return rolePermissions, err
 }
 
@@ -150,7 +150,7 @@ func (r *rolePermissionDAO) FindByBizIDAndResourceKeyAction(ctx context.Context,
 	return rolePermissions, err
 }
 
-func (r *rolePermissionDAO) ExistsByRoleIDAndPermissionID(ctx context.Context, bizID int64, roleID int64, permissionID int64) (bool, error) {
+func (r *rolePermissionDAO) ExistsByRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) (bool, error) {
 	var count int64
 	err := r.db.WithContext(ctx).
 		Model(&RolePermission{}).
@@ -178,14 +178,14 @@ func (r *rolePermissionDAO) BatchCreate(ctx context.Context, rolePermissions []R
 		rolePermissions[i].Utime = now
 	}
 
-	return r.db.WithContext(ctx).CreateInBatches(rolePermissions, 100).Error
+	return r.db.WithContext(ctx).CreateInBatches(rolePermissions, batchSize).Error
 }
 
 func (r *rolePermissionDAO) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&RolePermission{}).Error
 }
 
-func (r *rolePermissionDAO) DeleteByRoleIDAndPermissionID(ctx context.Context, bizID int64, roleID int64, permissionID int64) error {
+func (r *rolePermissionDAO) DeleteByRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error {
 	return r.db.WithContext(ctx).
 		Where("biz_id = ? AND role_id = ? AND permission_id = ?", bizID, roleID, permissionID).
 		Delete(&RolePermission{}).Error

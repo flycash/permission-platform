@@ -75,8 +75,15 @@ func (ActionType) EnumDescriptor() ([]byte, []int) {
 // 权限定义（资源 + 操作）
 type Permission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ResourceKey   string                 `protobuf:"bytes,1,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`            // 资源标识符，类似于 /xxx/xxx/xxx 的格式
-	Actions       []ActionType           `protobuf:"varint,2,rep,packed,name=actions,proto3,enum=permission.v1.ActionType" json:"actions,omitempty"` // 允许的操作列表
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	ResourceId    int64                  `protobuf:"varint,5,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	ResourceType  string                 `protobuf:"bytes,6,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`         // 冗余字段
+	ResourceKey   string                 `protobuf:"bytes,7,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`            // 资源标识符，类似于 /xxx/xxx/xxx 的格式
+	Actions       []ActionType           `protobuf:"varint,8,rep,packed,name=actions,proto3,enum=permission.v1.ActionType" json:"actions,omitempty"` // 允许的操作列表
+	Metadata      string                 `protobuf:"bytes,9,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +118,48 @@ func (*Permission) Descriptor() ([]byte, []int) {
 	return file_permission_v1_permission_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *Permission) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Permission) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *Permission) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Permission) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Permission) GetResourceId() int64 {
+	if x != nil {
+		return x.ResourceId
+	}
+	return 0
+}
+
+func (x *Permission) GetResourceType() string {
+	if x != nil {
+		return x.ResourceType
+	}
+	return ""
+}
+
 func (x *Permission) GetResourceKey() string {
 	if x != nil {
 		return x.ResourceKey
@@ -123,6 +172,13 @@ func (x *Permission) GetActions() []ActionType {
 		return x.Actions
 	}
 	return nil
+}
+
+func (x *Permission) GetMetadata() string {
+	if x != nil {
+		return x.Metadata
+	}
+	return ""
 }
 
 // 权限检查请求
@@ -225,22 +281,132 @@ func (x *CheckPermissionResponse) GetAllowed() bool {
 	return false
 }
 
+type Resource struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId       int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Type        string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Key         string                 `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
+	Name        string                 `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	// 和 Resource 有关的内容，是业务方在创建 Resource 的时候传入的内容
+	// 原封不动的返回
+	Metadata      string `protobuf:"bytes,7,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Resource) Reset() {
+	*x = Resource{}
+	mi := &file_permission_v1_permission_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Resource) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource) ProtoMessage() {}
+
+func (x *Resource) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_permission_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource.ProtoReflect.Descriptor instead.
+func (*Resource) Descriptor() ([]byte, []int) {
+	return file_permission_v1_permission_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Resource) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Resource) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *Resource) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Resource) GetKey() string {
+	if x != nil {
+		return x.Key
+	}
+	return ""
+}
+
+func (x *Resource) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Resource) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Resource) GetMetadata() string {
+	if x != nil {
+		return x.Metadata
+	}
+	return ""
+}
+
 var File_permission_v1_permission_proto protoreflect.FileDescriptor
 
 const file_permission_v1_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"d\n" +
+	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"\xa3\x02\n" +
 	"\n" +
-	"Permission\x12!\n" +
-	"\fresource_key\x18\x01 \x01(\tR\vresourceKey\x123\n" +
-	"\aactions\x18\x02 \x03(\x0e2\x19.permission.v1.ActionTypeR\aactions\"e\n" +
+	"Permission\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1f\n" +
+	"\vresource_id\x18\x05 \x01(\x03R\n" +
+	"resourceId\x12#\n" +
+	"\rresource_type\x18\x06 \x01(\tR\fresourceType\x12!\n" +
+	"\fresource_key\x18\a \x01(\tR\vresourceKey\x123\n" +
+	"\aactions\x18\b \x03(\x0e2\x19.permission.v1.ActionTypeR\aactions\x12\x1a\n" +
+	"\bmetadata\x18\t \x01(\tR\bmetadata\"e\n" +
 	"\x16CheckPermissionRequest\x12\x10\n" +
 	"\x03uid\x18\x01 \x01(\x03R\x03uid\x129\n" +
 	"\n" +
 	"permission\x18\x02 \x01(\v2\x19.permission.v1.PermissionR\n" +
 	"permission\"3\n" +
 	"\x17CheckPermissionResponse\x12\x18\n" +
-	"\aallowed\x18\x01 \x01(\bR\aallowed*9\n" +
+	"\aallowed\x18\x01 \x01(\bR\aallowed\"\xa9\x01\n" +
+	"\bResource\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x10\n" +
+	"\x03key\x18\x04 \x01(\tR\x03key\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x1a\n" +
+	"\bmetadata\x18\a \x01(\tR\bmetadata*9\n" +
 	"\n" +
 	"ActionType\x12\x16\n" +
 	"\x12ACTION_UNSPECIFIED\x10\x00\x12\b\n" +
@@ -264,12 +430,13 @@ func file_permission_v1_permission_proto_rawDescGZIP() []byte {
 
 var (
 	file_permission_v1_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_permission_v1_permission_proto_msgTypes  = make([]protoimpl.MessageInfo, 3)
+	file_permission_v1_permission_proto_msgTypes  = make([]protoimpl.MessageInfo, 4)
 	file_permission_v1_permission_proto_goTypes   = []any{
 		(ActionType)(0),                 // 0: permission.v1.ActionType
 		(*Permission)(nil),              // 1: permission.v1.Permission
 		(*CheckPermissionRequest)(nil),  // 2: permission.v1.CheckPermissionRequest
 		(*CheckPermissionResponse)(nil), // 3: permission.v1.CheckPermissionResponse
+		(*Resource)(nil),                // 4: permission.v1.Resource
 	}
 )
 
@@ -296,7 +463,7 @@ func file_permission_v1_permission_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_v1_permission_proto_rawDesc), len(file_permission_v1_permission_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

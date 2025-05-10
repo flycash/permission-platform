@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package permission.v1;
 
-option go_package = "gitee.com/flycash/permission-platform/api/gen/permission/v1;permissionpb";
+option go_package = "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionpb";
 
 // 操作类型枚举（可根据业务需求扩展）
 enum ActionType {
@@ -16,8 +16,15 @@ enum ActionType {
 
 // 权限定义（资源 + 操作）
 message Permission {
-  string resource_key = 1; // 资源标识符，类似于 /xxx/xxx/xxx 的格式
-  repeated ActionType actions = 2; // 允许的操作列表
+  int64 id = 1;
+  int64 biz_id = 2;
+  string name = 3;
+  string description = 4;
+  int64 resource_id = 5;
+  string resource_type = 6; // 冗余字段
+  string resource_key = 7; // 资源标识符，类似于 /xxx/xxx/xxx 的格式
+  repeated ActionType actions = 8; // 允许的操作列表
+  string metadata = 9;
 }
 
 // 权限检查请求
@@ -30,7 +37,7 @@ message CheckPermissionRequest {
 
 // 权限检查响应
 message CheckPermissionResponse {
-  optional bool allowed = 1; // 是否允许操作
+  bool allowed = 1; // 是否允许操作
 }
 
 // 权限服务定义
@@ -41,9 +48,12 @@ service PermissionService {
 
 message Resource {
   int64 id = 1;
-  string key = 2;
+  int64 biz_id = 2;
+  string type = 3;
+  string key = 4;
+  string name = 5;
+  string description = 6;
   // 和 Resource 有关的内容，是业务方在创建 Resource 的时候传入的内容
   // 原封不动的返回
-  string metadata = 3;
-  // 其它字段你随便加
+  string metadata = 7;
 }

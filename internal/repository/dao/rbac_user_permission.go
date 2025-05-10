@@ -58,9 +58,9 @@ type UserPermissionDAO interface {
 	// FindByBizIDAndResourceKeyAction 查找特定业务下针对特定资源和操作的权限关联
 	FindByBizIDAndResourceKeyAction(ctx context.Context, bizID int64, resourceKey string, action ActionType, offset, limit int) ([]UserPermission, error)
 	// FindValidPermissions 查找当前有效的权限关联
-	FindValidPermissions(ctx context.Context, userID int64, currentTime int64) ([]UserPermission, error)
+	FindValidPermissions(ctx context.Context, bizID, userID, currentTime int64) ([]UserPermission, error)
 	// ExistsByUserIDAndPermissionID 检查用户和权限关联是否存在
-	ExistsByUserIDAndPermissionID(ctx context.Context, bizID int64, userID int64, permissionID int64) (bool, error)
+	ExistsByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) (bool, error)
 	// Create 创建用户权限关联
 	Create(ctx context.Context, userPermission UserPermission) (UserPermission, error)
 	// BatchCreate 批量创建用户权限关联
@@ -70,7 +70,7 @@ type UserPermissionDAO interface {
 	// Delete 删除用户权限关联
 	Delete(ctx context.Context, id int64) error
 	// DeleteByUserIDAndPermissionID 删除特定用户和权限的关联
-	DeleteByUserIDAndPermissionID(ctx context.Context, bizID int64, userID int64, permissionID int64) error
+	DeleteByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error
 	// DeleteByUserID 删除用户的所有权限关联
 	DeleteByUserID(ctx context.Context, userID int64) error
 }
@@ -101,8 +101,8 @@ func (u *userPermissionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int6
 	}
 
 	result := make(map[int64]UserPermission, len(userPermissions))
-	for _, up := range userPermissions {
-		result[up.ID] = up
+	for i := range userPermissions {
+		result[userPermissions[i].ID] = userPermissions[i]
 	}
 	return result, nil
 }
@@ -165,16 +165,16 @@ func (u *userPermissionDAO) FindByBizIDAndResourceKeyAction(ctx context.Context,
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) FindValidPermissions(ctx context.Context, userID int64, currentTime int64) ([]UserPermission, error) {
+func (u *userPermissionDAO) FindValidPermissions(ctx context.Context, bizID, userID, currentTime int64) ([]UserPermission, error) {
 	var userPermissions []UserPermission
 	err := u.db.WithContext(ctx).
-		Where("user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
-			userID, currentTime, currentTime).
+		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
+			bizID, userID, currentTime, currentTime).
 		Find(&userPermissions).Error
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) ExistsByUserIDAndPermissionID(ctx context.Context, bizID int64, userID int64, permissionID int64) (bool, error) {
+func (u *userPermissionDAO) ExistsByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) (bool, error) {
 	var count int64
 	err := u.db.WithContext(ctx).
 		Model(&UserPermission{}).
@@ -202,7 +202,7 @@ func (u *userPermissionDAO) BatchCreate(ctx context.Context, userPermissions []U
 		userPermissions[i].Utime = now
 	}
 
-	return u.db.WithContext(ctx).CreateInBatches(userPermissions, 100).Error
+	return u.db.WithContext(ctx).CreateInBatches(userPermissions, batchSize).Error
 }
 
 func (u *userPermissionDAO) Update(ctx context.Context, userPermission UserPermission) error {
@@ -222,7 +222,7 @@ func (u *userPermissionDAO) Delete(ctx context.Context, id int64) error {
 	return u.db.WithContext(ctx).Where("id = ?", id).Delete(&UserPermission{}).Error
 }
 
-func (u *userPermissionDAO) DeleteByUserIDAndPermissionID(ctx context.Context, bizID int64, userID int64, permissionID int64) error {
+func (u *userPermissionDAO) DeleteByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error {
 	return u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND permission_id = ?", bizID, userID, permissionID).
 		Delete(&UserPermission{}).Error

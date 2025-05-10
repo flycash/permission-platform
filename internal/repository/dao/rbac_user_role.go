@@ -40,7 +40,7 @@ type UserRoleDAO interface {
 	// FindByBizIDAndRoleType 查找特定业务下指定角色类型的用户关联
 	FindByBizIDAndRoleType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]UserRole, error)
 	// FindValidRoles 查找当前有效的角色关联
-	FindValidRoles(ctx context.Context, userID int64, currentTime int64) ([]UserRole, error)
+	FindValidRoles(ctx context.Context, bizID, userID int64, currentTime int64) ([]UserRole, error)
 	// ExistsByUserIDAndRoleID 检查用户和角色关联是否存在
 	ExistsByUserIDAndRoleID(ctx context.Context, bizID int64, userID int64, roleID int64) (bool, error)
 	// Create 创建用户角色关联
@@ -85,8 +85,8 @@ func (u *userRoleDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]User
 	}
 
 	result := make(map[int64]UserRole, len(userRoles))
-	for _, ur := range userRoles {
-		result[ur.ID] = ur
+	for i := range userRoles {
+		result[userRoles[i].ID] = userRoles[i]
 	}
 	return result, nil
 }
@@ -119,16 +119,16 @@ func (u *userRoleDAO) FindByBizIDAndRoleType(ctx context.Context, bizID int64, r
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindValidRoles(ctx context.Context, userID int64, currentTime int64) ([]UserRole, error) {
+func (u *userRoleDAO) FindValidRoles(ctx context.Context, bizID, userID, currentTime int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	err := u.db.WithContext(ctx).
-		Where("user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
-			userID, currentTime, currentTime).
+		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
+			bizID, userID, currentTime, currentTime).
 		Find(&userRoles).Error
 	return userRoles, err
 }
 
-func (u *userRoleDAO) ExistsByUserIDAndRoleID(ctx context.Context, bizID int64, userID int64, roleID int64) (bool, error) {
+func (u *userRoleDAO) ExistsByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) (bool, error) {
 	var count int64
 	err := u.db.WithContext(ctx).
 		Model(&UserRole{}).
@@ -156,7 +156,7 @@ func (u *userRoleDAO) BatchCreate(ctx context.Context, userRoles []UserRole) err
 		userRoles[i].Utime = now
 	}
 
-	return u.db.WithContext(ctx).CreateInBatches(userRoles, 100).Error
+	return u.db.WithContext(ctx).CreateInBatches(userRoles, batchSize).Error
 }
 
 func (u *userRoleDAO) Update(ctx context.Context, userRole UserRole) error {
@@ -175,7 +175,7 @@ func (u *userRoleDAO) Delete(ctx context.Context, id int64) error {
 	return u.db.WithContext(ctx).Where("id = ?", id).Delete(&UserRole{}).Error
 }
 
-func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID int64, userID int64, roleID int64) error {
+func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error {
 	return u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
 		Delete(&UserRole{}).Error

@@ -7,6 +7,9 @@ import (
 	"github.com/ego-component/egorm"
 )
 
+// 批处理常量
+const batchSize = 100
+
 // RoleInclusion 角色包含关系表
 type RoleInclusion struct {
 	ID                int64    `gorm:"primaryKey;autoIncrement;comment:角色包含关系ID'"`
@@ -34,7 +37,7 @@ type RoleInclusionDAO interface {
 	// FindByBizID 查找特定业务下的角色包含关系
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RoleInclusion, error)
 	// FindByIncludingRoleID 查找特定角色包含的所有角色
-	FindByIncludingRoleID(ctx context.Context, includingRoleID int64) ([]RoleInclusion, error)
+	FindByIncludingRoleID(ctx context.Context, bizID int64, includingRoleID int64) ([]RoleInclusion, error)
 	// FindByIncludedRoleID 查找包含特定角色的所有角色
 	FindByIncludedRoleID(ctx context.Context, includedRoleID int64) ([]RoleInclusion, error)
 	// FindByBizIDAndIncludingRoleType 查找特定业务下指定包含者角色类型的包含关系
@@ -83,8 +86,8 @@ func (r *roleInclusionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64
 	}
 
 	result := make(map[int64]RoleInclusion, len(roleInclusions))
-	for _, ri := range roleInclusions {
-		result[ri.ID] = ri
+	for i := range roleInclusions {
+		result[roleInclusions[i].ID] = roleInclusions[i]
 	}
 	return result, nil
 }
@@ -95,9 +98,9 @@ func (r *roleInclusionDAO) FindByBizID(ctx context.Context, bizID int64, offset,
 	return roleInclusions, err
 }
 
-func (r *roleInclusionDAO) FindByIncludingRoleID(ctx context.Context, includingRoleID int64) ([]RoleInclusion, error) {
+func (r *roleInclusionDAO) FindByIncludingRoleID(ctx context.Context, bizID, includingRoleID int64) ([]RoleInclusion, error) {
 	var roleInclusions []RoleInclusion
-	err := r.db.WithContext(ctx).Where("including_role_id = ?", includingRoleID).Find(&roleInclusions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND including_role_id = ?", bizID, includingRoleID).Find(&roleInclusions).Error
 	return roleInclusions, err
 }
 
@@ -127,7 +130,7 @@ func (r *roleInclusionDAO) FindByBizIDAndIncludedRoleType(ctx context.Context, b
 	return roleInclusions, err
 }
 
-func (r *roleInclusionDAO) ExistsByIncludingAndIncludedRoleID(ctx context.Context, bizID int64, includingRoleID int64, includedRoleID int64) (bool, error) {
+func (r *roleInclusionDAO) ExistsByIncludingAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) (bool, error) {
 	var count int64
 	err := r.db.WithContext(ctx).
 		Model(&RoleInclusion{}).
@@ -155,14 +158,14 @@ func (r *roleInclusionDAO) BatchCreate(ctx context.Context, roleInclusions []Rol
 		roleInclusions[i].Utime = now
 	}
 
-	return r.db.WithContext(ctx).CreateInBatches(roleInclusions, 100).Error
+	return r.db.WithContext(ctx).CreateInBatches(roleInclusions, batchSize).Error
 }
 
 func (r *roleInclusionDAO) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&RoleInclusion{}).Error
 }
 
-func (r *roleInclusionDAO) DeleteByIncludingAndIncludedRoleID(ctx context.Context, bizID int64, includingRoleID int64, includedRoleID int64) error {
+func (r *roleInclusionDAO) DeleteByIncludingAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {
 	return r.db.WithContext(ctx).
 		Where("biz_id = ? AND including_role_id = ? AND included_role_id = ?", bizID, includingRoleID, includedRoleID).
 		Delete(&RoleInclusion{}).Error

@@ -32,8 +32,8 @@ type Permission struct {
 	ResourceKey  string                                     `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，冗余字段，加速查询'"`
 	Action       ActionType                                 `gorm:"type:ENUM('create', 'read', 'update', 'delete', 'execute', 'export', 'import');NOT NULL;uniqueIndex:uk_biz_resource_action,priority:3;index:idx_biz_action,priority:2;comment:'操作类型'"`
 	Metadata     sqlx.JsonColumn[domain.PermissionMetadata] `gorm:"type:JSON;comment:'权限元数据，可扩展字段'"`
-	Ctime        int64                                      `gorm:"-"`
-	Utime        int64                                      `gorm:"-"`
+	Ctime        int64
+	Utime        int64
 }
 
 func (Permission) TableName() string {
@@ -92,8 +92,8 @@ func (p *permissionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Pe
 	}
 
 	result := make(map[int64]Permission, len(permissions))
-	for _, permission := range permissions {
-		result[permission.ID] = permission
+	for i := range permissions {
+		result[permissions[i].ID] = permissions[i]
 	}
 	return result, nil
 }
@@ -128,7 +128,7 @@ func (p *permissionDAO) FindByBizIDAndAction(ctx context.Context, bizID int64, a
 	return permissions, err
 }
 
-func (p *permissionDAO) FindByBizIDResourceIDAndAction(ctx context.Context, bizID int64, resourceID int64, action ActionType) (Permission, error) {
+func (p *permissionDAO) FindByBizIDResourceIDAndAction(ctx context.Context, bizID, resourceID int64, action ActionType) (Permission, error) {
 	var permission Permission
 	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_id = ? AND action = ?", bizID, resourceID, action).First(&permission).Error
 	return permission, err

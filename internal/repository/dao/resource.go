@@ -72,8 +72,8 @@ func (r *resourceDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Reso
 	}
 
 	result := make(map[int64]Resource, len(resources))
-	for _, resource := range resources {
-		result[resource.ID] = resource
+	for i := range resources {
+		result[resources[i].ID] = resources[i]
 	}
 	return result, nil
 }

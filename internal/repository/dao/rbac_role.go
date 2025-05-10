@@ -84,8 +84,8 @@ func (r *roleDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Role, er
 	}
 
 	result := make(map[int64]Role, len(roles))
-	for _, role := range roles {
-		result[role.ID] = role
+	for i := range roles {
+		result[roles[i].ID] = roles[i]
 	}
 	return result, nil
 }
@@ -108,7 +108,7 @@ func (r *roleDAO) FindByBizIDAndName(ctx context.Context, bizID int64, name stri
 	return role, err
 }
 
-func (r *roleDAO) FindTemporaryRoles(ctx context.Context, bizID int64, currentTime int64, offset, limit int) ([]Role, error) {
+func (r *roleDAO) FindTemporaryRoles(ctx context.Context, bizID, currentTime int64, offset, limit int) ([]Role, error) {
 	var roles []Role
 	err := r.db.WithContext(ctx).
 		Where("biz_id = ? AND type = ? AND start_time <= ? AND (end_time >= ? OR end_time IS NULL)",
