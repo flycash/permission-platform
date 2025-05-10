@@ -29,6 +29,18 @@ func (RoleInclusion) TableName() string {
 type RoleInclusionDAO interface {
 	// FindByIncludingRoleID 查找特定角色包含的所有角色
 	FindByIncludingRoleID(ctx context.Context, bizID int64, includingRoleID int64) ([]RoleInclusion, error)
+
+	// GetByID 根据ID获取角色包含关系
+	GetByID(ctx context.Context, id int64) (RoleInclusion, error)
+
+	// Create 创建角色包含关系
+	Create(ctx context.Context, roleInclusion RoleInclusion) (RoleInclusion, error)
+
+	// Delete 删除角色包含关系
+	Delete(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error
+
+	// FindByBizIDAndRoleID 根据业务ID和角色ID查找角色包含关系
+	FindByBizIDAndRoleID(ctx context.Context, bizID, roleID int64) ([]RoleInclusion, error)
 }
 
 // roleInclusionDAO 角色包含关系数据访问实现
@@ -53,6 +65,28 @@ func (r *roleInclusionDAO) GetByID(ctx context.Context, id int64) (RoleInclusion
 	var roleInclusion RoleInclusion
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&roleInclusion).Error
 	return roleInclusion, err
+}
+
+func (r *roleInclusionDAO) Create(ctx context.Context, roleInclusion RoleInclusion) (RoleInclusion, error) {
+	now := time.Now().UnixMilli()
+	roleInclusion.Ctime = now
+	roleInclusion.Utime = now
+	err := r.db.WithContext(ctx).Create(&roleInclusion).Error
+	return roleInclusion, err
+}
+
+func (r *roleInclusionDAO) Delete(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {
+	return r.db.WithContext(ctx).
+		Where("biz_id = ? AND including_role_id = ? AND included_role_id = ?", bizID, includingRoleID, includedRoleID).
+		Delete(&RoleInclusion{}).Error
+}
+
+func (r *roleInclusionDAO) FindByBizIDAndRoleID(ctx context.Context, bizID, roleID int64) ([]RoleInclusion, error) {
+	var roleInclusions []RoleInclusion
+	err := r.db.WithContext(ctx).
+		Where("biz_id = ? AND (including_role_id = ? OR included_role_id = ?)", bizID, roleID, roleID).
+		Find(&roleInclusions).Error
+	return roleInclusions, err
 }
 
 func (r *roleInclusionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]RoleInclusion, error) {
@@ -110,14 +144,6 @@ func (r *roleInclusionDAO) ExistsByIncludingAndIncludedRoleID(ctx context.Contex
 	return count > 0, err
 }
 
-func (r *roleInclusionDAO) Create(ctx context.Context, roleInclusion RoleInclusion) (RoleInclusion, error) {
-	now := time.Now().UnixMilli()
-	roleInclusion.Ctime = now
-	roleInclusion.Utime = now
-	err := r.db.WithContext(ctx).Create(&roleInclusion).Error
-	return roleInclusion, err
-}
-
 func (r *roleInclusionDAO) BatchCreate(ctx context.Context, roleInclusions []RoleInclusion) error {
 	if len(roleInclusions) == 0 {
 		return nil
@@ -130,10 +156,6 @@ func (r *roleInclusionDAO) BatchCreate(ctx context.Context, roleInclusions []Rol
 	}
 
 	return r.db.WithContext(ctx).CreateInBatches(roleInclusions, batchSize).Error
-}
-
-func (r *roleInclusionDAO) Delete(ctx context.Context, id int64) error {
-	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&RoleInclusion{}).Error
 }
 
 func (r *roleInclusionDAO) DeleteByIncludingAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {

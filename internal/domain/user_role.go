@@ -1,10 +1,5 @@
 package domain
 
-type User struct {
-	ID    int64 `json:"id"`
-	BizID int64 `json:"bizId"`
-}
-
 // UserRole 用户角色关联
 type UserRole struct {
 	ID        int64    `json:"id"`

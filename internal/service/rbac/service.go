@@ -39,6 +39,24 @@ type Service interface {
 	GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error)
 	RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error
 	ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error)
+
+	// 业务配置相关方法
+	CreateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
+	GetBusinessConfig(ctx context.Context, id int64) (domain.BusinessConfig, error)
+	UpdateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
+	DeleteBusinessConfig(ctx context.Context, id int64) error
+	ListBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, int, error)
+
+	// 角色包含关系相关方法
+	CreateRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) (domain.RoleInclusion, error)
+	GetRoleInclusion(ctx context.Context, id int64) (domain.RoleInclusion, error)
+	DeleteRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error
+	ListRoleInclusions(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, int, error)
+
+	// 用户权限相关方法
+	GrantUserPermission(ctx context.Context, bizID, userID, permissionID int64, effect string, startTime, endTime int64) (domain.UserPermission, error)
+	RevokeUserPermission(ctx context.Context, bizID, userID, permissionID int64) error
+	ListUserPermissions(ctx context.Context, bizID, userID int64, offset, limit int, onlyValid bool) ([]domain.UserPermission, int, error)
 }
 
 type rbacService struct {
@@ -159,4 +177,55 @@ func (s *rbacService) RevokeRolePermission(ctx context.Context, bizID, roleID, p
 func (s *rbacService) ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error) {
 	// 调用仓储层获取角色权限列表
 	return s.repo.ListRolePermissions(ctx, bizID, roleID, offset, limit)
+}
+
+// 业务配置相关方法实现
+func (s *rbacService) CreateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error) {
+	return s.repo.SaveBusinessConfig(ctx, config)
+}
+
+func (s *rbacService) GetBusinessConfig(ctx context.Context, id int64) (domain.BusinessConfig, error) {
+	return s.repo.GetBusinessConfig(ctx, id)
+}
+
+func (s *rbacService) UpdateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error) {
+	return s.repo.SaveBusinessConfig(ctx, config)
+}
+
+func (s *rbacService) DeleteBusinessConfig(ctx context.Context, id int64) error {
+	return s.repo.DeleteBusinessConfig(ctx, id)
+}
+
+func (s *rbacService) ListBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, int, error) {
+	return s.repo.ListBusinessConfigs(ctx, offset, limit)
+}
+
+// 角色包含关系相关方法实现
+func (s *rbacService) CreateRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) (domain.RoleInclusion, error) {
+	return s.repo.CreateRoleInclusion(ctx, bizID, includingRoleID, includedRoleID)
+}
+
+func (s *rbacService) GetRoleInclusion(ctx context.Context, id int64) (domain.RoleInclusion, error) {
+	return s.repo.GetRoleInclusion(ctx, id)
+}
+
+func (s *rbacService) DeleteRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {
+	return s.repo.DeleteRoleInclusion(ctx, bizID, includingRoleID, includedRoleID)
+}
+
+func (s *rbacService) ListRoleInclusions(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, int, error) {
+	return s.repo.ListRoleInclusions(ctx, bizID, roleID, isIncluding, offset, limit)
+}
+
+// 用户权限相关方法实现
+func (s *rbacService) GrantUserPermission(ctx context.Context, bizID, userID, permissionID int64, effect string, startTime, endTime int64) (domain.UserPermission, error) {
+	return s.repo.GrantUserPermission(ctx, bizID, userID, permissionID, effect, startTime, endTime)
+}
+
+func (s *rbacService) RevokeUserPermission(ctx context.Context, bizID, userID, permissionID int64) error {
+	return s.repo.RevokeUserPermission(ctx, bizID, userID, permissionID)
+}
+
+func (s *rbacService) ListUserPermissions(ctx context.Context, bizID, userID int64, offset, limit int, onlyValid bool) ([]domain.UserPermission, int, error) {
+	return s.repo.ListUserPermissions(ctx, bizID, userID, offset, limit, onlyValid)
 }

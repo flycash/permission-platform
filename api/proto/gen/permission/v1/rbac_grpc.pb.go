@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RBACService_CreateRole_FullMethodName           = "/permission.v1.RBACService/CreateRole"
-	RBACService_GetRole_FullMethodName              = "/permission.v1.RBACService/GetRole"
-	RBACService_UpdateRole_FullMethodName           = "/permission.v1.RBACService/UpdateRole"
-	RBACService_DeleteRole_FullMethodName           = "/permission.v1.RBACService/DeleteRole"
-	RBACService_ListRoles_FullMethodName            = "/permission.v1.RBACService/ListRoles"
+	RBACService_CreateBusinessConfig_FullMethodName = "/permission.v1.RBACService/CreateBusinessConfig"
+	RBACService_GetBusinessConfig_FullMethodName    = "/permission.v1.RBACService/GetBusinessConfig"
+	RBACService_UpdateBusinessConfig_FullMethodName = "/permission.v1.RBACService/UpdateBusinessConfig"
+	RBACService_DeleteBusinessConfig_FullMethodName = "/permission.v1.RBACService/DeleteBusinessConfig"
+	RBACService_ListBusinessConfigs_FullMethodName  = "/permission.v1.RBACService/ListBusinessConfigs"
 	RBACService_CreateResource_FullMethodName       = "/permission.v1.RBACService/CreateResource"
 	RBACService_GetResource_FullMethodName          = "/permission.v1.RBACService/GetResource"
 	RBACService_UpdateResource_FullMethodName       = "/permission.v1.RBACService/UpdateResource"
@@ -35,44 +35,71 @@ const (
 	RBACService_UpdatePermission_FullMethodName     = "/permission.v1.RBACService/UpdatePermission"
 	RBACService_DeletePermission_FullMethodName     = "/permission.v1.RBACService/DeletePermission"
 	RBACService_ListPermissions_FullMethodName      = "/permission.v1.RBACService/ListPermissions"
-	RBACService_GrantUserRole_FullMethodName        = "/permission.v1.RBACService/GrantUserRole"
-	RBACService_RevokeUserRole_FullMethodName       = "/permission.v1.RBACService/RevokeUserRole"
-	RBACService_ListUserRoles_FullMethodName        = "/permission.v1.RBACService/ListUserRoles"
+	RBACService_CreateRole_FullMethodName           = "/permission.v1.RBACService/CreateRole"
+	RBACService_GetRole_FullMethodName              = "/permission.v1.RBACService/GetRole"
+	RBACService_UpdateRole_FullMethodName           = "/permission.v1.RBACService/UpdateRole"
+	RBACService_DeleteRole_FullMethodName           = "/permission.v1.RBACService/DeleteRole"
+	RBACService_ListRoles_FullMethodName            = "/permission.v1.RBACService/ListRoles"
+	RBACService_CreateRoleInclusion_FullMethodName  = "/permission.v1.RBACService/CreateRoleInclusion"
+	RBACService_GetRoleInclusion_FullMethodName     = "/permission.v1.RBACService/GetRoleInclusion"
+	RBACService_DeleteRoleInclusion_FullMethodName  = "/permission.v1.RBACService/DeleteRoleInclusion"
+	RBACService_ListRoleInclusions_FullMethodName   = "/permission.v1.RBACService/ListRoleInclusions"
 	RBACService_GrantRolePermission_FullMethodName  = "/permission.v1.RBACService/GrantRolePermission"
 	RBACService_RevokeRolePermission_FullMethodName = "/permission.v1.RBACService/RevokeRolePermission"
 	RBACService_ListRolePermissions_FullMethodName  = "/permission.v1.RBACService/ListRolePermissions"
+	RBACService_GrantUserRole_FullMethodName        = "/permission.v1.RBACService/GrantUserRole"
+	RBACService_RevokeUserRole_FullMethodName       = "/permission.v1.RBACService/RevokeUserRole"
+	RBACService_ListUserRoles_FullMethodName        = "/permission.v1.RBACService/ListUserRoles"
+	RBACService_GrantUserPermission_FullMethodName  = "/permission.v1.RBACService/GrantUserPermission"
+	RBACService_RevokeUserPermission_FullMethodName = "/permission.v1.RBACService/RevokeUserPermission"
+	RBACService_ListUserPermissions_FullMethodName  = "/permission.v1.RBACService/ListUserPermissions"
 )
 
 // RBACServiceClient is the client API for RBACService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RBACServiceClient interface {
-	// Role相关接口
-	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
-	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
-	UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*UpdateRoleResponse, error)
-	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
-	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
-	// Resource相关接口
+	// 业务配置相关接口
+	CreateBusinessConfig(ctx context.Context, in *CreateBusinessConfigRequest, opts ...grpc.CallOption) (*CreateBusinessConfigResponse, error)
+	GetBusinessConfig(ctx context.Context, in *GetBusinessConfigRequest, opts ...grpc.CallOption) (*GetBusinessConfigResponse, error)
+	UpdateBusinessConfig(ctx context.Context, in *UpdateBusinessConfigRequest, opts ...grpc.CallOption) (*UpdateBusinessConfigResponse, error)
+	DeleteBusinessConfig(ctx context.Context, in *DeleteBusinessConfigRequest, opts ...grpc.CallOption) (*DeleteBusinessConfigResponse, error)
+	ListBusinessConfigs(ctx context.Context, in *ListBusinessConfigsRequest, opts ...grpc.CallOption) (*ListBusinessConfigsResponse, error)
+	// 资源相关接口
 	CreateResource(ctx context.Context, in *CreateResourceRequest, opts ...grpc.CallOption) (*CreateResourceResponse, error)
 	GetResource(ctx context.Context, in *GetResourceRequest, opts ...grpc.CallOption) (*GetResourceResponse, error)
 	UpdateResource(ctx context.Context, in *UpdateResourceRequest, opts ...grpc.CallOption) (*UpdateResourceResponse, error)
 	DeleteResource(ctx context.Context, in *DeleteResourceRequest, opts ...grpc.CallOption) (*DeleteResourceResponse, error)
 	ListResources(ctx context.Context, in *ListResourcesRequest, opts ...grpc.CallOption) (*ListResourcesResponse, error)
-	// Permission相关接口
+	// 权限相关接口
 	CreatePermission(ctx context.Context, in *CreatePermissionRequest, opts ...grpc.CallOption) (*CreatePermissionResponse, error)
 	GetPermission(ctx context.Context, in *GetPermissionRequest, opts ...grpc.CallOption) (*GetPermissionResponse, error)
 	UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*UpdatePermissionResponse, error)
 	DeletePermission(ctx context.Context, in *DeletePermissionRequest, opts ...grpc.CallOption) (*DeletePermissionResponse, error)
 	ListPermissions(ctx context.Context, in *ListPermissionsRequest, opts ...grpc.CallOption) (*ListPermissionsResponse, error)
-	// 用户角色相关接口
-	GrantUserRole(ctx context.Context, in *GrantUserRoleRequest, opts ...grpc.CallOption) (*GrantUserRoleResponse, error)
-	RevokeUserRole(ctx context.Context, in *RevokeUserRoleRequest, opts ...grpc.CallOption) (*RevokeUserRoleResponse, error)
-	ListUserRoles(ctx context.Context, in *ListUserRolesRequest, opts ...grpc.CallOption) (*ListUserRolesResponse, error)
+	// 角色相关接口
+	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
+	UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*UpdateRoleResponse, error)
+	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
+	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
+	// 角色包含关系相关接口
+	CreateRoleInclusion(ctx context.Context, in *CreateRoleInclusionRequest, opts ...grpc.CallOption) (*CreateRoleInclusionResponse, error)
+	GetRoleInclusion(ctx context.Context, in *GetRoleInclusionRequest, opts ...grpc.CallOption) (*GetRoleInclusionResponse, error)
+	DeleteRoleInclusion(ctx context.Context, in *DeleteRoleInclusionRequest, opts ...grpc.CallOption) (*DeleteRoleInclusionResponse, error)
+	ListRoleInclusions(ctx context.Context, in *ListRoleInclusionsRequest, opts ...grpc.CallOption) (*ListRoleInclusionsResponse, error)
 	// 角色权限相关接口
 	GrantRolePermission(ctx context.Context, in *GrantRolePermissionRequest, opts ...grpc.CallOption) (*GrantRolePermissionResponse, error)
 	RevokeRolePermission(ctx context.Context, in *RevokeRolePermissionRequest, opts ...grpc.CallOption) (*RevokeRolePermissionResponse, error)
 	ListRolePermissions(ctx context.Context, in *ListRolePermissionsRequest, opts ...grpc.CallOption) (*ListRolePermissionsResponse, error)
+	// 用户角色相关接口
+	GrantUserRole(ctx context.Context, in *GrantUserRoleRequest, opts ...grpc.CallOption) (*GrantUserRoleResponse, error)
+	RevokeUserRole(ctx context.Context, in *RevokeUserRoleRequest, opts ...grpc.CallOption) (*RevokeUserRoleResponse, error)
+	ListUserRoles(ctx context.Context, in *ListUserRolesRequest, opts ...grpc.CallOption) (*ListUserRolesResponse, error)
+	// 用户权限相关接口
+	GrantUserPermission(ctx context.Context, in *GrantUserPermissionRequest, opts ...grpc.CallOption) (*GrantUserPermissionResponse, error)
+	RevokeUserPermission(ctx context.Context, in *RevokeUserPermissionRequest, opts ...grpc.CallOption) (*RevokeUserPermissionResponse, error)
+	ListUserPermissions(ctx context.Context, in *ListUserPermissionsRequest, opts ...grpc.CallOption) (*ListUserPermissionsResponse, error)
 }
 
 type rBACServiceClient struct {
@@ -83,50 +110,50 @@ func NewRBACServiceClient(cc grpc.ClientConnInterface) RBACServiceClient {
 	return &rBACServiceClient{cc}
 }
 
-func (c *rBACServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
+func (c *rBACServiceClient) CreateBusinessConfig(ctx context.Context, in *CreateBusinessConfigRequest, opts ...grpc.CallOption) (*CreateBusinessConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_CreateRole_FullMethodName, in, out, cOpts...)
+	out := new(CreateBusinessConfigResponse)
+	err := c.cc.Invoke(ctx, RBACService_CreateBusinessConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error) {
+func (c *rBACServiceClient) GetBusinessConfig(ctx context.Context, in *GetBusinessConfigRequest, opts ...grpc.CallOption) (*GetBusinessConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_GetRole_FullMethodName, in, out, cOpts...)
+	out := new(GetBusinessConfigResponse)
+	err := c.cc.Invoke(ctx, RBACService_GetBusinessConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*UpdateRoleResponse, error) {
+func (c *rBACServiceClient) UpdateBusinessConfig(ctx context.Context, in *UpdateBusinessConfigRequest, opts ...grpc.CallOption) (*UpdateBusinessConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_UpdateRole_FullMethodName, in, out, cOpts...)
+	out := new(UpdateBusinessConfigResponse)
+	err := c.cc.Invoke(ctx, RBACService_UpdateBusinessConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error) {
+func (c *rBACServiceClient) DeleteBusinessConfig(ctx context.Context, in *DeleteBusinessConfigRequest, opts ...grpc.CallOption) (*DeleteBusinessConfigResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_DeleteRole_FullMethodName, in, out, cOpts...)
+	out := new(DeleteBusinessConfigResponse)
+	err := c.cc.Invoke(ctx, RBACService_DeleteBusinessConfig_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error) {
+func (c *rBACServiceClient) ListBusinessConfigs(ctx context.Context, in *ListBusinessConfigsRequest, opts ...grpc.CallOption) (*ListBusinessConfigsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListRolesResponse)
-	err := c.cc.Invoke(ctx, RBACService_ListRoles_FullMethodName, in, out, cOpts...)
+	out := new(ListBusinessConfigsResponse)
+	err := c.cc.Invoke(ctx, RBACService_ListBusinessConfigs_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -233,30 +260,90 @@ func (c *rBACServiceClient) ListPermissions(ctx context.Context, in *ListPermiss
 	return out, nil
 }
 
-func (c *rBACServiceClient) GrantUserRole(ctx context.Context, in *GrantUserRoleRequest, opts ...grpc.CallOption) (*GrantUserRoleResponse, error) {
+func (c *rBACServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GrantUserRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_GrantUserRole_FullMethodName, in, out, cOpts...)
+	out := new(CreateRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_CreateRole_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) RevokeUserRole(ctx context.Context, in *RevokeUserRoleRequest, opts ...grpc.CallOption) (*RevokeUserRoleResponse, error) {
+func (c *rBACServiceClient) GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RevokeUserRoleResponse)
-	err := c.cc.Invoke(ctx, RBACService_RevokeUserRole_FullMethodName, in, out, cOpts...)
+	out := new(GetRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_GetRole_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rBACServiceClient) ListUserRoles(ctx context.Context, in *ListUserRolesRequest, opts ...grpc.CallOption) (*ListUserRolesResponse, error) {
+func (c *rBACServiceClient) UpdateRole(ctx context.Context, in *UpdateRoleRequest, opts ...grpc.CallOption) (*UpdateRoleResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListUserRolesResponse)
-	err := c.cc.Invoke(ctx, RBACService_ListUserRoles_FullMethodName, in, out, cOpts...)
+	out := new(UpdateRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_UpdateRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_DeleteRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRolesResponse)
+	err := c.cc.Invoke(ctx, RBACService_ListRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) CreateRoleInclusion(ctx context.Context, in *CreateRoleInclusionRequest, opts ...grpc.CallOption) (*CreateRoleInclusionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateRoleInclusionResponse)
+	err := c.cc.Invoke(ctx, RBACService_CreateRoleInclusion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) GetRoleInclusion(ctx context.Context, in *GetRoleInclusionRequest, opts ...grpc.CallOption) (*GetRoleInclusionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRoleInclusionResponse)
+	err := c.cc.Invoke(ctx, RBACService_GetRoleInclusion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) DeleteRoleInclusion(ctx context.Context, in *DeleteRoleInclusionRequest, opts ...grpc.CallOption) (*DeleteRoleInclusionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteRoleInclusionResponse)
+	err := c.cc.Invoke(ctx, RBACService_DeleteRoleInclusion_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) ListRoleInclusions(ctx context.Context, in *ListRoleInclusionsRequest, opts ...grpc.CallOption) (*ListRoleInclusionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListRoleInclusionsResponse)
+	err := c.cc.Invoke(ctx, RBACService_ListRoleInclusions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -293,36 +380,111 @@ func (c *rBACServiceClient) ListRolePermissions(ctx context.Context, in *ListRol
 	return out, nil
 }
 
+func (c *rBACServiceClient) GrantUserRole(ctx context.Context, in *GrantUserRoleRequest, opts ...grpc.CallOption) (*GrantUserRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GrantUserRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_GrantUserRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) RevokeUserRole(ctx context.Context, in *RevokeUserRoleRequest, opts ...grpc.CallOption) (*RevokeUserRoleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RevokeUserRoleResponse)
+	err := c.cc.Invoke(ctx, RBACService_RevokeUserRole_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) ListUserRoles(ctx context.Context, in *ListUserRolesRequest, opts ...grpc.CallOption) (*ListUserRolesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserRolesResponse)
+	err := c.cc.Invoke(ctx, RBACService_ListUserRoles_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) GrantUserPermission(ctx context.Context, in *GrantUserPermissionRequest, opts ...grpc.CallOption) (*GrantUserPermissionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GrantUserPermissionResponse)
+	err := c.cc.Invoke(ctx, RBACService_GrantUserPermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) RevokeUserPermission(ctx context.Context, in *RevokeUserPermissionRequest, opts ...grpc.CallOption) (*RevokeUserPermissionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RevokeUserPermissionResponse)
+	err := c.cc.Invoke(ctx, RBACService_RevokeUserPermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rBACServiceClient) ListUserPermissions(ctx context.Context, in *ListUserPermissionsRequest, opts ...grpc.CallOption) (*ListUserPermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserPermissionsResponse)
+	err := c.cc.Invoke(ctx, RBACService_ListUserPermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RBACServiceServer is the server API for RBACService service.
 // All implementations should embed UnimplementedRBACServiceServer
 // for forward compatibility.
 type RBACServiceServer interface {
-	// Role相关接口
-	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
-	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
-	UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error)
-	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
-	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
-	// Resource相关接口
+	// 业务配置相关接口
+	CreateBusinessConfig(context.Context, *CreateBusinessConfigRequest) (*CreateBusinessConfigResponse, error)
+	GetBusinessConfig(context.Context, *GetBusinessConfigRequest) (*GetBusinessConfigResponse, error)
+	UpdateBusinessConfig(context.Context, *UpdateBusinessConfigRequest) (*UpdateBusinessConfigResponse, error)
+	DeleteBusinessConfig(context.Context, *DeleteBusinessConfigRequest) (*DeleteBusinessConfigResponse, error)
+	ListBusinessConfigs(context.Context, *ListBusinessConfigsRequest) (*ListBusinessConfigsResponse, error)
+	// 资源相关接口
 	CreateResource(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error)
 	GetResource(context.Context, *GetResourceRequest) (*GetResourceResponse, error)
 	UpdateResource(context.Context, *UpdateResourceRequest) (*UpdateResourceResponse, error)
 	DeleteResource(context.Context, *DeleteResourceRequest) (*DeleteResourceResponse, error)
 	ListResources(context.Context, *ListResourcesRequest) (*ListResourcesResponse, error)
-	// Permission相关接口
+	// 权限相关接口
 	CreatePermission(context.Context, *CreatePermissionRequest) (*CreatePermissionResponse, error)
 	GetPermission(context.Context, *GetPermissionRequest) (*GetPermissionResponse, error)
 	UpdatePermission(context.Context, *UpdatePermissionRequest) (*UpdatePermissionResponse, error)
 	DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error)
 	ListPermissions(context.Context, *ListPermissionsRequest) (*ListPermissionsResponse, error)
-	// 用户角色相关接口
-	GrantUserRole(context.Context, *GrantUserRoleRequest) (*GrantUserRoleResponse, error)
-	RevokeUserRole(context.Context, *RevokeUserRoleRequest) (*RevokeUserRoleResponse, error)
-	ListUserRoles(context.Context, *ListUserRolesRequest) (*ListUserRolesResponse, error)
+	// 角色相关接口
+	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
+	UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error)
+	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
+	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	// 角色包含关系相关接口
+	CreateRoleInclusion(context.Context, *CreateRoleInclusionRequest) (*CreateRoleInclusionResponse, error)
+	GetRoleInclusion(context.Context, *GetRoleInclusionRequest) (*GetRoleInclusionResponse, error)
+	DeleteRoleInclusion(context.Context, *DeleteRoleInclusionRequest) (*DeleteRoleInclusionResponse, error)
+	ListRoleInclusions(context.Context, *ListRoleInclusionsRequest) (*ListRoleInclusionsResponse, error)
 	// 角色权限相关接口
 	GrantRolePermission(context.Context, *GrantRolePermissionRequest) (*GrantRolePermissionResponse, error)
 	RevokeRolePermission(context.Context, *RevokeRolePermissionRequest) (*RevokeRolePermissionResponse, error)
 	ListRolePermissions(context.Context, *ListRolePermissionsRequest) (*ListRolePermissionsResponse, error)
+	// 用户角色相关接口
+	GrantUserRole(context.Context, *GrantUserRoleRequest) (*GrantUserRoleResponse, error)
+	RevokeUserRole(context.Context, *RevokeUserRoleRequest) (*RevokeUserRoleResponse, error)
+	ListUserRoles(context.Context, *ListUserRolesRequest) (*ListUserRolesResponse, error)
+	// 用户权限相关接口
+	GrantUserPermission(context.Context, *GrantUserPermissionRequest) (*GrantUserPermissionResponse, error)
+	RevokeUserPermission(context.Context, *RevokeUserPermissionRequest) (*RevokeUserPermissionResponse, error)
+	ListUserPermissions(context.Context, *ListUserPermissionsRequest) (*ListUserPermissionsResponse, error)
 }
 
 // UnimplementedRBACServiceServer should be embedded to have
@@ -332,24 +494,24 @@ type RBACServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedRBACServiceServer struct{}
 
-func (UnimplementedRBACServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+func (UnimplementedRBACServiceServer) CreateBusinessConfig(context.Context, *CreateBusinessConfigRequest) (*CreateBusinessConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBusinessConfig not implemented")
 }
 
-func (UnimplementedRBACServiceServer) GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
+func (UnimplementedRBACServiceServer) GetBusinessConfig(context.Context, *GetBusinessConfigRequest) (*GetBusinessConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBusinessConfig not implemented")
 }
 
-func (UnimplementedRBACServiceServer) UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
+func (UnimplementedRBACServiceServer) UpdateBusinessConfig(context.Context, *UpdateBusinessConfigRequest) (*UpdateBusinessConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBusinessConfig not implemented")
 }
 
-func (UnimplementedRBACServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
+func (UnimplementedRBACServiceServer) DeleteBusinessConfig(context.Context, *DeleteBusinessConfigRequest) (*DeleteBusinessConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBusinessConfig not implemented")
 }
 
-func (UnimplementedRBACServiceServer) ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListRoles not implemented")
+func (UnimplementedRBACServiceServer) ListBusinessConfigs(context.Context, *ListBusinessConfigsRequest) (*ListBusinessConfigsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListBusinessConfigs not implemented")
 }
 
 func (UnimplementedRBACServiceServer) CreateResource(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error) {
@@ -392,16 +554,40 @@ func (UnimplementedRBACServiceServer) ListPermissions(context.Context, *ListPerm
 	return nil, status.Errorf(codes.Unimplemented, "method ListPermissions not implemented")
 }
 
-func (UnimplementedRBACServiceServer) GrantUserRole(context.Context, *GrantUserRoleRequest) (*GrantUserRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GrantUserRole not implemented")
+func (UnimplementedRBACServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
 }
 
-func (UnimplementedRBACServiceServer) RevokeUserRole(context.Context, *RevokeUserRoleRequest) (*RevokeUserRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserRole not implemented")
+func (UnimplementedRBACServiceServer) GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
 }
 
-func (UnimplementedRBACServiceServer) ListUserRoles(context.Context, *ListUserRolesRequest) (*ListUserRolesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUserRoles not implemented")
+func (UnimplementedRBACServiceServer) UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
+}
+
+func (UnimplementedRBACServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
+}
+
+func (UnimplementedRBACServiceServer) ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRoles not implemented")
+}
+
+func (UnimplementedRBACServiceServer) CreateRoleInclusion(context.Context, *CreateRoleInclusionRequest) (*CreateRoleInclusionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRoleInclusion not implemented")
+}
+
+func (UnimplementedRBACServiceServer) GetRoleInclusion(context.Context, *GetRoleInclusionRequest) (*GetRoleInclusionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRoleInclusion not implemented")
+}
+
+func (UnimplementedRBACServiceServer) DeleteRoleInclusion(context.Context, *DeleteRoleInclusionRequest) (*DeleteRoleInclusionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoleInclusion not implemented")
+}
+
+func (UnimplementedRBACServiceServer) ListRoleInclusions(context.Context, *ListRoleInclusionsRequest) (*ListRoleInclusionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRoleInclusions not implemented")
 }
 
 func (UnimplementedRBACServiceServer) GrantRolePermission(context.Context, *GrantRolePermissionRequest) (*GrantRolePermissionResponse, error) {
@@ -414,6 +600,30 @@ func (UnimplementedRBACServiceServer) RevokeRolePermission(context.Context, *Rev
 
 func (UnimplementedRBACServiceServer) ListRolePermissions(context.Context, *ListRolePermissionsRequest) (*ListRolePermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRolePermissions not implemented")
+}
+
+func (UnimplementedRBACServiceServer) GrantUserRole(context.Context, *GrantUserRoleRequest) (*GrantUserRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantUserRole not implemented")
+}
+
+func (UnimplementedRBACServiceServer) RevokeUserRole(context.Context, *RevokeUserRoleRequest) (*RevokeUserRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserRole not implemented")
+}
+
+func (UnimplementedRBACServiceServer) ListUserRoles(context.Context, *ListUserRolesRequest) (*ListUserRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserRoles not implemented")
+}
+
+func (UnimplementedRBACServiceServer) GrantUserPermission(context.Context, *GrantUserPermissionRequest) (*GrantUserPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GrantUserPermission not implemented")
+}
+
+func (UnimplementedRBACServiceServer) RevokeUserPermission(context.Context, *RevokeUserPermissionRequest) (*RevokeUserPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserPermission not implemented")
+}
+
+func (UnimplementedRBACServiceServer) ListUserPermissions(context.Context, *ListUserPermissionsRequest) (*ListUserPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserPermissions not implemented")
 }
 func (UnimplementedRBACServiceServer) testEmbeddedByValue() {}
 
@@ -435,92 +645,92 @@ func RegisterRBACServiceServer(s grpc.ServiceRegistrar, srv RBACServiceServer) {
 	s.RegisterService(&RBACService_ServiceDesc, srv)
 }
 
-func _RBACService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateRoleRequest)
+func _RBACService_CreateBusinessConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBusinessConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).CreateRole(ctx, in)
+		return srv.(RBACServiceServer).CreateBusinessConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_CreateRole_FullMethodName,
+		FullMethod: RBACService_CreateBusinessConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
+		return srv.(RBACServiceServer).CreateBusinessConfig(ctx, req.(*CreateBusinessConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_GetRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRoleRequest)
+func _RBACService_GetBusinessConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBusinessConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).GetRole(ctx, in)
+		return srv.(RBACServiceServer).GetBusinessConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_GetRole_FullMethodName,
+		FullMethod: RBACService_GetBusinessConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).GetRole(ctx, req.(*GetRoleRequest))
+		return srv.(RBACServiceServer).GetBusinessConfig(ctx, req.(*GetBusinessConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_UpdateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateRoleRequest)
+func _RBACService_UpdateBusinessConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBusinessConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).UpdateRole(ctx, in)
+		return srv.(RBACServiceServer).UpdateBusinessConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_UpdateRole_FullMethodName,
+		FullMethod: RBACService_UpdateBusinessConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).UpdateRole(ctx, req.(*UpdateRoleRequest))
+		return srv.(RBACServiceServer).UpdateBusinessConfig(ctx, req.(*UpdateBusinessConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteRoleRequest)
+func _RBACService_DeleteBusinessConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBusinessConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).DeleteRole(ctx, in)
+		return srv.(RBACServiceServer).DeleteBusinessConfig(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_DeleteRole_FullMethodName,
+		FullMethod: RBACService_DeleteBusinessConfig_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
+		return srv.(RBACServiceServer).DeleteBusinessConfig(ctx, req.(*DeleteBusinessConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_ListRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListRolesRequest)
+func _RBACService_ListBusinessConfigs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListBusinessConfigsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).ListRoles(ctx, in)
+		return srv.(RBACServiceServer).ListBusinessConfigs(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_ListRoles_FullMethodName,
+		FullMethod: RBACService_ListBusinessConfigs_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).ListRoles(ctx, req.(*ListRolesRequest))
+		return srv.(RBACServiceServer).ListBusinessConfigs(ctx, req.(*ListBusinessConfigsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -705,56 +915,164 @@ func _RBACService_ListPermissions_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_GrantUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GrantUserRoleRequest)
+func _RBACService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).GrantUserRole(ctx, in)
+		return srv.(RBACServiceServer).CreateRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_GrantUserRole_FullMethodName,
+		FullMethod: RBACService_CreateRole_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).GrantUserRole(ctx, req.(*GrantUserRoleRequest))
+		return srv.(RBACServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_RevokeUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RevokeUserRoleRequest)
+func _RBACService_GetRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).RevokeUserRole(ctx, in)
+		return srv.(RBACServiceServer).GetRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_RevokeUserRole_FullMethodName,
+		FullMethod: RBACService_GetRole_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).RevokeUserRole(ctx, req.(*RevokeUserRoleRequest))
+		return srv.(RBACServiceServer).GetRole(ctx, req.(*GetRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RBACService_ListUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUserRolesRequest)
+func _RBACService_UpdateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RBACServiceServer).ListUserRoles(ctx, in)
+		return srv.(RBACServiceServer).UpdateRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RBACService_ListUserRoles_FullMethodName,
+		FullMethod: RBACService_UpdateRole_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RBACServiceServer).ListUserRoles(ctx, req.(*ListUserRolesRequest))
+		return srv.(RBACServiceServer).UpdateRole(ctx, req.(*UpdateRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).DeleteRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_DeleteRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_ListRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).ListRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_ListRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).ListRoles(ctx, req.(*ListRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_CreateRoleInclusion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRoleInclusionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).CreateRoleInclusion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_CreateRoleInclusion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).CreateRoleInclusion(ctx, req.(*CreateRoleInclusionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_GetRoleInclusion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRoleInclusionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).GetRoleInclusion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_GetRoleInclusion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).GetRoleInclusion(ctx, req.(*GetRoleInclusionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_DeleteRoleInclusion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteRoleInclusionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).DeleteRoleInclusion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_DeleteRoleInclusion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).DeleteRoleInclusion(ctx, req.(*DeleteRoleInclusionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_ListRoleInclusions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListRoleInclusionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).ListRoleInclusions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_ListRoleInclusions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).ListRoleInclusions(ctx, req.(*ListRoleInclusionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -813,6 +1131,114 @@ func _RBACService_ListRolePermissions_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RBACService_GrantUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).GrantUserRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_GrantUserRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).GrantUserRole(ctx, req.(*GrantUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_RevokeUserRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeUserRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).RevokeUserRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_RevokeUserRole_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).RevokeUserRole(ctx, req.(*RevokeUserRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_ListUserRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserRolesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).ListUserRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_ListUserRoles_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).ListUserRoles(ctx, req.(*ListUserRolesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_GrantUserPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrantUserPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).GrantUserPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_GrantUserPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).GrantUserPermission(ctx, req.(*GrantUserPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_RevokeUserPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RevokeUserPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).RevokeUserPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_RevokeUserPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).RevokeUserPermission(ctx, req.(*RevokeUserPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RBACService_ListUserPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserPermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).ListUserPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_ListUserPermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).ListUserPermissions(ctx, req.(*ListUserPermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RBACService_ServiceDesc is the grpc.ServiceDesc for RBACService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -821,24 +1247,24 @@ var RBACService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RBACServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateRole",
-			Handler:    _RBACService_CreateRole_Handler,
+			MethodName: "CreateBusinessConfig",
+			Handler:    _RBACService_CreateBusinessConfig_Handler,
 		},
 		{
-			MethodName: "GetRole",
-			Handler:    _RBACService_GetRole_Handler,
+			MethodName: "GetBusinessConfig",
+			Handler:    _RBACService_GetBusinessConfig_Handler,
 		},
 		{
-			MethodName: "UpdateRole",
-			Handler:    _RBACService_UpdateRole_Handler,
+			MethodName: "UpdateBusinessConfig",
+			Handler:    _RBACService_UpdateBusinessConfig_Handler,
 		},
 		{
-			MethodName: "DeleteRole",
-			Handler:    _RBACService_DeleteRole_Handler,
+			MethodName: "DeleteBusinessConfig",
+			Handler:    _RBACService_DeleteBusinessConfig_Handler,
 		},
 		{
-			MethodName: "ListRoles",
-			Handler:    _RBACService_ListRoles_Handler,
+			MethodName: "ListBusinessConfigs",
+			Handler:    _RBACService_ListBusinessConfigs_Handler,
 		},
 		{
 			MethodName: "CreateResource",
@@ -881,16 +1307,40 @@ var RBACService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RBACService_ListPermissions_Handler,
 		},
 		{
-			MethodName: "GrantUserRole",
-			Handler:    _RBACService_GrantUserRole_Handler,
+			MethodName: "CreateRole",
+			Handler:    _RBACService_CreateRole_Handler,
 		},
 		{
-			MethodName: "RevokeUserRole",
-			Handler:    _RBACService_RevokeUserRole_Handler,
+			MethodName: "GetRole",
+			Handler:    _RBACService_GetRole_Handler,
 		},
 		{
-			MethodName: "ListUserRoles",
-			Handler:    _RBACService_ListUserRoles_Handler,
+			MethodName: "UpdateRole",
+			Handler:    _RBACService_UpdateRole_Handler,
+		},
+		{
+			MethodName: "DeleteRole",
+			Handler:    _RBACService_DeleteRole_Handler,
+		},
+		{
+			MethodName: "ListRoles",
+			Handler:    _RBACService_ListRoles_Handler,
+		},
+		{
+			MethodName: "CreateRoleInclusion",
+			Handler:    _RBACService_CreateRoleInclusion_Handler,
+		},
+		{
+			MethodName: "GetRoleInclusion",
+			Handler:    _RBACService_GetRoleInclusion_Handler,
+		},
+		{
+			MethodName: "DeleteRoleInclusion",
+			Handler:    _RBACService_DeleteRoleInclusion_Handler,
+		},
+		{
+			MethodName: "ListRoleInclusions",
+			Handler:    _RBACService_ListRoleInclusions_Handler,
 		},
 		{
 			MethodName: "GrantRolePermission",
@@ -903,6 +1353,30 @@ var RBACService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListRolePermissions",
 			Handler:    _RBACService_ListRolePermissions_Handler,
+		},
+		{
+			MethodName: "GrantUserRole",
+			Handler:    _RBACService_GrantUserRole_Handler,
+		},
+		{
+			MethodName: "RevokeUserRole",
+			Handler:    _RBACService_RevokeUserRole_Handler,
+		},
+		{
+			MethodName: "ListUserRoles",
+			Handler:    _RBACService_ListUserRoles_Handler,
+		},
+		{
+			MethodName: "GrantUserPermission",
+			Handler:    _RBACService_GrantUserPermission_Handler,
+		},
+		{
+			MethodName: "RevokeUserPermission",
+			Handler:    _RBACService_RevokeUserPermission_Handler,
+		},
+		{
+			MethodName: "ListUserPermissions",
+			Handler:    _RBACService_ListUserPermissions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

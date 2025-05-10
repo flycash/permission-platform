@@ -55,6 +55,19 @@ type RBACRepository interface {
 	GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error)
 	RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error
 	ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error)
+
+	// 角色包含关系相关方法
+
+	CreateRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) (domain.RoleInclusion, error)
+	GetRoleInclusion(ctx context.Context, id int64) (domain.RoleInclusion, error)
+	DeleteRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error
+	ListRoleInclusions(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, int, error)
+
+	// 用户权限相关方法
+
+	GrantUserPermission(ctx context.Context, bizID, userID, permissionID int64, effect string, startTime, endTime int64) (domain.UserPermission, error)
+	RevokeUserPermission(ctx context.Context, bizID, userID, permissionID int64) error
+	ListUserPermissions(ctx context.Context, bizID, userID int64, offset, limit int, onlyValid bool) ([]domain.UserPermission, int, error)
 }
 
 type rbacRepository struct {
@@ -783,5 +796,253 @@ func (r *rbacRepository) toRolePermissionDomain(rolePermission dao.RolePermissio
 		PermissionType: rolePermission.ResourceType,
 		StartTime:      0, // dao结构体中没有这些字段，由上层设置
 		EndTime:        0,
+	}
+}
+
+// 角色包含关系相关方法实现
+func (r *rbacRepository) CreateRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) (domain.RoleInclusion, error) {
+	// 获取包含者角色信息
+	includingRole, err := r.roleDAO.GetByID(ctx, includingRoleID)
+	if err != nil {
+		return domain.RoleInclusion{}, err
+	}
+
+	// 获取被包含角色信息
+	includedRole, err := r.roleDAO.GetByID(ctx, includedRoleID)
+	if err != nil {
+		return domain.RoleInclusion{}, err
+	}
+
+	roleInclusion := dao.RoleInclusion{
+		BizID:             bizID,
+		IncludingRoleID:   includingRoleID,
+		IncludingRoleType: includingRole.Type,
+		IncludingRoleName: includingRole.Name,
+		IncludedRoleID:    includedRoleID,
+		IncludedRoleType:  includedRole.Type,
+		IncludedRoleName:  includedRole.Name,
+	}
+	created, err := r.roleInclusionDAO.Create(ctx, roleInclusion)
+	if err != nil {
+		return domain.RoleInclusion{}, err
+	}
+	return r.toRoleInclusionDomain(created), nil
+}
+
+func (r *rbacRepository) GetRoleInclusion(ctx context.Context, id int64) (domain.RoleInclusion, error) {
+	roleInclusion, err := r.roleInclusionDAO.GetByID(ctx, id)
+	if err != nil {
+		return domain.RoleInclusion{}, err
+	}
+	return r.toRoleInclusionDomain(roleInclusion), nil
+}
+
+func (r *rbacRepository) DeleteRoleInclusion(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {
+	return r.roleInclusionDAO.Delete(ctx, bizID, includingRoleID, includedRoleID)
+}
+
+func (r *rbacRepository) ListRoleInclusions(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, int, error) {
+	var roleInclusions []dao.RoleInclusion
+	var err error
+
+	// 根据是否是包含关系查询
+	if isIncluding {
+		roleInclusions, err = r.roleInclusionDAO.FindByIncludingRoleID(ctx, bizID, roleID)
+	} else {
+		// 这里应该使用FindByIncludedRoleID方法，但目前DAO接口中没有这个方法
+		// 暂时使用变通方法，实际项目中应添加该方法
+		roleInclusions, err = r.roleInclusionDAO.FindByBizIDAndRoleID(ctx, bizID, roleID)
+		// 过滤出roleID是被包含角色的记录
+		var filteredInclusions []dao.RoleInclusion
+		for _, inclusion := range roleInclusions {
+			if inclusion.IncludedRoleID == roleID {
+				filteredInclusions = append(filteredInclusions, inclusion)
+			}
+		}
+		roleInclusions = filteredInclusions
+	}
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 处理分页
+	startIndex := offset
+	endIndex := offset + limit
+	if startIndex >= len(roleInclusions) {
+		return []domain.RoleInclusion{}, 0, nil
+	}
+	if endIndex > len(roleInclusions) {
+		endIndex = len(roleInclusions)
+	}
+
+	// 总数
+	count := len(roleInclusions)
+
+	// 转换为domain模型
+	paginatedInclusions := roleInclusions[startIndex:endIndex]
+	domainRoleInclusions := make([]domain.RoleInclusion, 0, len(paginatedInclusions))
+	for i := range paginatedInclusions {
+		domainRoleInclusions = append(domainRoleInclusions, r.toRoleInclusionDomain(paginatedInclusions[i]))
+	}
+
+	return domainRoleInclusions, count, nil
+}
+
+func (r *rbacRepository) toRoleInclusionDomain(roleInclusion dao.RoleInclusion) domain.RoleInclusion {
+	var includingRoleType, includedRoleType domain.RoleType
+
+	switch roleInclusion.IncludingRoleType {
+	case dao.RoleTypeSystem:
+		includingRoleType = domain.RoleTypeSystem
+	case dao.RoleTypeCustom:
+		includingRoleType = domain.RoleTypeCustom
+	case dao.RoleTypeTemporary:
+		includingRoleType = domain.RoleTypeTemporary
+	default:
+		includingRoleType = domain.RoleTypeCustom
+	}
+
+	switch roleInclusion.IncludedRoleType {
+	case dao.RoleTypeSystem:
+		includedRoleType = domain.RoleTypeSystem
+	case dao.RoleTypeCustom:
+		includedRoleType = domain.RoleTypeCustom
+	case dao.RoleTypeTemporary:
+		includedRoleType = domain.RoleTypeTemporary
+	default:
+		includedRoleType = domain.RoleTypeCustom
+	}
+
+	return domain.RoleInclusion{
+		ID:                roleInclusion.ID,
+		BizID:             roleInclusion.BizID,
+		IncludingRoleID:   roleInclusion.IncludingRoleID,
+		IncludingRoleType: includingRoleType,
+		IncludingRoleName: roleInclusion.IncludingRoleName,
+		IncludedRoleID:    roleInclusion.IncludedRoleID,
+		IncludedRoleType:  includedRoleType,
+		IncludedRoleName:  roleInclusion.IncludedRoleName,
+		IsIncluding:       true, // 默认为包含关系
+		Ctime:             roleInclusion.Ctime,
+		Utime:             roleInclusion.Utime,
+	}
+}
+
+// 用户权限相关方法实现
+func (r *rbacRepository) GrantUserPermission(ctx context.Context, bizID, userID, permissionID int64, effect string, startTime, endTime int64) (domain.UserPermission, error) {
+	// 获取权限信息
+	permission, err := r.permissionDAO.GetByID(ctx, permissionID)
+	if err != nil {
+		return domain.UserPermission{}, err
+	}
+
+	// 获取资源信息
+	resource, err := r.resourceDAO.GetByID(ctx, permission.ResourceID)
+	if err != nil {
+		return domain.UserPermission{}, err
+	}
+
+	userPermission := dao.UserPermission{
+		BizID:          bizID,
+		UserID:         userID,
+		PermissionID:   permissionID,
+		PermissionName: permission.Name,
+		ResourceType:   resource.Type,
+		ResourceKey:    resource.Key,
+		ResourceName:   resource.Name,
+		Action:         permission.Action,
+		StartTime:      startTime,
+		EndTime:        endTime,
+		Effect:         dao.EffectType(effect),
+	}
+	created, err := r.userPermissionDAO.Create(ctx, userPermission)
+	if err != nil {
+		return domain.UserPermission{}, err
+	}
+	return r.toUserPermissionDomain(created), nil
+}
+
+func (r *rbacRepository) RevokeUserPermission(ctx context.Context, bizID, userID, permissionID int64) error {
+	return r.userPermissionDAO.DeleteByUserIDAndPermissionID(ctx, bizID, userID, permissionID)
+}
+
+func (r *rbacRepository) ListUserPermissions(ctx context.Context, bizID, userID int64, offset, limit int, onlyValid bool) ([]domain.UserPermission, int, error) {
+	var userPermissions []dao.UserPermission
+	var err error
+
+	if onlyValid {
+		// 获取当前有效的权限
+		currentTime := time.Now().UnixMilli()
+		userPermissions, err = r.userPermissionDAO.FindValidPermissions(ctx, bizID, userID, currentTime)
+	} else {
+		// 获取所有权限
+		userPermissions, err = r.userPermissionDAO.FindByBizIDAndUserID(ctx, bizID, userID)
+	}
+
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 处理分页
+	startIndex := offset
+	endIndex := offset + limit
+	if startIndex >= len(userPermissions) {
+		return []domain.UserPermission{}, 0, nil
+	}
+	if endIndex > len(userPermissions) {
+		endIndex = len(userPermissions)
+	}
+
+	// 总数
+	count := len(userPermissions)
+
+	// 转换为domain模型
+	paginatedPermissions := userPermissions[startIndex:endIndex]
+	domainUserPermissions := make([]domain.UserPermission, 0, len(paginatedPermissions))
+	for i := range paginatedPermissions {
+		domainUserPermissions = append(domainUserPermissions, r.toUserPermissionDomain(paginatedPermissions[i]))
+	}
+
+	return domainUserPermissions, count, nil
+}
+
+func (r *rbacRepository) toUserPermissionDomain(userPermission dao.UserPermission) domain.UserPermission {
+	var action domain.ActionType
+	switch userPermission.Action {
+	case dao.ActionTypeCreate:
+		action = domain.ActionTypeCreate
+	case dao.ActionTypeRead:
+		action = domain.ActionTypeRead
+	case dao.ActionTypeUpdate:
+		action = domain.ActionTypeWrite
+	case dao.ActionTypeDelete:
+		action = domain.ActionTypeDelete
+	case dao.ActionTypeExecute:
+		action = domain.ActionTypeExecute
+	case dao.ActionTypeExport:
+		action = domain.ActionTypeExport
+	case dao.ActionTypeImport:
+		action = domain.ActionTypeImport
+	default:
+		action = domain.ActionTypeRead
+	}
+
+	return domain.UserPermission{
+		ID:             userPermission.ID,
+		BizID:          userPermission.BizID,
+		UserID:         userPermission.UserID,
+		PermissionID:   userPermission.PermissionID,
+		PermissionName: userPermission.PermissionName,
+		ResourceType:   userPermission.ResourceType,
+		ResourceKey:    userPermission.ResourceKey,
+		ResourceName:   userPermission.ResourceName,
+		Action:         action,
+		StartTime:      userPermission.StartTime,
+		EndTime:        userPermission.EndTime,
+		Effect:         string(userPermission.Effect),
+		OnlyValid:      false, // 默认为false
+		Ctime:          userPermission.Ctime,
+		Utime:          userPermission.Utime,
 	}
 }

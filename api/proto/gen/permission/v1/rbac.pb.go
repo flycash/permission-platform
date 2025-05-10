@@ -22,35 +22,33 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ==== Role相关消息定义 ====
-type Role struct {
+// ==== 业务配置相关消息定义 ====
+type BusinessConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	BizId         int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"` // system, custom, temporary
+	OwnerId       int64                  `protobuf:"varint,2,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	OwnerType     string                 `protobuf:"bytes,3,opt,name=owner_type,json=ownerType,proto3" json:"owner_type,omitempty"` // person, organization
 	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
-	Metadata      string                 `protobuf:"bytes,6,opt,name=metadata,proto3" json:"metadata,omitempty"`                     // JSON格式的元数据
-	StartTime     int64                  `protobuf:"varint,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 临时角色有效期开始时间
-	EndTime       int64                  `protobuf:"varint,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 临时角色有效期结束时间
+	RateLimit     int32                  `protobuf:"varint,5,opt,name=rate_limit,json=rateLimit,proto3" json:"rate_limit,omitempty"`
+	Token         string                 `protobuf:"bytes,6,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Role) Reset() {
-	*x = Role{}
+func (x *BusinessConfig) Reset() {
+	*x = BusinessConfig{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Role) String() string {
+func (x *BusinessConfig) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Role) ProtoMessage() {}
+func (*BusinessConfig) ProtoMessage() {}
 
-func (x *Role) ProtoReflect() protoreflect.Message {
+func (x *BusinessConfig) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -62,88 +60,74 @@ func (x *Role) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Role.ProtoReflect.Descriptor instead.
-func (*Role) Descriptor() ([]byte, []int) {
+// Deprecated: Use BusinessConfig.ProtoReflect.Descriptor instead.
+func (*BusinessConfig) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Role) GetId() int64 {
+func (x *BusinessConfig) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *Role) GetBizId() int64 {
+func (x *BusinessConfig) GetOwnerId() int64 {
 	if x != nil {
-		return x.BizId
+		return x.OwnerId
 	}
 	return 0
 }
 
-func (x *Role) GetType() string {
+func (x *BusinessConfig) GetOwnerType() string {
 	if x != nil {
-		return x.Type
+		return x.OwnerType
 	}
 	return ""
 }
 
-func (x *Role) GetName() string {
+func (x *BusinessConfig) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *Role) GetDescription() string {
+func (x *BusinessConfig) GetRateLimit() int32 {
 	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *Role) GetMetadata() string {
-	if x != nil {
-		return x.Metadata
-	}
-	return ""
-}
-
-func (x *Role) GetStartTime() int64 {
-	if x != nil {
-		return x.StartTime
+		return x.RateLimit
 	}
 	return 0
 }
 
-func (x *Role) GetEndTime() int64 {
+func (x *BusinessConfig) GetToken() string {
 	if x != nil {
-		return x.EndTime
+		return x.Token
 	}
-	return 0
+	return ""
 }
 
-type CreateRoleRequest struct {
+type CreateBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Config        *BusinessConfig        `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateRoleRequest) Reset() {
-	*x = CreateRoleRequest{}
+func (x *CreateBusinessConfigRequest) Reset() {
+	*x = CreateBusinessConfigRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateRoleRequest) String() string {
+func (x *CreateBusinessConfigRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateRoleRequest) ProtoMessage() {}
+func (*CreateBusinessConfigRequest) ProtoMessage() {}
 
-func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -155,39 +139,39 @@ func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
-func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateBusinessConfigRequest.ProtoReflect.Descriptor instead.
+func (*CreateBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CreateRoleRequest) GetRole() *Role {
+func (x *CreateBusinessConfigRequest) GetConfig() *BusinessConfig {
 	if x != nil {
-		return x.Role
+		return x.Config
 	}
 	return nil
 }
 
-type CreateRoleResponse struct {
+type CreateBusinessConfigResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Config        *BusinessConfig        `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateRoleResponse) Reset() {
-	*x = CreateRoleResponse{}
+func (x *CreateBusinessConfigResponse) Reset() {
+	*x = CreateBusinessConfigResponse{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateRoleResponse) String() string {
+func (x *CreateBusinessConfigResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateRoleResponse) ProtoMessage() {}
+func (*CreateBusinessConfigResponse) ProtoMessage() {}
 
-func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateBusinessConfigResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -199,39 +183,39 @@ func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateRoleResponse.ProtoReflect.Descriptor instead.
-func (*CreateRoleResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateBusinessConfigResponse.ProtoReflect.Descriptor instead.
+func (*CreateBusinessConfigResponse) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateRoleResponse) GetRole() *Role {
+func (x *CreateBusinessConfigResponse) GetConfig() *BusinessConfig {
 	if x != nil {
-		return x.Role
+		return x.Config
 	}
 	return nil
 }
 
-type GetRoleRequest struct {
+type GetBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetRoleRequest) Reset() {
-	*x = GetRoleRequest{}
+func (x *GetBusinessConfigRequest) Reset() {
+	*x = GetBusinessConfigRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetRoleRequest) String() string {
+func (x *GetBusinessConfigRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetRoleRequest) ProtoMessage() {}
+func (*GetBusinessConfigRequest) ProtoMessage() {}
 
-func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *GetBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -243,39 +227,39 @@ func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetRoleRequest.ProtoReflect.Descriptor instead.
-func (*GetRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetBusinessConfigRequest.ProtoReflect.Descriptor instead.
+func (*GetBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetRoleRequest) GetId() int64 {
+func (x *GetBusinessConfigRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type GetRoleResponse struct {
+type GetBusinessConfigResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Config        *BusinessConfig        `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetRoleResponse) Reset() {
-	*x = GetRoleResponse{}
+func (x *GetBusinessConfigResponse) Reset() {
+	*x = GetBusinessConfigResponse{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetRoleResponse) String() string {
+func (x *GetBusinessConfigResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetRoleResponse) ProtoMessage() {}
+func (*GetBusinessConfigResponse) ProtoMessage() {}
 
-func (x *GetRoleResponse) ProtoReflect() protoreflect.Message {
+func (x *GetBusinessConfigResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -287,39 +271,39 @@ func (x *GetRoleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetRoleResponse.ProtoReflect.Descriptor instead.
-func (*GetRoleResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetBusinessConfigResponse.ProtoReflect.Descriptor instead.
+func (*GetBusinessConfigResponse) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetRoleResponse) GetRole() *Role {
+func (x *GetBusinessConfigResponse) GetConfig() *BusinessConfig {
 	if x != nil {
-		return x.Role
+		return x.Config
 	}
 	return nil
 }
 
-type UpdateRoleRequest struct {
+type UpdateBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Config        *BusinessConfig        `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRoleRequest) Reset() {
-	*x = UpdateRoleRequest{}
+func (x *UpdateBusinessConfigRequest) Reset() {
+	*x = UpdateBusinessConfigRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRoleRequest) String() string {
+func (x *UpdateBusinessConfigRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRoleRequest) ProtoMessage() {}
+func (*UpdateBusinessConfigRequest) ProtoMessage() {}
 
-func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -331,39 +315,39 @@ func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRoleRequest.ProtoReflect.Descriptor instead.
-func (*UpdateRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateBusinessConfigRequest.ProtoReflect.Descriptor instead.
+func (*UpdateBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UpdateRoleRequest) GetRole() *Role {
+func (x *UpdateBusinessConfigRequest) GetConfig() *BusinessConfig {
 	if x != nil {
-		return x.Role
+		return x.Config
 	}
 	return nil
 }
 
-type UpdateRoleResponse struct {
+type UpdateBusinessConfigResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Config        *BusinessConfig        `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRoleResponse) Reset() {
-	*x = UpdateRoleResponse{}
+func (x *UpdateBusinessConfigResponse) Reset() {
+	*x = UpdateBusinessConfigResponse{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRoleResponse) String() string {
+func (x *UpdateBusinessConfigResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRoleResponse) ProtoMessage() {}
+func (*UpdateBusinessConfigResponse) ProtoMessage() {}
 
-func (x *UpdateRoleResponse) ProtoReflect() protoreflect.Message {
+func (x *UpdateBusinessConfigResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -375,39 +359,39 @@ func (x *UpdateRoleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRoleResponse.ProtoReflect.Descriptor instead.
-func (*UpdateRoleResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateBusinessConfigResponse.ProtoReflect.Descriptor instead.
+func (*UpdateBusinessConfigResponse) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateRoleResponse) GetRole() *Role {
+func (x *UpdateBusinessConfigResponse) GetConfig() *BusinessConfig {
 	if x != nil {
-		return x.Role
+		return x.Config
 	}
 	return nil
 }
 
-type DeleteRoleRequest struct {
+type DeleteBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteRoleRequest) Reset() {
-	*x = DeleteRoleRequest{}
+func (x *DeleteBusinessConfigRequest) Reset() {
+	*x = DeleteBusinessConfigRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteRoleRequest) String() string {
+func (x *DeleteBusinessConfigRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteRoleRequest) ProtoMessage() {}
+func (*DeleteBusinessConfigRequest) ProtoMessage() {}
 
-func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *DeleteBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -419,39 +403,39 @@ func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
-func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteBusinessConfigRequest.ProtoReflect.Descriptor instead.
+func (*DeleteBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *DeleteRoleRequest) GetId() int64 {
+func (x *DeleteBusinessConfigRequest) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-type DeleteRoleResponse struct {
+type DeleteBusinessConfigResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *DeleteRoleResponse) Reset() {
-	*x = DeleteRoleResponse{}
+func (x *DeleteBusinessConfigResponse) Reset() {
+	*x = DeleteBusinessConfigResponse{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *DeleteRoleResponse) String() string {
+func (x *DeleteBusinessConfigResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*DeleteRoleResponse) ProtoMessage() {}
+func (*DeleteBusinessConfigResponse) ProtoMessage() {}
 
-func (x *DeleteRoleResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteBusinessConfigResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -463,42 +447,40 @@ func (x *DeleteRoleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use DeleteRoleResponse.ProtoReflect.Descriptor instead.
-func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteBusinessConfigResponse.ProtoReflect.Descriptor instead.
+func (*DeleteBusinessConfigResponse) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *DeleteRoleResponse) GetSuccess() bool {
+func (x *DeleteBusinessConfigResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-type ListRolesRequest struct {
+type ListBusinessConfigsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
-	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"` // 可选过滤条件
+	Offset        int32                  `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListRolesRequest) Reset() {
-	*x = ListRolesRequest{}
+func (x *ListBusinessConfigsRequest) Reset() {
+	*x = ListBusinessConfigsRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListRolesRequest) String() string {
+func (x *ListBusinessConfigsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListRolesRequest) ProtoMessage() {}
+func (*ListBusinessConfigsRequest) ProtoMessage() {}
 
-func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
+func (x *ListBusinessConfigsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -510,61 +492,47 @@ func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListRolesRequest.ProtoReflect.Descriptor instead.
-func (*ListRolesRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListBusinessConfigsRequest.ProtoReflect.Descriptor instead.
+func (*ListBusinessConfigsRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *ListRolesRequest) GetBizId() int64 {
-	if x != nil {
-		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListRolesRequest) GetOffset() int32 {
+func (x *ListBusinessConfigsRequest) GetOffset() int32 {
 	if x != nil {
 		return x.Offset
 	}
 	return 0
 }
 
-func (x *ListRolesRequest) GetLimit() int32 {
+func (x *ListBusinessConfigsRequest) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *ListRolesRequest) GetType() string {
-	if x != nil {
-		return x.Type
-	}
-	return ""
-}
-
-type ListRolesResponse struct {
+type ListBusinessConfigsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Roles         []*Role                `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
+	Configs       []*BusinessConfig      `protobuf:"bytes,1,rep,name=configs,proto3" json:"configs,omitempty"`
 	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListRolesResponse) Reset() {
-	*x = ListRolesResponse{}
+func (x *ListBusinessConfigsResponse) Reset() {
+	*x = ListBusinessConfigsResponse{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListRolesResponse) String() string {
+func (x *ListBusinessConfigsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListRolesResponse) ProtoMessage() {}
+func (*ListBusinessConfigsResponse) ProtoMessage() {}
 
-func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
+func (x *ListBusinessConfigsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -576,25 +544,26 @@ func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListRolesResponse.ProtoReflect.Descriptor instead.
-func (*ListRolesResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListBusinessConfigsResponse.ProtoReflect.Descriptor instead.
+func (*ListBusinessConfigsResponse) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *ListRolesResponse) GetRoles() []*Role {
+func (x *ListBusinessConfigsResponse) GetConfigs() []*BusinessConfig {
 	if x != nil {
-		return x.Roles
+		return x.Configs
 	}
 	return nil
 }
 
-func (x *ListRolesResponse) GetTotal() int32 {
+func (x *ListBusinessConfigsResponse) GetTotal() int32 {
 	if x != nil {
 		return x.Total
 	}
 	return 0
 }
 
+// 资源相关消息定义
 type CreateResourceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Resource      *Resource              `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`
@@ -1075,6 +1044,7 @@ func (x *ListResourcesResponse) GetTotal() int32 {
 	return 0
 }
 
+// 权限相关消息定义
 type CreatePermissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Permission    *Permission            `protobuf:"bytes,1,opt,name=permission,proto3" json:"permission,omitempty"`
@@ -1563,35 +1533,35 @@ func (x *ListPermissionsResponse) GetTotal() int32 {
 	return 0
 }
 
-// ==== 用户角色相关消息定义 ====
-type UserRole struct {
+// ==== Role相关消息定义 ====
+type Role struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	BizId         int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	RoleName      string                 `protobuf:"bytes,5,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
-	RoleType      string                 `protobuf:"bytes,6,opt,name=role_type,json=roleType,proto3" json:"role_type,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"` // system, custom, temporary
+	Name          string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Metadata      string                 `protobuf:"bytes,6,opt,name=metadata,proto3" json:"metadata,omitempty"`                     // JSON格式的元数据
 	StartTime     int64                  `protobuf:"varint,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 临时角色有效期开始时间
 	EndTime       int64                  `protobuf:"varint,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 临时角色有效期结束时间
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserRole) Reset() {
-	*x = UserRole{}
+func (x *Role) Reset() {
+	*x = Role{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserRole) String() string {
+func (x *Role) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserRole) ProtoMessage() {}
+func (*Role) ProtoMessage() {}
 
-func (x *UserRole) ProtoReflect() protoreflect.Message {
+func (x *Role) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1603,92 +1573,88 @@ func (x *UserRole) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserRole.ProtoReflect.Descriptor instead.
-func (*UserRole) Descriptor() ([]byte, []int) {
+// Deprecated: Use Role.ProtoReflect.Descriptor instead.
+func (*Role) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{31}
 }
 
-func (x *UserRole) GetId() int64 {
+func (x *Role) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UserRole) GetBizId() int64 {
+func (x *Role) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
 	}
 	return 0
 }
 
-func (x *UserRole) GetUserId() int64 {
+func (x *Role) GetType() string {
 	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserRole) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *UserRole) GetRoleName() string {
-	if x != nil {
-		return x.RoleName
+		return x.Type
 	}
 	return ""
 }
 
-func (x *UserRole) GetRoleType() string {
+func (x *Role) GetName() string {
 	if x != nil {
-		return x.RoleType
+		return x.Name
 	}
 	return ""
 }
 
-func (x *UserRole) GetStartTime() int64 {
+func (x *Role) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Role) GetMetadata() string {
+	if x != nil {
+		return x.Metadata
+	}
+	return ""
+}
+
+func (x *Role) GetStartTime() int64 {
 	if x != nil {
 		return x.StartTime
 	}
 	return 0
 }
 
-func (x *UserRole) GetEndTime() int64 {
+func (x *Role) GetEndTime() int64 {
 	if x != nil {
 		return x.EndTime
 	}
 	return 0
 }
 
-type GrantUserRoleRequest struct {
+type CreateRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	StartTime     int64                  `protobuf:"varint,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 可选，临时角色有效期
-	EndTime       int64                  `protobuf:"varint,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 可选，临时角色有效期
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GrantUserRoleRequest) Reset() {
-	*x = GrantUserRoleRequest{}
+func (x *CreateRoleRequest) Reset() {
+	*x = CreateRoleRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GrantUserRoleRequest) String() string {
+func (x *CreateRoleRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GrantUserRoleRequest) ProtoMessage() {}
+func (*CreateRoleRequest) ProtoMessage() {}
 
-func (x *GrantUserRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateRoleRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1700,113 +1666,83 @@ func (x *GrantUserRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GrantUserRoleRequest.ProtoReflect.Descriptor instead.
-func (*GrantUserRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateRoleRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *GrantUserRoleRequest) GetBizId() int64 {
+func (x *CreateRoleRequest) GetRole() *Role {
 	if x != nil {
-		return x.BizId
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetStartTime() int64 {
-	if x != nil {
-		return x.StartTime
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetEndTime() int64 {
-	if x != nil {
-		return x.EndTime
-	}
-	return 0
-}
-
-type GrantUserRoleResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserRole      *UserRole              `protobuf:"bytes,1,opt,name=user_role,json=userRole,proto3" json:"user_role,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GrantUserRoleResponse) Reset() {
-	*x = GrantUserRoleResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[33]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GrantUserRoleResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GrantUserRoleResponse) ProtoMessage() {}
-
-func (x *GrantUserRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[33]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GrantUserRoleResponse.ProtoReflect.Descriptor instead.
-func (*GrantUserRoleResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{33}
-}
-
-func (x *GrantUserRoleResponse) GetUserRole() *UserRole {
-	if x != nil {
-		return x.UserRole
+		return x.Role
 	}
 	return nil
 }
 
-type RevokeUserRoleRequest struct {
+type CreateRoleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RevokeUserRoleRequest) Reset() {
-	*x = RevokeUserRoleRequest{}
+func (x *CreateRoleResponse) Reset() {
+	*x = CreateRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleResponse) ProtoMessage() {}
+
+func (x *CreateRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *CreateRoleResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type GetRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoleRequest) Reset() {
+	*x = GetRoleRequest{}
 	mi := &file_permission_v1_rbac_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RevokeUserRoleRequest) String() string {
+func (x *GetRoleRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RevokeUserRoleRequest) ProtoMessage() {}
+func (*GetRoleRequest) ProtoMessage() {}
 
-func (x *RevokeUserRoleRequest) ProtoReflect() protoreflect.Message {
+func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_permission_v1_rbac_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1818,54 +1754,216 @@ func (x *RevokeUserRoleRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RevokeUserRoleRequest.ProtoReflect.Descriptor instead.
-func (*RevokeUserRoleRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetRoleRequest.ProtoReflect.Descriptor instead.
+func (*GetRoleRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{34}
 }
 
-func (x *RevokeUserRoleRequest) GetBizId() int64 {
+func (x *GetRoleRequest) GetId() int64 {
 	if x != nil {
-		return x.BizId
+		return x.Id
 	}
 	return 0
 }
 
-func (x *RevokeUserRoleRequest) GetUserId() int64 {
+type GetRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoleResponse) Reset() {
+	*x = GetRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoleResponse) ProtoMessage() {}
+
+func (x *GetRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[35]
 	if x != nil {
-		return x.UserId
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoleResponse.ProtoReflect.Descriptor instead.
+func (*GetRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *GetRoleResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type UpdateRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleRequest) Reset() {
+	*x = UpdateRoleRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleRequest) ProtoMessage() {}
+
+func (x *UpdateRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleRequest.ProtoReflect.Descriptor instead.
+func (*UpdateRoleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *UpdateRoleRequest) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type UpdateRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Role          *Role                  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateRoleResponse) Reset() {
+	*x = UpdateRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateRoleResponse) ProtoMessage() {}
+
+func (x *UpdateRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateRoleResponse.ProtoReflect.Descriptor instead.
+func (*UpdateRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{37}
+}
+
+func (x *UpdateRoleResponse) GetRole() *Role {
+	if x != nil {
+		return x.Role
+	}
+	return nil
+}
+
+type DeleteRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleRequest) Reset() {
+	*x = DeleteRoleRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleRequest) ProtoMessage() {}
+
+func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
+func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *DeleteRoleRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
 	}
 	return 0
 }
 
-func (x *RevokeUserRoleRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-type RevokeUserRoleResponse struct {
+type DeleteRoleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RevokeUserRoleResponse) Reset() {
-	*x = RevokeUserRoleResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[35]
+func (x *DeleteRoleResponse) Reset() {
+	*x = DeleteRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RevokeUserRoleResponse) String() string {
+func (x *DeleteRoleResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RevokeUserRoleResponse) ProtoMessage() {}
+func (*DeleteRoleResponse) ProtoMessage() {}
 
-func (x *RevokeUserRoleResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[35]
+func (x *DeleteRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1876,43 +1974,43 @@ func (x *RevokeUserRoleResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RevokeUserRoleResponse.ProtoReflect.Descriptor instead.
-func (*RevokeUserRoleResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{35}
+// Deprecated: Use DeleteRoleResponse.ProtoReflect.Descriptor instead.
+func (*DeleteRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{39}
 }
 
-func (x *RevokeUserRoleResponse) GetSuccess() bool {
+func (x *DeleteRoleResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
 	return false
 }
 
-type ListUserRolesRequest struct {
+type ListRolesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Type          string                 `protobuf:"bytes,4,opt,name=type,proto3" json:"type,omitempty"` // 可选过滤条件
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListUserRolesRequest) Reset() {
-	*x = ListUserRolesRequest{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[36]
+func (x *ListRolesRequest) Reset() {
+	*x = ListRolesRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListUserRolesRequest) String() string {
+func (x *ListRolesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListUserRolesRequest) ProtoMessage() {}
+func (*ListRolesRequest) ProtoMessage() {}
 
-func (x *ListUserRolesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[36]
+func (x *ListRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1923,62 +2021,62 @@ func (x *ListUserRolesRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUserRolesRequest.ProtoReflect.Descriptor instead.
-func (*ListUserRolesRequest) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{36}
+// Deprecated: Use ListRolesRequest.ProtoReflect.Descriptor instead.
+func (*ListRolesRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{40}
 }
 
-func (x *ListUserRolesRequest) GetBizId() int64 {
+func (x *ListRolesRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
 	}
 	return 0
 }
 
-func (x *ListUserRolesRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *ListUserRolesRequest) GetOffset() int32 {
+func (x *ListRolesRequest) GetOffset() int32 {
 	if x != nil {
 		return x.Offset
 	}
 	return 0
 }
 
-func (x *ListUserRolesRequest) GetLimit() int32 {
+func (x *ListRolesRequest) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-type ListUserRolesResponse struct {
+func (x *ListRolesRequest) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+type ListRolesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserRoles     []*UserRole            `protobuf:"bytes,1,rep,name=user_roles,json=userRoles,proto3" json:"user_roles,omitempty"`
+	Roles         []*Role                `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListUserRolesResponse) Reset() {
-	*x = ListUserRolesResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[37]
+func (x *ListRolesResponse) Reset() {
+	*x = ListRolesResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListUserRolesResponse) String() string {
+func (x *ListRolesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListUserRolesResponse) ProtoMessage() {}
+func (*ListRolesResponse) ProtoMessage() {}
 
-func (x *ListUserRolesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[37]
+func (x *ListRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1989,19 +2087,544 @@ func (x *ListUserRolesResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListUserRolesResponse.ProtoReflect.Descriptor instead.
-func (*ListUserRolesResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{37}
+// Deprecated: Use ListRolesResponse.ProtoReflect.Descriptor instead.
+func (*ListRolesResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{41}
 }
 
-func (x *ListUserRolesResponse) GetUserRoles() []*UserRole {
+func (x *ListRolesResponse) GetRoles() []*Role {
 	if x != nil {
-		return x.UserRoles
+		return x.Roles
 	}
 	return nil
 }
 
-func (x *ListUserRolesResponse) GetTotal() int32 {
+func (x *ListRolesResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// ==== 角色包含关系相关消息定义 ====
+type RoleInclusion struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Id                int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId             int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	IncludingRoleId   int64                  `protobuf:"varint,3,opt,name=including_role_id,json=includingRoleId,proto3" json:"including_role_id,omitempty"`
+	IncludingRoleType string                 `protobuf:"bytes,4,opt,name=including_role_type,json=includingRoleType,proto3" json:"including_role_type,omitempty"`
+	IncludingRoleName string                 `protobuf:"bytes,5,opt,name=including_role_name,json=includingRoleName,proto3" json:"including_role_name,omitempty"`
+	IncludedRoleId    int64                  `protobuf:"varint,6,opt,name=included_role_id,json=includedRoleId,proto3" json:"included_role_id,omitempty"`
+	IncludedRoleType  string                 `protobuf:"bytes,7,opt,name=included_role_type,json=includedRoleType,proto3" json:"included_role_type,omitempty"`
+	IncludedRoleName  string                 `protobuf:"bytes,8,opt,name=included_role_name,json=includedRoleName,proto3" json:"included_role_name,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *RoleInclusion) Reset() {
+	*x = RoleInclusion{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleInclusion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleInclusion) ProtoMessage() {}
+
+func (x *RoleInclusion) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleInclusion.ProtoReflect.Descriptor instead.
+func (*RoleInclusion) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *RoleInclusion) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *RoleInclusion) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *RoleInclusion) GetIncludingRoleId() int64 {
+	if x != nil {
+		return x.IncludingRoleId
+	}
+	return 0
+}
+
+func (x *RoleInclusion) GetIncludingRoleType() string {
+	if x != nil {
+		return x.IncludingRoleType
+	}
+	return ""
+}
+
+func (x *RoleInclusion) GetIncludingRoleName() string {
+	if x != nil {
+		return x.IncludingRoleName
+	}
+	return ""
+}
+
+func (x *RoleInclusion) GetIncludedRoleId() int64 {
+	if x != nil {
+		return x.IncludedRoleId
+	}
+	return 0
+}
+
+func (x *RoleInclusion) GetIncludedRoleType() string {
+	if x != nil {
+		return x.IncludedRoleType
+	}
+	return ""
+}
+
+func (x *RoleInclusion) GetIncludedRoleName() string {
+	if x != nil {
+		return x.IncludedRoleName
+	}
+	return ""
+}
+
+type CreateRoleInclusionRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	BizId           int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	IncludingRoleId int64                  `protobuf:"varint,2,opt,name=including_role_id,json=includingRoleId,proto3" json:"including_role_id,omitempty"`
+	IncludedRoleId  int64                  `protobuf:"varint,3,opt,name=included_role_id,json=includedRoleId,proto3" json:"included_role_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *CreateRoleInclusionRequest) Reset() {
+	*x = CreateRoleInclusionRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoleInclusionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleInclusionRequest) ProtoMessage() {}
+
+func (x *CreateRoleInclusionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleInclusionRequest.ProtoReflect.Descriptor instead.
+func (*CreateRoleInclusionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *CreateRoleInclusionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *CreateRoleInclusionRequest) GetIncludingRoleId() int64 {
+	if x != nil {
+		return x.IncludingRoleId
+	}
+	return 0
+}
+
+func (x *CreateRoleInclusionRequest) GetIncludedRoleId() int64 {
+	if x != nil {
+		return x.IncludedRoleId
+	}
+	return 0
+}
+
+type CreateRoleInclusionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoleInclusion *RoleInclusion         `protobuf:"bytes,1,opt,name=role_inclusion,json=roleInclusion,proto3" json:"role_inclusion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateRoleInclusionResponse) Reset() {
+	*x = CreateRoleInclusionResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateRoleInclusionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoleInclusionResponse) ProtoMessage() {}
+
+func (x *CreateRoleInclusionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoleInclusionResponse.ProtoReflect.Descriptor instead.
+func (*CreateRoleInclusionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *CreateRoleInclusionResponse) GetRoleInclusion() *RoleInclusion {
+	if x != nil {
+		return x.RoleInclusion
+	}
+	return nil
+}
+
+type GetRoleInclusionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoleInclusionRequest) Reset() {
+	*x = GetRoleInclusionRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoleInclusionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoleInclusionRequest) ProtoMessage() {}
+
+func (x *GetRoleInclusionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoleInclusionRequest.ProtoReflect.Descriptor instead.
+func (*GetRoleInclusionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *GetRoleInclusionRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type GetRoleInclusionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoleInclusion *RoleInclusion         `protobuf:"bytes,1,opt,name=role_inclusion,json=roleInclusion,proto3" json:"role_inclusion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRoleInclusionResponse) Reset() {
+	*x = GetRoleInclusionResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRoleInclusionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRoleInclusionResponse) ProtoMessage() {}
+
+func (x *GetRoleInclusionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRoleInclusionResponse.ProtoReflect.Descriptor instead.
+func (*GetRoleInclusionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *GetRoleInclusionResponse) GetRoleInclusion() *RoleInclusion {
+	if x != nil {
+		return x.RoleInclusion
+	}
+	return nil
+}
+
+type DeleteRoleInclusionRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	BizId           int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	IncludingRoleId int64                  `protobuf:"varint,2,opt,name=including_role_id,json=includingRoleId,proto3" json:"including_role_id,omitempty"`
+	IncludedRoleId  int64                  `protobuf:"varint,3,opt,name=included_role_id,json=includedRoleId,proto3" json:"included_role_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *DeleteRoleInclusionRequest) Reset() {
+	*x = DeleteRoleInclusionRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleInclusionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleInclusionRequest) ProtoMessage() {}
+
+func (x *DeleteRoleInclusionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleInclusionRequest.ProtoReflect.Descriptor instead.
+func (*DeleteRoleInclusionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *DeleteRoleInclusionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *DeleteRoleInclusionRequest) GetIncludingRoleId() int64 {
+	if x != nil {
+		return x.IncludingRoleId
+	}
+	return 0
+}
+
+func (x *DeleteRoleInclusionRequest) GetIncludedRoleId() int64 {
+	if x != nil {
+		return x.IncludedRoleId
+	}
+	return 0
+}
+
+type DeleteRoleInclusionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteRoleInclusionResponse) Reset() {
+	*x = DeleteRoleInclusionResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteRoleInclusionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteRoleInclusionResponse) ProtoMessage() {}
+
+func (x *DeleteRoleInclusionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteRoleInclusionResponse.ProtoReflect.Descriptor instead.
+func (*DeleteRoleInclusionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{48}
+}
+
+func (x *DeleteRoleInclusionResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type ListRoleInclusionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`                // 可选，如果提供则表示查询特定角色的包含关系
+	IsIncluding   bool                   `protobuf:"varint,3,opt,name=is_including,json=isIncluding,proto3" json:"is_including,omitempty"` // 如果为true，则role_id表示including_role_id；否则表示included_role_id
+	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListRoleInclusionsRequest) Reset() {
+	*x = ListRoleInclusionsRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoleInclusionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoleInclusionsRequest) ProtoMessage() {}
+
+func (x *ListRoleInclusionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoleInclusionsRequest.ProtoReflect.Descriptor instead.
+func (*ListRoleInclusionsRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *ListRoleInclusionsRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *ListRoleInclusionsRequest) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+func (x *ListRoleInclusionsRequest) GetIsIncluding() bool {
+	if x != nil {
+		return x.IsIncluding
+	}
+	return false
+}
+
+func (x *ListRoleInclusionsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListRoleInclusionsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ListRoleInclusionsResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	RoleInclusions []*RoleInclusion       `protobuf:"bytes,1,rep,name=role_inclusions,json=roleInclusions,proto3" json:"role_inclusions,omitempty"`
+	Total          int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListRoleInclusionsResponse) Reset() {
+	*x = ListRoleInclusionsResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListRoleInclusionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListRoleInclusionsResponse) ProtoMessage() {}
+
+func (x *ListRoleInclusionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListRoleInclusionsResponse.ProtoReflect.Descriptor instead.
+func (*ListRoleInclusionsResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *ListRoleInclusionsResponse) GetRoleInclusions() []*RoleInclusion {
+	if x != nil {
+		return x.RoleInclusions
+	}
+	return nil
+}
+
+func (x *ListRoleInclusionsResponse) GetTotal() int32 {
 	if x != nil {
 		return x.Total
 	}
@@ -2025,7 +2648,7 @@ type RolePermission struct {
 
 func (x *RolePermission) Reset() {
 	*x = RolePermission{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[38]
+	mi := &file_permission_v1_rbac_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2037,7 +2660,7 @@ func (x *RolePermission) String() string {
 func (*RolePermission) ProtoMessage() {}
 
 func (x *RolePermission) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[38]
+	mi := &file_permission_v1_rbac_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2050,7 +2673,7 @@ func (x *RolePermission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RolePermission.ProtoReflect.Descriptor instead.
 func (*RolePermission) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{38}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{51}
 }
 
 func (x *RolePermission) GetId() int64 {
@@ -2122,7 +2745,7 @@ type GrantRolePermissionRequest struct {
 
 func (x *GrantRolePermissionRequest) Reset() {
 	*x = GrantRolePermissionRequest{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[39]
+	mi := &file_permission_v1_rbac_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2134,7 +2757,7 @@ func (x *GrantRolePermissionRequest) String() string {
 func (*GrantRolePermissionRequest) ProtoMessage() {}
 
 func (x *GrantRolePermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[39]
+	mi := &file_permission_v1_rbac_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2147,7 +2770,7 @@ func (x *GrantRolePermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantRolePermissionRequest.ProtoReflect.Descriptor instead.
 func (*GrantRolePermissionRequest) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{39}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GrantRolePermissionRequest) GetBizId() int64 {
@@ -2194,7 +2817,7 @@ type GrantRolePermissionResponse struct {
 
 func (x *GrantRolePermissionResponse) Reset() {
 	*x = GrantRolePermissionResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[40]
+	mi := &file_permission_v1_rbac_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2206,7 +2829,7 @@ func (x *GrantRolePermissionResponse) String() string {
 func (*GrantRolePermissionResponse) ProtoMessage() {}
 
 func (x *GrantRolePermissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[40]
+	mi := &file_permission_v1_rbac_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2219,7 +2842,7 @@ func (x *GrantRolePermissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GrantRolePermissionResponse.ProtoReflect.Descriptor instead.
 func (*GrantRolePermissionResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{40}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *GrantRolePermissionResponse) GetRolePermission() *RolePermission {
@@ -2240,7 +2863,7 @@ type RevokeRolePermissionRequest struct {
 
 func (x *RevokeRolePermissionRequest) Reset() {
 	*x = RevokeRolePermissionRequest{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[41]
+	mi := &file_permission_v1_rbac_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2252,7 +2875,7 @@ func (x *RevokeRolePermissionRequest) String() string {
 func (*RevokeRolePermissionRequest) ProtoMessage() {}
 
 func (x *RevokeRolePermissionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[41]
+	mi := &file_permission_v1_rbac_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2265,7 +2888,7 @@ func (x *RevokeRolePermissionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRolePermissionRequest.ProtoReflect.Descriptor instead.
 func (*RevokeRolePermissionRequest) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{41}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{54}
 }
 
 func (x *RevokeRolePermissionRequest) GetBizId() int64 {
@@ -2298,7 +2921,7 @@ type RevokeRolePermissionResponse struct {
 
 func (x *RevokeRolePermissionResponse) Reset() {
 	*x = RevokeRolePermissionResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[42]
+	mi := &file_permission_v1_rbac_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2310,7 +2933,7 @@ func (x *RevokeRolePermissionResponse) String() string {
 func (*RevokeRolePermissionResponse) ProtoMessage() {}
 
 func (x *RevokeRolePermissionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[42]
+	mi := &file_permission_v1_rbac_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2323,7 +2946,7 @@ func (x *RevokeRolePermissionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeRolePermissionResponse.ProtoReflect.Descriptor instead.
 func (*RevokeRolePermissionResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{42}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *RevokeRolePermissionResponse) GetSuccess() bool {
@@ -2345,7 +2968,7 @@ type ListRolePermissionsRequest struct {
 
 func (x *ListRolePermissionsRequest) Reset() {
 	*x = ListRolePermissionsRequest{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[43]
+	mi := &file_permission_v1_rbac_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2357,7 +2980,7 @@ func (x *ListRolePermissionsRequest) String() string {
 func (*ListRolePermissionsRequest) ProtoMessage() {}
 
 func (x *ListRolePermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[43]
+	mi := &file_permission_v1_rbac_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2370,7 +2993,7 @@ func (x *ListRolePermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolePermissionsRequest.ProtoReflect.Descriptor instead.
 func (*ListRolePermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{43}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{56}
 }
 
 func (x *ListRolePermissionsRequest) GetBizId() int64 {
@@ -2411,7 +3034,7 @@ type ListRolePermissionsResponse struct {
 
 func (x *ListRolePermissionsResponse) Reset() {
 	*x = ListRolePermissionsResponse{}
-	mi := &file_permission_v1_rbac_proto_msgTypes[44]
+	mi := &file_permission_v1_rbac_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2423,7 +3046,7 @@ func (x *ListRolePermissionsResponse) String() string {
 func (*ListRolePermissionsResponse) ProtoMessage() {}
 
 func (x *ListRolePermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_v1_rbac_proto_msgTypes[44]
+	mi := &file_permission_v1_rbac_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2436,7 +3059,7 @@ func (x *ListRolePermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListRolePermissionsResponse.ProtoReflect.Descriptor instead.
 func (*ListRolePermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{44}
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *ListRolePermissionsResponse) GetRolePermissions() []*RolePermission {
@@ -2453,44 +3076,979 @@ func (x *ListRolePermissionsResponse) GetTotal() int32 {
 	return 0
 }
 
+// ==== 用户角色相关消息定义 ====
+type UserRole struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	RoleName      string                 `protobuf:"bytes,5,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
+	RoleType      string                 `protobuf:"bytes,6,opt,name=role_type,json=roleType,proto3" json:"role_type,omitempty"`
+	StartTime     int64                  `protobuf:"varint,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 临时角色有效期开始时间
+	EndTime       int64                  `protobuf:"varint,8,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 临时角色有效期结束时间
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserRole) Reset() {
+	*x = UserRole{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserRole) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserRole) ProtoMessage() {}
+
+func (x *UserRole) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserRole.ProtoReflect.Descriptor instead.
+func (*UserRole) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *UserRole) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserRole) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *UserRole) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UserRole) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+func (x *UserRole) GetRoleName() string {
+	if x != nil {
+		return x.RoleName
+	}
+	return ""
+}
+
+func (x *UserRole) GetRoleType() string {
+	if x != nil {
+		return x.RoleType
+	}
+	return ""
+}
+
+func (x *UserRole) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *UserRole) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
+type GrantUserRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	StartTime     int64                  `protobuf:"varint,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 可选，临时角色有效期
+	EndTime       int64                  `protobuf:"varint,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 可选，临时角色有效期
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GrantUserRoleRequest) Reset() {
+	*x = GrantUserRoleRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantUserRoleRequest) ProtoMessage() {}
+
+func (x *GrantUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*GrantUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *GrantUserRoleRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *GrantUserRoleRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GrantUserRoleRequest) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+func (x *GrantUserRoleRequest) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *GrantUserRoleRequest) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
+type GrantUserRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRole      *UserRole              `protobuf:"bytes,1,opt,name=user_role,json=userRole,proto3" json:"user_role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GrantUserRoleResponse) Reset() {
+	*x = GrantUserRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantUserRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantUserRoleResponse) ProtoMessage() {}
+
+func (x *GrantUserRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantUserRoleResponse.ProtoReflect.Descriptor instead.
+func (*GrantUserRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *GrantUserRoleResponse) GetUserRole() *UserRole {
+	if x != nil {
+		return x.UserRole
+	}
+	return nil
+}
+
+type RevokeUserRoleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeUserRoleRequest) Reset() {
+	*x = RevokeUserRoleRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeUserRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeUserRoleRequest) ProtoMessage() {}
+
+func (x *RevokeUserRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeUserRoleRequest.ProtoReflect.Descriptor instead.
+func (*RevokeUserRoleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *RevokeUserRoleRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *RevokeUserRoleRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *RevokeUserRoleRequest) GetRoleId() int64 {
+	if x != nil {
+		return x.RoleId
+	}
+	return 0
+}
+
+type RevokeUserRoleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeUserRoleResponse) Reset() {
+	*x = RevokeUserRoleResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeUserRoleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeUserRoleResponse) ProtoMessage() {}
+
+func (x *RevokeUserRoleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeUserRoleResponse.ProtoReflect.Descriptor instead.
+func (*RevokeUserRoleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *RevokeUserRoleResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type ListUserRolesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserRolesRequest) Reset() {
+	*x = ListUserRolesRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserRolesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserRolesRequest) ProtoMessage() {}
+
+func (x *ListUserRolesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserRolesRequest.ProtoReflect.Descriptor instead.
+func (*ListUserRolesRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *ListUserRolesRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *ListUserRolesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListUserRolesRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListUserRolesRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ListUserRolesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserRoles     []*UserRole            `protobuf:"bytes,1,rep,name=user_roles,json=userRoles,proto3" json:"user_roles,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserRolesResponse) Reset() {
+	*x = ListUserRolesResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[64]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserRolesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserRolesResponse) ProtoMessage() {}
+
+func (x *ListUserRolesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[64]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserRolesResponse.ProtoReflect.Descriptor instead.
+func (*ListUserRolesResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{64}
+}
+
+func (x *ListUserRolesResponse) GetUserRoles() []*UserRole {
+	if x != nil {
+		return x.UserRoles
+	}
+	return nil
+}
+
+func (x *ListUserRolesResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+// ==== 用户权限相关消息定义 ====
+type UserPermission struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId          int64                  `protobuf:"varint,2,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId         int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PermissionId   int64                  `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	PermissionName string                 `protobuf:"bytes,5,opt,name=permission_name,json=permissionName,proto3" json:"permission_name,omitempty"`
+	ResourceType   string                 `protobuf:"bytes,6,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`
+	ResourceKey    string                 `protobuf:"bytes,7,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`
+	ResourceName   string                 `protobuf:"bytes,8,opt,name=resource_name,json=resourceName,proto3" json:"resource_name,omitempty"`
+	Action         string                 `protobuf:"bytes,9,opt,name=action,proto3" json:"action,omitempty"`
+	StartTime      int64                  `protobuf:"varint,10,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime        int64                  `protobuf:"varint,11,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Effect         string                 `protobuf:"bytes,12,opt,name=effect,proto3" json:"effect,omitempty"` // allow, deny
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UserPermission) Reset() {
+	*x = UserPermission{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[65]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserPermission) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserPermission) ProtoMessage() {}
+
+func (x *UserPermission) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[65]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserPermission.ProtoReflect.Descriptor instead.
+func (*UserPermission) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{65}
+}
+
+func (x *UserPermission) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserPermission) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *UserPermission) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *UserPermission) GetPermissionId() int64 {
+	if x != nil {
+		return x.PermissionId
+	}
+	return 0
+}
+
+func (x *UserPermission) GetPermissionName() string {
+	if x != nil {
+		return x.PermissionName
+	}
+	return ""
+}
+
+func (x *UserPermission) GetResourceType() string {
+	if x != nil {
+		return x.ResourceType
+	}
+	return ""
+}
+
+func (x *UserPermission) GetResourceKey() string {
+	if x != nil {
+		return x.ResourceKey
+	}
+	return ""
+}
+
+func (x *UserPermission) GetResourceName() string {
+	if x != nil {
+		return x.ResourceName
+	}
+	return ""
+}
+
+func (x *UserPermission) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+func (x *UserPermission) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *UserPermission) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
+func (x *UserPermission) GetEffect() string {
+	if x != nil {
+		return x.Effect
+	}
+	return ""
+}
+
+type GrantUserPermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	Effect        string                 `protobuf:"bytes,4,opt,name=effect,proto3" json:"effect,omitempty"`                         // allow, deny
+	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 可选，临时权限有效期
+	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 可选，临时权限有效期
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GrantUserPermissionRequest) Reset() {
+	*x = GrantUserPermissionRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[66]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantUserPermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantUserPermissionRequest) ProtoMessage() {}
+
+func (x *GrantUserPermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[66]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantUserPermissionRequest.ProtoReflect.Descriptor instead.
+func (*GrantUserPermissionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{66}
+}
+
+func (x *GrantUserPermissionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *GrantUserPermissionRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *GrantUserPermissionRequest) GetPermissionId() int64 {
+	if x != nil {
+		return x.PermissionId
+	}
+	return 0
+}
+
+func (x *GrantUserPermissionRequest) GetEffect() string {
+	if x != nil {
+		return x.Effect
+	}
+	return ""
+}
+
+func (x *GrantUserPermissionRequest) GetStartTime() int64 {
+	if x != nil {
+		return x.StartTime
+	}
+	return 0
+}
+
+func (x *GrantUserPermissionRequest) GetEndTime() int64 {
+	if x != nil {
+		return x.EndTime
+	}
+	return 0
+}
+
+type GrantUserPermissionResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserPermission *UserPermission        `protobuf:"bytes,1,opt,name=user_permission,json=userPermission,proto3" json:"user_permission,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GrantUserPermissionResponse) Reset() {
+	*x = GrantUserPermissionResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[67]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GrantUserPermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GrantUserPermissionResponse) ProtoMessage() {}
+
+func (x *GrantUserPermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[67]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GrantUserPermissionResponse.ProtoReflect.Descriptor instead.
+func (*GrantUserPermissionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{67}
+}
+
+func (x *GrantUserPermissionResponse) GetUserPermission() *UserPermission {
+	if x != nil {
+		return x.UserPermission
+	}
+	return nil
+}
+
+type RevokeUserPermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeUserPermissionRequest) Reset() {
+	*x = RevokeUserPermissionRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[68]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeUserPermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeUserPermissionRequest) ProtoMessage() {}
+
+func (x *RevokeUserPermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[68]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeUserPermissionRequest.ProtoReflect.Descriptor instead.
+func (*RevokeUserPermissionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{68}
+}
+
+func (x *RevokeUserPermissionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *RevokeUserPermissionRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *RevokeUserPermissionRequest) GetPermissionId() int64 {
+	if x != nil {
+		return x.PermissionId
+	}
+	return 0
+}
+
+type RevokeUserPermissionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RevokeUserPermissionResponse) Reset() {
+	*x = RevokeUserPermissionResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[69]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RevokeUserPermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RevokeUserPermissionResponse) ProtoMessage() {}
+
+func (x *RevokeUserPermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[69]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RevokeUserPermissionResponse.ProtoReflect.Descriptor instead.
+func (*RevokeUserPermissionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{69}
+}
+
+func (x *RevokeUserPermissionResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type ListUserPermissionsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	OnlyValid     bool                   `protobuf:"varint,5,opt,name=only_valid,json=onlyValid,proto3" json:"only_valid,omitempty"` // 如果为true，则只返回当前有效的权限
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserPermissionsRequest) Reset() {
+	*x = ListUserPermissionsRequest{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[70]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserPermissionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserPermissionsRequest) ProtoMessage() {}
+
+func (x *ListUserPermissionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[70]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserPermissionsRequest.ProtoReflect.Descriptor instead.
+func (*ListUserPermissionsRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{70}
+}
+
+func (x *ListUserPermissionsRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
+}
+
+func (x *ListUserPermissionsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ListUserPermissionsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *ListUserPermissionsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListUserPermissionsRequest) GetOnlyValid() bool {
+	if x != nil {
+		return x.OnlyValid
+	}
+	return false
+}
+
+type ListUserPermissionsResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	UserPermissions []*UserPermission      `protobuf:"bytes,1,rep,name=user_permissions,json=userPermissions,proto3" json:"user_permissions,omitempty"`
+	Total           int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListUserPermissionsResponse) Reset() {
+	*x = ListUserPermissionsResponse{}
+	mi := &file_permission_v1_rbac_proto_msgTypes[71]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserPermissionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserPermissionsResponse) ProtoMessage() {}
+
+func (x *ListUserPermissionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_rbac_proto_msgTypes[71]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserPermissionsResponse.ProtoReflect.Descriptor instead.
+func (*ListUserPermissionsResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{71}
+}
+
+func (x *ListUserPermissionsResponse) GetUserPermissions() []*UserPermission {
+	if x != nil {
+		return x.UserPermissions
+	}
+	return nil
+}
+
+func (x *ListUserPermissionsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 var File_permission_v1_rbac_proto protoreflect.FileDescriptor
 
 const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\n" +
-	"\x18permission/v1/rbac.proto\x12\rpermission.v1\x1a\x1epermission/v1/permission.proto\"\xcd\x01\n" +
-	"\x04Role\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
-	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x12\n" +
-	"\x04type\x18\x03 \x01(\tR\x04type\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x1a\n" +
-	"\bmetadata\x18\x06 \x01(\tR\bmetadata\x12\x1d\n" +
+	"\x18permission/v1/rbac.proto\x12\rpermission.v1\x1a\x1epermission/v1/permission.proto\"\xa3\x01\n" +
+	"\x0eBusinessConfig\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
+	"\bowner_id\x18\x02 \x01(\x03R\aownerId\x12\x1d\n" +
 	"\n" +
-	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\b \x01(\x03R\aendTime\"<\n" +
-	"\x11CreateRoleRequest\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"=\n" +
-	"\x12CreateRoleResponse\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\" \n" +
-	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\":\n" +
-	"\x0fGetRoleResponse\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"<\n" +
-	"\x11UpdateRoleRequest\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"=\n" +
-	"\x12UpdateRoleResponse\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"#\n" +
-	"\x11DeleteRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\".\n" +
-	"\x12DeleteRoleResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"k\n" +
-	"\x10ListRolesRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x12\n" +
-	"\x04type\x18\x04 \x01(\tR\x04type\"T\n" +
-	"\x11ListRolesResponse\x12)\n" +
-	"\x05roles\x18\x01 \x03(\v2\x13.permission.v1.RoleR\x05roles\x12\x14\n" +
+	"owner_type\x18\x03 \x01(\tR\townerType\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12\x1d\n" +
+	"\n" +
+	"rate_limit\x18\x05 \x01(\x05R\trateLimit\x12\x14\n" +
+	"\x05token\x18\x06 \x01(\tR\x05token\"T\n" +
+	"\x1bCreateBusinessConfigRequest\x125\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"U\n" +
+	"\x1cCreateBusinessConfigResponse\x125\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"*\n" +
+	"\x18GetBusinessConfigRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"R\n" +
+	"\x19GetBusinessConfigResponse\x125\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"T\n" +
+	"\x1bUpdateBusinessConfigRequest\x125\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"U\n" +
+	"\x1cUpdateBusinessConfigResponse\x125\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"-\n" +
+	"\x1bDeleteBusinessConfigRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"8\n" +
+	"\x1cDeleteBusinessConfigResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"J\n" +
+	"\x1aListBusinessConfigsRequest\x12\x16\n" +
+	"\x06offset\x18\x01 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\"l\n" +
+	"\x1bListBusinessConfigsResponse\x127\n" +
+	"\aconfigs\x18\x01 \x03(\v2\x1d.permission.v1.BusinessConfigR\aconfigs\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"L\n" +
 	"\x15CreateResourceRequest\x123\n" +
 	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\"M\n" +
@@ -2552,6 +4110,107 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x06action\x18\x06 \x01(\tR\x06action\"l\n" +
 	"\x17ListPermissionsResponse\x12;\n" +
 	"\vpermissions\x18\x01 \x03(\v2\x19.permission.v1.PermissionR\vpermissions\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xcd\x01\n" +
+	"\x04Role\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x1a\n" +
+	"\bmetadata\x18\x06 \x01(\tR\bmetadata\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\b \x01(\x03R\aendTime\"<\n" +
+	"\x11CreateRoleRequest\x12'\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"=\n" +
+	"\x12CreateRoleResponse\x12'\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\" \n" +
+	"\x0eGetRoleRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\":\n" +
+	"\x0fGetRoleResponse\x12'\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"<\n" +
+	"\x11UpdateRoleRequest\x12'\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"=\n" +
+	"\x12UpdateRoleResponse\x12'\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"#\n" +
+	"\x11DeleteRoleRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\".\n" +
+	"\x12DeleteRoleResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"k\n" +
+	"\x10ListRolesRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x12\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\"T\n" +
+	"\x11ListRolesResponse\x12)\n" +
+	"\x05roles\x18\x01 \x03(\v2\x13.permission.v1.RoleR\x05roles\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xc8\x02\n" +
+	"\rRoleInclusion\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12*\n" +
+	"\x11including_role_id\x18\x03 \x01(\x03R\x0fincludingRoleId\x12.\n" +
+	"\x13including_role_type\x18\x04 \x01(\tR\x11includingRoleType\x12.\n" +
+	"\x13including_role_name\x18\x05 \x01(\tR\x11includingRoleName\x12(\n" +
+	"\x10included_role_id\x18\x06 \x01(\x03R\x0eincludedRoleId\x12,\n" +
+	"\x12included_role_type\x18\a \x01(\tR\x10includedRoleType\x12,\n" +
+	"\x12included_role_name\x18\b \x01(\tR\x10includedRoleName\"\x89\x01\n" +
+	"\x1aCreateRoleInclusionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12*\n" +
+	"\x11including_role_id\x18\x02 \x01(\x03R\x0fincludingRoleId\x12(\n" +
+	"\x10included_role_id\x18\x03 \x01(\x03R\x0eincludedRoleId\"b\n" +
+	"\x1bCreateRoleInclusionResponse\x12C\n" +
+	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\")\n" +
+	"\x17GetRoleInclusionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
+	"\x18GetRoleInclusionResponse\x12C\n" +
+	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\"\x89\x01\n" +
+	"\x1aDeleteRoleInclusionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12*\n" +
+	"\x11including_role_id\x18\x02 \x01(\x03R\x0fincludingRoleId\x12(\n" +
+	"\x10included_role_id\x18\x03 \x01(\x03R\x0eincludedRoleId\"7\n" +
+	"\x1bDeleteRoleInclusionResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9c\x01\n" +
+	"\x19ListRoleInclusionsRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12!\n" +
+	"\fis_including\x18\x03 \x01(\bR\visIncluding\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x05 \x01(\x05R\x05limit\"y\n" +
+	"\x1aListRoleInclusionsResponse\x12E\n" +
+	"\x0frole_inclusions\x18\x01 \x03(\v2\x1c.permission.v1.RoleInclusionR\x0eroleInclusions\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x81\x02\n" +
+	"\x0eRolePermission\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
+	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x17\n" +
+	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12#\n" +
+	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12'\n" +
+	"\x0fpermission_name\x18\x05 \x01(\tR\x0epermissionName\x12'\n" +
+	"\x0fpermission_type\x18\x06 \x01(\tR\x0epermissionType\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\b \x01(\x03R\aendTime\"\xab\x01\n" +
+	"\x1aGrantRolePermissionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
+	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12\x1d\n" +
+	"\n" +
+	"start_time\x18\x04 \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\x05 \x01(\x03R\aendTime\"e\n" +
+	"\x1bGrantRolePermissionResponse\x12F\n" +
+	"\x0frole_permission\x18\x01 \x01(\v2\x1d.permission.v1.RolePermissionR\x0erolePermission\"r\n" +
+	"\x1bRevokeRolePermissionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
+	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\"8\n" +
+	"\x1cRevokeRolePermissionResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"z\n" +
+	"\x1aListRolePermissionsRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
+	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x04 \x01(\x05R\x05limit\"}\n" +
+	"\x1bListRolePermissionsResponse\x12H\n" +
+	"\x10role_permissions\x18\x01 \x03(\v2\x1d.permission.v1.RolePermissionR\x0frolePermissions\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xd7\x01\n" +
 	"\bUserRole\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
@@ -2586,49 +4245,54 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x15ListUserRolesResponse\x126\n" +
 	"\n" +
 	"user_roles\x18\x01 \x03(\v2\x17.permission.v1.UserRoleR\tuserRoles\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\x81\x02\n" +
-	"\x0eRolePermission\x12\x0e\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xf5\x02\n" +
+	"\x0eUserPermission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
 	"\x06biz_id\x18\x02 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12#\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12#\n" +
 	"\rpermission_id\x18\x04 \x01(\x03R\fpermissionId\x12'\n" +
-	"\x0fpermission_name\x18\x05 \x01(\tR\x0epermissionName\x12'\n" +
-	"\x0fpermission_type\x18\x06 \x01(\tR\x0epermissionType\x12\x1d\n" +
+	"\x0fpermission_name\x18\x05 \x01(\tR\x0epermissionName\x12#\n" +
+	"\rresource_type\x18\x06 \x01(\tR\fresourceType\x12!\n" +
+	"\fresource_key\x18\a \x01(\tR\vresourceKey\x12#\n" +
+	"\rresource_name\x18\b \x01(\tR\fresourceName\x12\x16\n" +
+	"\x06action\x18\t \x01(\tR\x06action\x12\x1d\n" +
 	"\n" +
-	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\b \x01(\x03R\aendTime\"\xab\x01\n" +
-	"\x1aGrantRolePermissionRequest\x12\x15\n" +
+	"start_time\x18\n" +
+	" \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\v \x01(\x03R\aendTime\x12\x16\n" +
+	"\x06effect\x18\f \x01(\tR\x06effect\"\xc3\x01\n" +
+	"\x1aGrantUserPermissionRequest\x12\x15\n" +
 	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12\x1d\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
+	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12\x16\n" +
+	"\x06effect\x18\x04 \x01(\tR\x06effect\x12\x1d\n" +
 	"\n" +
-	"start_time\x18\x04 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x05 \x01(\x03R\aendTime\"e\n" +
-	"\x1bGrantRolePermissionResponse\x12F\n" +
-	"\x0frole_permission\x18\x01 \x01(\v2\x1d.permission.v1.RolePermissionR\x0erolePermission\"r\n" +
-	"\x1bRevokeRolePermissionRequest\x12\x15\n" +
+	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
+	"\bend_time\x18\x06 \x01(\x03R\aendTime\"e\n" +
+	"\x1bGrantUserPermissionResponse\x12F\n" +
+	"\x0fuser_permission\x18\x01 \x01(\v2\x1d.permission.v1.UserPermissionR\x0euserPermission\"r\n" +
+	"\x1bRevokeUserPermissionRequest\x12\x15\n" +
 	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
 	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\"8\n" +
-	"\x1cRevokeRolePermissionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"z\n" +
-	"\x1aListRolePermissionsRequest\x12\x15\n" +
+	"\x1cRevokeUserPermissionResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x99\x01\n" +
+	"\x1aListUserPermissionsRequest\x12\x15\n" +
 	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12\x16\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x04 \x01(\x05R\x05limit\"}\n" +
-	"\x1bListRolePermissionsResponse\x12H\n" +
-	"\x10role_permissions\x18\x01 \x03(\v2\x1d.permission.v1.RolePermissionR\x0frolePermissions\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total2\xc0\x0f\n" +
-	"\vRBACService\x12Q\n" +
+	"\x05limit\x18\x04 \x01(\x05R\x05limit\x12\x1d\n" +
 	"\n" +
-	"CreateRole\x12 .permission.v1.CreateRoleRequest\x1a!.permission.v1.CreateRoleResponse\x12H\n" +
-	"\aGetRole\x12\x1d.permission.v1.GetRoleRequest\x1a\x1e.permission.v1.GetRoleResponse\x12Q\n" +
-	"\n" +
-	"UpdateRole\x12 .permission.v1.UpdateRoleRequest\x1a!.permission.v1.UpdateRoleResponse\x12Q\n" +
-	"\n" +
-	"DeleteRole\x12 .permission.v1.DeleteRoleRequest\x1a!.permission.v1.DeleteRoleResponse\x12N\n" +
-	"\tListRoles\x12\x1f.permission.v1.ListRolesRequest\x1a .permission.v1.ListRolesResponse\x12]\n" +
+	"only_valid\x18\x05 \x01(\bR\tonlyValid\"}\n" +
+	"\x1bListUserPermissionsResponse\x12H\n" +
+	"\x10user_permissions\x18\x01 \x03(\v2\x1d.permission.v1.UserPermissionR\x0fuserPermissions\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total2\xe2\x19\n" +
+	"\vRBACService\x12o\n" +
+	"\x14CreateBusinessConfig\x12*.permission.v1.CreateBusinessConfigRequest\x1a+.permission.v1.CreateBusinessConfigResponse\x12f\n" +
+	"\x11GetBusinessConfig\x12'.permission.v1.GetBusinessConfigRequest\x1a(.permission.v1.GetBusinessConfigResponse\x12o\n" +
+	"\x14UpdateBusinessConfig\x12*.permission.v1.UpdateBusinessConfigRequest\x1a+.permission.v1.UpdateBusinessConfigResponse\x12o\n" +
+	"\x14DeleteBusinessConfig\x12*.permission.v1.DeleteBusinessConfigRequest\x1a+.permission.v1.DeleteBusinessConfigResponse\x12l\n" +
+	"\x13ListBusinessConfigs\x12).permission.v1.ListBusinessConfigsRequest\x1a*.permission.v1.ListBusinessConfigsResponse\x12]\n" +
 	"\x0eCreateResource\x12$.permission.v1.CreateResourceRequest\x1a%.permission.v1.CreateResourceResponse\x12T\n" +
 	"\vGetResource\x12!.permission.v1.GetResourceRequest\x1a\".permission.v1.GetResourceResponse\x12]\n" +
 	"\x0eUpdateResource\x12$.permission.v1.UpdateResourceRequest\x1a%.permission.v1.UpdateResourceResponse\x12]\n" +
@@ -2638,13 +4302,28 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\rGetPermission\x12#.permission.v1.GetPermissionRequest\x1a$.permission.v1.GetPermissionResponse\x12c\n" +
 	"\x10UpdatePermission\x12&.permission.v1.UpdatePermissionRequest\x1a'.permission.v1.UpdatePermissionResponse\x12c\n" +
 	"\x10DeletePermission\x12&.permission.v1.DeletePermissionRequest\x1a'.permission.v1.DeletePermissionResponse\x12`\n" +
-	"\x0fListPermissions\x12%.permission.v1.ListPermissionsRequest\x1a&.permission.v1.ListPermissionsResponse\x12Z\n" +
+	"\x0fListPermissions\x12%.permission.v1.ListPermissionsRequest\x1a&.permission.v1.ListPermissionsResponse\x12Q\n" +
+	"\n" +
+	"CreateRole\x12 .permission.v1.CreateRoleRequest\x1a!.permission.v1.CreateRoleResponse\x12H\n" +
+	"\aGetRole\x12\x1d.permission.v1.GetRoleRequest\x1a\x1e.permission.v1.GetRoleResponse\x12Q\n" +
+	"\n" +
+	"UpdateRole\x12 .permission.v1.UpdateRoleRequest\x1a!.permission.v1.UpdateRoleResponse\x12Q\n" +
+	"\n" +
+	"DeleteRole\x12 .permission.v1.DeleteRoleRequest\x1a!.permission.v1.DeleteRoleResponse\x12N\n" +
+	"\tListRoles\x12\x1f.permission.v1.ListRolesRequest\x1a .permission.v1.ListRolesResponse\x12l\n" +
+	"\x13CreateRoleInclusion\x12).permission.v1.CreateRoleInclusionRequest\x1a*.permission.v1.CreateRoleInclusionResponse\x12c\n" +
+	"\x10GetRoleInclusion\x12&.permission.v1.GetRoleInclusionRequest\x1a'.permission.v1.GetRoleInclusionResponse\x12l\n" +
+	"\x13DeleteRoleInclusion\x12).permission.v1.DeleteRoleInclusionRequest\x1a*.permission.v1.DeleteRoleInclusionResponse\x12i\n" +
+	"\x12ListRoleInclusions\x12(.permission.v1.ListRoleInclusionsRequest\x1a).permission.v1.ListRoleInclusionsResponse\x12l\n" +
+	"\x13GrantRolePermission\x12).permission.v1.GrantRolePermissionRequest\x1a*.permission.v1.GrantRolePermissionResponse\x12o\n" +
+	"\x14RevokeRolePermission\x12*.permission.v1.RevokeRolePermissionRequest\x1a+.permission.v1.RevokeRolePermissionResponse\x12l\n" +
+	"\x13ListRolePermissions\x12).permission.v1.ListRolePermissionsRequest\x1a*.permission.v1.ListRolePermissionsResponse\x12Z\n" +
 	"\rGrantUserRole\x12#.permission.v1.GrantUserRoleRequest\x1a$.permission.v1.GrantUserRoleResponse\x12]\n" +
 	"\x0eRevokeUserRole\x12$.permission.v1.RevokeUserRoleRequest\x1a%.permission.v1.RevokeUserRoleResponse\x12Z\n" +
 	"\rListUserRoles\x12#.permission.v1.ListUserRolesRequest\x1a$.permission.v1.ListUserRolesResponse\x12l\n" +
-	"\x13GrantRolePermission\x12).permission.v1.GrantRolePermissionRequest\x1a*.permission.v1.GrantRolePermissionResponse\x12o\n" +
-	"\x14RevokeRolePermission\x12*.permission.v1.RevokeRolePermissionRequest\x1a+.permission.v1.RevokeRolePermissionResponse\x12l\n" +
-	"\x13ListRolePermissions\x12).permission.v1.ListRolePermissionsRequest\x1a*.permission.v1.ListRolePermissionsResponseB\xc3\x01\n" +
+	"\x13GrantUserPermission\x12).permission.v1.GrantUserPermissionRequest\x1a*.permission.v1.GrantUserPermissionResponse\x12o\n" +
+	"\x14RevokeUserPermission\x12*.permission.v1.RevokeUserPermissionRequest\x1a+.permission.v1.RevokeUserPermissionResponse\x12l\n" +
+	"\x13ListUserPermissions\x12).permission.v1.ListUserPermissionsRequest\x1a*.permission.v1.ListUserPermissionsResponseB\xc3\x01\n" +
 	"\x11com.permission.v1B\tRbacProtoP\x01ZNgitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionv1\xa2\x02\x03PXX\xaa\x02\rPermission.V1\xca\x02\rPermission\\V1\xe2\x02\x19Permission\\V1\\GPBMetadata\xea\x02\x0ePermission::V1b\x06proto3"
 
 var (
@@ -2660,19 +4339,19 @@ func file_permission_v1_rbac_proto_rawDescGZIP() []byte {
 }
 
 var (
-	file_permission_v1_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 45)
+	file_permission_v1_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
 	file_permission_v1_rbac_proto_goTypes  = []any{
-		(*Role)(nil),                         // 0: permission.v1.Role
-		(*CreateRoleRequest)(nil),            // 1: permission.v1.CreateRoleRequest
-		(*CreateRoleResponse)(nil),           // 2: permission.v1.CreateRoleResponse
-		(*GetRoleRequest)(nil),               // 3: permission.v1.GetRoleRequest
-		(*GetRoleResponse)(nil),              // 4: permission.v1.GetRoleResponse
-		(*UpdateRoleRequest)(nil),            // 5: permission.v1.UpdateRoleRequest
-		(*UpdateRoleResponse)(nil),           // 6: permission.v1.UpdateRoleResponse
-		(*DeleteRoleRequest)(nil),            // 7: permission.v1.DeleteRoleRequest
-		(*DeleteRoleResponse)(nil),           // 8: permission.v1.DeleteRoleResponse
-		(*ListRolesRequest)(nil),             // 9: permission.v1.ListRolesRequest
-		(*ListRolesResponse)(nil),            // 10: permission.v1.ListRolesResponse
+		(*BusinessConfig)(nil),               // 0: permission.v1.BusinessConfig
+		(*CreateBusinessConfigRequest)(nil),  // 1: permission.v1.CreateBusinessConfigRequest
+		(*CreateBusinessConfigResponse)(nil), // 2: permission.v1.CreateBusinessConfigResponse
+		(*GetBusinessConfigRequest)(nil),     // 3: permission.v1.GetBusinessConfigRequest
+		(*GetBusinessConfigResponse)(nil),    // 4: permission.v1.GetBusinessConfigResponse
+		(*UpdateBusinessConfigRequest)(nil),  // 5: permission.v1.UpdateBusinessConfigRequest
+		(*UpdateBusinessConfigResponse)(nil), // 6: permission.v1.UpdateBusinessConfigResponse
+		(*DeleteBusinessConfigRequest)(nil),  // 7: permission.v1.DeleteBusinessConfigRequest
+		(*DeleteBusinessConfigResponse)(nil), // 8: permission.v1.DeleteBusinessConfigResponse
+		(*ListBusinessConfigsRequest)(nil),   // 9: permission.v1.ListBusinessConfigsRequest
+		(*ListBusinessConfigsResponse)(nil),  // 10: permission.v1.ListBusinessConfigsResponse
 		(*CreateResourceRequest)(nil),        // 11: permission.v1.CreateResourceRequest
 		(*CreateResourceResponse)(nil),       // 12: permission.v1.CreateResourceResponse
 		(*GetResourceRequest)(nil),           // 13: permission.v1.GetResourceRequest
@@ -2693,95 +4372,157 @@ var (
 		(*DeletePermissionResponse)(nil),     // 28: permission.v1.DeletePermissionResponse
 		(*ListPermissionsRequest)(nil),       // 29: permission.v1.ListPermissionsRequest
 		(*ListPermissionsResponse)(nil),      // 30: permission.v1.ListPermissionsResponse
-		(*UserRole)(nil),                     // 31: permission.v1.UserRole
-		(*GrantUserRoleRequest)(nil),         // 32: permission.v1.GrantUserRoleRequest
-		(*GrantUserRoleResponse)(nil),        // 33: permission.v1.GrantUserRoleResponse
-		(*RevokeUserRoleRequest)(nil),        // 34: permission.v1.RevokeUserRoleRequest
-		(*RevokeUserRoleResponse)(nil),       // 35: permission.v1.RevokeUserRoleResponse
-		(*ListUserRolesRequest)(nil),         // 36: permission.v1.ListUserRolesRequest
-		(*ListUserRolesResponse)(nil),        // 37: permission.v1.ListUserRolesResponse
-		(*RolePermission)(nil),               // 38: permission.v1.RolePermission
-		(*GrantRolePermissionRequest)(nil),   // 39: permission.v1.GrantRolePermissionRequest
-		(*GrantRolePermissionResponse)(nil),  // 40: permission.v1.GrantRolePermissionResponse
-		(*RevokeRolePermissionRequest)(nil),  // 41: permission.v1.RevokeRolePermissionRequest
-		(*RevokeRolePermissionResponse)(nil), // 42: permission.v1.RevokeRolePermissionResponse
-		(*ListRolePermissionsRequest)(nil),   // 43: permission.v1.ListRolePermissionsRequest
-		(*ListRolePermissionsResponse)(nil),  // 44: permission.v1.ListRolePermissionsResponse
-		(*Resource)(nil),                     // 45: permission.v1.Resource
-		(*Permission)(nil),                   // 46: permission.v1.Permission
+		(*Role)(nil),                         // 31: permission.v1.Role
+		(*CreateRoleRequest)(nil),            // 32: permission.v1.CreateRoleRequest
+		(*CreateRoleResponse)(nil),           // 33: permission.v1.CreateRoleResponse
+		(*GetRoleRequest)(nil),               // 34: permission.v1.GetRoleRequest
+		(*GetRoleResponse)(nil),              // 35: permission.v1.GetRoleResponse
+		(*UpdateRoleRequest)(nil),            // 36: permission.v1.UpdateRoleRequest
+		(*UpdateRoleResponse)(nil),           // 37: permission.v1.UpdateRoleResponse
+		(*DeleteRoleRequest)(nil),            // 38: permission.v1.DeleteRoleRequest
+		(*DeleteRoleResponse)(nil),           // 39: permission.v1.DeleteRoleResponse
+		(*ListRolesRequest)(nil),             // 40: permission.v1.ListRolesRequest
+		(*ListRolesResponse)(nil),            // 41: permission.v1.ListRolesResponse
+		(*RoleInclusion)(nil),                // 42: permission.v1.RoleInclusion
+		(*CreateRoleInclusionRequest)(nil),   // 43: permission.v1.CreateRoleInclusionRequest
+		(*CreateRoleInclusionResponse)(nil),  // 44: permission.v1.CreateRoleInclusionResponse
+		(*GetRoleInclusionRequest)(nil),      // 45: permission.v1.GetRoleInclusionRequest
+		(*GetRoleInclusionResponse)(nil),     // 46: permission.v1.GetRoleInclusionResponse
+		(*DeleteRoleInclusionRequest)(nil),   // 47: permission.v1.DeleteRoleInclusionRequest
+		(*DeleteRoleInclusionResponse)(nil),  // 48: permission.v1.DeleteRoleInclusionResponse
+		(*ListRoleInclusionsRequest)(nil),    // 49: permission.v1.ListRoleInclusionsRequest
+		(*ListRoleInclusionsResponse)(nil),   // 50: permission.v1.ListRoleInclusionsResponse
+		(*RolePermission)(nil),               // 51: permission.v1.RolePermission
+		(*GrantRolePermissionRequest)(nil),   // 52: permission.v1.GrantRolePermissionRequest
+		(*GrantRolePermissionResponse)(nil),  // 53: permission.v1.GrantRolePermissionResponse
+		(*RevokeRolePermissionRequest)(nil),  // 54: permission.v1.RevokeRolePermissionRequest
+		(*RevokeRolePermissionResponse)(nil), // 55: permission.v1.RevokeRolePermissionResponse
+		(*ListRolePermissionsRequest)(nil),   // 56: permission.v1.ListRolePermissionsRequest
+		(*ListRolePermissionsResponse)(nil),  // 57: permission.v1.ListRolePermissionsResponse
+		(*UserRole)(nil),                     // 58: permission.v1.UserRole
+		(*GrantUserRoleRequest)(nil),         // 59: permission.v1.GrantUserRoleRequest
+		(*GrantUserRoleResponse)(nil),        // 60: permission.v1.GrantUserRoleResponse
+		(*RevokeUserRoleRequest)(nil),        // 61: permission.v1.RevokeUserRoleRequest
+		(*RevokeUserRoleResponse)(nil),       // 62: permission.v1.RevokeUserRoleResponse
+		(*ListUserRolesRequest)(nil),         // 63: permission.v1.ListUserRolesRequest
+		(*ListUserRolesResponse)(nil),        // 64: permission.v1.ListUserRolesResponse
+		(*UserPermission)(nil),               // 65: permission.v1.UserPermission
+		(*GrantUserPermissionRequest)(nil),   // 66: permission.v1.GrantUserPermissionRequest
+		(*GrantUserPermissionResponse)(nil),  // 67: permission.v1.GrantUserPermissionResponse
+		(*RevokeUserPermissionRequest)(nil),  // 68: permission.v1.RevokeUserPermissionRequest
+		(*RevokeUserPermissionResponse)(nil), // 69: permission.v1.RevokeUserPermissionResponse
+		(*ListUserPermissionsRequest)(nil),   // 70: permission.v1.ListUserPermissionsRequest
+		(*ListUserPermissionsResponse)(nil),  // 71: permission.v1.ListUserPermissionsResponse
+		(*Resource)(nil),                     // 72: permission.v1.Resource
+		(*Permission)(nil),                   // 73: permission.v1.Permission
 	}
 )
 
 var file_permission_v1_rbac_proto_depIdxs = []int32{
-	0,  // 0: permission.v1.CreateRoleRequest.role:type_name -> permission.v1.Role
-	0,  // 1: permission.v1.CreateRoleResponse.role:type_name -> permission.v1.Role
-	0,  // 2: permission.v1.GetRoleResponse.role:type_name -> permission.v1.Role
-	0,  // 3: permission.v1.UpdateRoleRequest.role:type_name -> permission.v1.Role
-	0,  // 4: permission.v1.UpdateRoleResponse.role:type_name -> permission.v1.Role
-	0,  // 5: permission.v1.ListRolesResponse.roles:type_name -> permission.v1.Role
-	45, // 6: permission.v1.CreateResourceRequest.resource:type_name -> permission.v1.Resource
-	45, // 7: permission.v1.CreateResourceResponse.resource:type_name -> permission.v1.Resource
-	45, // 8: permission.v1.GetResourceResponse.resource:type_name -> permission.v1.Resource
-	45, // 9: permission.v1.UpdateResourceRequest.resource:type_name -> permission.v1.Resource
-	45, // 10: permission.v1.UpdateResourceResponse.resource:type_name -> permission.v1.Resource
-	45, // 11: permission.v1.ListResourcesResponse.resources:type_name -> permission.v1.Resource
-	46, // 12: permission.v1.CreatePermissionRequest.permission:type_name -> permission.v1.Permission
-	46, // 13: permission.v1.CreatePermissionResponse.permission:type_name -> permission.v1.Permission
-	46, // 14: permission.v1.GetPermissionResponse.permission:type_name -> permission.v1.Permission
-	46, // 15: permission.v1.UpdatePermissionRequest.permission:type_name -> permission.v1.Permission
-	46, // 16: permission.v1.UpdatePermissionResponse.permission:type_name -> permission.v1.Permission
-	46, // 17: permission.v1.ListPermissionsResponse.permissions:type_name -> permission.v1.Permission
-	31, // 18: permission.v1.GrantUserRoleResponse.user_role:type_name -> permission.v1.UserRole
-	31, // 19: permission.v1.ListUserRolesResponse.user_roles:type_name -> permission.v1.UserRole
-	38, // 20: permission.v1.GrantRolePermissionResponse.role_permission:type_name -> permission.v1.RolePermission
-	38, // 21: permission.v1.ListRolePermissionsResponse.role_permissions:type_name -> permission.v1.RolePermission
-	1,  // 22: permission.v1.RBACService.CreateRole:input_type -> permission.v1.CreateRoleRequest
-	3,  // 23: permission.v1.RBACService.GetRole:input_type -> permission.v1.GetRoleRequest
-	5,  // 24: permission.v1.RBACService.UpdateRole:input_type -> permission.v1.UpdateRoleRequest
-	7,  // 25: permission.v1.RBACService.DeleteRole:input_type -> permission.v1.DeleteRoleRequest
-	9,  // 26: permission.v1.RBACService.ListRoles:input_type -> permission.v1.ListRolesRequest
-	11, // 27: permission.v1.RBACService.CreateResource:input_type -> permission.v1.CreateResourceRequest
-	13, // 28: permission.v1.RBACService.GetResource:input_type -> permission.v1.GetResourceRequest
-	15, // 29: permission.v1.RBACService.UpdateResource:input_type -> permission.v1.UpdateResourceRequest
-	17, // 30: permission.v1.RBACService.DeleteResource:input_type -> permission.v1.DeleteResourceRequest
-	19, // 31: permission.v1.RBACService.ListResources:input_type -> permission.v1.ListResourcesRequest
-	21, // 32: permission.v1.RBACService.CreatePermission:input_type -> permission.v1.CreatePermissionRequest
-	23, // 33: permission.v1.RBACService.GetPermission:input_type -> permission.v1.GetPermissionRequest
-	25, // 34: permission.v1.RBACService.UpdatePermission:input_type -> permission.v1.UpdatePermissionRequest
-	27, // 35: permission.v1.RBACService.DeletePermission:input_type -> permission.v1.DeletePermissionRequest
-	29, // 36: permission.v1.RBACService.ListPermissions:input_type -> permission.v1.ListPermissionsRequest
-	32, // 37: permission.v1.RBACService.GrantUserRole:input_type -> permission.v1.GrantUserRoleRequest
-	34, // 38: permission.v1.RBACService.RevokeUserRole:input_type -> permission.v1.RevokeUserRoleRequest
-	36, // 39: permission.v1.RBACService.ListUserRoles:input_type -> permission.v1.ListUserRolesRequest
-	39, // 40: permission.v1.RBACService.GrantRolePermission:input_type -> permission.v1.GrantRolePermissionRequest
-	41, // 41: permission.v1.RBACService.RevokeRolePermission:input_type -> permission.v1.RevokeRolePermissionRequest
-	43, // 42: permission.v1.RBACService.ListRolePermissions:input_type -> permission.v1.ListRolePermissionsRequest
-	2,  // 43: permission.v1.RBACService.CreateRole:output_type -> permission.v1.CreateRoleResponse
-	4,  // 44: permission.v1.RBACService.GetRole:output_type -> permission.v1.GetRoleResponse
-	6,  // 45: permission.v1.RBACService.UpdateRole:output_type -> permission.v1.UpdateRoleResponse
-	8,  // 46: permission.v1.RBACService.DeleteRole:output_type -> permission.v1.DeleteRoleResponse
-	10, // 47: permission.v1.RBACService.ListRoles:output_type -> permission.v1.ListRolesResponse
-	12, // 48: permission.v1.RBACService.CreateResource:output_type -> permission.v1.CreateResourceResponse
-	14, // 49: permission.v1.RBACService.GetResource:output_type -> permission.v1.GetResourceResponse
-	16, // 50: permission.v1.RBACService.UpdateResource:output_type -> permission.v1.UpdateResourceResponse
-	18, // 51: permission.v1.RBACService.DeleteResource:output_type -> permission.v1.DeleteResourceResponse
-	20, // 52: permission.v1.RBACService.ListResources:output_type -> permission.v1.ListResourcesResponse
-	22, // 53: permission.v1.RBACService.CreatePermission:output_type -> permission.v1.CreatePermissionResponse
-	24, // 54: permission.v1.RBACService.GetPermission:output_type -> permission.v1.GetPermissionResponse
-	26, // 55: permission.v1.RBACService.UpdatePermission:output_type -> permission.v1.UpdatePermissionResponse
-	28, // 56: permission.v1.RBACService.DeletePermission:output_type -> permission.v1.DeletePermissionResponse
-	30, // 57: permission.v1.RBACService.ListPermissions:output_type -> permission.v1.ListPermissionsResponse
-	33, // 58: permission.v1.RBACService.GrantUserRole:output_type -> permission.v1.GrantUserRoleResponse
-	35, // 59: permission.v1.RBACService.RevokeUserRole:output_type -> permission.v1.RevokeUserRoleResponse
-	37, // 60: permission.v1.RBACService.ListUserRoles:output_type -> permission.v1.ListUserRolesResponse
-	40, // 61: permission.v1.RBACService.GrantRolePermission:output_type -> permission.v1.GrantRolePermissionResponse
-	42, // 62: permission.v1.RBACService.RevokeRolePermission:output_type -> permission.v1.RevokeRolePermissionResponse
-	44, // 63: permission.v1.RBACService.ListRolePermissions:output_type -> permission.v1.ListRolePermissionsResponse
-	43, // [43:64] is the sub-list for method output_type
-	22, // [22:43] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	0,  // 0: permission.v1.CreateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig
+	0,  // 1: permission.v1.CreateBusinessConfigResponse.config:type_name -> permission.v1.BusinessConfig
+	0,  // 2: permission.v1.GetBusinessConfigResponse.config:type_name -> permission.v1.BusinessConfig
+	0,  // 3: permission.v1.UpdateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig
+	0,  // 4: permission.v1.UpdateBusinessConfigResponse.config:type_name -> permission.v1.BusinessConfig
+	0,  // 5: permission.v1.ListBusinessConfigsResponse.configs:type_name -> permission.v1.BusinessConfig
+	72, // 6: permission.v1.CreateResourceRequest.resource:type_name -> permission.v1.Resource
+	72, // 7: permission.v1.CreateResourceResponse.resource:type_name -> permission.v1.Resource
+	72, // 8: permission.v1.GetResourceResponse.resource:type_name -> permission.v1.Resource
+	72, // 9: permission.v1.UpdateResourceRequest.resource:type_name -> permission.v1.Resource
+	72, // 10: permission.v1.UpdateResourceResponse.resource:type_name -> permission.v1.Resource
+	72, // 11: permission.v1.ListResourcesResponse.resources:type_name -> permission.v1.Resource
+	73, // 12: permission.v1.CreatePermissionRequest.permission:type_name -> permission.v1.Permission
+	73, // 13: permission.v1.CreatePermissionResponse.permission:type_name -> permission.v1.Permission
+	73, // 14: permission.v1.GetPermissionResponse.permission:type_name -> permission.v1.Permission
+	73, // 15: permission.v1.UpdatePermissionRequest.permission:type_name -> permission.v1.Permission
+	73, // 16: permission.v1.UpdatePermissionResponse.permission:type_name -> permission.v1.Permission
+	73, // 17: permission.v1.ListPermissionsResponse.permissions:type_name -> permission.v1.Permission
+	31, // 18: permission.v1.CreateRoleRequest.role:type_name -> permission.v1.Role
+	31, // 19: permission.v1.CreateRoleResponse.role:type_name -> permission.v1.Role
+	31, // 20: permission.v1.GetRoleResponse.role:type_name -> permission.v1.Role
+	31, // 21: permission.v1.UpdateRoleRequest.role:type_name -> permission.v1.Role
+	31, // 22: permission.v1.UpdateRoleResponse.role:type_name -> permission.v1.Role
+	31, // 23: permission.v1.ListRolesResponse.roles:type_name -> permission.v1.Role
+	42, // 24: permission.v1.CreateRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
+	42, // 25: permission.v1.GetRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
+	42, // 26: permission.v1.ListRoleInclusionsResponse.role_inclusions:type_name -> permission.v1.RoleInclusion
+	51, // 27: permission.v1.GrantRolePermissionResponse.role_permission:type_name -> permission.v1.RolePermission
+	51, // 28: permission.v1.ListRolePermissionsResponse.role_permissions:type_name -> permission.v1.RolePermission
+	58, // 29: permission.v1.GrantUserRoleResponse.user_role:type_name -> permission.v1.UserRole
+	58, // 30: permission.v1.ListUserRolesResponse.user_roles:type_name -> permission.v1.UserRole
+	65, // 31: permission.v1.GrantUserPermissionResponse.user_permission:type_name -> permission.v1.UserPermission
+	65, // 32: permission.v1.ListUserPermissionsResponse.user_permissions:type_name -> permission.v1.UserPermission
+	1,  // 33: permission.v1.RBACService.CreateBusinessConfig:input_type -> permission.v1.CreateBusinessConfigRequest
+	3,  // 34: permission.v1.RBACService.GetBusinessConfig:input_type -> permission.v1.GetBusinessConfigRequest
+	5,  // 35: permission.v1.RBACService.UpdateBusinessConfig:input_type -> permission.v1.UpdateBusinessConfigRequest
+	7,  // 36: permission.v1.RBACService.DeleteBusinessConfig:input_type -> permission.v1.DeleteBusinessConfigRequest
+	9,  // 37: permission.v1.RBACService.ListBusinessConfigs:input_type -> permission.v1.ListBusinessConfigsRequest
+	11, // 38: permission.v1.RBACService.CreateResource:input_type -> permission.v1.CreateResourceRequest
+	13, // 39: permission.v1.RBACService.GetResource:input_type -> permission.v1.GetResourceRequest
+	15, // 40: permission.v1.RBACService.UpdateResource:input_type -> permission.v1.UpdateResourceRequest
+	17, // 41: permission.v1.RBACService.DeleteResource:input_type -> permission.v1.DeleteResourceRequest
+	19, // 42: permission.v1.RBACService.ListResources:input_type -> permission.v1.ListResourcesRequest
+	21, // 43: permission.v1.RBACService.CreatePermission:input_type -> permission.v1.CreatePermissionRequest
+	23, // 44: permission.v1.RBACService.GetPermission:input_type -> permission.v1.GetPermissionRequest
+	25, // 45: permission.v1.RBACService.UpdatePermission:input_type -> permission.v1.UpdatePermissionRequest
+	27, // 46: permission.v1.RBACService.DeletePermission:input_type -> permission.v1.DeletePermissionRequest
+	29, // 47: permission.v1.RBACService.ListPermissions:input_type -> permission.v1.ListPermissionsRequest
+	32, // 48: permission.v1.RBACService.CreateRole:input_type -> permission.v1.CreateRoleRequest
+	34, // 49: permission.v1.RBACService.GetRole:input_type -> permission.v1.GetRoleRequest
+	36, // 50: permission.v1.RBACService.UpdateRole:input_type -> permission.v1.UpdateRoleRequest
+	38, // 51: permission.v1.RBACService.DeleteRole:input_type -> permission.v1.DeleteRoleRequest
+	40, // 52: permission.v1.RBACService.ListRoles:input_type -> permission.v1.ListRolesRequest
+	43, // 53: permission.v1.RBACService.CreateRoleInclusion:input_type -> permission.v1.CreateRoleInclusionRequest
+	45, // 54: permission.v1.RBACService.GetRoleInclusion:input_type -> permission.v1.GetRoleInclusionRequest
+	47, // 55: permission.v1.RBACService.DeleteRoleInclusion:input_type -> permission.v1.DeleteRoleInclusionRequest
+	49, // 56: permission.v1.RBACService.ListRoleInclusions:input_type -> permission.v1.ListRoleInclusionsRequest
+	52, // 57: permission.v1.RBACService.GrantRolePermission:input_type -> permission.v1.GrantRolePermissionRequest
+	54, // 58: permission.v1.RBACService.RevokeRolePermission:input_type -> permission.v1.RevokeRolePermissionRequest
+	56, // 59: permission.v1.RBACService.ListRolePermissions:input_type -> permission.v1.ListRolePermissionsRequest
+	59, // 60: permission.v1.RBACService.GrantUserRole:input_type -> permission.v1.GrantUserRoleRequest
+	61, // 61: permission.v1.RBACService.RevokeUserRole:input_type -> permission.v1.RevokeUserRoleRequest
+	63, // 62: permission.v1.RBACService.ListUserRoles:input_type -> permission.v1.ListUserRolesRequest
+	66, // 63: permission.v1.RBACService.GrantUserPermission:input_type -> permission.v1.GrantUserPermissionRequest
+	68, // 64: permission.v1.RBACService.RevokeUserPermission:input_type -> permission.v1.RevokeUserPermissionRequest
+	70, // 65: permission.v1.RBACService.ListUserPermissions:input_type -> permission.v1.ListUserPermissionsRequest
+	2,  // 66: permission.v1.RBACService.CreateBusinessConfig:output_type -> permission.v1.CreateBusinessConfigResponse
+	4,  // 67: permission.v1.RBACService.GetBusinessConfig:output_type -> permission.v1.GetBusinessConfigResponse
+	6,  // 68: permission.v1.RBACService.UpdateBusinessConfig:output_type -> permission.v1.UpdateBusinessConfigResponse
+	8,  // 69: permission.v1.RBACService.DeleteBusinessConfig:output_type -> permission.v1.DeleteBusinessConfigResponse
+	10, // 70: permission.v1.RBACService.ListBusinessConfigs:output_type -> permission.v1.ListBusinessConfigsResponse
+	12, // 71: permission.v1.RBACService.CreateResource:output_type -> permission.v1.CreateResourceResponse
+	14, // 72: permission.v1.RBACService.GetResource:output_type -> permission.v1.GetResourceResponse
+	16, // 73: permission.v1.RBACService.UpdateResource:output_type -> permission.v1.UpdateResourceResponse
+	18, // 74: permission.v1.RBACService.DeleteResource:output_type -> permission.v1.DeleteResourceResponse
+	20, // 75: permission.v1.RBACService.ListResources:output_type -> permission.v1.ListResourcesResponse
+	22, // 76: permission.v1.RBACService.CreatePermission:output_type -> permission.v1.CreatePermissionResponse
+	24, // 77: permission.v1.RBACService.GetPermission:output_type -> permission.v1.GetPermissionResponse
+	26, // 78: permission.v1.RBACService.UpdatePermission:output_type -> permission.v1.UpdatePermissionResponse
+	28, // 79: permission.v1.RBACService.DeletePermission:output_type -> permission.v1.DeletePermissionResponse
+	30, // 80: permission.v1.RBACService.ListPermissions:output_type -> permission.v1.ListPermissionsResponse
+	33, // 81: permission.v1.RBACService.CreateRole:output_type -> permission.v1.CreateRoleResponse
+	35, // 82: permission.v1.RBACService.GetRole:output_type -> permission.v1.GetRoleResponse
+	37, // 83: permission.v1.RBACService.UpdateRole:output_type -> permission.v1.UpdateRoleResponse
+	39, // 84: permission.v1.RBACService.DeleteRole:output_type -> permission.v1.DeleteRoleResponse
+	41, // 85: permission.v1.RBACService.ListRoles:output_type -> permission.v1.ListRolesResponse
+	44, // 86: permission.v1.RBACService.CreateRoleInclusion:output_type -> permission.v1.CreateRoleInclusionResponse
+	46, // 87: permission.v1.RBACService.GetRoleInclusion:output_type -> permission.v1.GetRoleInclusionResponse
+	48, // 88: permission.v1.RBACService.DeleteRoleInclusion:output_type -> permission.v1.DeleteRoleInclusionResponse
+	50, // 89: permission.v1.RBACService.ListRoleInclusions:output_type -> permission.v1.ListRoleInclusionsResponse
+	53, // 90: permission.v1.RBACService.GrantRolePermission:output_type -> permission.v1.GrantRolePermissionResponse
+	55, // 91: permission.v1.RBACService.RevokeRolePermission:output_type -> permission.v1.RevokeRolePermissionResponse
+	57, // 92: permission.v1.RBACService.ListRolePermissions:output_type -> permission.v1.ListRolePermissionsResponse
+	60, // 93: permission.v1.RBACService.GrantUserRole:output_type -> permission.v1.GrantUserRoleResponse
+	62, // 94: permission.v1.RBACService.RevokeUserRole:output_type -> permission.v1.RevokeUserRoleResponse
+	64, // 95: permission.v1.RBACService.ListUserRoles:output_type -> permission.v1.ListUserRolesResponse
+	67, // 96: permission.v1.RBACService.GrantUserPermission:output_type -> permission.v1.GrantUserPermissionResponse
+	69, // 97: permission.v1.RBACService.RevokeUserPermission:output_type -> permission.v1.RevokeUserPermissionResponse
+	71, // 98: permission.v1.RBACService.ListUserPermissions:output_type -> permission.v1.ListUserPermissionsResponse
+	66, // [66:99] is the sub-list for method output_type
+	33, // [33:66] is the sub-list for method input_type
+	33, // [33:33] is the sub-list for extension type_name
+	33, // [33:33] is the sub-list for extension extendee
+	0,  // [0:33] is the sub-list for field type_name
 }
 
 func init() { file_permission_v1_rbac_proto_init() }
@@ -2796,7 +4537,7 @@ func file_permission_v1_rbac_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_v1_rbac_proto_rawDesc), len(file_permission_v1_rbac_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   45,
+			NumMessages:   72,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

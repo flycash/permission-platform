@@ -41,6 +41,15 @@ func (UserPermission) TableName() string {
 type UserPermissionDAO interface {
 	// FindValidPermissions 查找当前有效的权限关联
 	FindValidPermissions(ctx context.Context, bizID, userID, currentTime int64) ([]UserPermission, error)
+
+	// Create 创建用户权限关联
+	Create(ctx context.Context, userPermission UserPermission) (UserPermission, error)
+
+	// DeleteByUserIDAndPermissionID 删除特定用户和权限的关联
+	DeleteByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error
+
+	// FindByBizIDAndUserID 查找特定业务和用户下的所有权限关联
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error)
 }
 
 // userPermissionDAO 用户权限关联数据访问实现
@@ -133,15 +142,6 @@ func (u *userPermissionDAO) FindByBizIDAndResourceKeyAction(ctx context.Context,
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) FindValidPermissions(ctx context.Context, bizID, userID, currentTime int64) ([]UserPermission, error) {
-	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
-			bizID, userID, currentTime, currentTime).
-		Find(&userPermissions).Error
-	return userPermissions, err
-}
-
 func (u *userPermissionDAO) ExistsByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) (bool, error) {
 	var count int64
 	err := u.db.WithContext(ctx).
@@ -149,14 +149,6 @@ func (u *userPermissionDAO) ExistsByUserIDAndPermissionID(ctx context.Context, b
 		Where("biz_id = ? AND user_id = ? AND permission_id = ?", bizID, userID, permissionID).
 		Count(&count).Error
 	return count > 0, err
-}
-
-func (u *userPermissionDAO) Create(ctx context.Context, userPermission UserPermission) (UserPermission, error) {
-	now := time.Now().UnixMilli()
-	userPermission.Ctime = now
-	userPermission.Utime = now
-	err := u.db.WithContext(ctx).Create(&userPermission).Error
-	return userPermission, err
 }
 
 func (u *userPermissionDAO) BatchCreate(ctx context.Context, userPermissions []UserPermission) error {
@@ -190,12 +182,35 @@ func (u *userPermissionDAO) Delete(ctx context.Context, id int64) error {
 	return u.db.WithContext(ctx).Where("id = ?", id).Delete(&UserPermission{}).Error
 }
 
+func (u *userPermissionDAO) DeleteByUserID(ctx context.Context, userID int64) error {
+	return u.db.WithContext(ctx).Where("user_id = ?", userID).Delete(&UserPermission{}).Error
+}
+
+func (u *userPermissionDAO) Create(ctx context.Context, userPermission UserPermission) (UserPermission, error) {
+	now := time.Now().UnixMilli()
+	userPermission.Ctime = now
+	userPermission.Utime = now
+	err := u.db.WithContext(ctx).Create(&userPermission).Error
+	return userPermission, err
+}
+
 func (u *userPermissionDAO) DeleteByUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error {
 	return u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND permission_id = ?", bizID, userID, permissionID).
 		Delete(&UserPermission{}).Error
 }
 
-func (u *userPermissionDAO) DeleteByUserID(ctx context.Context, userID int64) error {
-	return u.db.WithContext(ctx).Where("user_id = ?", userID).Delete(&UserPermission{}).Error
+func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error) {
+	var userPermissions []UserPermission
+	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Find(&userPermissions).Error
+	return userPermissions, err
+}
+
+func (u *userPermissionDAO) FindValidPermissions(ctx context.Context, bizID, userID, currentTime int64) ([]UserPermission, error) {
+	var userPermissions []UserPermission
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
+			bizID, userID, currentTime, currentTime).
+		Find(&userPermissions).Error
+	return userPermissions, err
 }

@@ -799,3 +799,437 @@ func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.
 		Total:           int32(total),
 	}, nil
 }
+
+// 从领域模型转换为proto消息
+func domainToProtoBusinessConfig(domainConfig domain.BusinessConfig) *permissionpb.BusinessConfig {
+	return &permissionpb.BusinessConfig{
+		Id:        domainConfig.ID,
+		OwnerId:   domainConfig.OwnerID,
+		OwnerType: domainConfig.OwnerType,
+		Name:      domainConfig.Name,
+		RateLimit: int32(domainConfig.RateLimit),
+		Token:     domainConfig.Token,
+	}
+}
+
+// 从proto消息转换为领域模型
+func protoToDomainBusinessConfig(protoConfig *permissionpb.BusinessConfig) domain.BusinessConfig {
+	return domain.BusinessConfig{
+		ID:        protoConfig.Id,
+		OwnerID:   protoConfig.OwnerId,
+		OwnerType: protoConfig.OwnerType,
+		Name:      protoConfig.Name,
+		RateLimit: int(protoConfig.RateLimit),
+		Token:     protoConfig.Token,
+	}
+}
+
+// 从领域模型转换为proto消息
+func domainToProtoRoleInclusion(domainInclusion domain.RoleInclusion) *permissionpb.RoleInclusion {
+	var includingRoleType, includedRoleType string
+
+	switch domainInclusion.IncludingRoleType {
+	case domain.RoleTypeSystem:
+		includingRoleType = "system"
+	case domain.RoleTypeCustom:
+		includingRoleType = "custom"
+	case domain.RoleTypeTemporary:
+		includingRoleType = "temporary"
+	default:
+		includingRoleType = "custom"
+	}
+
+	switch domainInclusion.IncludedRoleType {
+	case domain.RoleTypeSystem:
+		includedRoleType = "system"
+	case domain.RoleTypeCustom:
+		includedRoleType = "custom"
+	case domain.RoleTypeTemporary:
+		includedRoleType = "temporary"
+	default:
+		includedRoleType = "custom"
+	}
+
+	return &permissionpb.RoleInclusion{
+		Id:                domainInclusion.ID,
+		BizId:             domainInclusion.BizID,
+		IncludingRoleId:   domainInclusion.IncludingRoleID,
+		IncludingRoleType: includingRoleType,
+		IncludingRoleName: domainInclusion.IncludingRoleName,
+		IncludedRoleId:    domainInclusion.IncludedRoleID,
+		IncludedRoleType:  includedRoleType,
+		IncludedRoleName:  domainInclusion.IncludedRoleName,
+	}
+}
+
+// 从领域模型转换为proto消息
+func domainToProtoUserPermission(domainPermission domain.UserPermission) *permissionpb.UserPermission {
+	var action string
+	switch domainPermission.Action {
+	case domain.ActionTypeRead:
+		action = "read"
+	case domain.ActionTypeWrite:
+		action = "write"
+	case domain.ActionTypeCreate:
+		action = "create"
+	case domain.ActionTypeDelete:
+		action = "delete"
+	case domain.ActionTypeExecute:
+		action = "execute"
+	case domain.ActionTypeExport:
+		action = "export"
+	case domain.ActionTypeImport:
+		action = "import"
+	default:
+		action = "read"
+	}
+
+	return &permissionpb.UserPermission{
+		Id:             domainPermission.ID,
+		BizId:          domainPermission.BizID,
+		UserId:         domainPermission.UserID,
+		PermissionId:   domainPermission.PermissionID,
+		PermissionName: domainPermission.PermissionName,
+		ResourceType:   domainPermission.ResourceType,
+		ResourceKey:    domainPermission.ResourceKey,
+		ResourceName:   domainPermission.ResourceName,
+		Action:         action,
+		StartTime:      domainPermission.StartTime,
+		EndTime:        domainPermission.EndTime,
+		Effect:         domainPermission.Effect,
+	}
+}
+
+// ==== 业务配置相关接口实现 ====
+
+// CreateBusinessConfig 创建业务配置
+func (s *RBACServer) CreateBusinessConfig(ctx context.Context, req *permissionpb.CreateBusinessConfigRequest) (*permissionpb.CreateBusinessConfigResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.Config == nil {
+		return nil, status.Error(codes.InvalidArgument, "缺少业务配置信息")
+	}
+
+	// 转换为领域模型
+	domainConfig := protoToDomainBusinessConfig(req.Config)
+
+	// 调用服务层
+	createdConfig, err := s.rbacService.CreateBusinessConfig(ctx, domainConfig)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "创建业务配置失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.CreateBusinessConfigResponse{
+		Config: domainToProtoBusinessConfig(createdConfig),
+	}, nil
+}
+
+// GetBusinessConfig 获取业务配置
+func (s *RBACServer) GetBusinessConfig(ctx context.Context, req *permissionpb.GetBusinessConfigRequest) (*permissionpb.GetBusinessConfigResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务配置ID无效")
+	}
+
+	// 调用服务层
+	config, err := s.rbacService.GetBusinessConfig(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取业务配置失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.GetBusinessConfigResponse{
+		Config: domainToProtoBusinessConfig(config),
+	}, nil
+}
+
+// UpdateBusinessConfig 更新业务配置
+func (s *RBACServer) UpdateBusinessConfig(ctx context.Context, req *permissionpb.UpdateBusinessConfigRequest) (*permissionpb.UpdateBusinessConfigResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.Config == nil || req.Config.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务配置ID无效")
+	}
+
+	// 转换为领域模型
+	domainConfig := protoToDomainBusinessConfig(req.Config)
+
+	// 调用服务层
+	updatedConfig, err := s.rbacService.UpdateBusinessConfig(ctx, domainConfig)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "更新业务配置失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.UpdateBusinessConfigResponse{
+		Config: domainToProtoBusinessConfig(updatedConfig),
+	}, nil
+}
+
+// DeleteBusinessConfig 删除业务配置
+func (s *RBACServer) DeleteBusinessConfig(ctx context.Context, req *permissionpb.DeleteBusinessConfigRequest) (*permissionpb.DeleteBusinessConfigResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务配置ID无效")
+	}
+
+	// 调用服务层
+	err = s.rbacService.DeleteBusinessConfig(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "删除业务配置失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.DeleteBusinessConfigResponse{
+		Success: true,
+	}, nil
+}
+
+// ListBusinessConfigs 获取业务配置列表
+func (s *RBACServer) ListBusinessConfigs(ctx context.Context, req *permissionpb.ListBusinessConfigsRequest) (*permissionpb.ListBusinessConfigsResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 调用服务层
+	configs, total, err := s.rbacService.ListBusinessConfigs(ctx, int(req.Offset), int(req.Limit))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取业务配置列表失败: "+err.Error())
+	}
+
+	// 转换结果
+	protoConfigs := make([]*permissionpb.BusinessConfig, 0, len(configs))
+	for _, config := range configs {
+		protoConfigs = append(protoConfigs, domainToProtoBusinessConfig(config))
+	}
+
+	// 返回结果
+	return &permissionpb.ListBusinessConfigsResponse{
+		Configs: protoConfigs,
+		Total:   int32(total),
+	}, nil
+}
+
+// ==== 角色包含关系相关接口实现 ====
+
+// CreateRoleInclusion 创建角色包含关系
+func (s *RBACServer) CreateRoleInclusion(ctx context.Context, req *permissionpb.CreateRoleInclusionRequest) (*permissionpb.CreateRoleInclusionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.IncludingRoleId <= 0 || req.IncludedRoleId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID或角色ID无效")
+	}
+
+	// 调用服务层
+	roleInclusion, err := s.rbacService.CreateRoleInclusion(ctx, req.BizId, req.IncludingRoleId, req.IncludedRoleId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "创建角色包含关系失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.CreateRoleInclusionResponse{
+		RoleInclusion: domainToProtoRoleInclusion(roleInclusion),
+	}, nil
+}
+
+// GetRoleInclusion 获取角色包含关系
+func (s *RBACServer) GetRoleInclusion(ctx context.Context, req *permissionpb.GetRoleInclusionRequest) (*permissionpb.GetRoleInclusionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.Id <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "角色包含关系ID无效")
+	}
+
+	// 调用服务层
+	roleInclusion, err := s.rbacService.GetRoleInclusion(ctx, req.Id)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取角色包含关系失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.GetRoleInclusionResponse{
+		RoleInclusion: domainToProtoRoleInclusion(roleInclusion),
+	}, nil
+}
+
+// DeleteRoleInclusion 删除角色包含关系
+func (s *RBACServer) DeleteRoleInclusion(ctx context.Context, req *permissionpb.DeleteRoleInclusionRequest) (*permissionpb.DeleteRoleInclusionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.IncludingRoleId <= 0 || req.IncludedRoleId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID或角色ID无效")
+	}
+
+	// 调用服务层
+	err = s.rbacService.DeleteRoleInclusion(ctx, req.BizId, req.IncludingRoleId, req.IncludedRoleId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "删除角色包含关系失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.DeleteRoleInclusionResponse{
+		Success: true,
+	}, nil
+}
+
+// ListRoleInclusions 获取角色包含关系列表
+func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.ListRoleInclusionsRequest) (*permissionpb.ListRoleInclusionsResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID无效")
+	}
+
+	// 调用服务层
+	roleInclusions, total, err := s.rbacService.ListRoleInclusions(ctx, req.BizId, req.RoleId, req.IsIncluding, int(req.Offset), int(req.Limit))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取角色包含关系列表失败: "+err.Error())
+	}
+
+	// 转换结果
+	protoInclusions := make([]*permissionpb.RoleInclusion, 0, len(roleInclusions))
+	for _, inclusion := range roleInclusions {
+		protoInclusions = append(protoInclusions, domainToProtoRoleInclusion(inclusion))
+	}
+
+	// 返回结果
+	return &permissionpb.ListRoleInclusionsResponse{
+		RoleInclusions: protoInclusions,
+		Total:          int32(total),
+	}, nil
+}
+
+// ==== 用户权限相关接口实现 ====
+
+// GrantUserPermission 授予用户权限
+func (s *RBACServer) GrantUserPermission(ctx context.Context, req *permissionpb.GrantUserPermissionRequest) (*permissionpb.GrantUserPermissionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.UserId <= 0 || req.PermissionId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID、用户ID或权限ID无效")
+	}
+
+	// 默认为allow效果
+	effect := req.Effect
+	if effect == "" {
+		effect = "allow"
+	}
+
+	// 调用服务层
+	userPermission, err := s.rbacService.GrantUserPermission(ctx, req.BizId, req.UserId, req.PermissionId, effect, req.StartTime, req.EndTime)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "授予用户权限失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.GrantUserPermissionResponse{
+		UserPermission: domainToProtoUserPermission(userPermission),
+	}, nil
+}
+
+// RevokeUserPermission 撤销用户权限
+func (s *RBACServer) RevokeUserPermission(ctx context.Context, req *permissionpb.RevokeUserPermissionRequest) (*permissionpb.RevokeUserPermissionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.UserId <= 0 || req.PermissionId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID、用户ID或权限ID无效")
+	}
+
+	// 调用服务层
+	err = s.rbacService.RevokeUserPermission(ctx, req.BizId, req.UserId, req.PermissionId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "撤销用户权限失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.RevokeUserPermissionResponse{
+		Success: true,
+	}, nil
+}
+
+// ListUserPermissions 获取用户权限列表
+func (s *RBACServer) ListUserPermissions(ctx context.Context, req *permissionpb.ListUserPermissionsRequest) (*permissionpb.ListUserPermissionsResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.UserId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID或用户ID无效")
+	}
+
+	// 调用服务层
+	userPermissions, total, err := s.rbacService.ListUserPermissions(ctx, req.BizId, req.UserId, int(req.Offset), int(req.Limit), req.OnlyValid)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取用户权限列表失败: "+err.Error())
+	}
+
+	// 转换结果
+	protoUserPermissions := make([]*permissionpb.UserPermission, 0, len(userPermissions))
+	for _, userPermission := range userPermissions {
+		protoUserPermissions = append(protoUserPermissions, domainToProtoUserPermission(userPermission))
+	}
+
+	// 返回结果
+	return &permissionpb.ListUserPermissionsResponse{
+		UserPermissions: protoUserPermissions,
+		Total:           int32(total),
+	}, nil
+}

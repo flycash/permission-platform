@@ -7,36 +7,199 @@ import "permission/v1/permission.proto";
 option go_package = "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionpb";
 
 service RBACService {
-  // Role相关接口
-  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
-  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
-  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
-  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
-  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+  // 业务配置相关接口
+  rpc CreateBusinessConfig(CreateBusinessConfigRequest) returns (CreateBusinessConfigResponse);
+  rpc GetBusinessConfig(GetBusinessConfigRequest) returns (GetBusinessConfigResponse);
+  rpc UpdateBusinessConfig(UpdateBusinessConfigRequest) returns (UpdateBusinessConfigResponse);
+  rpc DeleteBusinessConfig(DeleteBusinessConfigRequest) returns (DeleteBusinessConfigResponse);
+  rpc ListBusinessConfigs(ListBusinessConfigsRequest) returns (ListBusinessConfigsResponse);
 
-  // Resource相关接口
+  // 资源相关接口
   rpc CreateResource(CreateResourceRequest) returns (CreateResourceResponse);
   rpc GetResource(GetResourceRequest) returns (GetResourceResponse);
   rpc UpdateResource(UpdateResourceRequest) returns (UpdateResourceResponse);
   rpc DeleteResource(DeleteResourceRequest) returns (DeleteResourceResponse);
   rpc ListResources(ListResourcesRequest) returns (ListResourcesResponse);
 
-  // Permission相关接口
+  // 权限相关接口
   rpc CreatePermission(CreatePermissionRequest) returns (CreatePermissionResponse);
   rpc GetPermission(GetPermissionRequest) returns (GetPermissionResponse);
   rpc UpdatePermission(UpdatePermissionRequest) returns (UpdatePermissionResponse);
   rpc DeletePermission(DeletePermissionRequest) returns (DeletePermissionResponse);
   rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse);
 
-  // 用户角色相关接口
-  rpc GrantUserRole(GrantUserRoleRequest) returns (GrantUserRoleResponse);
-  rpc RevokeUserRole(RevokeUserRoleRequest) returns (RevokeUserRoleResponse);
-  rpc ListUserRoles(ListUserRolesRequest) returns (ListUserRolesResponse);
+  // 角色相关接口
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+  rpc ListRoles(ListRolesRequest) returns (ListRolesResponse);
+
+  // 角色包含关系相关接口
+  rpc CreateRoleInclusion(CreateRoleInclusionRequest) returns (CreateRoleInclusionResponse);
+  rpc GetRoleInclusion(GetRoleInclusionRequest) returns (GetRoleInclusionResponse);
+  rpc DeleteRoleInclusion(DeleteRoleInclusionRequest) returns (DeleteRoleInclusionResponse);
+  rpc ListRoleInclusions(ListRoleInclusionsRequest) returns (ListRoleInclusionsResponse);
 
   // 角色权限相关接口
   rpc GrantRolePermission(GrantRolePermissionRequest) returns (GrantRolePermissionResponse);
   rpc RevokeRolePermission(RevokeRolePermissionRequest) returns (RevokeRolePermissionResponse);
   rpc ListRolePermissions(ListRolePermissionsRequest) returns (ListRolePermissionsResponse);
+
+  // 用户角色相关接口
+  rpc GrantUserRole(GrantUserRoleRequest) returns (GrantUserRoleResponse);
+  rpc RevokeUserRole(RevokeUserRoleRequest) returns (RevokeUserRoleResponse);
+  rpc ListUserRoles(ListUserRolesRequest) returns (ListUserRolesResponse);
+
+  // 用户权限相关接口
+  rpc GrantUserPermission(GrantUserPermissionRequest) returns (GrantUserPermissionResponse);
+  rpc RevokeUserPermission(RevokeUserPermissionRequest) returns (RevokeUserPermissionResponse);
+  rpc ListUserPermissions(ListUserPermissionsRequest) returns (ListUserPermissionsResponse);
+}
+
+// ==== 业务配置相关消息定义 ====
+message BusinessConfig {
+  int64 id = 1;
+  int64 owner_id = 2;
+  string owner_type = 3; // person, organization
+  string name = 4;
+  int32 rate_limit = 5;
+  string token = 6;
+}
+
+message CreateBusinessConfigRequest {
+  BusinessConfig config = 1;
+}
+
+message CreateBusinessConfigResponse {
+  BusinessConfig config = 1;
+}
+
+message GetBusinessConfigRequest {
+  int64 id = 1;
+}
+
+message GetBusinessConfigResponse {
+  BusinessConfig config = 1;
+}
+
+message UpdateBusinessConfigRequest {
+  BusinessConfig config = 1;
+}
+
+message UpdateBusinessConfigResponse {
+  BusinessConfig config = 1;
+}
+
+message DeleteBusinessConfigRequest {
+  int64 id = 1;
+}
+
+message DeleteBusinessConfigResponse {
+  bool success = 1;
+}
+
+message ListBusinessConfigsRequest {
+  int32 offset = 1;
+  int32 limit = 2;
+}
+
+message ListBusinessConfigsResponse {
+  repeated BusinessConfig configs = 1;
+  int32 total = 2;
+}
+
+// 资源相关消息定义
+message CreateResourceRequest {
+  Resource resource = 1;
+}
+
+message CreateResourceResponse {
+  Resource resource = 1;
+}
+
+message GetResourceRequest {
+  int64 id = 1;
+}
+
+message GetResourceResponse {
+  Resource resource = 1;
+}
+
+message UpdateResourceRequest {
+  Resource resource = 1;
+}
+
+message UpdateResourceResponse {
+  Resource resource = 1;
+}
+
+message DeleteResourceRequest {
+  int64 id = 1;
+}
+
+message DeleteResourceResponse {
+  bool success = 1;
+}
+
+message ListResourcesRequest {
+  int64 biz_id = 1;
+  int32 offset = 2;
+  int32 limit = 3;
+  string type = 4; // 可选过滤条件
+  string key = 5; // 可选过滤条件
+}
+
+message ListResourcesResponse {
+  repeated Resource resources = 1;
+  int32 total = 2;
+}
+
+// 权限相关消息定义
+message CreatePermissionRequest {
+  Permission permission = 1;
+}
+
+message CreatePermissionResponse {
+  Permission permission = 1;
+}
+
+message GetPermissionRequest {
+  int64 id = 1;
+}
+
+message GetPermissionResponse {
+  Permission permission = 1;
+}
+
+message UpdatePermissionRequest {
+  Permission permission = 1;
+}
+
+message UpdatePermissionResponse {
+  Permission permission = 1;
+}
+
+message DeletePermissionRequest {
+  int64 id = 1;
+}
+
+message DeletePermissionResponse {
+  bool success = 1;
+}
+
+message ListPermissionsRequest {
+  int64 biz_id = 1;
+  int32 offset = 2;
+  int32 limit = 3;
+  string resource_type = 4; // 可选过滤条件
+  string resource_key = 5; // 可选过滤条件
+  string action = 6; // 可选过滤条件
+}
+
+message ListPermissionsResponse {
+  repeated Permission permissions = 1;
+  int32 total = 2;
 }
 
 // ==== Role相关消息定义 ====
@@ -95,94 +258,102 @@ message ListRolesResponse {
   int32 total = 2;
 }
 
-message CreateResourceRequest {
-  Resource resource = 1;
+// ==== 角色包含关系相关消息定义 ====
+message RoleInclusion {
+  int64 id = 1;
+  int64 biz_id = 2;
+  int64 including_role_id = 3;
+  string including_role_type = 4;
+  string including_role_name = 5;
+  int64 included_role_id = 6;
+  string included_role_type = 7;
+  string included_role_name = 8;
 }
 
-message CreateResourceResponse {
-  Resource resource = 1;
+message CreateRoleInclusionRequest {
+  int64 biz_id = 1;
+  int64 including_role_id = 2;
+  int64 included_role_id = 3;
 }
 
-message GetResourceRequest {
+message CreateRoleInclusionResponse {
+  RoleInclusion role_inclusion = 1;
+}
+
+message GetRoleInclusionRequest {
   int64 id = 1;
 }
 
-message GetResourceResponse {
-  Resource resource = 1;
+message GetRoleInclusionResponse {
+  RoleInclusion role_inclusion = 1;
 }
 
-message UpdateResourceRequest {
-  Resource resource = 1;
+message DeleteRoleInclusionRequest {
+  int64 biz_id = 1;
+  int64 including_role_id = 2;
+  int64 included_role_id = 3;
 }
 
-message UpdateResourceResponse {
-  Resource resource = 1;
-}
-
-message DeleteResourceRequest {
-  int64 id = 1;
-}
-
-message DeleteResourceResponse {
+message DeleteRoleInclusionResponse {
   bool success = 1;
 }
 
-message ListResourcesRequest {
+message ListRoleInclusionsRequest {
   int64 biz_id = 1;
-  int32 offset = 2;
-  int32 limit = 3;
-  string type = 4; // 可选过滤条件
-  string key = 5; // 可选过滤条件
+  int64 role_id = 2; // 可选，如果提供则表示查询特定角色的包含关系
+  bool is_including = 3; // 如果为true，则role_id表示including_role_id；否则表示included_role_id
+  int32 offset = 4;
+  int32 limit = 5;
 }
 
-message ListResourcesResponse {
-  repeated Resource resources = 1;
+message ListRoleInclusionsResponse {
+  repeated RoleInclusion role_inclusions = 1;
   int32 total = 2;
 }
 
-message CreatePermissionRequest {
-  Permission permission = 1;
-}
-
-message CreatePermissionResponse {
-  Permission permission = 1;
-}
-
-message GetPermissionRequest {
+// ==== 角色权限相关消息定义 ====
+message RolePermission {
   int64 id = 1;
+  int64 biz_id = 2;
+  int64 role_id = 3;
+  int64 permission_id = 4;
+  string permission_name = 5;
+  string permission_type = 6;
+  int64 start_time = 7; // 临时角色有效期开始时间
+  int64 end_time = 8; // 临时角色有效期结束时间
 }
 
-message GetPermissionResponse {
-  Permission permission = 1;
+message GrantRolePermissionRequest {
+  int64 biz_id = 1;
+  int64 role_id = 2;
+  int64 permission_id = 3;
+  int64 start_time = 4; // 可选，临时角色有效期
+  int64 end_time = 5; // 可选，临时角色有效期
 }
 
-message UpdatePermissionRequest {
-  Permission permission = 1;
+message GrantRolePermissionResponse {
+  RolePermission role_permission = 1;
 }
 
-message UpdatePermissionResponse {
-  Permission permission = 1;
+message RevokeRolePermissionRequest {
+  int64 biz_id = 1;
+  int64 role_id = 2;
+  int64 permission_id = 3;
 }
 
-message DeletePermissionRequest {
-  int64 id = 1;
-}
-
-message DeletePermissionResponse {
+message RevokeRolePermissionResponse {
   bool success = 1;
 }
 
-message ListPermissionsRequest {
+message ListRolePermissionsRequest {
   int64 biz_id = 1;
-  int32 offset = 2;
-  int32 limit = 3;
-  string resource_type = 4; // 可选过滤条件
-  string resource_key = 5; // 可选过滤条件
-  string action = 6; // 可选过滤条件
+  int64 role_id = 2;
+  int32 offset = 3;
+  int32 limit = 4;
 }
 
-message ListPermissionsResponse {
-  repeated Permission permissions = 1;
+message ListRolePermissionsResponse {
+  repeated RolePermission role_permissions = 1;
   int32 total = 2;
 }
 
@@ -232,48 +403,54 @@ message ListUserRolesResponse {
   int32 total = 2;
 }
 
-// ==== 角色权限相关消息定义 ====
-message RolePermission {
+// ==== 用户权限相关消息定义 ====
+message UserPermission {
   int64 id = 1;
   int64 biz_id = 2;
-  int64 role_id = 3;
+  int64 user_id = 3;
   int64 permission_id = 4;
   string permission_name = 5;
-  string permission_type = 6;
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
+  string resource_type = 6;
+  string resource_key = 7;
+  string resource_name = 8;
+  string action = 9;
+  int64 start_time = 10;
+  int64 end_time = 11;
+  string effect = 12; // allow, deny
 }
 
-message GrantRolePermissionRequest {
+message GrantUserPermissionRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
+  int64 user_id = 2;
   int64 permission_id = 3;
-  int64 start_time = 4; // 可选，临时角色有效期
-  int64 end_time = 5; // 可选，临时角色有效期
+  string effect = 4; // allow, deny
+  int64 start_time = 5; // 可选，临时权限有效期
+  int64 end_time = 6; // 可选，临时权限有效期
 }
 
-message GrantRolePermissionResponse {
-  RolePermission role_permission = 1;
+message GrantUserPermissionResponse {
+  UserPermission user_permission = 1;
 }
 
-message RevokeRolePermissionRequest {
+message RevokeUserPermissionRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
+  int64 user_id = 2;
   int64 permission_id = 3;
 }
 
-message RevokeRolePermissionResponse {
+message RevokeUserPermissionResponse {
   bool success = 1;
 }
 
-message ListRolePermissionsRequest {
+message ListUserPermissionsRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
+  int64 user_id = 2;
   int32 offset = 3;
   int32 limit = 4;
+  bool only_valid = 5; // 如果为true，则只返回当前有效的权限
 }
 
-message ListRolePermissionsResponse {
-  repeated RolePermission role_permissions = 1;
+message ListUserPermissionsResponse {
+  repeated UserPermission user_permissions = 1;
   int32 total = 2;
 }
