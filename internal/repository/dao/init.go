@@ -1,6 +1,14 @@
 package dao
 
-import "github.com/ego-component/egorm"
+import (
+	"errors"
+
+	"github.com/ego-component/egorm"
+	"github.com/go-sql-driver/mysql"
+)
+
+// 批处理常量
+const batchSize = 100
 
 func InitTables(db *egorm.Component) error {
 	return db.AutoMigrate(
@@ -13,4 +21,17 @@ func InitTables(db *egorm.Component) error {
 		&UserRole{},
 		&UserPermission{},
 	)
+}
+
+// isUniqueConstraintError 检查是否是唯一索引冲突错误
+func isUniqueConstraintError(err error) bool {
+	if err == nil {
+		return false
+	}
+	me := new(mysql.MySQLError)
+	if ok := errors.As(err, &me); ok {
+		const uniqueIndexErrNo uint16 = 1062
+		return me.Number == uniqueIndexErrNo
+	}
+	return false
 }

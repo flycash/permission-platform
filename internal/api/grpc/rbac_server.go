@@ -15,11 +15,11 @@ import (
 
 type RBACServer struct {
 	permissionpb.UnimplementedRBACServiceServer
-	rbacService rbac.RBACService
+	rbacService rbac.Service
 }
 
 // NewRBACServer 创建RBAC服务器实例
-func NewRBACServer(rbacService rbac.RBACService) *RBACServer {
+func NewRBACServer(rbacService rbac.Service) *RBACServer {
 	return &RBACServer{
 		rbacService: rbacService,
 	}
@@ -195,6 +195,20 @@ func domainToProtoUserRole(domainUserRole domain.UserRole) *permissionpb.UserRol
 		RoleType:  roleType,
 		StartTime: domainUserRole.StartTime,
 		EndTime:   domainUserRole.EndTime,
+	}
+}
+
+// 从领域模型转换为proto消息
+func domainToProtoRolePermission(domainRolePermission domain.RolePermission) *permissionpb.RolePermission {
+	return &permissionpb.RolePermission{
+		Id:             domainRolePermission.ID,
+		BizId:          domainRolePermission.BizID,
+		RoleId:         domainRolePermission.RoleID,
+		PermissionId:   domainRolePermission.PermissionID,
+		PermissionName: domainRolePermission.PermissionName,
+		PermissionType: domainRolePermission.PermissionType,
+		StartTime:      domainRolePermission.StartTime,
+		EndTime:        domainRolePermission.EndTime,
 	}
 }
 
@@ -699,5 +713,89 @@ func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUs
 	return &permissionpb.ListUserRolesResponse{
 		UserRoles: protoUserRoles,
 		Total:     int32(total),
+	}, nil
+}
+
+// ===== 角色权限相关接口实现 =====
+
+// GrantRolePermission 授予角色权限
+func (s *RBACServer) GrantRolePermission(ctx context.Context, req *permissionpb.GrantRolePermissionRequest) (*permissionpb.GrantRolePermissionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.RoleId <= 0 || req.PermissionId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID、角色ID或权限ID无效")
+	}
+
+	// 调用服务层
+	rolePermission, err := s.rbacService.GrantRolePermission(ctx, req.BizId, req.RoleId, req.PermissionId, req.StartTime, req.EndTime)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "授予角色权限失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.GrantRolePermissionResponse{
+		RolePermission: domainToProtoRolePermission(rolePermission),
+	}, nil
+}
+
+// RevokeRolePermission 撤销角色权限
+func (s *RBACServer) RevokeRolePermission(ctx context.Context, req *permissionpb.RevokeRolePermissionRequest) (*permissionpb.RevokeRolePermissionResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.RoleId <= 0 || req.PermissionId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID、角色ID或权限ID无效")
+	}
+
+	// 调用服务层
+	err = s.rbacService.RevokeRolePermission(ctx, req.BizId, req.RoleId, req.PermissionId)
+	if err != nil {
+		return nil, status.Error(codes.Internal, "撤销角色权限失败: "+err.Error())
+	}
+
+	// 返回结果
+	return &permissionpb.RevokeRolePermissionResponse{
+		Success: true,
+	}, nil
+}
+
+// ListRolePermissions 获取角色权限列表
+func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.ListRolePermissionsRequest) (*permissionpb.ListRolePermissionsResponse, error) {
+	// 获取调用者ID
+	_, err := getUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 参数校验
+	if req.BizId <= 0 || req.RoleId <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "业务ID或角色ID无效")
+	}
+
+	// 调用服务层
+	rolePermissions, total, err := s.rbacService.ListRolePermissions(ctx, req.BizId, req.RoleId, int(req.Offset), int(req.Limit))
+	if err != nil {
+		return nil, status.Error(codes.Internal, "获取角色权限列表失败: "+err.Error())
+	}
+
+	// 转换结果
+	protoRolePermissions := make([]*permissionpb.RolePermission, 0, len(rolePermissions))
+	for _, rolePermission := range rolePermissions {
+		protoRolePermissions = append(protoRolePermissions, domainToProtoRolePermission(rolePermission))
+	}
+
+	// 返回结果
+	return &permissionpb.ListRolePermissionsResponse{
+		RolePermissions: protoRolePermissions,
+		Total:           int32(total),
 	}, nil
 }

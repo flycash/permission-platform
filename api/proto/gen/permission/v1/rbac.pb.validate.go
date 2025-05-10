@@ -4611,3 +4611,826 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListUserRolesResponseValidationError{}
+
+// Validate checks the field values on RolePermission with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RolePermission) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RolePermission with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RolePermissionMultiError,
+// or nil if none found.
+func (m *RolePermission) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RolePermission) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for BizId
+
+	// no validation rules for RoleId
+
+	// no validation rules for PermissionId
+
+	// no validation rules for PermissionName
+
+	// no validation rules for PermissionType
+
+	// no validation rules for StartTime
+
+	// no validation rules for EndTime
+
+	if len(errors) > 0 {
+		return RolePermissionMultiError(errors)
+	}
+
+	return nil
+}
+
+// RolePermissionMultiError is an error wrapping multiple validation errors
+// returned by RolePermission.ValidateAll() if the designated constraints
+// aren't met.
+type RolePermissionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RolePermissionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RolePermissionMultiError) AllErrors() []error { return m }
+
+// RolePermissionValidationError is the validation error returned by
+// RolePermission.Validate if the designated constraints aren't met.
+type RolePermissionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RolePermissionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RolePermissionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RolePermissionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RolePermissionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RolePermissionValidationError) ErrorName() string { return "RolePermissionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RolePermissionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRolePermission.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RolePermissionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RolePermissionValidationError{}
+
+// Validate checks the field values on GrantRolePermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GrantRolePermissionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantRolePermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantRolePermissionRequestMultiError, or nil if none found.
+func (m *GrantRolePermissionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantRolePermissionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BizId
+
+	// no validation rules for RoleId
+
+	// no validation rules for PermissionId
+
+	// no validation rules for StartTime
+
+	// no validation rules for EndTime
+
+	if len(errors) > 0 {
+		return GrantRolePermissionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GrantRolePermissionRequestMultiError is an error wrapping multiple
+// validation errors returned by GrantRolePermissionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type GrantRolePermissionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantRolePermissionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantRolePermissionRequestMultiError) AllErrors() []error { return m }
+
+// GrantRolePermissionRequestValidationError is the validation error returned
+// by GrantRolePermissionRequest.Validate if the designated constraints aren't met.
+type GrantRolePermissionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantRolePermissionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantRolePermissionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantRolePermissionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantRolePermissionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantRolePermissionRequestValidationError) ErrorName() string {
+	return "GrantRolePermissionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantRolePermissionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantRolePermissionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantRolePermissionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantRolePermissionRequestValidationError{}
+
+// Validate checks the field values on GrantRolePermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GrantRolePermissionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GrantRolePermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GrantRolePermissionResponseMultiError, or nil if none found.
+func (m *GrantRolePermissionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GrantRolePermissionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetRolePermission()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantRolePermissionResponseValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantRolePermissionResponseValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRolePermission()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantRolePermissionResponseValidationError{
+				field:  "RolePermission",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GrantRolePermissionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GrantRolePermissionResponseMultiError is an error wrapping multiple
+// validation errors returned by GrantRolePermissionResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GrantRolePermissionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GrantRolePermissionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GrantRolePermissionResponseMultiError) AllErrors() []error { return m }
+
+// GrantRolePermissionResponseValidationError is the validation error returned
+// by GrantRolePermissionResponse.Validate if the designated constraints
+// aren't met.
+type GrantRolePermissionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GrantRolePermissionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GrantRolePermissionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GrantRolePermissionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GrantRolePermissionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GrantRolePermissionResponseValidationError) ErrorName() string {
+	return "GrantRolePermissionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GrantRolePermissionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGrantRolePermissionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GrantRolePermissionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GrantRolePermissionResponseValidationError{}
+
+// Validate checks the field values on RevokeRolePermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeRolePermissionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeRolePermissionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeRolePermissionRequestMultiError, or nil if none found.
+func (m *RevokeRolePermissionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeRolePermissionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BizId
+
+	// no validation rules for RoleId
+
+	// no validation rules for PermissionId
+
+	if len(errors) > 0 {
+		return RevokeRolePermissionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeRolePermissionRequestMultiError is an error wrapping multiple
+// validation errors returned by RevokeRolePermissionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RevokeRolePermissionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeRolePermissionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeRolePermissionRequestMultiError) AllErrors() []error { return m }
+
+// RevokeRolePermissionRequestValidationError is the validation error returned
+// by RevokeRolePermissionRequest.Validate if the designated constraints
+// aren't met.
+type RevokeRolePermissionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeRolePermissionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeRolePermissionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeRolePermissionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeRolePermissionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeRolePermissionRequestValidationError) ErrorName() string {
+	return "RevokeRolePermissionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeRolePermissionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeRolePermissionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeRolePermissionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeRolePermissionRequestValidationError{}
+
+// Validate checks the field values on RevokeRolePermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RevokeRolePermissionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RevokeRolePermissionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RevokeRolePermissionResponseMultiError, or nil if none found.
+func (m *RevokeRolePermissionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RevokeRolePermissionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Success
+
+	if len(errors) > 0 {
+		return RevokeRolePermissionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RevokeRolePermissionResponseMultiError is an error wrapping multiple
+// validation errors returned by RevokeRolePermissionResponse.ValidateAll() if
+// the designated constraints aren't met.
+type RevokeRolePermissionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RevokeRolePermissionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RevokeRolePermissionResponseMultiError) AllErrors() []error { return m }
+
+// RevokeRolePermissionResponseValidationError is the validation error returned
+// by RevokeRolePermissionResponse.Validate if the designated constraints
+// aren't met.
+type RevokeRolePermissionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RevokeRolePermissionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RevokeRolePermissionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RevokeRolePermissionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RevokeRolePermissionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RevokeRolePermissionResponseValidationError) ErrorName() string {
+	return "RevokeRolePermissionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RevokeRolePermissionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRevokeRolePermissionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RevokeRolePermissionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RevokeRolePermissionResponseValidationError{}
+
+// Validate checks the field values on ListRolePermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListRolePermissionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListRolePermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListRolePermissionsRequestMultiError, or nil if none found.
+func (m *ListRolePermissionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListRolePermissionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BizId
+
+	// no validation rules for RoleId
+
+	// no validation rules for Offset
+
+	// no validation rules for Limit
+
+	if len(errors) > 0 {
+		return ListRolePermissionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListRolePermissionsRequestMultiError is an error wrapping multiple
+// validation errors returned by ListRolePermissionsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListRolePermissionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListRolePermissionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListRolePermissionsRequestMultiError) AllErrors() []error { return m }
+
+// ListRolePermissionsRequestValidationError is the validation error returned
+// by ListRolePermissionsRequest.Validate if the designated constraints aren't met.
+type ListRolePermissionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListRolePermissionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListRolePermissionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListRolePermissionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListRolePermissionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListRolePermissionsRequestValidationError) ErrorName() string {
+	return "ListRolePermissionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListRolePermissionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListRolePermissionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListRolePermissionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListRolePermissionsRequestValidationError{}
+
+// Validate checks the field values on ListRolePermissionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListRolePermissionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListRolePermissionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListRolePermissionsResponseMultiError, or nil if none found.
+func (m *ListRolePermissionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListRolePermissionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetRolePermissions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListRolePermissionsResponseValidationError{
+						field:  fmt.Sprintf("RolePermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListRolePermissionsResponseValidationError{
+						field:  fmt.Sprintf("RolePermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListRolePermissionsResponseValidationError{
+					field:  fmt.Sprintf("RolePermissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Total
+
+	if len(errors) > 0 {
+		return ListRolePermissionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListRolePermissionsResponseMultiError is an error wrapping multiple
+// validation errors returned by ListRolePermissionsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ListRolePermissionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListRolePermissionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListRolePermissionsResponseMultiError) AllErrors() []error { return m }
+
+// ListRolePermissionsResponseValidationError is the validation error returned
+// by ListRolePermissionsResponse.Validate if the designated constraints
+// aren't met.
+type ListRolePermissionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListRolePermissionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListRolePermissionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListRolePermissionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListRolePermissionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListRolePermissionsResponseValidationError) ErrorName() string {
+	return "ListRolePermissionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListRolePermissionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListRolePermissionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListRolePermissionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListRolePermissionsResponseValidationError{}

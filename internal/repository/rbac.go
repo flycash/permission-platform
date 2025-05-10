@@ -13,6 +13,7 @@ type RBACRepository interface {
 	CheckUserPermission(ctx context.Context, bizID, userID int64, permission domain.Permission) (bool, error)
 
 	// Role相关方法
+
 	CreateRole(ctx context.Context, role domain.Role) (domain.Role, error)
 	GetRole(ctx context.Context, id int64) (domain.Role, error)
 	UpdateRole(ctx context.Context, role domain.Role) (domain.Role, error)
@@ -20,6 +21,7 @@ type RBACRepository interface {
 	ListRoles(ctx context.Context, bizID int64, offset, limit int, roleType string) ([]domain.Role, int, error)
 
 	// Resource相关方法
+
 	CreateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error)
 	GetResource(ctx context.Context, id int64) (domain.Resource, error)
 	UpdateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error)
@@ -27,6 +29,7 @@ type RBACRepository interface {
 	ListResources(ctx context.Context, bizID int64, offset, limit int, resourceType, key string) ([]domain.Resource, int, error)
 
 	// Permission相关方法
+
 	CreatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 	GetPermission(ctx context.Context, id int64) (domain.Permission, error)
 	UpdatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
@@ -34,9 +37,24 @@ type RBACRepository interface {
 	ListPermissions(ctx context.Context, bizID int64, offset, limit int, resourceType, resourceKey, action string) ([]domain.Permission, int, error)
 
 	// 用户角色相关方法
+
 	GrantUserRole(ctx context.Context, bizID int64, userID int64, roleID int64, startTime, endTime int64) (domain.UserRole, error)
 	RevokeUserRole(ctx context.Context, bizID int64, userID int64, roleID int64) error
 	ListUserRoles(ctx context.Context, bizID int64, userID int64, offset, limit int) ([]domain.UserRole, int, error)
+
+	// 业务配置相关方法
+
+	GetBusinessConfig(ctx context.Context, id int64) (domain.BusinessConfig, error)
+	GetBusinessConfigs(ctx context.Context, ids []int64) (map[int64]domain.BusinessConfig, error)
+	SaveBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
+	DeleteBusinessConfig(ctx context.Context, id int64) error
+	ListBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, int, error)
+
+	// 角色权限相关方法
+
+	GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error)
+	RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error
+	ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error)
 }
 
 type rbacRepository struct {
@@ -47,6 +65,7 @@ type rbacRepository struct {
 	roleInclusionDAO  dao.RoleInclusionDAO
 	userPermissionDAO dao.UserPermissionDAO
 	userRoleDAO       dao.UserRoleDAO
+	businessConfigDAO dao.BusinessConfigDAO
 }
 
 // NewRBACRepository 创建RBAC仓储的实例
@@ -58,6 +77,7 @@ func NewRBACRepository(
 	roleInclusionDAO dao.RoleInclusionDAO,
 	userPermissionDAO dao.UserPermissionDAO,
 	userRoleDAO dao.UserRoleDAO,
+	businessConfigDAO dao.BusinessConfigDAO,
 ) RBACRepository {
 	return &rbacRepository{
 		resourceDAO:       resourceDAO,
@@ -67,11 +87,12 @@ func NewRBACRepository(
 		roleInclusionDAO:  roleInclusionDAO,
 		userPermissionDAO: userPermissionDAO,
 		userRoleDAO:       userRoleDAO,
+		businessConfigDAO: businessConfigDAO,
 	}
 }
 
 // convertDomainActionToDAOAction 将领域模型的操作类型转换为DAO的操作类型
-func convertDomainActionToDAOAction(action domain.ActionType) dao.ActionType {
+func (r *rbacRepository) convertDomainActionToDAOAction(action domain.ActionType) dao.ActionType {
 	switch action {
 	case domain.ActionTypeRead:
 		return dao.ActionTypeRead
@@ -95,7 +116,7 @@ func convertDomainActionToDAOAction(action domain.ActionType) dao.ActionType {
 // CheckUserPermission 检查用户是否具有特定权限
 func (r *rbacRepository) CheckUserPermission(ctx context.Context, bizID, userID int64, permission domain.Permission) (bool, error) {
 	// 1. 转换操作类型
-	daoAction := convertDomainActionToDAOAction(permission.Action)
+	daoAction := r.convertDomainActionToDAOAction(permission.Action)
 	resourceKey := permission.ResourceKey
 
 	// 2. 检查直接分配给用户的权限
@@ -438,16 +459,16 @@ func (r *rbacRepository) ListUserRoles(ctx context.Context, bizID, userID int64,
 }
 
 func (r *rbacRepository) toRoleEntity(role domain.Role) dao.Role {
-	roleType := dao.RoleType(string(role.Type))
-
 	return dao.Role{
 		ID:          role.ID,
 		BizID:       role.BizID,
-		Type:        roleType,
+		Type:        dao.RoleType(role.Type),
 		Name:        role.Name,
 		Description: role.Description,
 		StartTime:   role.StartTime,
 		EndTime:     role.EndTime,
+		Ctime:       role.Ctime,
+		Utime:       role.Utime,
 	}
 }
 
@@ -472,6 +493,8 @@ func (r *rbacRepository) toRoleDomain(role dao.Role) domain.Role {
 		Description: role.Description,
 		StartTime:   role.StartTime,
 		EndTime:     role.EndTime,
+		Ctime:       role.Ctime,
+		Utime:       role.Utime,
 	}
 }
 
@@ -483,6 +506,8 @@ func (r *rbacRepository) toResourceEntity(resource domain.Resource) dao.Resource
 		Key:         resource.Key,
 		Name:        resource.Name,
 		Description: resource.Description,
+		Ctime:       resource.Ctime,
+		Utime:       resource.Utime,
 	}
 }
 
@@ -494,9 +519,12 @@ func (r *rbacRepository) toResourceDomain(resource dao.Resource) domain.Resource
 		Key:         resource.Key,
 		Name:        resource.Name,
 		Description: resource.Description,
+		Ctime:       resource.Ctime,
+		Utime:       resource.Utime,
 	}
 }
 
+//nolint:dupl // 虽然结构相似，但执行的是互逆的转换操作
 func (r *rbacRepository) toPermissionEntity(permission domain.Permission) dao.Permission {
 	var action dao.ActionType
 	switch permission.Action {
@@ -527,9 +555,12 @@ func (r *rbacRepository) toPermissionEntity(permission domain.Permission) dao.Pe
 		ResourceType: permission.ResourceType,
 		ResourceKey:  permission.ResourceKey,
 		Action:       action,
+		Ctime:        permission.Ctime,
+		Utime:        permission.Utime,
 	}
 }
 
+//nolint:dupl // 虽然结构相似，但执行的是互逆的转换操作
 func (r *rbacRepository) toPermissionDomain(permission dao.Permission) domain.Permission {
 	var action domain.ActionType
 	switch permission.Action {
@@ -560,6 +591,8 @@ func (r *rbacRepository) toPermissionDomain(permission dao.Permission) domain.Pe
 		ResourceType: permission.ResourceType,
 		ResourceKey:  permission.ResourceKey,
 		Action:       action,
+		Ctime:        permission.Ctime,
+		Utime:        permission.Utime,
 	}
 }
 
@@ -585,5 +618,170 @@ func (r *rbacRepository) toUserRoleDomain(userRole dao.UserRole) domain.UserRole
 		RoleType:  roleType,
 		StartTime: userRole.StartTime,
 		EndTime:   userRole.EndTime,
+		Ctime:     userRole.Ctime,
+		Utime:     userRole.Utime,
+	}
+}
+
+// 业务配置相关方法实现
+func (r *rbacRepository) GetBusinessConfig(ctx context.Context, id int64) (domain.BusinessConfig, error) {
+	config, err := r.businessConfigDAO.GetByID(ctx, id)
+	if err != nil {
+		return domain.BusinessConfig{}, err
+	}
+	return r.toBusinessConfigDomain(config), nil
+}
+
+func (r *rbacRepository) GetBusinessConfigs(ctx context.Context, ids []int64) (map[int64]domain.BusinessConfig, error) {
+	configMap, err := r.businessConfigDAO.GetByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[int64]domain.BusinessConfig, len(configMap))
+	for id, config := range configMap {
+		result[id] = r.toBusinessConfigDomain(config)
+	}
+	return result, nil
+}
+
+func (r *rbacRepository) SaveBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error) {
+	daoConfig := r.toBusinessConfigEntity(config)
+	saved, err := r.businessConfigDAO.SaveConfig(ctx, daoConfig)
+	if err != nil {
+		return domain.BusinessConfig{}, err
+	}
+	return r.toBusinessConfigDomain(saved), nil
+}
+
+func (r *rbacRepository) DeleteBusinessConfig(ctx context.Context, id int64) error {
+	return r.businessConfigDAO.Delete(ctx, id)
+}
+
+func (r *rbacRepository) ListBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, int, error) {
+	configs, err := r.businessConfigDAO.Find(ctx, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	count := len(configs)
+	result := make([]domain.BusinessConfig, 0, count)
+	for i := range configs {
+		result = append(result, r.toBusinessConfigDomain(configs[i]))
+	}
+	return result, count, nil
+}
+
+func (r *rbacRepository) toBusinessConfigEntity(config domain.BusinessConfig) dao.BusinessConfig {
+	return dao.BusinessConfig{
+		ID:        config.ID,
+		Name:      config.Name,
+		OwnerID:   config.OwnerID,
+		OwnerType: config.OwnerType,
+		RateLimit: config.RateLimit,
+		Token:     config.Token,
+		Ctime:     config.Ctime,
+		Utime:     config.Utime,
+	}
+}
+
+func (r *rbacRepository) toBusinessConfigDomain(config dao.BusinessConfig) domain.BusinessConfig {
+	return domain.BusinessConfig{
+		ID:        config.ID,
+		Name:      config.Name,
+		OwnerID:   config.OwnerID,
+		OwnerType: config.OwnerType,
+		RateLimit: config.RateLimit,
+		Token:     config.Token,
+		Ctime:     config.Ctime,
+		Utime:     config.Utime,
+	}
+}
+
+// 角色权限相关方法实现
+func (r *rbacRepository) GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error) {
+	// 获取角色信息
+	role, err := r.roleDAO.GetByID(ctx, roleID)
+	if err != nil {
+		return domain.RolePermission{}, err
+	}
+
+	// 获取权限信息
+	permission, err := r.permissionDAO.GetByID(ctx, permissionID)
+	if err != nil {
+		return domain.RolePermission{}, err
+	}
+
+	rolePermission := dao.RolePermission{
+		BizID:        bizID,
+		RoleID:       roleID,
+		PermissionID: permissionID,
+		RoleName:     role.Name,
+		RoleType:     role.Type,
+		ResourceType: permission.ResourceType,
+		ResourceKey:  permission.ResourceKey,
+		Action:       permission.Action,
+	}
+
+	created, err := r.rolePermissionDAO.Create(ctx, rolePermission)
+	if err != nil {
+		return domain.RolePermission{}, err
+	}
+
+	result := r.toRolePermissionDomain(created)
+	// 单独设置StartTime和EndTime，因为dao结构体中没有这些字段
+	result.StartTime = startTime
+	result.EndTime = endTime
+
+	return result, nil
+}
+
+func (r *rbacRepository) RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error {
+	return r.rolePermissionDAO.DeleteByRoleIDAndPermissionID(ctx, bizID, roleID, permissionID)
+}
+
+func (r *rbacRepository) ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error) {
+	// 查找角色所有权限
+	rolePermissions, err := r.rolePermissionDAO.FindByRoleID(ctx, bizID, roleID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 总数
+	count := len(rolePermissions)
+
+	// 处理分页
+	startIndex := offset
+	endIndex := offset + limit
+	if startIndex >= count {
+		return []domain.RolePermission{}, 0, nil
+	}
+	if endIndex > count {
+		endIndex = count
+	}
+
+	// 转换为domain模型
+	paginatedPermissions := rolePermissions[startIndex:endIndex]
+	domainRolePermissions := make([]domain.RolePermission, 0, len(paginatedPermissions))
+	for i := range paginatedPermissions {
+		domainRolePermissions = append(domainRolePermissions, r.toRolePermissionDomain(paginatedPermissions[i]))
+	}
+
+	return domainRolePermissions, count, nil
+}
+
+func (r *rbacRepository) toRolePermissionDomain(rolePermission dao.RolePermission) domain.RolePermission {
+	// 获取权限名称，这里简化处理
+	permissionName := ""
+
+	return domain.RolePermission{
+		ID:             rolePermission.ID,
+		BizID:          rolePermission.BizID,
+		RoleID:         rolePermission.RoleID,
+		PermissionID:   rolePermission.PermissionID,
+		PermissionName: permissionName,
+		PermissionType: rolePermission.ResourceType,
+		StartTime:      0, // dao结构体中没有这些字段，由上层设置
+		EndTime:        0,
 	}
 }

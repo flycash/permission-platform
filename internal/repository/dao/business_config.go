@@ -2,8 +2,10 @@ package dao
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/errs"
 	"github.com/ego-component/egorm"
 	"gorm.io/gorm/clause"
 )
@@ -108,6 +110,9 @@ func (b *businessConfigDAO) SaveConfig(ctx context.Context, config BusinessConfi
 		}), // 只更新指定的非空列
 	}).Create(&config)
 	if result.Error != nil {
+		if isUniqueConstraintError(result.Error) {
+			return BusinessConfig{}, fmt.Errorf("%w", errs.ErrBusinessConfigDuplicate)
+		}
 		return BusinessConfig{}, result.Error
 	}
 	return config, nil

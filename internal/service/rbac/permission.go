@@ -17,8 +17,8 @@ type permissionService struct {
 	repo repository.RBACRepository
 }
 
-// NewService 创建RBAC服务实例
-func NewService(repo repository.RBACRepository) PermissionService {
+// NewPermissionService 创建RBAC权限服务实例
+func NewPermissionService(repo repository.RBACRepository) PermissionService {
 	return &permissionService{
 		repo: repo,
 	}

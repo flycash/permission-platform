@@ -7,9 +7,6 @@ import (
 	"github.com/ego-component/egorm"
 )
 
-// 批处理常量
-const batchSize = 100
-
 // RoleInclusion 角色包含关系表
 type RoleInclusion struct {
 	ID                int64    `gorm:"primaryKey;autoIncrement;comment:角色包含关系ID'"`
@@ -30,34 +27,8 @@ func (RoleInclusion) TableName() string {
 
 // RoleInclusionDAO 角色包含关系数据访问接口
 type RoleInclusionDAO interface {
-	// GetByID 根据ID获取角色包含关系
-	GetByID(ctx context.Context, id int64) (RoleInclusion, error)
-	// GetByIDs 根据多个ID批量获取角色包含关系
-	GetByIDs(ctx context.Context, ids []int64) (map[int64]RoleInclusion, error)
-	// FindByBizID 查找特定业务下的角色包含关系
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RoleInclusion, error)
 	// FindByIncludingRoleID 查找特定角色包含的所有角色
 	FindByIncludingRoleID(ctx context.Context, bizID int64, includingRoleID int64) ([]RoleInclusion, error)
-	// FindByIncludedRoleID 查找包含特定角色的所有角色
-	FindByIncludedRoleID(ctx context.Context, includedRoleID int64) ([]RoleInclusion, error)
-	// FindByBizIDAndIncludingRoleType 查找特定业务下指定包含者角色类型的包含关系
-	FindByBizIDAndIncludingRoleType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]RoleInclusion, error)
-	// FindByBizIDAndIncludedRoleType 查找特定业务下指定被包含角色类型的包含关系
-	FindByBizIDAndIncludedRoleType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]RoleInclusion, error)
-	// ExistsByIncludingAndIncludedRoleID 检查包含关系是否存在
-	ExistsByIncludingAndIncludedRoleID(ctx context.Context, bizID int64, includingRoleID int64, includedRoleID int64) (bool, error)
-	// Create 创建角色包含关系
-	Create(ctx context.Context, roleInclusion RoleInclusion) (RoleInclusion, error)
-	// BatchCreate 批量创建角色包含关系
-	BatchCreate(ctx context.Context, roleInclusions []RoleInclusion) error
-	// Delete 删除角色包含关系
-	Delete(ctx context.Context, id int64) error
-	// DeleteByIncludingAndIncludedRoleID 删除特定的角色包含关系
-	DeleteByIncludingAndIncludedRoleID(ctx context.Context, bizID int64, includingRoleID int64, includedRoleID int64) error
-	// DeleteByIncludingRoleID 删除特定角色的所有包含关系（作为包含者）
-	DeleteByIncludingRoleID(ctx context.Context, includingRoleID int64) error
-	// DeleteByIncludedRoleID 删除特定角色的所有包含关系（作为被包含者）
-	DeleteByIncludedRoleID(ctx context.Context, includedRoleID int64) error
 }
 
 // roleInclusionDAO 角色包含关系数据访问实现
@@ -70,6 +41,12 @@ func NewRoleInclusionDAO(db *egorm.Component) RoleInclusionDAO {
 	return &roleInclusionDAO{
 		db: db,
 	}
+}
+
+func (r *roleInclusionDAO) FindByIncludingRoleID(ctx context.Context, bizID, includingRoleID int64) ([]RoleInclusion, error) {
+	var roleInclusions []RoleInclusion
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND including_role_id = ?", bizID, includingRoleID).Find(&roleInclusions).Error
+	return roleInclusions, err
 }
 
 func (r *roleInclusionDAO) GetByID(ctx context.Context, id int64) (RoleInclusion, error) {
@@ -95,12 +72,6 @@ func (r *roleInclusionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64
 func (r *roleInclusionDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RoleInclusion, error) {
 	var roleInclusions []RoleInclusion
 	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&roleInclusions).Error
-	return roleInclusions, err
-}
-
-func (r *roleInclusionDAO) FindByIncludingRoleID(ctx context.Context, bizID, includingRoleID int64) ([]RoleInclusion, error) {
-	var roleInclusions []RoleInclusion
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND including_role_id = ?", bizID, includingRoleID).Find(&roleInclusions).Error
 	return roleInclusions, err
 }
 

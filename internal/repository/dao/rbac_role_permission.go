@@ -2,8 +2,10 @@ package dao
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/errs"
 	"github.com/ego-component/egorm"
 )
 
@@ -28,36 +30,12 @@ func (RolePermission) TableName() string {
 
 // RolePermissionDAO 角色权限关联数据访问接口
 type RolePermissionDAO interface {
-	// GetByID 根据ID获取角色权限关联
-	GetByID(ctx context.Context, id int64) (RolePermission, error)
-	// GetByIDs 根据多个ID批量获取角色权限关联
-	GetByIDs(ctx context.Context, ids []int64) (map[int64]RolePermission, error)
-	// FindByBizID 查找特定业务下的角色权限关联
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error)
 	// FindByRoleID 查找特定角色的所有权限关联
 	FindByRoleID(ctx context.Context, bizID int64, roleID int64) ([]RolePermission, error)
-	// FindByPermissionID 查找拥有特定权限的所有角色关联
-	FindByPermissionID(ctx context.Context, permissionID int64) ([]RolePermission, error)
-	// FindByBizIDAndRoleType 查找特定业务下指定角色类型的权限关联
-	FindByBizIDAndRoleType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]RolePermission, error)
-	// FindByBizIDAndResourceType 查找特定业务下指定资源类型的权限关联
-	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]RolePermission, error)
-	// FindByBizIDAndAction 查找特定业务下指定操作类型的权限关联
-	FindByBizIDAndAction(ctx context.Context, bizID int64, action ActionType, offset, limit int) ([]RolePermission, error)
-	// FindByBizIDAndResourceKeyAction 查找特定业务下针对特定资源和操作的权限关联
-	FindByBizIDAndResourceKeyAction(ctx context.Context, bizID int64, resourceKey string, action ActionType, offset, limit int) ([]RolePermission, error)
-	// ExistsByRoleIDAndPermissionID 检查角色和权限关联是否存在
-	ExistsByRoleIDAndPermissionID(ctx context.Context, bizID int64, roleID int64, permissionID int64) (bool, error)
 	// Create 创建角色权限关联
 	Create(ctx context.Context, rolePermission RolePermission) (RolePermission, error)
-	// BatchCreate 批量创建角色权限关联
-	BatchCreate(ctx context.Context, rolePermissions []RolePermission) error
-	// Delete 删除角色权限关联
-	Delete(ctx context.Context, id int64) error
 	// DeleteByRoleIDAndPermissionID 删除特定角色和权限的关联
 	DeleteByRoleIDAndPermissionID(ctx context.Context, bizID int64, roleID int64, permissionID int64) error
-	// DeleteByRoleID 删除角色的所有权限关联
-	DeleteByRoleID(ctx context.Context, roleID int64) error
 }
 
 // rolePermissionDAO 角色权限关联数据访问实现
@@ -95,12 +73,6 @@ func (r *rolePermissionDAO) GetByIDs(ctx context.Context, ids []int64) (map[int6
 func (r *rolePermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
 	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&rolePermissions).Error
-	return rolePermissions, err
-}
-
-func (r *rolePermissionDAO) FindByRoleID(ctx context.Context, bizID, roleID int64) ([]RolePermission, error) {
-	var rolePermissions []RolePermission
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id = ?", bizID, roleID).Find(&rolePermissions).Error
 	return rolePermissions, err
 }
 
@@ -164,7 +136,13 @@ func (r *rolePermissionDAO) Create(ctx context.Context, rolePermission RolePermi
 	rolePermission.Ctime = now
 	rolePermission.Utime = now
 	err := r.db.WithContext(ctx).Create(&rolePermission).Error
-	return rolePermission, err
+	if err != nil {
+		if isUniqueConstraintError(err) {
+			return RolePermission{}, fmt.Errorf("%w", errs.ErrRolePermissionDuplicate)
+		}
+		return RolePermission{}, err
+	}
+	return rolePermission, nil
 }
 
 func (r *rolePermissionDAO) BatchCreate(ctx context.Context, rolePermissions []RolePermission) error {
@@ -185,12 +163,18 @@ func (r *rolePermissionDAO) Delete(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Where("id = ?", id).Delete(&RolePermission{}).Error
 }
 
+func (r *rolePermissionDAO) DeleteByRoleID(ctx context.Context, roleID int64) error {
+	return r.db.WithContext(ctx).Where("role_id = ?", roleID).Delete(&RolePermission{}).Error
+}
+
+func (r *rolePermissionDAO) FindByRoleID(ctx context.Context, bizID, roleID int64) ([]RolePermission, error) {
+	var rolePermissions []RolePermission
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id = ?", bizID, roleID).Find(&rolePermissions).Error
+	return rolePermissions, err
+}
+
 func (r *rolePermissionDAO) DeleteByRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error {
 	return r.db.WithContext(ctx).
 		Where("biz_id = ? AND role_id = ? AND permission_id = ?", bizID, roleID, permissionID).
 		Delete(&RolePermission{}).Error
-}
-
-func (r *rolePermissionDAO) DeleteByRoleID(ctx context.Context, roleID int64) error {
-	return r.db.WithContext(ctx).Where("role_id = ?", roleID).Delete(&RolePermission{}).Error
 }

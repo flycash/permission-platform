@@ -2,9 +2,11 @@ package dao
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
+	"gitee.com/flycash/permission-platform/internal/errs"
 	"github.com/ecodeclub/ekit/sqlx"
 	"github.com/ego-component/egorm"
 )
@@ -40,16 +42,10 @@ func (Role) TableName() string {
 type RoleDAO interface {
 	// GetByID 根据ID获取角色
 	GetByID(ctx context.Context, id int64) (Role, error)
-	// GetByIDs 根据多个ID批量获取角色
-	GetByIDs(ctx context.Context, ids []int64) (map[int64]Role, error)
 	// FindByBizID 查找特定业务下的角色
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Role, error)
 	// FindByBizIDAndType 查找特定业务下指定类型的角色
 	FindByBizIDAndType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]Role, error)
-	// FindByBizIDAndName 查找特定业务下指定名称的角色
-	FindByBizIDAndName(ctx context.Context, bizID int64, name string) (Role, error)
-	// FindTemporaryRoles 查找当前有效的临时角色
-	FindTemporaryRoles(ctx context.Context, bizID int64, currentTime int64, offset, limit int) ([]Role, error)
 	// Create 创建角色
 	Create(ctx context.Context, role Role) (Role, error)
 	// Update 更新角色
@@ -76,20 +72,6 @@ func (r *roleDAO) GetByID(ctx context.Context, id int64) (Role, error) {
 	return role, err
 }
 
-func (r *roleDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Role, error) {
-	var roles []Role
-	err := r.db.WithContext(ctx).Where("id IN (?)", ids).Find(&roles).Error
-	if err != nil {
-		return nil, err
-	}
-
-	result := make(map[int64]Role, len(roles))
-	for i := range roles {
-		result[roles[i].ID] = roles[i]
-	}
-	return result, nil
-}
-
 func (r *roleDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Role, error) {
 	var roles []Role
 	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&roles).Error
@@ -102,28 +84,14 @@ func (r *roleDAO) FindByBizIDAndType(ctx context.Context, bizID int64, roleType 
 	return roles, err
 }
 
-func (r *roleDAO) FindByBizIDAndName(ctx context.Context, bizID int64, name string) (Role, error) {
-	var role Role
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND name = ?", bizID, name).First(&role).Error
-	return role, err
-}
-
-func (r *roleDAO) FindTemporaryRoles(ctx context.Context, bizID, currentTime int64, offset, limit int) ([]Role, error) {
-	var roles []Role
-	err := r.db.WithContext(ctx).
-		Where("biz_id = ? AND type = ? AND start_time <= ? AND (end_time >= ? OR end_time IS NULL)",
-			bizID, RoleTypeTemporary, currentTime, currentTime).
-		Offset(offset).
-		Limit(limit).
-		Find(&roles).Error
-	return roles, err
-}
-
 func (r *roleDAO) Create(ctx context.Context, role Role) (Role, error) {
 	now := time.Now().UnixMilli()
 	role.Ctime = now
 	role.Utime = now
 	err := r.db.WithContext(ctx).Create(&role).Error
+	if isUniqueConstraintError(err) {
+		return Role{}, fmt.Errorf("%w", errs.ErrRoleDuplicate)
+	}
 	return role, err
 }
 

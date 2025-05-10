@@ -7,8 +7,8 @@ import (
 	"gitee.com/flycash/permission-platform/internal/repository"
 )
 
-// RBACService RBAC模型的管理接口
-type RBACService interface {
+// Service RBAC模型的管理接口
+type Service interface {
 	// Role相关方法
 	CreateRole(ctx context.Context, role domain.Role) (domain.Role, error)
 	GetRole(ctx context.Context, id int64) (domain.Role, error)
@@ -34,14 +34,19 @@ type RBACService interface {
 	GrantUserRole(ctx context.Context, bizID, userID, roleID, startTime, endTime int64) (domain.UserRole, error)
 	RevokeUserRole(ctx context.Context, bizID, userID, roleID int64) error
 	ListUserRoles(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, int, error)
+
+	// 角色权限相关方法
+	GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error)
+	RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error
+	ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error)
 }
 
 type rbacService struct {
 	repo repository.RBACRepository
 }
 
-// NewRBACService 创建RBAC服务实例
-func NewRBACService(repo repository.RBACRepository) RBACService {
+// NewService 创建RBAC服务实例
+func NewService(repo repository.RBACRepository) Service {
 	return &rbacService{
 		repo: repo,
 	}
@@ -138,4 +143,20 @@ func (s *rbacService) RevokeUserRole(ctx context.Context, bizID, userID, roleID 
 func (s *rbacService) ListUserRoles(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, int, error) {
 	// 调用仓储层获取用户角色列表
 	return s.repo.ListUserRoles(ctx, bizID, userID, offset, limit)
+}
+
+// 角色权限相关方法实现
+func (s *rbacService) GrantRolePermission(ctx context.Context, bizID, roleID, permissionID, startTime, endTime int64) (domain.RolePermission, error) {
+	// 调用仓储层授予角色权限
+	return s.repo.GrantRolePermission(ctx, bizID, roleID, permissionID, startTime, endTime)
+}
+
+func (s *rbacService) RevokeRolePermission(ctx context.Context, bizID, roleID, permissionID int64) error {
+	// 调用仓储层撤销角色权限
+	return s.repo.RevokeRolePermission(ctx, bizID, roleID, permissionID)
+}
+
+func (s *rbacService) ListRolePermissions(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, int, error) {
+	// 调用仓储层获取角色权限列表
+	return s.repo.ListRolePermissions(ctx, bizID, roleID, offset, limit)
 }

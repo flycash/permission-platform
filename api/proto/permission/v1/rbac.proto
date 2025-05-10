@@ -32,6 +32,11 @@ service RBACService {
   rpc GrantUserRole(GrantUserRoleRequest) returns (GrantUserRoleResponse);
   rpc RevokeUserRole(RevokeUserRoleRequest) returns (RevokeUserRoleResponse);
   rpc ListUserRoles(ListUserRolesRequest) returns (ListUserRolesResponse);
+
+  // 角色权限相关接口
+  rpc GrantRolePermission(GrantRolePermissionRequest) returns (GrantRolePermissionResponse);
+  rpc RevokeRolePermission(RevokeRolePermissionRequest) returns (RevokeRolePermissionResponse);
+  rpc ListRolePermissions(ListRolePermissionsRequest) returns (ListRolePermissionsResponse);
 }
 
 // ==== Role相关消息定义 ====
@@ -224,5 +229,51 @@ message ListUserRolesRequest {
 
 message ListUserRolesResponse {
   repeated UserRole user_roles = 1;
+  int32 total = 2;
+}
+
+// ==== 角色权限相关消息定义 ====
+message RolePermission {
+  int64 id = 1;
+  int64 biz_id = 2;
+  int64 role_id = 3;
+  int64 permission_id = 4;
+  string permission_name = 5;
+  string permission_type = 6;
+  int64 start_time = 7; // 临时角色有效期开始时间
+  int64 end_time = 8; // 临时角色有效期结束时间
+}
+
+message GrantRolePermissionRequest {
+  int64 biz_id = 1;
+  int64 role_id = 2;
+  int64 permission_id = 3;
+  int64 start_time = 4; // 可选，临时角色有效期
+  int64 end_time = 5; // 可选，临时角色有效期
+}
+
+message GrantRolePermissionResponse {
+  RolePermission role_permission = 1;
+}
+
+message RevokeRolePermissionRequest {
+  int64 biz_id = 1;
+  int64 role_id = 2;
+  int64 permission_id = 3;
+}
+
+message RevokeRolePermissionResponse {
+  bool success = 1;
+}
+
+message ListRolePermissionsRequest {
+  int64 biz_id = 1;
+  int64 role_id = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+}
+
+message ListRolePermissionsResponse {
+  repeated RolePermission role_permissions = 1;
   int32 total = 2;
 }

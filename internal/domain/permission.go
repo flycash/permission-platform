@@ -27,4 +27,6 @@ type Permission struct {
 	ResourceType string     `json:"resourceType"`
 	ResourceKey  string     `json:"resourceKey"`
 	Action       ActionType `json:"action"`
+	Ctime        int64
+	Utime        int64
 }

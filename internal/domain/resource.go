@@ -21,4 +21,6 @@ type Resource struct {
 	Key         string `json:"key"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Ctime       int64
+	Utime       int64
 }

@@ -27,36 +27,14 @@ func (UserRole) TableName() string {
 
 // UserRoleDAO 用户角色关联数据访问接口
 type UserRoleDAO interface {
-	// GetByID 根据ID获取用户角色关联
-	GetByID(ctx context.Context, id int64) (UserRole, error)
-	// GetByIDs 根据多个ID批量获取用户角色关联
-	GetByIDs(ctx context.Context, ids []int64) (map[int64]UserRole, error)
-	// FindByBizID 查找特定业务下的用户角色关联
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserRole, error)
 	// FindByUserID 查找特定用户的所有角色关联
 	FindByUserID(ctx context.Context, userID int64) ([]UserRole, error)
-	// FindByRoleID 查找拥有特定角色的所有用户关联
-	FindByRoleID(ctx context.Context, roleID int64) ([]UserRole, error)
-	// FindByBizIDAndRoleType 查找特定业务下指定角色类型的用户关联
-	FindByBizIDAndRoleType(ctx context.Context, bizID int64, roleType RoleType, offset, limit int) ([]UserRole, error)
 	// FindValidRoles 查找当前有效的角色关联
 	FindValidRoles(ctx context.Context, bizID, userID int64, currentTime int64) ([]UserRole, error)
-	// ExistsByUserIDAndRoleID 检查用户和角色关联是否存在
-	ExistsByUserIDAndRoleID(ctx context.Context, bizID int64, userID int64, roleID int64) (bool, error)
 	// Create 创建用户角色关联
 	Create(ctx context.Context, userRole UserRole) (UserRole, error)
-	// BatchCreate 批量创建用户角色关联
-	BatchCreate(ctx context.Context, userRoles []UserRole) error
-	// Update 更新用户角色关联
-	Update(ctx context.Context, userRole UserRole) error
-	// Delete 删除用户角色关联
-	Delete(ctx context.Context, id int64) error
 	// DeleteByUserIDAndRoleID 删除特定用户和角色的关联
 	DeleteByUserIDAndRoleID(ctx context.Context, bizID int64, userID int64, roleID int64) error
-	// DeleteByUserID 删除用户的所有角色关联
-	DeleteByUserID(ctx context.Context, userID int64) error
-	// DeleteByRoleID 删除角色的所有用户关联
-	DeleteByRoleID(ctx context.Context, roleID int64) error
 }
 
 // userRoleDAO 用户角色关联数据访问实现
@@ -97,12 +75,6 @@ func (u *userRoleDAO) FindByBizID(ctx context.Context, bizID int64, offset, limi
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindByUserID(ctx context.Context, userID int64) ([]UserRole, error) {
-	var userRoles []UserRole
-	err := u.db.WithContext(ctx).Where("user_id = ?", userID).Find(&userRoles).Error
-	return userRoles, err
-}
-
 func (u *userRoleDAO) FindByRoleID(ctx context.Context, roleID int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	err := u.db.WithContext(ctx).Where("role_id = ?", roleID).Find(&userRoles).Error
@@ -119,15 +91,6 @@ func (u *userRoleDAO) FindByBizIDAndRoleType(ctx context.Context, bizID int64, r
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindValidRoles(ctx context.Context, bizID, userID, currentTime int64) ([]UserRole, error) {
-	var userRoles []UserRole
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
-			bizID, userID, currentTime, currentTime).
-		Find(&userRoles).Error
-	return userRoles, err
-}
-
 func (u *userRoleDAO) ExistsByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) (bool, error) {
 	var count int64
 	err := u.db.WithContext(ctx).
@@ -135,14 +98,6 @@ func (u *userRoleDAO) ExistsByUserIDAndRoleID(ctx context.Context, bizID, userID
 		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
 		Count(&count).Error
 	return count > 0, err
-}
-
-func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, error) {
-	now := time.Now().UnixMilli()
-	userRole.Ctime = now
-	userRole.Utime = now
-	err := u.db.WithContext(ctx).Create(&userRole).Error
-	return userRole, err
 }
 
 func (u *userRoleDAO) BatchCreate(ctx context.Context, userRoles []UserRole) error {
@@ -175,16 +130,39 @@ func (u *userRoleDAO) Delete(ctx context.Context, id int64) error {
 	return u.db.WithContext(ctx).Where("id = ?", id).Delete(&UserRole{}).Error
 }
 
-func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error {
-	return u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
-		Delete(&UserRole{}).Error
-}
-
 func (u *userRoleDAO) DeleteByUserID(ctx context.Context, userID int64) error {
 	return u.db.WithContext(ctx).Where("user_id = ?", userID).Delete(&UserRole{}).Error
 }
 
 func (u *userRoleDAO) DeleteByRoleID(ctx context.Context, roleID int64) error {
 	return u.db.WithContext(ctx).Where("role_id = ?", roleID).Delete(&UserRole{}).Error
+}
+
+func (u *userRoleDAO) FindByUserID(ctx context.Context, userID int64) ([]UserRole, error) {
+	var userRoles []UserRole
+	err := u.db.WithContext(ctx).Where("user_id = ?", userID).Find(&userRoles).Error
+	return userRoles, err
+}
+
+func (u *userRoleDAO) FindValidRoles(ctx context.Context, bizID, userID, currentTime int64) ([]UserRole, error) {
+	var userRoles []UserRole
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND (start_time IS NULL OR start_time <= ?) AND (end_time IS NULL OR end_time >= ?)",
+			bizID, userID, currentTime, currentTime).
+		Find(&userRoles).Error
+	return userRoles, err
+}
+
+func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, error) {
+	now := time.Now().UnixMilli()
+	userRole.Ctime = now
+	userRole.Utime = now
+	err := u.db.WithContext(ctx).Create(&userRole).Error
+	return userRole, err
+}
+
+func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error {
+	return u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
+		Delete(&UserRole{}).Error
 }

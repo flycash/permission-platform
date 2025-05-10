@@ -2,9 +2,11 @@ package dao
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
+	"gitee.com/flycash/permission-platform/internal/errs"
 	"github.com/ecodeclub/ekit/sqlx"
 	"github.com/ego-component/egorm"
 )
@@ -30,8 +32,6 @@ func (Resource) TableName() string {
 type ResourceDAO interface {
 	// GetByID 根据ID获取资源
 	GetByID(ctx context.Context, id int64) (Resource, error)
-	// GetByIDs 根据多个ID批量获取资源
-	GetByIDs(ctx context.Context, ids []int64) (map[int64]Resource, error)
 	// FindByBizID 查找特定业务下的资源
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error)
 	// FindByBizIDAndType 查找特定业务下指定类型的资源
@@ -64,20 +64,6 @@ func (r *resourceDAO) GetByID(ctx context.Context, id int64) (Resource, error) {
 	return resource, err
 }
 
-func (r *resourceDAO) GetByIDs(ctx context.Context, ids []int64) (map[int64]Resource, error) {
-	var resources []Resource
-	err := r.db.WithContext(ctx).Where("id IN (?)", ids).Find(&resources).Error
-	if err != nil {
-		return nil, err
-	}
-
-	result := make(map[int64]Resource, len(resources))
-	for i := range resources {
-		result[resources[i].ID] = resources[i]
-	}
-	return result, nil
-}
-
 func (r *resourceDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error) {
 	var resources []Resource
 	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&resources).Error
@@ -101,7 +87,13 @@ func (r *resourceDAO) Create(ctx context.Context, resource Resource) (Resource, 
 	resource.Ctime = now
 	resource.Utime = now
 	err := r.db.WithContext(ctx).Create(&resource).Error
-	return resource, err
+	if err != nil {
+		if isUniqueConstraintError(err) {
+			return Resource{}, fmt.Errorf("%w", errs.ErrResourceDuplicate)
+		}
+		return Resource{}, err
+	}
+	return resource, nil
 }
 
 func (r *resourceDAO) Update(ctx context.Context, resource Resource) error {

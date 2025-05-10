@@ -23,4 +23,6 @@ type Role struct {
 	Description string   `json:"description"`
 	StartTime   int64    `json:"startTime"`
 	EndTime     int64    `json:"endTime"`
+	Ctime       int64
+	Utime       int64
 }
