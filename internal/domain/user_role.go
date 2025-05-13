@@ -2,14 +2,12 @@ package domain
 
 // UserRole 用户角色关联
 type UserRole struct {
-	ID        int64    `json:"id"`
-	BizID     int64    `json:"bizId"`
-	UserID    int64    `json:"userId"`
-	RoleID    int64    `json:"roleId"`
-	RoleName  string   `json:"roleName"`
-	RoleType  RoleType `json:"roleType"`
-	StartTime int64    `json:"startTime"`
-	EndTime   int64    `json:"endTime"`
+	ID        int64
+	BizID     int64
+	UserID    int64
+	Role      Role
+	StartTime int64 // 授予角色生效时间
+	EndTime   int64 // 授予角色失效时间
 	Ctime     int64
 	Utime     int64
 }

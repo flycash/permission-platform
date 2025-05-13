@@ -7,9 +7,6 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// 批处理常量
-const batchSize = 100
-
 func InitTables(db *egorm.Component) error {
 	return db.AutoMigrate(
 		&BusinessConfig{},

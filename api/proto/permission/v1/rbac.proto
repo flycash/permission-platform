@@ -88,7 +88,7 @@ message UpdateBusinessConfigRequest {
 }
 
 message UpdateBusinessConfigResponse {
-  BusinessConfig config = 1;
+  bool success = 1;
 }
 
 message DeleteBusinessConfigRequest {
@@ -109,7 +109,7 @@ message ListBusinessConfigsResponse {
   int32 total = 2;
 }
 
-// 资源相关消息定义
+// ==== 资源相关消息定义 ====
 message CreateResourceRequest {
   Resource resource = 1;
 }
@@ -131,7 +131,7 @@ message UpdateResourceRequest {
 }
 
 message UpdateResourceResponse {
-  Resource resource = 1;
+  bool success = 1;
 }
 
 message DeleteResourceRequest {
@@ -146,8 +146,6 @@ message ListResourcesRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string type = 4; // 可选过滤条件
-  string key = 5; // 可选过滤条件
 }
 
 message ListResourcesResponse {
@@ -155,7 +153,7 @@ message ListResourcesResponse {
   int32 total = 2;
 }
 
-// 权限相关消息定义
+// ==== 权限相关消息定义 ====
 message CreatePermissionRequest {
   Permission permission = 1;
 }
@@ -177,7 +175,7 @@ message UpdatePermissionRequest {
 }
 
 message UpdatePermissionResponse {
-  Permission permission = 1;
+  bool success = 1;
 }
 
 message DeletePermissionRequest {
@@ -192,9 +190,6 @@ message ListPermissionsRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string resource_type = 4; // 可选过滤条件
-  string resource_key = 5; // 可选过滤条件
-  string action = 6; // 可选过滤条件
 }
 
 message ListPermissionsResponse {
@@ -202,16 +197,14 @@ message ListPermissionsResponse {
   int32 total = 2;
 }
 
-// ==== Role相关消息定义 ====
+// ==== 角色相关消息定义 ====
 message Role {
   int64 id = 1;
   int64 biz_id = 2;
-  string type = 3; // system, custom, temporary
+  string type = 3;
   string name = 4;
   string description = 5;
   string metadata = 6; // JSON格式的元数据
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
 }
 
 message CreateRoleRequest {
@@ -235,7 +228,7 @@ message UpdateRoleRequest {
 }
 
 message UpdateRoleResponse {
-  Role role = 1;
+  bool success = 1;
 }
 
 message DeleteRoleRequest {
@@ -250,7 +243,6 @@ message ListRolesRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string type = 4; // 可选过滤条件
 }
 
 message ListRolesResponse {
@@ -317,18 +309,17 @@ message RolePermission {
   int64 biz_id = 2;
   int64 role_id = 3;
   int64 permission_id = 4;
-  string permission_name = 5;
-  string permission_type = 6;
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
+  string role_name = 5;
+  string role_type = 6;
+  string resource_type = 7;
+  string resource_key = 8;
+  string permission_action = 9;
 }
 
 message GrantRolePermissionRequest {
   int64 biz_id = 1;
   int64 role_id = 2;
   int64 permission_id = 3;
-  int64 start_time = 4; // 可选，临时角色有效期
-  int64 end_time = 5; // 可选，临时角色有效期
 }
 
 message GrantRolePermissionResponse {
@@ -365,16 +356,16 @@ message UserRole {
   int64 role_id = 4;
   string role_name = 5;
   string role_type = 6;
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
+  int64 start_time = 7; // 授予角色生效时间
+  int64 end_time = 8; // 授予角色失效时间
 }
 
 message GrantUserRoleRequest {
   int64 biz_id = 1;
   int64 user_id = 2;
   int64 role_id = 3;
-  int64 start_time = 4; // 可选，临时角色有效期
-  int64 end_time = 5; // 可选，临时角色有效期
+  int64 start_time = 4; // 授予角色生效时间
+  int64 end_time = 5; // 授予角色失效时间
 }
 
 message GrantUserRoleResponse {
@@ -413,7 +404,7 @@ message UserPermission {
   string resource_type = 6;
   string resource_key = 7;
   string resource_name = 8;
-  string action = 9;
+  string permission_action = 9;
   int64 start_time = 10;
   int64 end_time = 11;
   string effect = 12; // allow, deny
@@ -424,8 +415,8 @@ message GrantUserPermissionRequest {
   int64 user_id = 2;
   int64 permission_id = 3;
   string effect = 4; // allow, deny
-  int64 start_time = 5; // 可选，临时权限有效期
-  int64 end_time = 6; // 可选，临时权限有效期
+  int64 start_time = 5; // 权限生效日期
+  int64 end_time = 6; // 权限失效日期
 }
 
 message GrantUserPermissionResponse {
@@ -447,7 +438,6 @@ message ListUserPermissionsRequest {
   int64 user_id = 2;
   int32 offset = 3;
   int32 limit = 4;
-  bool only_valid = 5; // 如果为true，则只返回当前有效的权限
 }
 
 message ListUserPermissionsResponse {

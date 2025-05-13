@@ -22,56 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 操作类型枚举（可根据业务需求扩展）
-type ActionType int32
-
-const (
-	ActionType_ACTION_UNSPECIFIED ActionType = 0
-	ActionType_READ               ActionType = 1
-	ActionType_WRITE              ActionType = 2
-)
-
-// Enum value maps for ActionType.
-var (
-	ActionType_name = map[int32]string{
-		0: "ACTION_UNSPECIFIED",
-		1: "READ",
-		2: "WRITE",
-	}
-	ActionType_value = map[string]int32{
-		"ACTION_UNSPECIFIED": 0,
-		"READ":               1,
-		"WRITE":              2,
-	}
-)
-
-func (x ActionType) Enum() *ActionType {
-	p := new(ActionType)
-	*p = x
-	return p
-}
-
-func (x ActionType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (ActionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_permission_v1_permission_proto_enumTypes[0].Descriptor()
-}
-
-func (ActionType) Type() protoreflect.EnumType {
-	return &file_permission_v1_permission_proto_enumTypes[0]
-}
-
-func (x ActionType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use ActionType.Descriptor instead.
-func (ActionType) EnumDescriptor() ([]byte, []int) {
-	return file_permission_v1_permission_proto_rawDescGZIP(), []int{0}
-}
-
 // 权限定义（资源 + 操作）
 type Permission struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -80,9 +30,9 @@ type Permission struct {
 	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	ResourceId    int64                  `protobuf:"varint,5,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
-	ResourceType  string                 `protobuf:"bytes,6,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"`         // 冗余字段
-	ResourceKey   string                 `protobuf:"bytes,7,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`            // 资源标识符，类似于 /xxx/xxx/xxx 的格式
-	Actions       []ActionType           `protobuf:"varint,8,rep,packed,name=actions,proto3,enum=permission.v1.ActionType" json:"actions,omitempty"` // 允许的操作列表
+	ResourceType  string                 `protobuf:"bytes,6,opt,name=resource_type,json=resourceType,proto3" json:"resource_type,omitempty"` // 资源类型
+	ResourceKey   string                 `protobuf:"bytes,7,opt,name=resource_key,json=resourceKey,proto3" json:"resource_key,omitempty"`    // 资源标识符，类似于 /xxx/xxx/xxx 的格式
+	Actions       []string               `protobuf:"bytes,8,rep,name=actions,proto3" json:"actions,omitempty"`                               // 允许的操作列表
 	Metadata      string                 `protobuf:"bytes,9,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -167,7 +117,7 @@ func (x *Permission) GetResourceKey() string {
 	return ""
 }
 
-func (x *Permission) GetActions() []ActionType {
+func (x *Permission) GetActions() []string {
 	if x != nil {
 		return x.Actions
 	}
@@ -379,7 +329,7 @@ var File_permission_v1_permission_proto protoreflect.FileDescriptor
 
 const file_permission_v1_permission_proto_rawDesc = "" +
 	"\n" +
-	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"\xa3\x02\n" +
+	"\x1epermission/v1/permission.proto\x12\rpermission.v1\"\x88\x02\n" +
 	"\n" +
 	"Permission\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x15\n" +
@@ -389,8 +339,8 @@ const file_permission_v1_permission_proto_rawDesc = "" +
 	"\vresource_id\x18\x05 \x01(\x03R\n" +
 	"resourceId\x12#\n" +
 	"\rresource_type\x18\x06 \x01(\tR\fresourceType\x12!\n" +
-	"\fresource_key\x18\a \x01(\tR\vresourceKey\x123\n" +
-	"\aactions\x18\b \x03(\x0e2\x19.permission.v1.ActionTypeR\aactions\x12\x1a\n" +
+	"\fresource_key\x18\a \x01(\tR\vresourceKey\x12\x18\n" +
+	"\aactions\x18\b \x03(\tR\aactions\x12\x1a\n" +
 	"\bmetadata\x18\t \x01(\tR\bmetadata\"e\n" +
 	"\x16CheckPermissionRequest\x12\x10\n" +
 	"\x03uid\x18\x01 \x01(\x03R\x03uid\x129\n" +
@@ -406,12 +356,7 @@ const file_permission_v1_permission_proto_rawDesc = "" +
 	"\x03key\x18\x04 \x01(\tR\x03key\x12\x12\n" +
 	"\x04name\x18\x05 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x1a\n" +
-	"\bmetadata\x18\a \x01(\tR\bmetadata*9\n" +
-	"\n" +
-	"ActionType\x12\x16\n" +
-	"\x12ACTION_UNSPECIFIED\x10\x00\x12\b\n" +
-	"\x04READ\x10\x01\x12\t\n" +
-	"\x05WRITE\x10\x022u\n" +
+	"\bmetadata\x18\a \x01(\tR\bmetadata2u\n" +
 	"\x11PermissionService\x12`\n" +
 	"\x0fCheckPermission\x12%.permission.v1.CheckPermissionRequest\x1a&.permission.v1.CheckPermissionResponseB\xc9\x01\n" +
 	"\x11com.permission.v1B\x0fPermissionProtoP\x01ZNgitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionv1\xa2\x02\x03PXX\xaa\x02\rPermission.V1\xca\x02\rPermission\\V1\xe2\x02\x19Permission\\V1\\GPBMetadata\xea\x02\x0ePermission::V1b\x06proto3"
@@ -429,27 +374,24 @@ func file_permission_v1_permission_proto_rawDescGZIP() []byte {
 }
 
 var (
-	file_permission_v1_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-	file_permission_v1_permission_proto_msgTypes  = make([]protoimpl.MessageInfo, 4)
-	file_permission_v1_permission_proto_goTypes   = []any{
-		(ActionType)(0),                 // 0: permission.v1.ActionType
-		(*Permission)(nil),              // 1: permission.v1.Permission
-		(*CheckPermissionRequest)(nil),  // 2: permission.v1.CheckPermissionRequest
-		(*CheckPermissionResponse)(nil), // 3: permission.v1.CheckPermissionResponse
-		(*Resource)(nil),                // 4: permission.v1.Resource
+	file_permission_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+	file_permission_v1_permission_proto_goTypes  = []any{
+		(*Permission)(nil),              // 0: permission.v1.Permission
+		(*CheckPermissionRequest)(nil),  // 1: permission.v1.CheckPermissionRequest
+		(*CheckPermissionResponse)(nil), // 2: permission.v1.CheckPermissionResponse
+		(*Resource)(nil),                // 3: permission.v1.Resource
 	}
 )
 
 var file_permission_v1_permission_proto_depIdxs = []int32{
-	0, // 0: permission.v1.Permission.actions:type_name -> permission.v1.ActionType
-	1, // 1: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission
-	2, // 2: permission.v1.PermissionService.CheckPermission:input_type -> permission.v1.CheckPermissionRequest
-	3, // 3: permission.v1.PermissionService.CheckPermission:output_type -> permission.v1.CheckPermissionResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission
+	1, // 1: permission.v1.PermissionService.CheckPermission:input_type -> permission.v1.CheckPermissionRequest
+	2, // 2: permission.v1.PermissionService.CheckPermission:output_type -> permission.v1.CheckPermissionResponse
+	2, // [2:3] is the sub-list for method output_type
+	1, // [1:2] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_permission_v1_permission_proto_init() }
@@ -462,14 +404,13 @@ func file_permission_v1_permission_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_v1_permission_proto_rawDesc), len(file_permission_v1_permission_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_permission_v1_permission_proto_goTypes,
 		DependencyIndexes: file_permission_v1_permission_proto_depIdxs,
-		EnumInfos:         file_permission_v1_permission_proto_enumTypes,
 		MessageInfos:      file_permission_v1_permission_proto_msgTypes,
 	}.Build()
 	File_permission_v1_permission_proto = out.File
