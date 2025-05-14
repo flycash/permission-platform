@@ -197,7 +197,8 @@ func (x *CreateBusinessConfigResponse) GetConfig() *BusinessConfig {
 
 type GetBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -230,6 +231,13 @@ func (x *GetBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetBusinessConfigRequest.ProtoReflect.Descriptor instead.
 func (*GetBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetBusinessConfigRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *GetBusinessConfigRequest) GetId() int64 {
@@ -373,7 +381,8 @@ func (x *UpdateBusinessConfigResponse) GetSuccess() bool {
 
 type DeleteBusinessConfigRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -406,6 +415,13 @@ func (x *DeleteBusinessConfigRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteBusinessConfigRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBusinessConfigRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DeleteBusinessConfigRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *DeleteBusinessConfigRequest) GetId() int64 {
@@ -654,7 +670,8 @@ func (x *CreateResourceResponse) GetResource() *Resource {
 
 type GetResourceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -687,6 +704,13 @@ func (x *GetResourceRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetResourceRequest.ProtoReflect.Descriptor instead.
 func (*GetResourceRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetResourceRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *GetResourceRequest) GetId() int64 {
@@ -830,7 +854,8 @@ func (x *UpdateResourceResponse) GetSuccess() bool {
 
 type DeleteResourceRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -863,6 +888,13 @@ func (x *DeleteResourceRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteResourceRequest.ProtoReflect.Descriptor instead.
 func (*DeleteResourceRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *DeleteResourceRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *DeleteResourceRequest) GetId() int64 {
@@ -1119,7 +1151,8 @@ func (x *CreatePermissionResponse) GetPermission() *Permission {
 
 type GetPermissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1152,6 +1185,13 @@ func (x *GetPermissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetPermissionRequest.ProtoReflect.Descriptor instead.
 func (*GetPermissionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetPermissionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *GetPermissionRequest) GetId() int64 {
@@ -1295,7 +1335,8 @@ func (x *UpdatePermissionResponse) GetSuccess() bool {
 
 type DeletePermissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1328,6 +1369,13 @@ func (x *DeletePermissionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeletePermissionRequest.ProtoReflect.Descriptor instead.
 func (*DeletePermissionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *DeletePermissionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *DeletePermissionRequest) GetId() int64 {
@@ -1668,7 +1716,8 @@ func (x *CreateRoleResponse) GetRole() *Role {
 
 type GetRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1701,6 +1750,13 @@ func (x *GetRoleRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetRoleRequest.ProtoReflect.Descriptor instead.
 func (*GetRoleRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *GetRoleRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *GetRoleRequest) GetId() int64 {
@@ -1844,7 +1900,8 @@ func (x *UpdateRoleResponse) GetSuccess() bool {
 
 type DeleteRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1877,6 +1934,13 @@ func (x *DeleteRoleRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteRoleRequest.ProtoReflect.Descriptor instead.
 func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *DeleteRoleRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *DeleteRoleRequest) GetId() int64 {
@@ -2144,12 +2208,10 @@ func (x *RoleInclusion) GetIncludedRoleName() string {
 }
 
 type CreateRoleInclusionRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	BizId           int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	IncludingRoleId int64                  `protobuf:"varint,2,opt,name=including_role_id,json=includingRoleId,proto3" json:"including_role_id,omitempty"`
-	IncludedRoleId  int64                  `protobuf:"varint,3,opt,name=included_role_id,json=includedRoleId,proto3" json:"included_role_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoleInclusion *RoleInclusion         `protobuf:"bytes,1,opt,name=role_inclusion,json=roleInclusion,proto3" json:"role_inclusion,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateRoleInclusionRequest) Reset() {
@@ -2182,25 +2244,11 @@ func (*CreateRoleInclusionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{43}
 }
 
-func (x *CreateRoleInclusionRequest) GetBizId() int64 {
+func (x *CreateRoleInclusionRequest) GetRoleInclusion() *RoleInclusion {
 	if x != nil {
-		return x.BizId
+		return x.RoleInclusion
 	}
-	return 0
-}
-
-func (x *CreateRoleInclusionRequest) GetIncludingRoleId() int64 {
-	if x != nil {
-		return x.IncludingRoleId
-	}
-	return 0
-}
-
-func (x *CreateRoleInclusionRequest) GetIncludedRoleId() int64 {
-	if x != nil {
-		return x.IncludedRoleId
-	}
-	return 0
+	return nil
 }
 
 type CreateRoleInclusionResponse struct {
@@ -2249,7 +2297,8 @@ func (x *CreateRoleInclusionResponse) GetRoleInclusion() *RoleInclusion {
 
 type GetRoleInclusionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2282,6 +2331,13 @@ func (x *GetRoleInclusionRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetRoleInclusionRequest.ProtoReflect.Descriptor instead.
 func (*GetRoleInclusionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{45}
+}
+
+func (x *GetRoleInclusionRequest) GetBizId() int64 {
+	if x != nil {
+		return x.BizId
+	}
+	return 0
 }
 
 func (x *GetRoleInclusionRequest) GetId() int64 {
@@ -2336,12 +2392,11 @@ func (x *GetRoleInclusionResponse) GetRoleInclusion() *RoleInclusion {
 }
 
 type DeleteRoleInclusionRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	BizId           int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	IncludingRoleId int64                  `protobuf:"varint,2,opt,name=including_role_id,json=includingRoleId,proto3" json:"including_role_id,omitempty"`
-	IncludedRoleId  int64                  `protobuf:"varint,3,opt,name=included_role_id,json=includedRoleId,proto3" json:"included_role_id,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteRoleInclusionRequest) Reset() {
@@ -2381,16 +2436,9 @@ func (x *DeleteRoleInclusionRequest) GetBizId() int64 {
 	return 0
 }
 
-func (x *DeleteRoleInclusionRequest) GetIncludingRoleId() int64 {
+func (x *DeleteRoleInclusionRequest) GetId() int64 {
 	if x != nil {
-		return x.IncludingRoleId
-	}
-	return 0
-}
-
-func (x *DeleteRoleInclusionRequest) GetIncludedRoleId() int64 {
-	if x != nil {
-		return x.IncludedRoleId
+		return x.Id
 	}
 	return 0
 }
@@ -2442,10 +2490,8 @@ func (x *DeleteRoleInclusionResponse) GetSuccess() bool {
 type ListRoleInclusionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`                // 可选，如果提供则表示查询特定角色的包含关系
-	IsIncluding   bool                   `protobuf:"varint,3,opt,name=is_including,json=isIncluding,proto3" json:"is_including,omitempty"` // 如果为true，则role_id表示including_role_id；否则表示included_role_id
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,5,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2485,20 +2531,6 @@ func (x *ListRoleInclusionsRequest) GetBizId() int64 {
 		return x.BizId
 	}
 	return 0
-}
-
-func (x *ListRoleInclusionsRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *ListRoleInclusionsRequest) GetIsIncluding() bool {
-	if x != nil {
-		return x.IsIncluding
-	}
-	return false
 }
 
 func (x *ListRoleInclusionsRequest) GetOffset() int32 {
@@ -2677,12 +2709,10 @@ func (x *RolePermission) GetPermissionAction() string {
 }
 
 type GrantRolePermissionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	RolePermission *RolePermission        `protobuf:"bytes,1,opt,name=role_permission,json=rolePermission,proto3" json:"role_permission,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GrantRolePermissionRequest) Reset() {
@@ -2715,25 +2745,11 @@ func (*GrantRolePermissionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{52}
 }
 
-func (x *GrantRolePermissionRequest) GetBizId() int64 {
+func (x *GrantRolePermissionRequest) GetRolePermission() *RolePermission {
 	if x != nil {
-		return x.BizId
+		return x.RolePermission
 	}
-	return 0
-}
-
-func (x *GrantRolePermissionRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *GrantRolePermissionRequest) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
-	}
-	return 0
+	return nil
 }
 
 type GrantRolePermissionResponse struct {
@@ -2783,8 +2799,7 @@ func (x *GrantRolePermissionResponse) GetRolePermission() *RolePermission {
 type RevokeRolePermissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2826,16 +2841,9 @@ func (x *RevokeRolePermissionRequest) GetBizId() int64 {
 	return 0
 }
 
-func (x *RevokeRolePermissionRequest) GetRoleId() int64 {
+func (x *RevokeRolePermissionRequest) GetId() int64 {
 	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *RevokeRolePermissionRequest) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
+		return x.Id
 	}
 	return 0
 }
@@ -2887,9 +2895,8 @@ func (x *RevokeRolePermissionResponse) GetSuccess() bool {
 type ListRolePermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2927,13 +2934,6 @@ func (*ListRolePermissionsRequest) Descriptor() ([]byte, []int) {
 func (x *ListRolePermissionsRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListRolePermissionsRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
 	}
 	return 0
 }
@@ -3107,11 +3107,7 @@ func (x *UserRole) GetEndTime() int64 {
 
 type GrantUserRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	StartTime     int64                  `protobuf:"varint,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 授予角色生效时间
-	EndTime       int64                  `protobuf:"varint,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 授予角色失效时间
+	UserRole      *UserRole              `protobuf:"bytes,1,opt,name=user_role,json=userRole,proto3" json:"user_role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3146,39 +3142,11 @@ func (*GrantUserRoleRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{59}
 }
 
-func (x *GrantUserRoleRequest) GetBizId() int64 {
+func (x *GrantUserRoleRequest) GetUserRole() *UserRole {
 	if x != nil {
-		return x.BizId
+		return x.UserRole
 	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetStartTime() int64 {
-	if x != nil {
-		return x.StartTime
-	}
-	return 0
-}
-
-func (x *GrantUserRoleRequest) GetEndTime() int64 {
-	if x != nil {
-		return x.EndTime
-	}
-	return 0
+	return nil
 }
 
 type GrantUserRoleResponse struct {
@@ -3228,8 +3196,7 @@ func (x *GrantUserRoleResponse) GetUserRole() *UserRole {
 type RevokeUserRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	RoleId        int64                  `protobuf:"varint,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3271,16 +3238,9 @@ func (x *RevokeUserRoleRequest) GetBizId() int64 {
 	return 0
 }
 
-func (x *RevokeUserRoleRequest) GetUserId() int64 {
+func (x *RevokeUserRoleRequest) GetId() int64 {
 	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RevokeUserRoleRequest) GetRoleId() int64 {
-	if x != nil {
-		return x.RoleId
+		return x.Id
 	}
 	return 0
 }
@@ -3332,9 +3292,8 @@ func (x *RevokeUserRoleResponse) GetSuccess() bool {
 type ListUserRolesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3372,13 +3331,6 @@ func (*ListUserRolesRequest) Descriptor() ([]byte, []int) {
 func (x *ListUserRolesRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListUserRolesRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -3583,15 +3535,10 @@ func (x *UserPermission) GetEffect() string {
 }
 
 type GrantUserPermissionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
-	Effect        string                 `protobuf:"bytes,4,opt,name=effect,proto3" json:"effect,omitempty"`                         // allow, deny
-	StartTime     int64                  `protobuf:"varint,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"` // 权限生效日期
-	EndTime       int64                  `protobuf:"varint,6,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`       // 权限失效日期
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserPermission *UserPermission        `protobuf:"bytes,1,opt,name=user_permission,json=userPermission,proto3" json:"user_permission,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *GrantUserPermissionRequest) Reset() {
@@ -3624,46 +3571,11 @@ func (*GrantUserPermissionRequest) Descriptor() ([]byte, []int) {
 	return file_permission_v1_rbac_proto_rawDescGZIP(), []int{66}
 }
 
-func (x *GrantUserPermissionRequest) GetBizId() int64 {
+func (x *GrantUserPermissionRequest) GetUserPermission() *UserPermission {
 	if x != nil {
-		return x.BizId
+		return x.UserPermission
 	}
-	return 0
-}
-
-func (x *GrantUserPermissionRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *GrantUserPermissionRequest) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
-	}
-	return 0
-}
-
-func (x *GrantUserPermissionRequest) GetEffect() string {
-	if x != nil {
-		return x.Effect
-	}
-	return ""
-}
-
-func (x *GrantUserPermissionRequest) GetStartTime() int64 {
-	if x != nil {
-		return x.StartTime
-	}
-	return 0
-}
-
-func (x *GrantUserPermissionRequest) GetEndTime() int64 {
-	if x != nil {
-		return x.EndTime
-	}
-	return 0
+	return nil
 }
 
 type GrantUserPermissionResponse struct {
@@ -3713,8 +3625,7 @@ func (x *GrantUserPermissionResponse) GetUserPermission() *UserPermission {
 type RevokeUserPermissionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	PermissionId  int64                  `protobuf:"varint,3,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	Id            int64                  `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3756,16 +3667,9 @@ func (x *RevokeUserPermissionRequest) GetBizId() int64 {
 	return 0
 }
 
-func (x *RevokeUserPermissionRequest) GetUserId() int64 {
+func (x *RevokeUserPermissionRequest) GetId() int64 {
 	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RevokeUserPermissionRequest) GetPermissionId() int64 {
-	if x != nil {
-		return x.PermissionId
+		return x.Id
 	}
 	return 0
 }
@@ -3817,9 +3721,8 @@ func (x *RevokeUserPermissionResponse) GetSuccess() bool {
 type ListUserPermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3857,13 +3760,6 @@ func (*ListUserPermissionsRequest) Descriptor() ([]byte, []int) {
 func (x *ListUserPermissionsRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListUserPermissionsRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
 	}
 	return 0
 }
@@ -3951,17 +3847,19 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x1bCreateBusinessConfigRequest\x125\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"U\n" +
 	"\x1cCreateBusinessConfigResponse\x125\n" +
-	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"*\n" +
-	"\x18GetBusinessConfigRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"R\n" +
+	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"A\n" +
+	"\x18GetBusinessConfigRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"R\n" +
 	"\x19GetBusinessConfigResponse\x125\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"T\n" +
 	"\x1bUpdateBusinessConfigRequest\x125\n" +
 	"\x06config\x18\x01 \x01(\v2\x1d.permission.v1.BusinessConfigR\x06config\"8\n" +
 	"\x1cUpdateBusinessConfigResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"-\n" +
-	"\x1bDeleteBusinessConfigRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"8\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"D\n" +
+	"\x1bDeleteBusinessConfigRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"8\n" +
 	"\x1cDeleteBusinessConfigResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"J\n" +
 	"\x1aListBusinessConfigsRequest\x12\x16\n" +
@@ -3973,17 +3871,19 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x15CreateResourceRequest\x123\n" +
 	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\"M\n" +
 	"\x16CreateResourceResponse\x123\n" +
-	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\"$\n" +
-	"\x12GetResourceRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"J\n" +
+	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\";\n" +
+	"\x12GetResourceRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"J\n" +
 	"\x13GetResourceResponse\x123\n" +
 	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\"L\n" +
 	"\x15UpdateResourceRequest\x123\n" +
 	"\bresource\x18\x01 \x01(\v2\x17.permission.v1.ResourceR\bresource\"2\n" +
 	"\x16UpdateResourceResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"'\n" +
-	"\x15DeleteResourceRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"2\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\">\n" +
+	"\x15DeleteResourceRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"2\n" +
 	"\x16DeleteResourceResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
 	"\x14ListResourcesRequest\x12\x15\n" +
@@ -4000,9 +3900,10 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x18CreatePermissionResponse\x129\n" +
 	"\n" +
 	"permission\x18\x01 \x01(\v2\x19.permission.v1.PermissionR\n" +
-	"permission\"&\n" +
-	"\x14GetPermissionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"R\n" +
+	"permission\"=\n" +
+	"\x14GetPermissionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"R\n" +
 	"\x15GetPermissionResponse\x129\n" +
 	"\n" +
 	"permission\x18\x01 \x01(\v2\x19.permission.v1.PermissionR\n" +
@@ -4012,9 +3913,10 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"permission\x18\x01 \x01(\v2\x19.permission.v1.PermissionR\n" +
 	"permission\"4\n" +
 	"\x18UpdatePermissionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\")\n" +
-	"\x17DeletePermissionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"4\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"@\n" +
+	"\x17DeletePermissionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"4\n" +
 	"\x18DeletePermissionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"]\n" +
 	"\x16ListPermissionsRequest\x12\x15\n" +
@@ -4034,17 +3936,19 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x11CreateRoleRequest\x12'\n" +
 	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"=\n" +
 	"\x12CreateRoleResponse\x12'\n" +
-	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\" \n" +
-	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\":\n" +
+	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"7\n" +
+	"\x0eGetRoleRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\":\n" +
 	"\x0fGetRoleResponse\x12'\n" +
 	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\"<\n" +
 	"\x11UpdateRoleRequest\x12'\n" +
 	"\x04role\x18\x01 \x01(\v2\x13.permission.v1.RoleR\x04role\".\n" +
 	"\x12UpdateRoleResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"#\n" +
-	"\x11DeleteRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\".\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\":\n" +
+	"\x11DeleteRoleRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\".\n" +
 	"\x12DeleteRoleResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"W\n" +
 	"\x10ListRolesRequest\x12\x15\n" +
@@ -4062,29 +3966,25 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x13including_role_name\x18\x05 \x01(\tR\x11includingRoleName\x12(\n" +
 	"\x10included_role_id\x18\x06 \x01(\x03R\x0eincludedRoleId\x12,\n" +
 	"\x12included_role_type\x18\a \x01(\tR\x10includedRoleType\x12,\n" +
-	"\x12included_role_name\x18\b \x01(\tR\x10includedRoleName\"\x89\x01\n" +
-	"\x1aCreateRoleInclusionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12*\n" +
-	"\x11including_role_id\x18\x02 \x01(\x03R\x0fincludingRoleId\x12(\n" +
-	"\x10included_role_id\x18\x03 \x01(\x03R\x0eincludedRoleId\"b\n" +
+	"\x12included_role_name\x18\b \x01(\tR\x10includedRoleName\"a\n" +
+	"\x1aCreateRoleInclusionRequest\x12C\n" +
+	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\"b\n" +
 	"\x1bCreateRoleInclusionResponse\x12C\n" +
-	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\")\n" +
-	"\x17GetRoleInclusionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x03R\x02id\"_\n" +
+	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\"@\n" +
+	"\x17GetRoleInclusionRequest\x12\x15\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"_\n" +
 	"\x18GetRoleInclusionResponse\x12C\n" +
-	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\"\x89\x01\n" +
+	"\x0erole_inclusion\x18\x01 \x01(\v2\x1c.permission.v1.RoleInclusionR\rroleInclusion\"C\n" +
 	"\x1aDeleteRoleInclusionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12*\n" +
-	"\x11including_role_id\x18\x02 \x01(\x03R\x0fincludingRoleId\x12(\n" +
-	"\x10included_role_id\x18\x03 \x01(\x03R\x0eincludedRoleId\"7\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"7\n" +
 	"\x1bDeleteRoleInclusionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9c\x01\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"`\n" +
 	"\x19ListRoleInclusionsRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12!\n" +
-	"\fis_including\x18\x03 \x01(\bR\visIncluding\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x05 \x01(\x05R\x05limit\"y\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"y\n" +
 	"\x1aListRoleInclusionsResponse\x12E\n" +
 	"\x0frole_inclusions\x18\x01 \x03(\v2\x1c.permission.v1.RoleInclusionR\x0eroleInclusions\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xa4\x02\n" +
@@ -4097,24 +3997,20 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\trole_type\x18\x06 \x01(\tR\broleType\x12#\n" +
 	"\rresource_type\x18\a \x01(\tR\fresourceType\x12!\n" +
 	"\fresource_key\x18\b \x01(\tR\vresourceKey\x12+\n" +
-	"\x11permission_action\x18\t \x01(\tR\x10permissionAction\"q\n" +
-	"\x1aGrantRolePermissionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\"e\n" +
+	"\x11permission_action\x18\t \x01(\tR\x10permissionAction\"d\n" +
+	"\x1aGrantRolePermissionRequest\x12F\n" +
+	"\x0frole_permission\x18\x01 \x01(\v2\x1d.permission.v1.RolePermissionR\x0erolePermission\"e\n" +
 	"\x1bGrantRolePermissionResponse\x12F\n" +
-	"\x0frole_permission\x18\x01 \x01(\v2\x1d.permission.v1.RolePermissionR\x0erolePermission\"r\n" +
+	"\x0frole_permission\x18\x01 \x01(\v2\x1d.permission.v1.RolePermissionR\x0erolePermission\"D\n" +
 	"\x1bRevokeRolePermissionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\"8\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"8\n" +
 	"\x1cRevokeRolePermissionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"z\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"a\n" +
 	"\x1aListRolePermissionsRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\arole_id\x18\x02 \x01(\x03R\x06roleId\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x04 \x01(\x05R\x05limit\"}\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"}\n" +
 	"\x1bListRolePermissionsResponse\x12H\n" +
 	"\x10role_permissions\x18\x01 \x03(\v2\x1d.permission.v1.RolePermissionR\x0frolePermissions\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total\"\xd7\x01\n" +
@@ -4127,27 +4023,20 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\trole_type\x18\x06 \x01(\tR\broleType\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\a \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\b \x01(\x03R\aendTime\"\x99\x01\n" +
-	"\x14GrantUserRoleRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x17\n" +
-	"\arole_id\x18\x03 \x01(\x03R\x06roleId\x12\x1d\n" +
-	"\n" +
-	"start_time\x18\x04 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x05 \x01(\x03R\aendTime\"M\n" +
+	"\bend_time\x18\b \x01(\x03R\aendTime\"L\n" +
+	"\x14GrantUserRoleRequest\x124\n" +
+	"\tuser_role\x18\x01 \x01(\v2\x17.permission.v1.UserRoleR\buserRole\"M\n" +
 	"\x15GrantUserRoleResponse\x124\n" +
-	"\tuser_role\x18\x01 \x01(\v2\x17.permission.v1.UserRoleR\buserRole\"`\n" +
+	"\tuser_role\x18\x01 \x01(\v2\x17.permission.v1.UserRoleR\buserRole\">\n" +
 	"\x15RevokeUserRoleRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x17\n" +
-	"\arole_id\x18\x03 \x01(\x03R\x06roleId\"2\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"2\n" +
 	"\x16RevokeUserRoleResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"t\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
 	"\x14ListUserRolesRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x04 \x01(\x05R\x05limit\"e\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"e\n" +
 	"\x15ListUserRolesResponse\x126\n" +
 	"\n" +
 	"user_roles\x18\x01 \x03(\v2\x17.permission.v1.UserRoleR\tuserRoles\x12\x14\n" +
@@ -4166,28 +4055,20 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"start_time\x18\n" +
 	" \x01(\x03R\tstartTime\x12\x19\n" +
 	"\bend_time\x18\v \x01(\x03R\aendTime\x12\x16\n" +
-	"\x06effect\x18\f \x01(\tR\x06effect\"\xc3\x01\n" +
-	"\x1aGrantUserPermissionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\x12\x16\n" +
-	"\x06effect\x18\x04 \x01(\tR\x06effect\x12\x1d\n" +
-	"\n" +
-	"start_time\x18\x05 \x01(\x03R\tstartTime\x12\x19\n" +
-	"\bend_time\x18\x06 \x01(\x03R\aendTime\"e\n" +
+	"\x06effect\x18\f \x01(\tR\x06effect\"d\n" +
+	"\x1aGrantUserPermissionRequest\x12F\n" +
+	"\x0fuser_permission\x18\x01 \x01(\v2\x1d.permission.v1.UserPermissionR\x0euserPermission\"e\n" +
 	"\x1bGrantUserPermissionResponse\x12F\n" +
-	"\x0fuser_permission\x18\x01 \x01(\v2\x1d.permission.v1.UserPermissionR\x0euserPermission\"r\n" +
+	"\x0fuser_permission\x18\x01 \x01(\v2\x1d.permission.v1.UserPermissionR\x0euserPermission\"D\n" +
 	"\x1bRevokeUserPermissionRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12#\n" +
-	"\rpermission_id\x18\x03 \x01(\x03R\fpermissionId\"8\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\"8\n" +
 	"\x1cRevokeUserPermissionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"z\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"a\n" +
 	"\x1aListUserPermissionsRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x17\n" +
-	"\auser_id\x18\x02 \x01(\x03R\x06userId\x12\x16\n" +
-	"\x06offset\x18\x03 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x04 \x01(\x05R\x05limit\"}\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\"}\n" +
 	"\x1bListUserPermissionsResponse\x12H\n" +
 	"\x10user_permissions\x18\x01 \x03(\v2\x1d.permission.v1.UserPermissionR\x0fuserPermissions\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x05R\x05total2\xe2\x19\n" +
@@ -4343,86 +4224,90 @@ var file_permission_v1_rbac_proto_depIdxs = []int32{
 	31, // 17: permission.v1.GetRoleResponse.role:type_name -> permission.v1.Role
 	31, // 18: permission.v1.UpdateRoleRequest.role:type_name -> permission.v1.Role
 	31, // 19: permission.v1.ListRolesResponse.roles:type_name -> permission.v1.Role
-	42, // 20: permission.v1.CreateRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
-	42, // 21: permission.v1.GetRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
-	42, // 22: permission.v1.ListRoleInclusionsResponse.role_inclusions:type_name -> permission.v1.RoleInclusion
-	51, // 23: permission.v1.GrantRolePermissionResponse.role_permission:type_name -> permission.v1.RolePermission
-	51, // 24: permission.v1.ListRolePermissionsResponse.role_permissions:type_name -> permission.v1.RolePermission
-	58, // 25: permission.v1.GrantUserRoleResponse.user_role:type_name -> permission.v1.UserRole
-	58, // 26: permission.v1.ListUserRolesResponse.user_roles:type_name -> permission.v1.UserRole
-	65, // 27: permission.v1.GrantUserPermissionResponse.user_permission:type_name -> permission.v1.UserPermission
-	65, // 28: permission.v1.ListUserPermissionsResponse.user_permissions:type_name -> permission.v1.UserPermission
-	1,  // 29: permission.v1.RBACService.CreateBusinessConfig:input_type -> permission.v1.CreateBusinessConfigRequest
-	3,  // 30: permission.v1.RBACService.GetBusinessConfig:input_type -> permission.v1.GetBusinessConfigRequest
-	5,  // 31: permission.v1.RBACService.UpdateBusinessConfig:input_type -> permission.v1.UpdateBusinessConfigRequest
-	7,  // 32: permission.v1.RBACService.DeleteBusinessConfig:input_type -> permission.v1.DeleteBusinessConfigRequest
-	9,  // 33: permission.v1.RBACService.ListBusinessConfigs:input_type -> permission.v1.ListBusinessConfigsRequest
-	11, // 34: permission.v1.RBACService.CreateResource:input_type -> permission.v1.CreateResourceRequest
-	13, // 35: permission.v1.RBACService.GetResource:input_type -> permission.v1.GetResourceRequest
-	15, // 36: permission.v1.RBACService.UpdateResource:input_type -> permission.v1.UpdateResourceRequest
-	17, // 37: permission.v1.RBACService.DeleteResource:input_type -> permission.v1.DeleteResourceRequest
-	19, // 38: permission.v1.RBACService.ListResources:input_type -> permission.v1.ListResourcesRequest
-	21, // 39: permission.v1.RBACService.CreatePermission:input_type -> permission.v1.CreatePermissionRequest
-	23, // 40: permission.v1.RBACService.GetPermission:input_type -> permission.v1.GetPermissionRequest
-	25, // 41: permission.v1.RBACService.UpdatePermission:input_type -> permission.v1.UpdatePermissionRequest
-	27, // 42: permission.v1.RBACService.DeletePermission:input_type -> permission.v1.DeletePermissionRequest
-	29, // 43: permission.v1.RBACService.ListPermissions:input_type -> permission.v1.ListPermissionsRequest
-	32, // 44: permission.v1.RBACService.CreateRole:input_type -> permission.v1.CreateRoleRequest
-	34, // 45: permission.v1.RBACService.GetRole:input_type -> permission.v1.GetRoleRequest
-	36, // 46: permission.v1.RBACService.UpdateRole:input_type -> permission.v1.UpdateRoleRequest
-	38, // 47: permission.v1.RBACService.DeleteRole:input_type -> permission.v1.DeleteRoleRequest
-	40, // 48: permission.v1.RBACService.ListRoles:input_type -> permission.v1.ListRolesRequest
-	43, // 49: permission.v1.RBACService.CreateRoleInclusion:input_type -> permission.v1.CreateRoleInclusionRequest
-	45, // 50: permission.v1.RBACService.GetRoleInclusion:input_type -> permission.v1.GetRoleInclusionRequest
-	47, // 51: permission.v1.RBACService.DeleteRoleInclusion:input_type -> permission.v1.DeleteRoleInclusionRequest
-	49, // 52: permission.v1.RBACService.ListRoleInclusions:input_type -> permission.v1.ListRoleInclusionsRequest
-	52, // 53: permission.v1.RBACService.GrantRolePermission:input_type -> permission.v1.GrantRolePermissionRequest
-	54, // 54: permission.v1.RBACService.RevokeRolePermission:input_type -> permission.v1.RevokeRolePermissionRequest
-	56, // 55: permission.v1.RBACService.ListRolePermissions:input_type -> permission.v1.ListRolePermissionsRequest
-	59, // 56: permission.v1.RBACService.GrantUserRole:input_type -> permission.v1.GrantUserRoleRequest
-	61, // 57: permission.v1.RBACService.RevokeUserRole:input_type -> permission.v1.RevokeUserRoleRequest
-	63, // 58: permission.v1.RBACService.ListUserRoles:input_type -> permission.v1.ListUserRolesRequest
-	66, // 59: permission.v1.RBACService.GrantUserPermission:input_type -> permission.v1.GrantUserPermissionRequest
-	68, // 60: permission.v1.RBACService.RevokeUserPermission:input_type -> permission.v1.RevokeUserPermissionRequest
-	70, // 61: permission.v1.RBACService.ListUserPermissions:input_type -> permission.v1.ListUserPermissionsRequest
-	2,  // 62: permission.v1.RBACService.CreateBusinessConfig:output_type -> permission.v1.CreateBusinessConfigResponse
-	4,  // 63: permission.v1.RBACService.GetBusinessConfig:output_type -> permission.v1.GetBusinessConfigResponse
-	6,  // 64: permission.v1.RBACService.UpdateBusinessConfig:output_type -> permission.v1.UpdateBusinessConfigResponse
-	8,  // 65: permission.v1.RBACService.DeleteBusinessConfig:output_type -> permission.v1.DeleteBusinessConfigResponse
-	10, // 66: permission.v1.RBACService.ListBusinessConfigs:output_type -> permission.v1.ListBusinessConfigsResponse
-	12, // 67: permission.v1.RBACService.CreateResource:output_type -> permission.v1.CreateResourceResponse
-	14, // 68: permission.v1.RBACService.GetResource:output_type -> permission.v1.GetResourceResponse
-	16, // 69: permission.v1.RBACService.UpdateResource:output_type -> permission.v1.UpdateResourceResponse
-	18, // 70: permission.v1.RBACService.DeleteResource:output_type -> permission.v1.DeleteResourceResponse
-	20, // 71: permission.v1.RBACService.ListResources:output_type -> permission.v1.ListResourcesResponse
-	22, // 72: permission.v1.RBACService.CreatePermission:output_type -> permission.v1.CreatePermissionResponse
-	24, // 73: permission.v1.RBACService.GetPermission:output_type -> permission.v1.GetPermissionResponse
-	26, // 74: permission.v1.RBACService.UpdatePermission:output_type -> permission.v1.UpdatePermissionResponse
-	28, // 75: permission.v1.RBACService.DeletePermission:output_type -> permission.v1.DeletePermissionResponse
-	30, // 76: permission.v1.RBACService.ListPermissions:output_type -> permission.v1.ListPermissionsResponse
-	33, // 77: permission.v1.RBACService.CreateRole:output_type -> permission.v1.CreateRoleResponse
-	35, // 78: permission.v1.RBACService.GetRole:output_type -> permission.v1.GetRoleResponse
-	37, // 79: permission.v1.RBACService.UpdateRole:output_type -> permission.v1.UpdateRoleResponse
-	39, // 80: permission.v1.RBACService.DeleteRole:output_type -> permission.v1.DeleteRoleResponse
-	41, // 81: permission.v1.RBACService.ListRoles:output_type -> permission.v1.ListRolesResponse
-	44, // 82: permission.v1.RBACService.CreateRoleInclusion:output_type -> permission.v1.CreateRoleInclusionResponse
-	46, // 83: permission.v1.RBACService.GetRoleInclusion:output_type -> permission.v1.GetRoleInclusionResponse
-	48, // 84: permission.v1.RBACService.DeleteRoleInclusion:output_type -> permission.v1.DeleteRoleInclusionResponse
-	50, // 85: permission.v1.RBACService.ListRoleInclusions:output_type -> permission.v1.ListRoleInclusionsResponse
-	53, // 86: permission.v1.RBACService.GrantRolePermission:output_type -> permission.v1.GrantRolePermissionResponse
-	55, // 87: permission.v1.RBACService.RevokeRolePermission:output_type -> permission.v1.RevokeRolePermissionResponse
-	57, // 88: permission.v1.RBACService.ListRolePermissions:output_type -> permission.v1.ListRolePermissionsResponse
-	60, // 89: permission.v1.RBACService.GrantUserRole:output_type -> permission.v1.GrantUserRoleResponse
-	62, // 90: permission.v1.RBACService.RevokeUserRole:output_type -> permission.v1.RevokeUserRoleResponse
-	64, // 91: permission.v1.RBACService.ListUserRoles:output_type -> permission.v1.ListUserRolesResponse
-	67, // 92: permission.v1.RBACService.GrantUserPermission:output_type -> permission.v1.GrantUserPermissionResponse
-	69, // 93: permission.v1.RBACService.RevokeUserPermission:output_type -> permission.v1.RevokeUserPermissionResponse
-	71, // 94: permission.v1.RBACService.ListUserPermissions:output_type -> permission.v1.ListUserPermissionsResponse
-	62, // [62:95] is the sub-list for method output_type
-	29, // [29:62] is the sub-list for method input_type
-	29, // [29:29] is the sub-list for extension type_name
-	29, // [29:29] is the sub-list for extension extendee
-	0,  // [0:29] is the sub-list for field type_name
+	42, // 20: permission.v1.CreateRoleInclusionRequest.role_inclusion:type_name -> permission.v1.RoleInclusion
+	42, // 21: permission.v1.CreateRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
+	42, // 22: permission.v1.GetRoleInclusionResponse.role_inclusion:type_name -> permission.v1.RoleInclusion
+	42, // 23: permission.v1.ListRoleInclusionsResponse.role_inclusions:type_name -> permission.v1.RoleInclusion
+	51, // 24: permission.v1.GrantRolePermissionRequest.role_permission:type_name -> permission.v1.RolePermission
+	51, // 25: permission.v1.GrantRolePermissionResponse.role_permission:type_name -> permission.v1.RolePermission
+	51, // 26: permission.v1.ListRolePermissionsResponse.role_permissions:type_name -> permission.v1.RolePermission
+	58, // 27: permission.v1.GrantUserRoleRequest.user_role:type_name -> permission.v1.UserRole
+	58, // 28: permission.v1.GrantUserRoleResponse.user_role:type_name -> permission.v1.UserRole
+	58, // 29: permission.v1.ListUserRolesResponse.user_roles:type_name -> permission.v1.UserRole
+	65, // 30: permission.v1.GrantUserPermissionRequest.user_permission:type_name -> permission.v1.UserPermission
+	65, // 31: permission.v1.GrantUserPermissionResponse.user_permission:type_name -> permission.v1.UserPermission
+	65, // 32: permission.v1.ListUserPermissionsResponse.user_permissions:type_name -> permission.v1.UserPermission
+	1,  // 33: permission.v1.RBACService.CreateBusinessConfig:input_type -> permission.v1.CreateBusinessConfigRequest
+	3,  // 34: permission.v1.RBACService.GetBusinessConfig:input_type -> permission.v1.GetBusinessConfigRequest
+	5,  // 35: permission.v1.RBACService.UpdateBusinessConfig:input_type -> permission.v1.UpdateBusinessConfigRequest
+	7,  // 36: permission.v1.RBACService.DeleteBusinessConfig:input_type -> permission.v1.DeleteBusinessConfigRequest
+	9,  // 37: permission.v1.RBACService.ListBusinessConfigs:input_type -> permission.v1.ListBusinessConfigsRequest
+	11, // 38: permission.v1.RBACService.CreateResource:input_type -> permission.v1.CreateResourceRequest
+	13, // 39: permission.v1.RBACService.GetResource:input_type -> permission.v1.GetResourceRequest
+	15, // 40: permission.v1.RBACService.UpdateResource:input_type -> permission.v1.UpdateResourceRequest
+	17, // 41: permission.v1.RBACService.DeleteResource:input_type -> permission.v1.DeleteResourceRequest
+	19, // 42: permission.v1.RBACService.ListResources:input_type -> permission.v1.ListResourcesRequest
+	21, // 43: permission.v1.RBACService.CreatePermission:input_type -> permission.v1.CreatePermissionRequest
+	23, // 44: permission.v1.RBACService.GetPermission:input_type -> permission.v1.GetPermissionRequest
+	25, // 45: permission.v1.RBACService.UpdatePermission:input_type -> permission.v1.UpdatePermissionRequest
+	27, // 46: permission.v1.RBACService.DeletePermission:input_type -> permission.v1.DeletePermissionRequest
+	29, // 47: permission.v1.RBACService.ListPermissions:input_type -> permission.v1.ListPermissionsRequest
+	32, // 48: permission.v1.RBACService.CreateRole:input_type -> permission.v1.CreateRoleRequest
+	34, // 49: permission.v1.RBACService.GetRole:input_type -> permission.v1.GetRoleRequest
+	36, // 50: permission.v1.RBACService.UpdateRole:input_type -> permission.v1.UpdateRoleRequest
+	38, // 51: permission.v1.RBACService.DeleteRole:input_type -> permission.v1.DeleteRoleRequest
+	40, // 52: permission.v1.RBACService.ListRoles:input_type -> permission.v1.ListRolesRequest
+	43, // 53: permission.v1.RBACService.CreateRoleInclusion:input_type -> permission.v1.CreateRoleInclusionRequest
+	45, // 54: permission.v1.RBACService.GetRoleInclusion:input_type -> permission.v1.GetRoleInclusionRequest
+	47, // 55: permission.v1.RBACService.DeleteRoleInclusion:input_type -> permission.v1.DeleteRoleInclusionRequest
+	49, // 56: permission.v1.RBACService.ListRoleInclusions:input_type -> permission.v1.ListRoleInclusionsRequest
+	52, // 57: permission.v1.RBACService.GrantRolePermission:input_type -> permission.v1.GrantRolePermissionRequest
+	54, // 58: permission.v1.RBACService.RevokeRolePermission:input_type -> permission.v1.RevokeRolePermissionRequest
+	56, // 59: permission.v1.RBACService.ListRolePermissions:input_type -> permission.v1.ListRolePermissionsRequest
+	59, // 60: permission.v1.RBACService.GrantUserRole:input_type -> permission.v1.GrantUserRoleRequest
+	61, // 61: permission.v1.RBACService.RevokeUserRole:input_type -> permission.v1.RevokeUserRoleRequest
+	63, // 62: permission.v1.RBACService.ListUserRoles:input_type -> permission.v1.ListUserRolesRequest
+	66, // 63: permission.v1.RBACService.GrantUserPermission:input_type -> permission.v1.GrantUserPermissionRequest
+	68, // 64: permission.v1.RBACService.RevokeUserPermission:input_type -> permission.v1.RevokeUserPermissionRequest
+	70, // 65: permission.v1.RBACService.ListUserPermissions:input_type -> permission.v1.ListUserPermissionsRequest
+	2,  // 66: permission.v1.RBACService.CreateBusinessConfig:output_type -> permission.v1.CreateBusinessConfigResponse
+	4,  // 67: permission.v1.RBACService.GetBusinessConfig:output_type -> permission.v1.GetBusinessConfigResponse
+	6,  // 68: permission.v1.RBACService.UpdateBusinessConfig:output_type -> permission.v1.UpdateBusinessConfigResponse
+	8,  // 69: permission.v1.RBACService.DeleteBusinessConfig:output_type -> permission.v1.DeleteBusinessConfigResponse
+	10, // 70: permission.v1.RBACService.ListBusinessConfigs:output_type -> permission.v1.ListBusinessConfigsResponse
+	12, // 71: permission.v1.RBACService.CreateResource:output_type -> permission.v1.CreateResourceResponse
+	14, // 72: permission.v1.RBACService.GetResource:output_type -> permission.v1.GetResourceResponse
+	16, // 73: permission.v1.RBACService.UpdateResource:output_type -> permission.v1.UpdateResourceResponse
+	18, // 74: permission.v1.RBACService.DeleteResource:output_type -> permission.v1.DeleteResourceResponse
+	20, // 75: permission.v1.RBACService.ListResources:output_type -> permission.v1.ListResourcesResponse
+	22, // 76: permission.v1.RBACService.CreatePermission:output_type -> permission.v1.CreatePermissionResponse
+	24, // 77: permission.v1.RBACService.GetPermission:output_type -> permission.v1.GetPermissionResponse
+	26, // 78: permission.v1.RBACService.UpdatePermission:output_type -> permission.v1.UpdatePermissionResponse
+	28, // 79: permission.v1.RBACService.DeletePermission:output_type -> permission.v1.DeletePermissionResponse
+	30, // 80: permission.v1.RBACService.ListPermissions:output_type -> permission.v1.ListPermissionsResponse
+	33, // 81: permission.v1.RBACService.CreateRole:output_type -> permission.v1.CreateRoleResponse
+	35, // 82: permission.v1.RBACService.GetRole:output_type -> permission.v1.GetRoleResponse
+	37, // 83: permission.v1.RBACService.UpdateRole:output_type -> permission.v1.UpdateRoleResponse
+	39, // 84: permission.v1.RBACService.DeleteRole:output_type -> permission.v1.DeleteRoleResponse
+	41, // 85: permission.v1.RBACService.ListRoles:output_type -> permission.v1.ListRolesResponse
+	44, // 86: permission.v1.RBACService.CreateRoleInclusion:output_type -> permission.v1.CreateRoleInclusionResponse
+	46, // 87: permission.v1.RBACService.GetRoleInclusion:output_type -> permission.v1.GetRoleInclusionResponse
+	48, // 88: permission.v1.RBACService.DeleteRoleInclusion:output_type -> permission.v1.DeleteRoleInclusionResponse
+	50, // 89: permission.v1.RBACService.ListRoleInclusions:output_type -> permission.v1.ListRoleInclusionsResponse
+	53, // 90: permission.v1.RBACService.GrantRolePermission:output_type -> permission.v1.GrantRolePermissionResponse
+	55, // 91: permission.v1.RBACService.RevokeRolePermission:output_type -> permission.v1.RevokeRolePermissionResponse
+	57, // 92: permission.v1.RBACService.ListRolePermissions:output_type -> permission.v1.ListRolePermissionsResponse
+	60, // 93: permission.v1.RBACService.GrantUserRole:output_type -> permission.v1.GrantUserRoleResponse
+	62, // 94: permission.v1.RBACService.RevokeUserRole:output_type -> permission.v1.RevokeUserRoleResponse
+	64, // 95: permission.v1.RBACService.ListUserRoles:output_type -> permission.v1.ListUserRolesResponse
+	67, // 96: permission.v1.RBACService.GrantUserPermission:output_type -> permission.v1.GrantUserPermissionResponse
+	69, // 97: permission.v1.RBACService.RevokeUserPermission:output_type -> permission.v1.RevokeUserPermissionResponse
+	71, // 98: permission.v1.RBACService.ListUserPermissions:output_type -> permission.v1.ListUserPermissionsResponse
+	66, // [66:99] is the sub-list for method output_type
+	33, // [33:66] is the sub-list for method input_type
+	33, // [33:33] is the sub-list for extension type_name
+	33, // [33:33] is the sub-list for extension extendee
+	0,  // [0:33] is the sub-list for field type_name
 }
 
 func init() { file_permission_v1_rbac_proto_init() }

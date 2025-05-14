@@ -30,6 +30,7 @@ type BusinessConfigDAO interface {
 	GetByID(ctx context.Context, id int64) (BusinessConfig, error)
 	Find(ctx context.Context, offset int, limit int) ([]BusinessConfig, error)
 	Count(ctx context.Context) (int64, error)
+	UpdateToken(ctx context.Context, id int64, token string) error
 	Update(ctx context.Context, config BusinessConfig) error
 	Delete(ctx context.Context, id int64) error
 }
@@ -82,6 +83,16 @@ func (b *businessConfigDAO) GetByIDs(ctx context.Context, ids []int64) (map[int6
 	return configMap, nil
 }
 
+func (b *businessConfigDAO) UpdateToken(ctx context.Context, id int64, token string) error {
+	return b.db.WithContext(ctx).
+		Model(&BusinessConfig{}).
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"token": token,
+			"utime": time.Now().UnixMilli(),
+		}).Error
+}
+
 // Update 更新业务配置
 func (b *businessConfigDAO) Update(ctx context.Context, config BusinessConfig) error {
 	config.Utime = time.Now().UnixMilli()
@@ -93,7 +104,6 @@ func (b *businessConfigDAO) Update(ctx context.Context, config BusinessConfig) e
 			"owner_type": config.OwnerType,
 			"name":       config.Name,
 			"rate_limit": config.RateLimit,
-			"token":      config.Token,
 			"utime":      config.Utime,
 		}).Error
 }

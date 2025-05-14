@@ -433,6 +433,8 @@ func (m *GetBusinessConfigRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -904,6 +906,8 @@ func (m *DeleteBusinessConfigRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -1622,6 +1626,8 @@ func (m *GetResourceRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -2091,6 +2097,8 @@ func (m *DeleteResourceRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -2808,6 +2816,8 @@ func (m *GetPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -3277,6 +3287,8 @@ func (m *DeletePermissionRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -4104,6 +4116,8 @@ func (m *GetRoleRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -4569,6 +4583,8 @@ func (m *DeleteRoleRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -5138,11 +5154,34 @@ func (m *CreateRoleInclusionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for IncludingRoleId
-
-	// no validation rules for IncludedRoleId
+	if all {
+		switch v := interface{}(m.GetRoleInclusion()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateRoleInclusionRequestValidationError{
+					field:  "RoleInclusion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateRoleInclusionRequestValidationError{
+					field:  "RoleInclusion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRoleInclusion()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateRoleInclusionRequestValidationError{
+				field:  "RoleInclusion",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return CreateRoleInclusionRequestMultiError(errors)
@@ -5377,6 +5416,8 @@ func (m *GetRoleInclusionRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -5615,9 +5656,7 @@ func (m *DeleteRoleInclusionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for IncludingRoleId
-
-	// no validation rules for IncludedRoleId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return DeleteRoleInclusionRequestMultiError(errors)
@@ -5827,10 +5866,6 @@ func (m *ListRoleInclusionsRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for RoleId
-
-	// no validation rules for IsIncluding
 
 	// no validation rules for Offset
 
@@ -6194,11 +6229,34 @@ func (m *GrantRolePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for RoleId
-
-	// no validation rules for PermissionId
+	if all {
+		switch v := interface{}(m.GetRolePermission()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantRolePermissionRequestValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantRolePermissionRequestValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRolePermission()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantRolePermissionRequestValidationError{
+				field:  "RolePermission",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantRolePermissionRequestMultiError(errors)
@@ -6436,9 +6494,7 @@ func (m *RevokeRolePermissionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for RoleId
-
-	// no validation rules for PermissionId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeRolePermissionRequestMultiError(errors)
@@ -6649,8 +6705,6 @@ func (m *ListRolePermissionsRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for RoleId
 
 	// no validation rules for Offset
 
@@ -7012,15 +7066,34 @@ func (m *GrantUserRoleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for UserId
-
-	// no validation rules for RoleId
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
+	if all {
+		switch v := interface{}(m.GetUserRole()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantUserRoleRequestValidationError{
+					field:  "UserRole",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantUserRoleRequestValidationError{
+					field:  "UserRole",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserRole()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantUserRoleRequestValidationError{
+				field:  "UserRole",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantUserRoleRequestMultiError(errors)
@@ -7257,9 +7330,7 @@ func (m *RevokeUserRoleRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for UserId
-
-	// no validation rules for RoleId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeUserRoleRequestMultiError(errors)
@@ -7468,8 +7539,6 @@ func (m *ListUserRolesRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for UserId
 
 	// no validation rules for Offset
 
@@ -7839,17 +7908,34 @@ func (m *GrantUserPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for UserId
-
-	// no validation rules for PermissionId
-
-	// no validation rules for Effect
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
+	if all {
+		switch v := interface{}(m.GetUserPermission()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantUserPermissionRequestValidationError{
+					field:  "UserPermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantUserPermissionRequestValidationError{
+					field:  "UserPermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserPermission()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantUserPermissionRequestValidationError{
+				field:  "UserPermission",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantUserPermissionRequestMultiError(errors)
@@ -8087,9 +8173,7 @@ func (m *RevokeUserPermissionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for UserId
-
-	// no validation rules for PermissionId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeUserPermissionRequestMultiError(errors)
@@ -8300,8 +8384,6 @@ func (m *ListUserPermissionsRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for UserId
 
 	// no validation rules for Offset
 

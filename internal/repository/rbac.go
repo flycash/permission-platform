@@ -6,7 +6,6 @@ import (
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"github.com/ecodeclub/ekit/slice"
-	"github.com/ecodeclub/ekit/sqlx"
 )
 
 type RBACRepository interface {
@@ -15,6 +14,7 @@ type RBACRepository interface {
 	CreateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
 	FindBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, int, error)
 	FindBusinessConfigByID(ctx context.Context, id int64) (domain.BusinessConfig, error)
+	UpdateBusinessConfigToken(ctx context.Context, id int64, token string) error
 	UpdateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
 	DeleteBusinessConfigByID(ctx context.Context, id int64) error
 
@@ -25,6 +25,7 @@ type RBACRepository interface {
 	UpdateResourceByBizIDAndID(ctx context.Context, resource domain.Resource) (domain.Resource, error)
 	DeleteResourceByBizIDAndID(ctx context.Context, bizID, id int64) error
 	FindResourcesByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, int, error)
+	FindResourcesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, int, error)
 
 	// 权限相关方法
 
@@ -33,6 +34,7 @@ type RBACRepository interface {
 	FindPermissionsByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, int, error)
 	UpdatePermissionByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 	DeletePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, int, error)
 
 	// 角色相关方法
 
@@ -41,6 +43,7 @@ type RBACRepository interface {
 	FindRolesByBizIDAndType(ctx context.Context, bizID int64, roleType string, offset, limit int) ([]domain.Role, int, error)
 	UpdateRoleByBizIDAndID(ctx context.Context, role domain.Role) (domain.Role, error)
 	DeleteRoleByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, int, error)
 
 	// 角色包含关系相关方法
 
@@ -49,12 +52,14 @@ type RBACRepository interface {
 	FindRoleInclusionsByBizIDAndIncludingRoleID(ctx context.Context, bizID, includingRoleID int64, offset, limit int) ([]domain.RoleInclusion, int, error)
 	FindRoleInclusionsByBizIDAndIncludedRoleID(ctx context.Context, bizID, includedRoleID int64, offset, limit int) ([]domain.RoleInclusion, int, error)
 	DeleteRoleInclusionByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindRoleInclusionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, int, error)
 
 	// 角色权限相关方法
 
 	CreateRolePermission(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error)
 	FindRolePermissionsByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, int, error)
 	DeleteRolePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindRolePermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, int, error)
 
 	// 用户角色相关方法
 
@@ -62,6 +67,7 @@ type RBACRepository interface {
 	FindUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, int, error)
 	FindValidUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserRole, int, error)
 	DeleteUserRoleByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindUserRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, int, error)
 
 	// 用户权限相关方法
 
@@ -69,6 +75,7 @@ type RBACRepository interface {
 	FindUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, int, error)
 	FindValidUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserPermission, int, error)
 	DeleteUserPermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
+	FindUserPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, int, error)
 }
 
 type rbacRepository struct {
@@ -147,6 +154,10 @@ func (r *rbacRepository) UpdateBusinessConfig(ctx context.Context, config domain
 	return config, nil
 }
 
+func (r *rbacRepository) UpdateBusinessConfigToken(ctx context.Context, id int64, token string) error {
+	return r.businessConfigDAO.UpdateToken(ctx, id, token)
+}
+
 func (r *rbacRepository) DeleteBusinessConfigByID(ctx context.Context, id int64) error {
 	return r.businessConfigDAO.Delete(ctx, id)
 }
@@ -188,6 +199,22 @@ func (r *rbacRepository) FindResourcesByBizIDAndTypeAndKey(ctx context.Context, 
 	}
 
 	total, err := r.resourceDAO.CountByBizIDAndTypeAndKey(ctx, bizID, resourceType, resourceKey)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(resources, func(_ int, src dao.Resource) domain.Resource {
+		return r.toResourceDomain(src)
+	}), int(total), nil
+}
+
+func (r *rbacRepository) FindResourcesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, int, error) {
+	resources, err := r.resourceDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.resourceDAO.CountByBizID(ctx, bizID)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -241,6 +268,22 @@ func (r *rbacRepository) DeletePermissionByBizIDAndID(ctx context.Context, bizID
 	return r.permissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 }
 
+func (r *rbacRepository) FindPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, int, error) {
+	permissions, err := r.permissionDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.permissionDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(permissions, func(_ int, src dao.Permission) domain.Permission {
+		return r.toPermissionDomain(src)
+	}), int(total), nil
+}
+
 // ================== 角色相关方法 ==================
 
 func (r *rbacRepository) CreateRole(ctx context.Context, role domain.Role) (domain.Role, error) {
@@ -283,6 +326,22 @@ func (r *rbacRepository) UpdateRoleByBizIDAndID(ctx context.Context, role domain
 
 func (r *rbacRepository) DeleteRoleByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.roleDAO.DeleteByBizIDAndID(ctx, bizID, id)
+}
+
+func (r *rbacRepository) FindRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, int, error) {
+	roles, err := r.roleDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.roleDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(roles, func(_ int, src dao.Role) domain.Role {
+		return r.toRoleDomain(src)
+	}), int(total), nil
 }
 
 // ================== 角色包含关系相关方法 ==================
@@ -335,6 +394,22 @@ func (r *rbacRepository) DeleteRoleInclusionByBizIDAndID(ctx context.Context, bi
 	return r.roleInclusionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 }
 
+func (r *rbacRepository) FindRoleInclusionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, int, error) {
+	roleInclusions, err := r.roleInclusionDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.roleInclusionDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(roleInclusions, func(_ int, src dao.RoleInclusion) domain.RoleInclusion {
+		return r.toRoleInclusionDomain(src)
+	}), int(total), nil
+}
+
 // ================== 角色权限相关方法 ==================
 
 func (r *rbacRepository) CreateRolePermission(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error) {
@@ -361,6 +436,22 @@ func (r *rbacRepository) FindRolePermissionsByBizIDAndRoleIDs(ctx context.Contex
 
 func (r *rbacRepository) DeleteRolePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.rolePermissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
+}
+
+func (r *rbacRepository) FindRolePermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, int, error) {
+	rolePermissions, err := r.rolePermissionDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.rolePermissionDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(rolePermissions, func(_ int, src dao.RolePermission) domain.RolePermission {
+		return r.toRolePermissionDomain(src)
+	}), int(total), nil
 }
 
 // ================== 用户角色权限相关方法 ==================
@@ -414,6 +505,22 @@ func (r *rbacRepository) FindValidUserRolesByBizIDAndUserID(ctx context.Context,
 
 func (r *rbacRepository) DeleteUserRoleByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
+}
+
+func (r *rbacRepository) FindUserRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, int, error) {
+	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.userRoleDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.UserRole {
+		return r.toUserRoleDomain(src)
+	}), int(total), nil
 }
 
 // ================== 用户权限相关方法 ==================
@@ -473,6 +580,22 @@ func (r *rbacRepository) DeleteUserPermissionByBizIDAndID(ctx context.Context, b
 	return r.userPermissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 }
 
+func (r *rbacRepository) FindUserPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, int, error) {
+	userPermissions, err := r.userPermissionDAO.FindByBizID(ctx, bizID, offset, limit)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	total, err := r.userPermissionDAO.CountByBizID(ctx, bizID)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return slice.Map(userPermissions, func(_ int, src dao.UserPermission) domain.UserPermission {
+		return r.toUserPermissionDomain(src)
+	}), int(total), nil
+}
+
 func (r *rbacRepository) toBusinessConfigEntity(bc domain.BusinessConfig) dao.BusinessConfig {
 	return dao.BusinessConfig{
 		ID:        bc.ID,
@@ -507,20 +630,13 @@ func (r *rbacRepository) toResourceEntity(res domain.Resource) dao.Resource {
 		Key:         res.Key,
 		Name:        res.Name,
 		Description: res.Description,
-		Metadata: sqlx.JsonColumn[domain.ResourceMetadata]{
-			Val:   res.Metadata,
-			Valid: true,
-		},
-		Ctime: res.Ctime,
-		Utime: res.Utime,
+		Metadata:    res.Metadata,
+		Ctime:       res.Ctime,
+		Utime:       res.Utime,
 	}
 }
 
 func (r *rbacRepository) toResourceDomain(res dao.Resource) domain.Resource {
-	var metadata domain.ResourceMetadata
-	if res.Metadata.Valid {
-		metadata = res.Metadata.Val
-	}
 	return domain.Resource{
 		ID:          res.ID,
 		BizID:       res.BizID,
@@ -528,7 +644,7 @@ func (r *rbacRepository) toResourceDomain(res dao.Resource) domain.Resource {
 		Key:         res.Key,
 		Name:        res.Name,
 		Description: res.Description,
-		Metadata:    metadata,
+		Metadata:    res.Metadata,
 		Ctime:       res.Ctime,
 		Utime:       res.Utime,
 	}
@@ -544,20 +660,13 @@ func (r *rbacRepository) toPermissionEntity(p domain.Permission) dao.Permission 
 		ResourceType: p.Resource.Type,
 		ResourceKey:  p.Resource.Key,
 		Action:       p.Action,
-		Metadata: sqlx.JsonColumn[domain.PermissionMetadata]{
-			Val:   p.Metadata,
-			Valid: true,
-		},
-		Ctime: p.Ctime,
-		Utime: p.Utime,
+		Metadata:     p.Metadata,
+		Ctime:        p.Ctime,
+		Utime:        p.Utime,
 	}
 }
 
 func (r *rbacRepository) toPermissionDomain(p dao.Permission) domain.Permission {
-	var metadata domain.PermissionMetadata
-	if p.Metadata.Valid {
-		metadata = p.Metadata.Val
-	}
 	return domain.Permission{
 		ID:          p.ID,
 		BizID:       p.BizID,
@@ -569,7 +678,7 @@ func (r *rbacRepository) toPermissionDomain(p dao.Permission) domain.Permission 
 			Key:  p.ResourceKey,
 		},
 		Action:   p.Action,
-		Metadata: metadata,
+		Metadata: p.Metadata,
 		Ctime:    p.Ctime,
 		Utime:    p.Utime,
 	}
@@ -582,27 +691,20 @@ func (r *rbacRepository) toRoleEntity(role domain.Role) dao.Role {
 		Type:        role.Type,
 		Name:        role.Name,
 		Description: role.Description,
-		Metadata: sqlx.JsonColumn[domain.RoleMetadata]{
-			Val:   role.Metadata,
-			Valid: true,
-		},
-		Ctime: role.Ctime,
-		Utime: role.Utime,
+		Metadata:    role.Metadata,
+		Ctime:       role.Ctime,
+		Utime:       role.Utime,
 	}
 }
 
 func (r *rbacRepository) toRoleDomain(role dao.Role) domain.Role {
-	var metadata domain.RoleMetadata
-	if role.Metadata.Valid {
-		metadata = role.Metadata.Val
-	}
 	return domain.Role{
 		ID:          role.ID,
 		BizID:       role.BizID,
 		Type:        role.Type,
 		Name:        role.Name,
 		Description: role.Description,
-		Metadata:    metadata,
+		Metadata:    role.Metadata,
 		Ctime:       role.Ctime,
 		Utime:       role.Utime,
 	}

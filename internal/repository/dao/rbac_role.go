@@ -5,20 +5,18 @@ import (
 	"fmt"
 	"time"
 
-	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/errs"
-	"github.com/ecodeclub/ekit/sqlx"
 	"github.com/ego-component/egorm"
 )
 
 // Role 角色记录表
 type Role struct {
-	ID          int64                                `gorm:"primaryKey;autoIncrement;comment:角色ID'"`
-	BizID       int64                                `gorm:"type:BIGINT;NOT NULL;index:idx_biz_id;uniqueIndex:uk_biz_type_name,priority:1;comment:'业务ID'"`
-	Type        string                               `gorm:"type:VARCHAR(255);NOT NULL;index:idx_role_type;uniqueIndex:uk_biz_type_name,priority:2;comment:'角色类（被冗余，创建后不可修改）'"`
-	Name        string                               `gorm:"type:VARCHAR(255);NOT NULL;uniqueIndex:uk_biz_type_name,priority:3;comment:'角色名称（被冗余，创建后不可修改）'"`
-	Description string                               `gorm:"type:TEXT;comment:'角色描述'"`
-	Metadata    sqlx.JsonColumn[domain.RoleMetadata] `gorm:"type:JSON;comment:'角色元数据，可扩展字段'"`
+	ID          int64  `gorm:"primaryKey;autoIncrement;comment:角色ID'"`
+	BizID       int64  `gorm:"type:BIGINT;NOT NULL;index:idx_biz_id;uniqueIndex:uk_biz_type_name,priority:1;comment:'业务ID'"`
+	Type        string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_role_type;uniqueIndex:uk_biz_type_name,priority:2;comment:'角色类（被冗余，创建后不可修改）'"`
+	Name        string `gorm:"type:VARCHAR(255);NOT NULL;uniqueIndex:uk_biz_type_name,priority:3;comment:'角色名称（被冗余，创建后不可修改）'"`
+	Description string `gorm:"type:TEXT;comment:'角色描述'"`
+	Metadata    string `gorm:"type:JSON;comment:'角色元数据，可扩展字段'"`
 	Ctime       int64
 	Utime       int64
 }

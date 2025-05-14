@@ -76,7 +76,8 @@ message CreateBusinessConfigResponse {
 }
 
 message GetBusinessConfigRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetBusinessConfigResponse {
@@ -92,7 +93,8 @@ message UpdateBusinessConfigResponse {
 }
 
 message DeleteBusinessConfigRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteBusinessConfigResponse {
@@ -119,7 +121,8 @@ message CreateResourceResponse {
 }
 
 message GetResourceRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetResourceResponse {
@@ -135,7 +138,8 @@ message UpdateResourceResponse {
 }
 
 message DeleteResourceRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteResourceResponse {
@@ -163,7 +167,8 @@ message CreatePermissionResponse {
 }
 
 message GetPermissionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetPermissionResponse {
@@ -179,7 +184,8 @@ message UpdatePermissionResponse {
 }
 
 message DeletePermissionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeletePermissionResponse {
@@ -216,7 +222,8 @@ message CreateRoleResponse {
 }
 
 message GetRoleRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetRoleResponse {
@@ -232,7 +239,8 @@ message UpdateRoleResponse {
 }
 
 message DeleteRoleRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteRoleResponse {
@@ -263,9 +271,7 @@ message RoleInclusion {
 }
 
 message CreateRoleInclusionRequest {
-  int64 biz_id = 1;
-  int64 including_role_id = 2;
-  int64 included_role_id = 3;
+  RoleInclusion role_inclusion = 1;
 }
 
 message CreateRoleInclusionResponse {
@@ -273,7 +279,8 @@ message CreateRoleInclusionResponse {
 }
 
 message GetRoleInclusionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetRoleInclusionResponse {
@@ -282,8 +289,7 @@ message GetRoleInclusionResponse {
 
 message DeleteRoleInclusionRequest {
   int64 biz_id = 1;
-  int64 including_role_id = 2;
-  int64 included_role_id = 3;
+  int64 id = 2;
 }
 
 message DeleteRoleInclusionResponse {
@@ -292,10 +298,8 @@ message DeleteRoleInclusionResponse {
 
 message ListRoleInclusionsRequest {
   int64 biz_id = 1;
-  int64 role_id = 2; // 可选，如果提供则表示查询特定角色的包含关系
-  bool is_including = 3; // 如果为true，则role_id表示including_role_id；否则表示included_role_id
-  int32 offset = 4;
-  int32 limit = 5;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListRoleInclusionsResponse {
@@ -317,9 +321,7 @@ message RolePermission {
 }
 
 message GrantRolePermissionRequest {
-  int64 biz_id = 1;
-  int64 role_id = 2;
-  int64 permission_id = 3;
+  RolePermission role_permission = 1;
 }
 
 message GrantRolePermissionResponse {
@@ -328,8 +330,7 @@ message GrantRolePermissionResponse {
 
 message RevokeRolePermissionRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
-  int64 permission_id = 3;
+  int64 id = 2;
 }
 
 message RevokeRolePermissionResponse {
@@ -338,9 +339,8 @@ message RevokeRolePermissionResponse {
 
 message ListRolePermissionsRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListRolePermissionsResponse {
@@ -361,11 +361,7 @@ message UserRole {
 }
 
 message GrantUserRoleRequest {
-  int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 role_id = 3;
-  int64 start_time = 4; // 授予角色生效时间
-  int64 end_time = 5; // 授予角色失效时间
+  UserRole user_role = 1;
 }
 
 message GrantUserRoleResponse {
@@ -374,8 +370,7 @@ message GrantUserRoleResponse {
 
 message RevokeUserRoleRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 role_id = 3;
+  int64 id = 2;
 }
 
 message RevokeUserRoleResponse {
@@ -384,9 +379,8 @@ message RevokeUserRoleResponse {
 
 message ListUserRolesRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListUserRolesResponse {
@@ -411,12 +405,7 @@ message UserPermission {
 }
 
 message GrantUserPermissionRequest {
-  int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 permission_id = 3;
-  string effect = 4; // allow, deny
-  int64 start_time = 5; // 权限生效日期
-  int64 end_time = 6; // 权限失效日期
+  UserPermission user_permission = 1;
 }
 
 message GrantUserPermissionResponse {
@@ -425,8 +414,7 @@ message GrantUserPermissionResponse {
 
 message RevokeUserPermissionRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 permission_id = 3;
+  int64 id = 2;
 }
 
 message RevokeUserPermissionResponse {
@@ -435,9 +423,8 @@ message RevokeUserPermissionResponse {
 
 message ListUserPermissionsRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListUserPermissionsResponse {
