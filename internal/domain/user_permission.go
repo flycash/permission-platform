@@ -1,20 +1,33 @@
 package domain
 
+type Effect string
+
+const (
+	EffectAllow Effect = "allow"
+	EffectDeny  Effect = "deny"
+)
+
+func (e Effect) String() string {
+	return string(e)
+}
+
+func (e Effect) IsAllow() bool {
+	return e.String() == "allow"
+}
+
+func (e Effect) IsDeny() bool {
+	return e.String() == "deny"
+}
+
 // UserPermission 用户权限关联
 type UserPermission struct {
-	ID             int64      `json:"id"`
-	BizID          int64      `json:"bizId"`
-	UserID         int64      `json:"userId"`
-	PermissionID   int64      `json:"permissionId"`
-	PermissionName string     `json:"permissionName"`
-	ResourceType   string     `json:"resourceType"`
-	ResourceKey    string     `json:"resourceKey"`
-	ResourceName   string     `json:"resourceName"`
-	Action         ActionType `json:"action"`
-	StartTime      int64      `json:"startTime"` // 临时权限生效时间
-	EndTime        int64      `json:"endTime"`   // 临时权限失效时间
-	Effect         string     `json:"effect"`    // allow, deny
-	OnlyValid      bool       `json:"onlyValid"` // 是否只返回有效的权限
-	Ctime          int64      `json:"ctime"`
-	Utime          int64      `json:"utime"`
+	ID         int64
+	BizID      int64
+	UserID     int64
+	Permission Permission
+	StartTime  int64 // 权限生效时间
+	EndTime    int64 // 权限失效时间
+	Effect     Effect
+	Ctime      int64
+	Utime      int64
 }

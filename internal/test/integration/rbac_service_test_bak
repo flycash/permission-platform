@@ -426,7 +426,7 @@ func (s *RBACServiceTestSuite) TestListRoles() {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			roles, count, err := s.svc.Svc.ListRoles(context.Background(), tt.bizID, tt.offset, tt.limit, tt.roleType)
+			roles, count, err := s.svc.Svc.ListRolesByRoleType(context.Background(), tt.bizID, tt.offset, tt.limit, tt.roleType)
 
 			require.NoError(t, err)
 			assert.Equal(t, tt.wantCount, count)
@@ -861,7 +861,7 @@ func (s *RBACServiceTestSuite) TestListResources() {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resources, count, err := s.svc.Svc.ListResources(context.Background(), tt.bizID, tt.offset, tt.limit, tt.resourceType, tt.key)
+			resources, count, err := s.svc.Svc.ListResourcesByTypeAndKey(context.Background(), tt.bizID, tt.offset, tt.limit, tt.resourceType, tt.key)
 
 			require.NoError(t, err)
 			assert.Equal(t, tt.wantCount, count)
@@ -1406,7 +1406,7 @@ func (s *RBACServiceTestSuite) TestListPermissions() {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			permissions, count, err := s.svc.Svc.ListPermissions(context.Background(), tt.bizID, tt.offset, tt.limit, tt.resourceType, tt.resourceKey, tt.action)
+			permissions, count, err := s.svc.Svc.ListPermissionsByResourceTypeAndKeyAndAction(context.Background(), tt.bizID, tt.offset, tt.limit, tt.resourceType, tt.resourceKey, tt.action)
 
 			require.NoError(t, err)
 			assert.Equal(t, tt.wantCount, count)
@@ -1574,7 +1574,7 @@ func (s *RBACServiceTestSuite) TestRevokeUserRole() {
 			wantErr: false,
 			validate: func(t *testing.T, bizID, userID, roleID int64) {
 				// 检查是否已撤销，通过列出用户角色验证
-				roles, _, err := s.svc.Svc.ListUserRoles(context.Background(), bizID, userID, 0, 10)
+				roles, _, err := s.svc.Svc.ListUserRolesByUserID(context.Background(), bizID, userID, 0, 10)
 				require.NoError(t, err)
 
 				// 检查此用户是否不再拥有该角色
@@ -1743,7 +1743,7 @@ func (s *RBACServiceTestSuite) TestListUserRoles() {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			roles, count, err := s.svc.Svc.ListUserRoles(context.Background(), tt.bizID, tt.userID, tt.offset, tt.limit)
+			roles, count, err := s.svc.Svc.ListUserRolesByUserID(context.Background(), tt.bizID, tt.userID, tt.offset, tt.limit)
 
 			require.NoError(t, err)
 			assert.Equal(t, tt.wantCount, count)
@@ -1803,7 +1803,7 @@ func (s *RBACServiceTestSuite) TestPermissionCheck() {
 		},
 		checkAction: func(t *testing.T, resource domain.Resource, permission domain.Permission, role domain.Role, userRole domain.UserRole) {
 			// 检查用户角色列表
-			roles, count, err := s.svc.Svc.ListUserRoles(context.Background(), bizID, userID, 0, 10)
+			roles, count, err := s.svc.Svc.ListUserRolesByUserID(context.Background(), bizID, userID, 0, 10)
 			require.NoError(t, err)
 			assert.Equal(t, 1, count)
 			assert.Len(t, roles, 1)

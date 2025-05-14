@@ -76,7 +76,8 @@ message CreateBusinessConfigResponse {
 }
 
 message GetBusinessConfigRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetBusinessConfigResponse {
@@ -88,11 +89,12 @@ message UpdateBusinessConfigRequest {
 }
 
 message UpdateBusinessConfigResponse {
-  BusinessConfig config = 1;
+  bool success = 1;
 }
 
 message DeleteBusinessConfigRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteBusinessConfigResponse {
@@ -109,7 +111,7 @@ message ListBusinessConfigsResponse {
   int32 total = 2;
 }
 
-// 资源相关消息定义
+// ==== 资源相关消息定义 ====
 message CreateResourceRequest {
   Resource resource = 1;
 }
@@ -119,7 +121,8 @@ message CreateResourceResponse {
 }
 
 message GetResourceRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetResourceResponse {
@@ -131,11 +134,12 @@ message UpdateResourceRequest {
 }
 
 message UpdateResourceResponse {
-  Resource resource = 1;
+  bool success = 1;
 }
 
 message DeleteResourceRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteResourceResponse {
@@ -146,8 +150,6 @@ message ListResourcesRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string type = 4; // 可选过滤条件
-  string key = 5; // 可选过滤条件
 }
 
 message ListResourcesResponse {
@@ -155,7 +157,7 @@ message ListResourcesResponse {
   int32 total = 2;
 }
 
-// 权限相关消息定义
+// ==== 权限相关消息定义 ====
 message CreatePermissionRequest {
   Permission permission = 1;
 }
@@ -165,7 +167,8 @@ message CreatePermissionResponse {
 }
 
 message GetPermissionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetPermissionResponse {
@@ -177,11 +180,12 @@ message UpdatePermissionRequest {
 }
 
 message UpdatePermissionResponse {
-  Permission permission = 1;
+  bool success = 1;
 }
 
 message DeletePermissionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeletePermissionResponse {
@@ -192,9 +196,6 @@ message ListPermissionsRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string resource_type = 4; // 可选过滤条件
-  string resource_key = 5; // 可选过滤条件
-  string action = 6; // 可选过滤条件
 }
 
 message ListPermissionsResponse {
@@ -202,16 +203,14 @@ message ListPermissionsResponse {
   int32 total = 2;
 }
 
-// ==== Role相关消息定义 ====
+// ==== 角色相关消息定义 ====
 message Role {
   int64 id = 1;
   int64 biz_id = 2;
-  string type = 3; // system, custom, temporary
+  string type = 3;
   string name = 4;
   string description = 5;
   string metadata = 6; // JSON格式的元数据
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
 }
 
 message CreateRoleRequest {
@@ -223,7 +222,8 @@ message CreateRoleResponse {
 }
 
 message GetRoleRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetRoleResponse {
@@ -235,11 +235,12 @@ message UpdateRoleRequest {
 }
 
 message UpdateRoleResponse {
-  Role role = 1;
+  bool success = 1;
 }
 
 message DeleteRoleRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message DeleteRoleResponse {
@@ -250,7 +251,6 @@ message ListRolesRequest {
   int64 biz_id = 1;
   int32 offset = 2;
   int32 limit = 3;
-  string type = 4; // 可选过滤条件
 }
 
 message ListRolesResponse {
@@ -271,9 +271,7 @@ message RoleInclusion {
 }
 
 message CreateRoleInclusionRequest {
-  int64 biz_id = 1;
-  int64 including_role_id = 2;
-  int64 included_role_id = 3;
+  RoleInclusion role_inclusion = 1;
 }
 
 message CreateRoleInclusionResponse {
@@ -281,7 +279,8 @@ message CreateRoleInclusionResponse {
 }
 
 message GetRoleInclusionRequest {
-  int64 id = 1;
+  int64 biz_id = 1;
+  int64 id = 2;
 }
 
 message GetRoleInclusionResponse {
@@ -290,8 +289,7 @@ message GetRoleInclusionResponse {
 
 message DeleteRoleInclusionRequest {
   int64 biz_id = 1;
-  int64 including_role_id = 2;
-  int64 included_role_id = 3;
+  int64 id = 2;
 }
 
 message DeleteRoleInclusionResponse {
@@ -300,10 +298,8 @@ message DeleteRoleInclusionResponse {
 
 message ListRoleInclusionsRequest {
   int64 biz_id = 1;
-  int64 role_id = 2; // 可选，如果提供则表示查询特定角色的包含关系
-  bool is_including = 3; // 如果为true，则role_id表示including_role_id；否则表示included_role_id
-  int32 offset = 4;
-  int32 limit = 5;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListRoleInclusionsResponse {
@@ -317,18 +313,15 @@ message RolePermission {
   int64 biz_id = 2;
   int64 role_id = 3;
   int64 permission_id = 4;
-  string permission_name = 5;
-  string permission_type = 6;
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
+  string role_name = 5;
+  string role_type = 6;
+  string resource_type = 7;
+  string resource_key = 8;
+  string permission_action = 9;
 }
 
 message GrantRolePermissionRequest {
-  int64 biz_id = 1;
-  int64 role_id = 2;
-  int64 permission_id = 3;
-  int64 start_time = 4; // 可选，临时角色有效期
-  int64 end_time = 5; // 可选，临时角色有效期
+  RolePermission role_permission = 1;
 }
 
 message GrantRolePermissionResponse {
@@ -337,8 +330,7 @@ message GrantRolePermissionResponse {
 
 message RevokeRolePermissionRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
-  int64 permission_id = 3;
+  int64 id = 2;
 }
 
 message RevokeRolePermissionResponse {
@@ -347,9 +339,8 @@ message RevokeRolePermissionResponse {
 
 message ListRolePermissionsRequest {
   int64 biz_id = 1;
-  int64 role_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListRolePermissionsResponse {
@@ -365,16 +356,12 @@ message UserRole {
   int64 role_id = 4;
   string role_name = 5;
   string role_type = 6;
-  int64 start_time = 7; // 临时角色有效期开始时间
-  int64 end_time = 8; // 临时角色有效期结束时间
+  int64 start_time = 7; // 授予角色生效时间
+  int64 end_time = 8; // 授予角色失效时间
 }
 
 message GrantUserRoleRequest {
-  int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 role_id = 3;
-  int64 start_time = 4; // 可选，临时角色有效期
-  int64 end_time = 5; // 可选，临时角色有效期
+  UserRole user_role = 1;
 }
 
 message GrantUserRoleResponse {
@@ -383,8 +370,7 @@ message GrantUserRoleResponse {
 
 message RevokeUserRoleRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 role_id = 3;
+  int64 id = 2;
 }
 
 message RevokeUserRoleResponse {
@@ -393,9 +379,8 @@ message RevokeUserRoleResponse {
 
 message ListUserRolesRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListUserRolesResponse {
@@ -413,19 +398,14 @@ message UserPermission {
   string resource_type = 6;
   string resource_key = 7;
   string resource_name = 8;
-  string action = 9;
+  string permission_action = 9;
   int64 start_time = 10;
   int64 end_time = 11;
   string effect = 12; // allow, deny
 }
 
 message GrantUserPermissionRequest {
-  int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 permission_id = 3;
-  string effect = 4; // allow, deny
-  int64 start_time = 5; // 可选，临时权限有效期
-  int64 end_time = 6; // 可选，临时权限有效期
+  UserPermission user_permission = 1;
 }
 
 message GrantUserPermissionResponse {
@@ -434,8 +414,7 @@ message GrantUserPermissionResponse {
 
 message RevokeUserPermissionRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int64 permission_id = 3;
+  int64 id = 2;
 }
 
 message RevokeUserPermissionResponse {
@@ -444,10 +423,8 @@ message RevokeUserPermissionResponse {
 
 message ListUserPermissionsRequest {
   int64 biz_id = 1;
-  int64 user_id = 2;
-  int32 offset = 3;
-  int32 limit = 4;
-  bool only_valid = 5; // 如果为true，则只返回当前有效的权限
+  int32 offset = 2;
+  int32 limit = 3;
 }
 
 message ListUserPermissionsResponse {

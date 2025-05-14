@@ -6,18 +6,11 @@ type Policy struct {
 	Name        string
 	Description string
 	Status      PolicyStatus
-	Effect      EffectType
+	Effect      Effect
 	Rules       []*PolicyRule
 	Ctime       int64
 	Utime       int64
 }
-
-type EffectType string
-
-const (
-	EffectPermit EffectType = "permit"
-	EffectDeny   EffectType = "deny"
-)
 
 type PolicyStatus string
 

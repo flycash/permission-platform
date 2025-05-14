@@ -4,16 +4,6 @@ package permission.v1;
 
 option go_package = "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionpb";
 
-// 操作类型枚举（可根据业务需求扩展）
-enum ActionType {
-  ACTION_UNSPECIFIED = 0;
-  READ = 1;
-  WRITE = 2;
-  // DELETE = 3;
-  // EXECUTE = 4;
-  // 可在此处继续添加其他操作类型...
-}
-
 // 权限定义（资源 + 操作）
 message Permission {
   int64 id = 1;
@@ -21,9 +11,9 @@ message Permission {
   string name = 3;
   string description = 4;
   int64 resource_id = 5;
-  string resource_type = 6; // 冗余字段
+  string resource_type = 6; // 资源类型
   string resource_key = 7; // 资源标识符，类似于 /xxx/xxx/xxx 的格式
-  repeated ActionType actions = 8; // 允许的操作列表
+  repeated string actions = 8; // 允许的操作列表
   string metadata = 9;
 }
 

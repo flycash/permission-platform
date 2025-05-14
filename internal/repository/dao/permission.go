@@ -5,35 +5,21 @@ import (
 	"fmt"
 	"time"
 
-	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/errs"
-	"github.com/ecodeclub/ekit/sqlx"
 	"github.com/ego-component/egorm"
-)
-
-type ActionType string
-
-const (
-	ActionTypeCreate  ActionType = "create"
-	ActionTypeRead    ActionType = "read"
-	ActionTypeUpdate  ActionType = "update"
-	ActionTypeDelete  ActionType = "delete"
-	ActionTypeExecute ActionType = "execute"
-	ActionTypeExport  ActionType = "export"
-	ActionTypeImport  ActionType = "import"
 )
 
 // Permission 权限表 RBAC 与 ABAC 共享此表
 type Permission struct {
-	ID           int64                                      `gorm:"primaryKey;autoIncrement;comment:'权限ID'"`
-	BizID        int64                                      `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:1;index:idx_biz_action,priority:1;index:idx_biz_resource_type,priority:1;index:idx_biz_resource_key,priority:1;comment:'业务ID'"`
-	Name         string                                     `gorm:"type:VARCHAR(100);NOT NULL;comment:'权限名称'"`
-	Description  string                                     `gorm:"type:TEXT;comment:'权限描述'"`
-	ResourceID   int64                                      `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:2;index:idx_resource_id;comment:'关联的资源ID'"`
-	ResourceType string                                     `gorm:"type:VARCHAR(100);NOT NULL;index:idx_biz_resource_type,priority:2;comment:'资源类型，冗余字段，加速查询'"`
-	ResourceKey  string                                     `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，冗余字段，加速查询'"`
-	Action       ActionType                                 `gorm:"type:ENUM('create', 'read', 'update', 'delete', 'execute', 'export', 'import');NOT NULL;uniqueIndex:uk_biz_resource_action,priority:3;index:idx_biz_action,priority:2;comment:'操作类型'"`
-	Metadata     sqlx.JsonColumn[domain.PermissionMetadata] `gorm:"type:JSON;comment:'权限元数据，可扩展字段'"`
+	ID           int64  `gorm:"primaryKey;autoIncrement;comment:'权限ID'"`
+	BizID        int64  `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:1;index:idx_biz_action,priority:1;index:idx_biz_resource_type,priority:1;index:idx_biz_resource_key,priority:1;comment:'业务ID'"`
+	Name         string `gorm:"type:VARCHAR(255);NOT NULL;comment:'权限名称'"`
+	Description  string `gorm:"type:TEXT;comment:'权限描述'"`
+	ResourceID   int64  `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:2;index:idx_resource_id;comment:'关联的资源ID，创建后不可修改'"`
+	ResourceType string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_type,priority:2;comment:'资源类型，冗余字段，加速查询'"`
+	ResourceKey  string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，冗余字段，加速查询'"`
+	Action       string `gorm:"type:VARCHAR(255);NOT NULL;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:3;index:idx_biz_action,priority:2;comment:'操作类型'"`
+	Metadata     string `gorm:"type:JSON;comment:'权限元数据，可扩展字段'"`
 	Ctime        int64
 	Utime        int64
 }
@@ -44,23 +30,27 @@ func (Permission) TableName() string {
 
 // PermissionDAO 权限数据访问接口
 type PermissionDAO interface {
-	// GetByID 根据ID获取权限
-	GetByID(ctx context.Context, id int64) (Permission, error)
-	// FindByBizID 查找特定业务下的权限
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error)
-	// FindByBizIDAndResourceType 查找特定业务下指定资源类型的权限
-	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
-	// FindByBizIDAndResourceKey 查找特定业务下指定资源Key的权限
-	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
-	// FindByBizIDAndAction 查找特定业务下指定操作类型的权限
-	FindByBizIDAndAction(ctx context.Context, bizID int64, action ActionType, offset, limit int) ([]Permission, error)
-	// Create 创建权限
 	Create(ctx context.Context, permission Permission) (Permission, error)
-	// Update 更新权限
-	Update(ctx context.Context, permission Permission) error
-	// Delete 删除权限
-	Delete(ctx context.Context, id int64) error
-	FindPermissions(ctx context.Context, bizID int64, resourceKey string, action ActionType) ([]Permission, error)
+
+	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error)
+	CountByBizID(ctx context.Context, bizID int64) (int64, error)
+
+	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error)
+
+	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
+	CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error)
+
+	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
+	CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error)
+
+	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error)
+	CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error)
+
+	UpdateByBizIDAndID(ctx context.Context, permission Permission) error
+
+	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
+
+	FindPermissions(ctx context.Context, bizID int64, resourceKey, action string) ([]Permission, error)
 }
 
 // permissionDAO 权限数据访问实现
@@ -75,40 +65,10 @@ func NewPermissionDAO(db *egorm.Component) PermissionDAO {
 	}
 }
 
-func (p *permissionDAO) FindPermissions(ctx context.Context, bizID int64, resourceKey string, action ActionType) ([]Permission, error) {
+func (p *permissionDAO) FindPermissions(ctx context.Context, bizID int64, resourceKey, action string) ([]Permission, error) {
 	var permissions []Permission
 	err := p.db.WithContext(ctx).
 		Where("biz_id = ? AND resource_key = ? AND action =?", bizID, resourceKey, action).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) GetByID(ctx context.Context, id int64) (Permission, error) {
-	var permission Permission
-	err := p.db.WithContext(ctx).Where("id = ?", id).First(&permission).Error
-	return permission, err
-}
-
-func (p *permissionDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) FindByBizIDAndAction(ctx context.Context, bizID int64, action ActionType, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND action = ?", bizID, action).Offset(offset).Limit(limit).Find(&permissions).Error
 	return permissions, err
 }
 
@@ -126,19 +86,83 @@ func (p *permissionDAO) Create(ctx context.Context, permission Permission) (Perm
 	return permission, nil
 }
 
-func (p *permissionDAO) Update(ctx context.Context, permission Permission) error {
+func (p *permissionDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&permissions).Error
+	return permissions, err
+}
+
+func (p *permissionDAO) FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error) {
+	var permission Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).First(&permission).Error
+	return permission, err
+}
+
+func (p *permissionDAO) FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Offset(offset).Limit(limit).Find(&permissions).Error
+	return permissions, err
+}
+
+func (p *permissionDAO) FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Offset(offset).Limit(limit).Find(&permissions).Error
+	return permissions, err
+}
+
+func (p *permissionDAO) FindByBizIDAndResourceKeyAndAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_key = ? AND action = ?", bizID, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
+	return permissions, err
+}
+
+func (p *permissionDAO) UpdateByBizIDAndID(ctx context.Context, permission Permission) error {
 	permission.Utime = time.Now().UnixMilli()
 	return p.db.WithContext(ctx).
 		Model(&Permission{}).
-		Where("id = ?", permission.ID).
-		Updates(map[string]interface{}{
+		Where("biz_id = ? AND id = ?", permission.BizID, permission.ID).
+		Updates(map[string]any{
 			"name":        permission.Name,
 			"description": permission.Description,
+			"action":      permission.Action,
 			"metadata":    permission.Metadata,
 			"utime":       permission.Utime,
 		}).Error
 }
 
-func (p *permissionDAO) Delete(ctx context.Context, id int64) error {
-	return p.db.WithContext(ctx).Where("id = ?", id).Delete(&Permission{}).Error
+func (p *permissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
+	return p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Permission{}).Error
+}
+
+func (p *permissionDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
+	var count int64
+	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ?", bizID).Count(&count).Error
+	return count, err
+}
+
+func (p *permissionDAO) CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error) {
+	var count int64
+	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Count(&count).Error
+	return count, err
+}
+
+func (p *permissionDAO) CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error) {
+	var count int64
+	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Count(&count).Error
+	return count, err
+}
+
+func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
+		bizID, resourceType, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
+	return permissions, err
+}
+
+func (p *permissionDAO) CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error) {
+	var count int64
+	err := p.db.WithContext(ctx).Model(&Permission{}).
+		Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
+			bizID, resourceType, resourceKey, action).Count(&count).Error
+	return count, err
 }

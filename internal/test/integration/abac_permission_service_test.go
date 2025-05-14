@@ -57,8 +57,10 @@ func (s *PermissionSuite) TestPermission() {
 			name: "policy是permit",
 			uid:  22,
 			permission: domain.Permission{
-				ResourceKey: "/order/tab",
-				Action:      domain.ActionTypeRead,
+				Resource: domain.Resource{
+					Key: "/order/tab",
+				},
+				Action: "read",
 			},
 			attrs: domain.PermissionRequest{
 				EnvironmentAttrs: map[string]string{
@@ -102,13 +104,16 @@ func (s *PermissionSuite) TestPermission() {
 				require.NoError(s.T(), err)
 				// 创建权限
 				permission := domain.Permission{
-					BizID:        bizId,
-					Name:         "读取订单权限",
-					Description:  "允许读取订单信息",
-					ResourceID:   10001,
-					ResourceType: "order",
-					ResourceKey:  "/order/tab",
-					Action:       domain.ActionTypeRead,
+					BizID:       bizId,
+					Name:        "读取订单权限",
+					Description: "允许读取订单信息",
+					Resource: domain.Resource{
+						ID:   10001,
+						Type: "order",
+						Key:  "/order/tab",
+					},
+					Action:   "read",
+					Metadata: "[1]",
 				}
 				per, err := s.permissionRepo.CreatePermission(t.Context(), permission)
 				require.NoError(t, err)
@@ -120,6 +125,7 @@ func (s *PermissionSuite) TestPermission() {
 					Name:        "order_table",
 					Description: "desc",
 					Key:         "/order/tab",
+					Metadata:    "[1]",
 				}
 				_, err = s.permissionRepo.CreateResource(t.Context(), res)
 				require.NoError(t, err)
@@ -201,7 +207,7 @@ func (s *PermissionSuite) TestPermission() {
 					require.NoError(s.T(), err)
 				}
 				// 关联权限和策略
-				err = s.policyRepo.SavePermissionPolicy(t.Context(), bizId, id, per.ID, domain.EffectPermit)
+				err = s.policyRepo.SavePermissionPolicy(t.Context(), bizId, id, per.ID, domain.EffectAllow)
 				require.NoError(t, err)
 			},
 			wantVal: true,
@@ -210,8 +216,10 @@ func (s *PermissionSuite) TestPermission() {
 			name: "policy是有一个是deny有一个permit",
 			uid:  23,
 			permission: domain.Permission{
-				ResourceKey: "/order/tab",
-				Action:      domain.ActionTypeRead,
+				Resource: domain.Resource{
+					Key: "/order/tab",
+				},
+				Action: "read",
 			},
 			attrs: domain.PermissionRequest{
 				EnvironmentAttrs: map[string]string{
@@ -255,13 +263,17 @@ func (s *PermissionSuite) TestPermission() {
 				require.NoError(s.T(), err)
 				// 创建权限
 				permission := domain.Permission{
-					BizID:        bizId,
-					Name:         "读取订单权限",
-					Description:  "允许读取订单信息",
-					ResourceID:   10001,
-					ResourceType: "order",
-					ResourceKey:  "/order/tab",
-					Action:       domain.ActionTypeRead,
+					BizID:       bizId,
+					Name:        "读取订单权限",
+					Description: "允许读取订单信息",
+					Resource: domain.Resource{
+						ID:   10001,
+						Key:  "/order/tab",
+						Type: "order",
+					},
+					Metadata: "[1]",
+
+					Action: "read",
 				}
 				per, err := s.permissionRepo.CreatePermission(t.Context(), permission)
 				require.NoError(t, err)
@@ -273,6 +285,7 @@ func (s *PermissionSuite) TestPermission() {
 					Name:        "order_table",
 					Description: "desc",
 					Key:         "/order/tab",
+					Metadata:    "[1]",
 				}
 				_, err = s.permissionRepo.CreateResource(t.Context(), res)
 				require.NoError(t, err)
@@ -328,7 +341,7 @@ func (s *PermissionSuite) TestPermission() {
 					require.NoError(s.T(), err)
 				}
 				// 关联permit策略
-				err = s.policyRepo.SavePermissionPolicy(t.Context(), bizId, permitId, per.ID, domain.EffectPermit)
+				err = s.policyRepo.SavePermissionPolicy(t.Context(), bizId, permitId, per.ID, domain.EffectAllow)
 				require.NoError(t, err)
 
 				// 创建deny策略，规则与permit类似但ID不同

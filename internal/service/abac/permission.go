@@ -47,7 +47,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
 	permissionIds := slice.Map(permissions, func(_ int, src domain.Permission) int64 {
 		return src.ID
 	})
-	permission.ResourceID = res.ID
+	permission.Resource.ID = res.ID
 	var eg errgroup.Group
 	var (
 		subObj        domain.SubjectObject
@@ -86,7 +86,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
 		policy := policies[idx]
 		p.setPolicyDefinition(bizDefinition, policy.Rules)
 		if p.parser.Check(attributeValReq, policy.Rules) {
-			if policy.Effect == domain.EffectPermit {
+			if policy.Effect == domain.EffectAllow {
 				hasPermit = true
 			}
 			if policy.Effect == domain.EffectDeny {
@@ -113,12 +113,12 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, pe
 	)
 	eg.Go(func() error {
 		var eerr error
-		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, permission.ResourceKey, permission.Action)
+		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, permission.Resource.Key, permission.Action)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
-		res, eerr = p.permissionRepo.FindResource(ctx, bizID, permission.ResourceKey)
+		res, eerr = p.permissionRepo.FindResource(ctx, bizID, permission.Resource.Key)
 		return eerr
 	})
 	err := eg.Wait()
@@ -169,7 +169,7 @@ func (p *permissionSvc) getAttributesVal(ctx context.Context, bizID, uid int64, 
 	})
 	eg.Go(func() error {
 		var eerr error
-		resObj, eerr = p.valRepo.FindResourceValue(ctx, bizID, permission.ResourceID)
+		resObj, eerr = p.valRepo.FindResourceValue(ctx, bizID, permission.Resource.ID)
 		return eerr
 	})
 	eg.Go(func() error {

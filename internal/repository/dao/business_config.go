@@ -2,12 +2,9 @@ package dao
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"gitee.com/flycash/permission-platform/internal/errs"
 	"github.com/ego-component/egorm"
-	"gorm.io/gorm/clause"
 )
 
 // BusinessConfig 业务配置表
@@ -15,9 +12,9 @@ type BusinessConfig struct {
 	ID        int64  `gorm:"primaryKey;autoIncrement;comment:'业务ID'"`
 	OwnerID   int64  `gorm:"type:BIGINT;comment:'业务方ID'"`
 	OwnerType string `gorm:"type:ENUM('person', 'organization');comment:'业务方类型：person-个人,organization-组织'"`
-	Name      string `gorm:"type:VARCHAR(100);NOT NULL;comment:'业务名称'"`
+	Name      string `gorm:"type:VARCHAR(255);NOT NULL;comment:'业务名称'"`
 	RateLimit int    `gorm:"type:INT;DEFAULT:1000;comment:'每秒最大请求数'"`
-	Token     string `gorm:"type:TEXT;NOT NULL;comment:'业务方Token，内部包含uid也就是上方的ownerID'"`
+	Token     string `gorm:"type:TEXT;NOT NULL;comment:'业务方Token，内部包含bizID'"`
 	Ctime     int64
 	Utime     int64
 }
@@ -28,11 +25,14 @@ func (BusinessConfig) TableName() string {
 }
 
 type BusinessConfigDAO interface {
+	Create(ctx context.Context, config BusinessConfig) (BusinessConfig, error)
 	GetByIDs(ctx context.Context, id []int64) (map[int64]BusinessConfig, error)
 	GetByID(ctx context.Context, id int64) (BusinessConfig, error)
-	Delete(ctx context.Context, id int64) error
-	SaveConfig(ctx context.Context, config BusinessConfig) (BusinessConfig, error)
 	Find(ctx context.Context, offset int, limit int) ([]BusinessConfig, error)
+	Count(ctx context.Context) (int64, error)
+	UpdateToken(ctx context.Context, id int64, token string) error
+	Update(ctx context.Context, config BusinessConfig) error
+	Delete(ctx context.Context, id int64) error
 }
 
 // Implementation of the BusinessConfigDAO interface
@@ -47,6 +47,14 @@ func NewBusinessConfigDAO(db *egorm.Component) BusinessConfigDAO {
 	}
 }
 
+func (b *businessConfigDAO) Create(ctx context.Context, config BusinessConfig) (BusinessConfig, error) {
+	now := time.Now().UnixMilli()
+	config.Ctime = now
+	config.Utime = now
+	err := b.db.WithContext(ctx).Create(&config).Error
+	return config, err
+}
+
 func (b *businessConfigDAO) Find(ctx context.Context, offset, limit int) ([]BusinessConfig, error) {
 	var res []BusinessConfig
 	err := b.db.WithContext(ctx).Limit(limit).Offset(offset).Find(&res).Error
@@ -55,14 +63,8 @@ func (b *businessConfigDAO) Find(ctx context.Context, offset, limit int) ([]Busi
 
 func (b *businessConfigDAO) GetByID(ctx context.Context, id int64) (BusinessConfig, error) {
 	var config BusinessConfig
-
-	// 根据ID查询业务配置
 	err := b.db.WithContext(ctx).Where("id = ?", id).First(&config).Error
-	if err != nil {
-		return BusinessConfig{}, err
-	}
-
-	return config, nil
+	return config, err
 }
 
 // GetByIDs 根据ID获取业务配置信息
@@ -81,6 +83,31 @@ func (b *businessConfigDAO) GetByIDs(ctx context.Context, ids []int64) (map[int6
 	return configMap, nil
 }
 
+func (b *businessConfigDAO) UpdateToken(ctx context.Context, id int64, token string) error {
+	return b.db.WithContext(ctx).
+		Model(&BusinessConfig{}).
+		Where("id = ?", id).
+		Updates(map[string]any{
+			"token": token,
+			"utime": time.Now().UnixMilli(),
+		}).Error
+}
+
+// Update 更新业务配置
+func (b *businessConfigDAO) Update(ctx context.Context, config BusinessConfig) error {
+	config.Utime = time.Now().UnixMilli()
+	return b.db.WithContext(ctx).
+		Model(&BusinessConfig{}).
+		Where("id = ?", config.ID).
+		Updates(map[string]any{
+			"owner_id":   config.OwnerID,
+			"owner_type": config.OwnerType,
+			"name":       config.Name,
+			"rate_limit": config.RateLimit,
+			"utime":      config.Utime,
+		}).Error
+}
+
 // Delete 根据ID删除业务配置
 func (b *businessConfigDAO) Delete(ctx context.Context, id int64) error {
 	// 执行删除操作
@@ -93,27 +120,8 @@ func (b *businessConfigDAO) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-// SaveConfig 保存业务配置
-func (b *businessConfigDAO) SaveConfig(ctx context.Context, config BusinessConfig) (BusinessConfig, error) {
-	now := time.Now().UnixMilli()
-	config.Ctime = now
-	config.Utime = now
-	// 使用upsert语句，如果记录存在则更新，不存在则插入
-	db := b.db.WithContext(ctx)
-	result := db.Clauses(clause.OnConflict{
-		Columns: []clause.Column{{Name: "id"}}, // 根据ID判断冲突
-		DoUpdates: clause.AssignmentColumns([]string{
-			"owner_id",
-			"owner_type",
-			"rate_limit",
-			"utime",
-		}), // 只更新指定的非空列
-	}).Create(&config)
-	if result.Error != nil {
-		if isUniqueConstraintError(result.Error) {
-			return BusinessConfig{}, fmt.Errorf("%w", errs.ErrBusinessConfigDuplicate)
-		}
-		return BusinessConfig{}, result.Error
-	}
-	return config, nil
+func (b *businessConfigDAO) Count(ctx context.Context) (int64, error) {
+	var count int64
+	err := b.db.WithContext(ctx).Model(&BusinessConfig{}).Count(&count).Error
+	return count, err
 }

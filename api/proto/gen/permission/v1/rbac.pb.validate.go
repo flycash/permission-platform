@@ -433,6 +433,8 @@ func (m *GetBusinessConfigRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -800,34 +802,7 @@ func (m *UpdateBusinessConfigResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetConfig()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateBusinessConfigResponseValidationError{
-					field:  "Config",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateBusinessConfigResponseValidationError{
-					field:  "Config",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetConfig()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateBusinessConfigResponseValidationError{
-				field:  "Config",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return UpdateBusinessConfigResponseMultiError(errors)
@@ -931,6 +906,8 @@ func (m *DeleteBusinessConfigRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -1392,7 +1369,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateResourceRequestValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1400,7 +1377,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateResourceRequestValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1409,7 +1386,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateResourceRequestValidationError{
-				field:  "resource",
+				field:  "Resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1523,7 +1500,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateResourceResponseValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1531,7 +1508,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateResourceResponseValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1540,7 +1517,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateResourceResponseValidationError{
-				field:  "resource",
+				field:  "Resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1648,6 +1625,8 @@ func (m *GetResourceRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -1758,7 +1737,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, GetResourceResponseValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1766,7 +1745,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, GetResourceResponseValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1775,7 +1754,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return GetResourceResponseValidationError{
-				field:  "resource",
+				field:  "Resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1889,7 +1868,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UpdateResourceRequestValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1897,7 +1876,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UpdateResourceRequestValidationError{
-					field:  "resource",
+					field:  "Resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1906,7 +1885,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateResourceRequestValidationError{
-				field:  "resource",
+				field:  "Resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -2015,34 +1994,7 @@ func (m *UpdateResourceResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetResource()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateResourceResponseValidationError{
-					field:  "resource",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateResourceResponseValidationError{
-					field:  "resource",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateResourceResponseValidationError{
-				field:  "resource",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return UpdateResourceResponseMultiError(errors)
@@ -2145,6 +2097,8 @@ func (m *DeleteResourceRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -2359,10 +2313,6 @@ func (m *ListResourcesRequest) validate(all bool) error {
 	// no validation rules for Offset
 
 	// no validation rules for Limit
-
-	// no validation rules for Type
-
-	// no validation rules for Key
 
 	if len(errors) > 0 {
 		return ListResourcesRequestMultiError(errors)
@@ -2866,6 +2816,8 @@ func (m *GetPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BizId
+
 	// no validation rules for Id
 
 	if len(errors) > 0 {
@@ -3232,34 +3184,7 @@ func (m *UpdatePermissionResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPermission()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdatePermissionResponseValidationError{
-					field:  "Permission",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdatePermissionResponseValidationError{
-					field:  "Permission",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPermission()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdatePermissionResponseValidationError{
-				field:  "Permission",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return UpdatePermissionResponseMultiError(errors)
@@ -3362,6 +3287,8 @@ func (m *DeletePermissionRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -3576,12 +3503,6 @@ func (m *ListPermissionsRequest) validate(all bool) error {
 	// no validation rules for Offset
 
 	// no validation rules for Limit
-
-	// no validation rules for ResourceType
-
-	// no validation rules for ResourceKey
-
-	// no validation rules for Action
 
 	if len(errors) > 0 {
 		return ListPermissionsRequestMultiError(errors)
@@ -3833,10 +3754,6 @@ func (m *Role) validate(all bool) error {
 	// no validation rules for Description
 
 	// no validation rules for Metadata
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
 
 	if len(errors) > 0 {
 		return RoleMultiError(errors)
@@ -4198,6 +4115,8 @@ func (m *GetRoleRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -4561,34 +4480,7 @@ func (m *UpdateRoleResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetRole()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateRoleResponseValidationError{
-					field:  "Role",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateRoleResponseValidationError{
-					field:  "Role",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetRole()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateRoleResponseValidationError{
-				field:  "Role",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Success
 
 	if len(errors) > 0 {
 		return UpdateRoleResponseMultiError(errors)
@@ -4691,6 +4583,8 @@ func (m *DeleteRoleRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -4905,8 +4799,6 @@ func (m *ListRolesRequest) validate(all bool) error {
 	// no validation rules for Offset
 
 	// no validation rules for Limit
-
-	// no validation rules for Type
 
 	if len(errors) > 0 {
 		return ListRolesRequestMultiError(errors)
@@ -5262,11 +5154,34 @@ func (m *CreateRoleInclusionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for IncludingRoleId
-
-	// no validation rules for IncludedRoleId
+	if all {
+		switch v := interface{}(m.GetRoleInclusion()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateRoleInclusionRequestValidationError{
+					field:  "RoleInclusion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateRoleInclusionRequestValidationError{
+					field:  "RoleInclusion",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRoleInclusion()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateRoleInclusionRequestValidationError{
+				field:  "RoleInclusion",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return CreateRoleInclusionRequestMultiError(errors)
@@ -5501,6 +5416,8 @@ func (m *GetRoleInclusionRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for BizId
 
 	// no validation rules for Id
 
@@ -5739,9 +5656,7 @@ func (m *DeleteRoleInclusionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for IncludingRoleId
-
-	// no validation rules for IncludedRoleId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return DeleteRoleInclusionRequestMultiError(errors)
@@ -5951,10 +5866,6 @@ func (m *ListRoleInclusionsRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for RoleId
-
-	// no validation rules for IsIncluding
 
 	// no validation rules for Offset
 
@@ -6208,13 +6119,15 @@ func (m *RolePermission) validate(all bool) error {
 
 	// no validation rules for PermissionId
 
-	// no validation rules for PermissionName
+	// no validation rules for RoleName
 
-	// no validation rules for PermissionType
+	// no validation rules for RoleType
 
-	// no validation rules for StartTime
+	// no validation rules for ResourceType
 
-	// no validation rules for EndTime
+	// no validation rules for ResourceKey
+
+	// no validation rules for PermissionAction
 
 	if len(errors) > 0 {
 		return RolePermissionMultiError(errors)
@@ -6316,15 +6229,34 @@ func (m *GrantRolePermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for RoleId
-
-	// no validation rules for PermissionId
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
+	if all {
+		switch v := interface{}(m.GetRolePermission()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantRolePermissionRequestValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantRolePermissionRequestValidationError{
+					field:  "RolePermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRolePermission()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantRolePermissionRequestValidationError{
+				field:  "RolePermission",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantRolePermissionRequestMultiError(errors)
@@ -6562,9 +6494,7 @@ func (m *RevokeRolePermissionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for RoleId
-
-	// no validation rules for PermissionId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeRolePermissionRequestMultiError(errors)
@@ -6775,8 +6705,6 @@ func (m *ListRolePermissionsRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for RoleId
 
 	// no validation rules for Offset
 
@@ -7138,15 +7066,34 @@ func (m *GrantUserRoleRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for UserId
-
-	// no validation rules for RoleId
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
+	if all {
+		switch v := interface{}(m.GetUserRole()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantUserRoleRequestValidationError{
+					field:  "UserRole",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantUserRoleRequestValidationError{
+					field:  "UserRole",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserRole()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantUserRoleRequestValidationError{
+				field:  "UserRole",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantUserRoleRequestMultiError(errors)
@@ -7383,9 +7330,7 @@ func (m *RevokeUserRoleRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for UserId
-
-	// no validation rules for RoleId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeUserRoleRequestMultiError(errors)
@@ -7594,8 +7539,6 @@ func (m *ListUserRolesRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for UserId
 
 	// no validation rules for Offset
 
@@ -7857,7 +7800,7 @@ func (m *UserPermission) validate(all bool) error {
 
 	// no validation rules for ResourceName
 
-	// no validation rules for Action
+	// no validation rules for PermissionAction
 
 	// no validation rules for StartTime
 
@@ -7965,17 +7908,34 @@ func (m *GrantUserPermissionRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for BizId
-
-	// no validation rules for UserId
-
-	// no validation rules for PermissionId
-
-	// no validation rules for Effect
-
-	// no validation rules for StartTime
-
-	// no validation rules for EndTime
+	if all {
+		switch v := interface{}(m.GetUserPermission()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GrantUserPermissionRequestValidationError{
+					field:  "UserPermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GrantUserPermissionRequestValidationError{
+					field:  "UserPermission",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserPermission()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GrantUserPermissionRequestValidationError{
+				field:  "UserPermission",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return GrantUserPermissionRequestMultiError(errors)
@@ -8213,9 +8173,7 @@ func (m *RevokeUserPermissionRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for UserId
-
-	// no validation rules for PermissionId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return RevokeUserPermissionRequestMultiError(errors)
@@ -8427,13 +8385,9 @@ func (m *ListUserPermissionsRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for UserId
-
 	// no validation rules for Offset
 
 	// no validation rules for Limit
-
-	// no validation rules for OnlyValid
 
 	if len(errors) > 0 {
 		return ListUserPermissionsRequestMultiError(errors)

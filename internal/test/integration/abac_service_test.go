@@ -101,7 +101,7 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
 			name: "更新属性定义",
 			before: func() (domain.AttributeDefinition, int64) {
 				def := domain.AttributeDefinition{
-					Name:           "age",
+					Name:           "new_age",
 					Description:    "用户年龄",
 					DataType:       domain.DataTypeNumber,
 					EntityType:     domain.EntityTypeSubject,
@@ -154,6 +154,7 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
 func (s *AbacServiceSuite) TestAttributeDefinition_First() {
 	ctx := context.Background()
 	bizID := int64(3)
+	defer s.clearBizVal(bizID)
 
 	// 先创建一个属性定义
 	def := domain.AttributeDefinition{
@@ -766,6 +767,8 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_FindWithDefinition() {
 	// 验证属性值
 	values := make(map[string]string)
 	for _, val := range resourceObj.AttributeValues {
+		val.Ctime = 0
+		val.Utime = 0
 		values[val.Definition.Name] = val.Value
 	}
 	s.Equal("1024", values["size"])
@@ -774,7 +777,10 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_FindWithDefinition() {
 	// 验证属性定义
 	defs := make(map[string]domain.AttributeDefinition)
 	for _, val := range resourceObj.AttributeValues {
+		val.Definition.Ctime = 0
+		val.Definition.Utime = 0
 		defs[val.Definition.Name] = val.Definition
+
 	}
 	s.Equal(sizeDef, defs["size"])
 	s.Equal(typeDef, defs["type"])
@@ -1158,14 +1164,14 @@ func (s *AbacServiceSuite) TestPolicy_SavePermissionPolicy() {
 
 	// 测试保存权限策略关联
 	permissionID := int64(1003)
-	err = s.policyRepo.SavePermissionPolicy(ctx, bizID, id, permissionID, domain.EffectPermit)
+	err = s.policyRepo.SavePermissionPolicy(ctx, bizID, id, permissionID, domain.EffectAllow)
 	s.NoError(err)
 
 	// 验证关联已保存
 	var res dao.PermissionPolicy
 	err = s.db.WithContext(ctx).Where("biz_id = ? AND policy_id = ?", bizID, id).First(&res).Error
 	require.NoError(s.T(), err)
-	s.Equal(string(domain.EffectPermit), res.Effect)
+	s.Equal(string(domain.EffectAllow), res.Effect)
 }
 
 func (s *AbacServiceSuite) TestPolicy_FindPolicies() {
@@ -1240,7 +1246,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 	s.Greater(ruleID, int64(0))
 	// 添加权限策略关联
 	permissionID := int64(1001)
-	err = s.policyRepo.SavePermissionPolicy(ctx, bizID, id, permissionID, domain.EffectPermit)
+	err = s.policyRepo.SavePermissionPolicy(ctx, bizID, id, permissionID, domain.EffectAllow)
 	s.NoError(err)
 
 	// 测试查询策略
@@ -1263,7 +1269,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 		Where("biz_id = ? AND policy_id = ? AND permission_id = ?", bizID, id, permissionID).
 		First(&permissionPolicy).Error
 	s.NoError(err)
-	s.Equal(string(domain.EffectPermit), permissionPolicy.Effect)
+	s.Equal(string(domain.EffectAllow), permissionPolicy.Effect)
 }
 
 func TestAbacServiceSuite(t *testing.T) {

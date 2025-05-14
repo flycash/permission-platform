@@ -14,7 +14,7 @@ type PolicySvc interface {
 	SaveRule(ctx context.Context, bizID, policyID int64, rule domain.PolicyRule) (int64, error)
 	DeleteRule(ctx context.Context, ruleID int64) error
 	FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionIDs []int64) ([]domain.Policy, error)
-	SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.EffectType) error
+	SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.Effect) error
 	FindPolicies(ctx context.Context, bizID int64, offset, limit int) (int64, []domain.Policy, error)
 }
 
