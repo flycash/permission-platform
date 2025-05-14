@@ -11,11 +11,14 @@ import (
 // ResourceRepository 资源仓储接口
 type ResourceRepository interface {
 	Create(ctx context.Context, resource domain.Resource) (domain.Resource, error)
-	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Resource, error)
-	UpdateByBizIDAndID(ctx context.Context, resource domain.Resource) (domain.Resource, error)
-	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error)
+
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, error)
+	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Resource, error)
+	FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error)
+
+	UpdateByBizIDAndID(ctx context.Context, resource domain.Resource) (domain.Resource, error)
+
+	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
 // resourceRepository 资源仓储实现

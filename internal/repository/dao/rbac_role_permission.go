@@ -33,15 +33,9 @@ type RolePermissionDAO interface {
 	Create(ctx context.Context, rolePermission RolePermission) (RolePermission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (RolePermission, error)
-
 	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]RolePermission, error)
-	CountByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) (int64, error)
-
 	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]RolePermission, error)
-	CountByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) (int64, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error
@@ -114,22 +108,4 @@ func (r *rolePermissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id in
 
 func (r *rolePermissionDAO) DeleteByBizIDAndRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error {
 	return r.db.WithContext(ctx).Where("biz_id = ? AND role_id = ? AND permission_id = ?", bizID, roleID, permissionID).Delete(&RolePermission{}).Error
-}
-
-func (r *rolePermissionDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&RolePermission{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (r *rolePermissionDAO) CountByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&RolePermission{}).Where("biz_id = ? AND role_id IN (?) ", bizID, roleIDs).Count(&count).Error
-	return count, err
-}
-
-func (r *rolePermissionDAO) CountByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&RolePermission{}).Where("biz_id = ? AND permission_id = ?", bizID, permissionID).Count(&count).Error
-	return count, err
 }

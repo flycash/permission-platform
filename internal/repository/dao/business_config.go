@@ -29,7 +29,6 @@ type BusinessConfigDAO interface {
 	GetByIDs(ctx context.Context, id []int64) (map[int64]BusinessConfig, error)
 	GetByID(ctx context.Context, id int64) (BusinessConfig, error)
 	Find(ctx context.Context, offset int, limit int) ([]BusinessConfig, error)
-	Count(ctx context.Context) (int64, error)
 	UpdateToken(ctx context.Context, id int64, token string) error
 	Update(ctx context.Context, config BusinessConfig) error
 	Delete(ctx context.Context, id int64) error
@@ -118,10 +117,4 @@ func (b *businessConfigDAO) Delete(ctx context.Context, id int64) error {
 		return result.Error
 	}
 	return nil
-}
-
-func (b *businessConfigDAO) Count(ctx context.Context) (int64, error) {
-	var count int64
-	err := b.db.WithContext(ctx).Model(&BusinessConfig{}).Count(&count).Error
-	return count, err
 }

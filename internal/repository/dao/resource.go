@@ -31,16 +31,9 @@ type ResourceDAO interface {
 	Create(ctx context.Context, resource Resource) (Resource, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Resource, error)
-
 	FindByBizIDAndType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Resource, error)
-	CountByBizIDAndType(ctx context.Context, bizID int64, resourceType string) (int64, error)
-
 	FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]Resource, error)
-	CountByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string) (int64, error)
-
 	FindByBizIDAndKey(ctx context.Context, bizID int64, key string) (Resource, error)
 
 	UpdateByBizIDAndID(ctx context.Context, resource Resource) error
@@ -115,29 +108,9 @@ func (r *resourceDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) e
 	return r.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Resource{}).Error
 }
 
-func (r *resourceDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&Resource{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (r *resourceDAO) CountByBizIDAndType(ctx context.Context, bizID int64, resourceType string) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&Resource{}).Where("biz_id = ? AND type = ?", bizID, resourceType).Count(&count).Error
-	return count, err
-}
-
 func (r *resourceDAO) FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]Resource, error) {
 	var resources []Resource
 	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ? AND `key` = ?", bizID, resourceType, resourceKey).
 		Offset(offset).Limit(limit).Find(&resources).Error
 	return resources, err
-}
-
-func (r *resourceDAO) CountByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&Resource{}).
-		Where("biz_id = ? AND type = ? AND `key` = ?", bizID, resourceType, resourceKey).
-		Count(&count).Error
-	return count, err
 }

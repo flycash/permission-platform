@@ -33,18 +33,10 @@ type PermissionDAO interface {
 	Create(ctx context.Context, permission Permission) (Permission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error)
-
 	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error)
-
 	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error)
-
 	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission Permission) error
 
@@ -125,35 +117,9 @@ func (p *permissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64)
 	return p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Permission{}).Error
 }
 
-func (p *permissionDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Count(&count).Error
-	return count, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Count(&count).Error
-	return count, err
-}
-
 func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error) {
 	var permissions []Permission
 	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
 		bizID, resourceType, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
 	return permissions, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).
-		Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
-			bizID, resourceType, resourceKey, action).Count(&count).Error
-	return count, err
 }

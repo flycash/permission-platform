@@ -21,16 +21,24 @@ func Init() *Service {
 		testioc.BaseSet,
 
 		rbacsvc.NewService,
-		repository.NewRBACRepositoryOld,
+		repository.NewRBACRepository,
 
 		dao.NewBusinessConfigDAO,
+		repository.NewBusinessConfigRepository,
 		dao.NewResourceDAO,
+		repository.NewResourceRepository,
 		dao.NewPermissionDAO,
+		repository.NewPermissionRepository,
 		dao.NewRoleDAO,
+		repository.NewRoleRepository,
 		dao.NewRoleInclusionDAO,
+		repository.NewRoleInclusionRepository,
 		dao.NewRolePermissionDAO,
+		repository.NewRolePermissionRepository,
 		dao.NewUserRoleDAO,
+		repository.NewUserRoleRepository,
 		dao.NewUserPermissionDAO,
+		repository.NewUserPermissionRepository,
 
 		wire.Struct(new(Service), "*"),
 	)

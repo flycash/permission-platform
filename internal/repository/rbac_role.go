@@ -11,11 +11,14 @@ import (
 // RoleRepository 角色仓储接口
 type RoleRepository interface {
 	Create(ctx context.Context, role domain.Role) (domain.Role, error)
+
+	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Role, error)
 	FindByBizIDAndType(ctx context.Context, bizID int64, roleType string, offset, limit int) ([]domain.Role, error)
+
 	UpdateByBizIDAndID(ctx context.Context, role domain.Role) (domain.Role, error)
+
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, error)
 }
 
 // roleRepository 角色仓储实现

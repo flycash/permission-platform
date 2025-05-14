@@ -11,9 +11,11 @@ import (
 // RolePermissionRepository 角色权限关系仓储接口
 type RolePermissionRepository interface {
 	Create(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error)
-	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error)
-	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
+
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error)
+	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error)
+
+	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
 // rolePermissionRepository 角色权限关系仓储实现

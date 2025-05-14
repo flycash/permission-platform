@@ -30,12 +30,8 @@ type RoleDAO interface {
 	Create(ctx context.Context, role Role) (Role, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Role, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Role, error)
-
 	FindByBizIDAndType(ctx context.Context, bizID int64, roleType string, offset, limit int) ([]Role, error)
-	CountByBizIDAndType(ctx context.Context, bizID int64, roleType string) (int64, error)
 
 	UpdateByBizIDAndID(ctx context.Context, role Role) error
 
@@ -97,16 +93,4 @@ func (r *roleDAO) UpdateByBizIDAndID(ctx context.Context, role Role) error {
 
 func (r *roleDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Role{}).Error
-}
-
-func (r *roleDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&Role{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (r *roleDAO) CountByBizIDAndType(ctx context.Context, bizID int64, roleType string) (int64, error) {
-	var count int64
-	err := r.db.WithContext(ctx).Model(&Role{}).Where("biz_id = ? AND type = ?", bizID, roleType).Count(&count).Error
-	return count, err
 }

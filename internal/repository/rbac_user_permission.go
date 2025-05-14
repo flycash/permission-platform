@@ -11,10 +11,12 @@ import (
 // UserPermissionRepository 用户权限关系仓储接口
 type UserPermissionRepository interface {
 	Create(ctx context.Context, userPermission domain.UserPermission) (domain.UserPermission, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
-	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserPermission, error)
-	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
+
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
+	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
+
+	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
 // userPermissionRepository 用户权限关系仓储实现
@@ -48,8 +50,8 @@ func (r *userPermissionRepository) FindByBizIDAndUserID(ctx context.Context, biz
 	}), nil
 }
 
-func (r *userPermissionRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserPermission, error) {
-	userPermissions, err := r.userPermissionDAO.FindValidPermissionsWithBizID(ctx, bizID, userID, currentTime, offset, limit)
+func (r *userPermissionRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error) {
+	userPermissions, err := r.userPermissionDAO.FindValidPermissionsWithBizID(ctx, bizID, userID, offset, limit)
 	if err != nil {
 		return nil, err
 	}

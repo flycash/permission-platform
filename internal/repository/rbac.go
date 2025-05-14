@@ -2,80 +2,29 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
-	"gitee.com/flycash/permission-platform/internal/repository/dao"
+	"github.com/ecodeclub/ekit/mapx"
 )
 
 type RBACRepository interface {
-	// 业务配置相关方法
-
-	CreateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
-	FindBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, error)
-	FindBusinessConfigByID(ctx context.Context, id int64) (domain.BusinessConfig, error)
-	UpdateBusinessConfigToken(ctx context.Context, id int64, token string) error
-	UpdateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
-	DeleteBusinessConfigByID(ctx context.Context, id int64) error
-
-	// 资源相关方法
-
-	CreateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error)
-	FindResourceByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Resource, error)
-	UpdateResourceByBizIDAndID(ctx context.Context, resource domain.Resource) (domain.Resource, error)
-	DeleteResourceByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindResourcesByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error)
-	FindResourcesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, error)
-
-	// 权限相关方法
-
-	CreatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
-	FindPermissionByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error)
-	FindPermissionsByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error)
-	UpdatePermissionByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error)
-	DeletePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
-
-	// 角色相关方法
-
-	CreateRole(ctx context.Context, role domain.Role) (domain.Role, error)
-	FindRoleByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Role, error)
-	FindRolesByBizIDAndType(ctx context.Context, bizID int64, roleType string, offset, limit int) ([]domain.Role, error)
-	UpdateRoleByBizIDAndID(ctx context.Context, role domain.Role) (domain.Role, error)
-	DeleteRoleByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, error)
-
-	// 角色包含关系相关方法
-
-	CreateRoleInclusion(ctx context.Context, roleInclusion domain.RoleInclusion) (domain.RoleInclusion, error)
-	FindRoleInclusionByBizIDAndID(ctx context.Context, bizID, id int64) (domain.RoleInclusion, error)
-	FindRoleInclusionsByBizIDAndIncludingRoleID(ctx context.Context, bizID, includingRoleID int64, offset, limit int) ([]domain.RoleInclusion, error)
-	FindRoleInclusionsByBizIDAndIncludedRoleID(ctx context.Context, bizID, includedRoleID int64, offset, limit int) ([]domain.RoleInclusion, error)
-	DeleteRoleInclusionByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindRoleInclusionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, error)
-
-	// 角色权限相关方法
-
-	CreateRolePermission(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error)
-	FindRolePermissionsByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error)
-	DeleteRolePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindRolePermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error)
-
-	// 用户角色相关方法
-
-	CreateUserRole(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error)
-	FindUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
-	FindValidUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserRole, error)
-	DeleteUserRoleByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindUserRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error)
-
-	// 用户权限相关方法
-
-	CreateUserPermission(ctx context.Context, userPermission domain.UserPermission) (domain.UserPermission, error)
-	FindUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
-	FindValidUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserPermission, error)
-	DeleteUserPermissionByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindUserPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error)
+	BusinessConfig() BusinessConfigRepository
+	Resource() ResourceRepository
+	Permission() PermissionRepository
+	Role() RoleRepository
+	RoleInclusion() RoleInclusionRepository
+	RolePermission() RolePermissionRepository
+	UserRole() UserRoleRepository
+	UserPermission() UserPermissionRepository
+	// GetAllUserPermissions 获取用户的所有权限，包括个人权限、个人拥有的角色（及包含的角色）对应的权限
+	GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
 }
+
+const (
+	limit           = 100
+	oneHundredYears = 100
+)
 
 type rbacRepository struct {
 	businessConfigRepo BusinessConfigRepository
@@ -88,7 +37,7 @@ type rbacRepository struct {
 	userPermissionRepo UserPermissionRepository
 }
 
-// NewRBACRepository 接收8个子Repository
+// NewRBACRepository 聚合根
 func NewRBACRepository(
 	businessConfigRepo BusinessConfigRepository,
 	resourceRepo ResourceRepository,
@@ -111,226 +60,247 @@ func NewRBACRepository(
 	}
 }
 
-// NewRBACRepositoryOld 原有工厂函数的兼容包装
-func NewRBACRepositoryOld(
-	resourceDAO dao.ResourceDAO,
-	permissionDAO dao.PermissionDAO,
-	roleDAO dao.RoleDAO,
-	rolePermissionDAO dao.RolePermissionDAO,
-	roleInclusionDAO dao.RoleInclusionDAO,
-	userPermissionDAO dao.UserPermissionDAO,
-	userRoleDAO dao.UserRoleDAO,
-	businessConfigDAO dao.BusinessConfigDAO,
-) RBACRepository {
-	businessConfigRepo := NewBusinessConfigRepository(businessConfigDAO)
-	resourceRepo := NewResourceRepository(resourceDAO)
-	permissionRepo := NewPermissionRepository(permissionDAO)
-	roleRepo := NewRoleRepository(roleDAO)
-	roleInclusionRepo := NewRoleInclusionRepository(roleInclusionDAO)
-	rolePermissionRepo := NewRolePermissionRepository(rolePermissionDAO)
-	userRoleRepo := NewUserRoleRepository(userRoleDAO)
-	userPermissionRepo := NewUserPermissionRepository(userPermissionDAO)
-
-	return NewRBACRepository(
-		businessConfigRepo,
-		resourceRepo,
-		permissionRepo,
-		roleRepo,
-		roleInclusionRepo,
-		rolePermissionRepo,
-		userRoleRepo,
-		userPermissionRepo,
-	)
+func (r *rbacRepository) BusinessConfig() BusinessConfigRepository {
+	return r.businessConfigRepo
 }
 
-// ========== 业务配置相关方法实现 ==========
-
-func (r *rbacRepository) CreateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error) {
-	return r.businessConfigRepo.Create(ctx, config)
+func (r *rbacRepository) Resource() ResourceRepository {
+	return r.resourceRepo
 }
 
-func (r *rbacRepository) FindBusinessConfigs(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, error) {
-	return r.businessConfigRepo.Find(ctx, offset, limit)
+func (r *rbacRepository) Permission() PermissionRepository {
+	return r.permissionRepo
 }
 
-func (r *rbacRepository) FindBusinessConfigByID(ctx context.Context, id int64) (domain.BusinessConfig, error) {
-	return r.businessConfigRepo.FindByID(ctx, id)
+func (r *rbacRepository) Role() RoleRepository {
+	return r.roleRepo
 }
 
-func (r *rbacRepository) UpdateBusinessConfig(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error) {
-	return r.businessConfigRepo.Update(ctx, config)
+func (r *rbacRepository) RoleInclusion() RoleInclusionRepository {
+	return r.roleInclusionRepo
 }
 
-func (r *rbacRepository) UpdateBusinessConfigToken(ctx context.Context, id int64, token string) error {
-	return r.businessConfigRepo.UpdateToken(ctx, id, token)
+func (r *rbacRepository) RolePermission() RolePermissionRepository {
+	return r.rolePermissionRepo
 }
 
-func (r *rbacRepository) DeleteBusinessConfigByID(ctx context.Context, id int64) error {
-	return r.businessConfigRepo.Delete(ctx, id)
+func (r *rbacRepository) UserRole() UserRoleRepository {
+	return r.userRoleRepo
 }
 
-// ========== 资源相关方法实现 ==========
-
-func (r *rbacRepository) CreateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error) {
-	return r.resourceRepo.Create(ctx, resource)
+func (r *rbacRepository) UserPermission() UserPermissionRepository {
+	return r.userPermissionRepo
 }
 
-func (r *rbacRepository) FindResourceByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Resource, error) {
-	return r.resourceRepo.FindByBizIDAndID(ctx, bizID, id)
+func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+	// 1. 获取用户直接分配的权限
+	directPermissions, err := r.getUserDirectPermissions(ctx, bizID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2.获取用户通过角色获得的权限
+	// 2.1 获取用户的所有角色ID（包括继承的角色）
+	allRoleIDs, err := r.getAllRoleIDs(ctx, bizID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 2.2 如果用户没有任何角色，则只返回直接权限
+	if len(allRoleIDs) == 0 {
+		return directPermissions, nil
+	}
+
+	// 2.3 获取所有角色对应的权限
+	rolePermissions, err := r.getRolePermissions(ctx, bizID, userID, allRoleIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	// 3. 合并两条路径的权限
+	return r.mergePermissions(directPermissions, rolePermissions), nil
 }
 
-func (r *rbacRepository) UpdateResourceByBizIDAndID(ctx context.Context, resource domain.Resource) (domain.Resource, error) {
-	return r.resourceRepo.UpdateByBizIDAndID(ctx, resource)
+// getUserDirectPermissions 获取用户直接分配的所有权限
+func (r *rbacRepository) getUserDirectPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+	offset := 0
+	var allPermissions []domain.UserPermission
+
+	for {
+		permissions, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
+		if err != nil {
+			return nil, err
+		}
+		allPermissions = append(allPermissions, permissions...)
+
+		// 如果返回的数量小于limit，说明已经取完了
+		if len(permissions) < limit {
+			break
+		}
+		offset += limit
+	}
+
+	return allPermissions, nil
 }
 
-func (r *rbacRepository) DeleteResourceByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.resourceRepo.DeleteByBizIDAndID(ctx, bizID, id)
+// getAllRoleIDs 获取用户所有角色ID，包括继承的角色
+func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
+	// 1. 获取用户直接角色
+	directRoles, err := r.getUserRoles(ctx, bizID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// 如果用户没有任何直接角色，返回空切片
+	if len(directRoles) == 0 {
+		return []int64{}, nil
+	}
+
+	// 2. 提取直接角色ID, 收集所有角色ID
+	directRoleIDs := make([]int64, 0, len(directRoles))
+	allRoleIDs := make(map[int64]struct{})
+	for i := range directRoles {
+		directRoleIDs = append(directRoleIDs, directRoles[i].Role.ID)
+		allRoleIDs[directRoles[i].Role.ID] = struct{}{}
+	}
+
+	// 3. 递归获取包含的角色
+	err = r.collectIncludedRoles(ctx, bizID, directRoleIDs, allRoleIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	// 4. 将角色ID集合转为切片
+	result := make([]int64, 0, len(allRoleIDs))
+	for roleID := range allRoleIDs {
+		result = append(result, roleID)
+	}
+	return result, nil
 }
 
-func (r *rbacRepository) FindResourcesByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error) {
-	return r.resourceRepo.FindByBizIDAndTypeAndKey(ctx, bizID, resourceType, resourceKey, offset, limit)
+// getUserRoles 获取用户直接分配的所有角色
+func (r *rbacRepository) getUserRoles(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
+	offset := 0
+	var allRoles []domain.UserRole
+
+	for {
+		roles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
+		if err != nil {
+			return nil, err
+		}
+		allRoles = append(allRoles, roles...)
+
+		// 如果返回的数量小于limit，说明已经取完了
+		if len(roles) < limit {
+			break
+		}
+		offset += limit
+	}
+
+	return allRoles, nil
 }
 
-func (r *rbacRepository) FindResourcesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, error) {
-	return r.resourceRepo.FindByBizID(ctx, bizID, offset, limit)
+// collectIncludedRoles 递归收集角色包含关系
+func (r *rbacRepository) collectIncludedRoles(ctx context.Context, bizID int64, roleIDs []int64, allRoleIDs map[int64]struct{}) error {
+	if len(roleIDs) == 0 {
+		return nil
+	}
+	offset := 0
+	for {
+		// 获取当前这批角色包含的所有角色
+		inclusions, err := r.roleInclusionRepo.FindByBizIDAndIncludingRoleIDs(ctx, bizID, roleIDs, offset, limit)
+		if err != nil {
+			return err
+		}
+
+		// 如果没有更多包含关系，跳出循环
+		if len(inclusions) == 0 {
+			break
+		}
+
+		// 收集新发现的角色ID
+		newRoleIDs := make([]int64, 0)
+		for i := range inclusions {
+			includedRoleID := inclusions[i].IncludedRole.ID
+			// 如果是新角色，加入待处理列表
+			if _, exists := allRoleIDs[includedRoleID]; !exists {
+				allRoleIDs[includedRoleID] = struct{}{}
+				newRoleIDs = append(newRoleIDs, includedRoleID)
+			}
+		}
+
+		// 如果返回的数量小于limit，说明当前页已取完
+		if len(inclusions) < limit {
+			// 递归处理新发现的角色
+			if len(newRoleIDs) > 0 {
+				if err1 := r.collectIncludedRoles(ctx, bizID, newRoleIDs, allRoleIDs); err1 != nil {
+					return err1
+				}
+			}
+			break
+		}
+		offset += limit
+	}
+
+	return nil
 }
 
-// ========== 权限相关方法实现 ==========
+// getRolePermissions 获取指定角色ID列表对应的所有权限
+func (r *rbacRepository) getRolePermissions(ctx context.Context, bizID, userID int64, roleIDs []int64) ([]domain.UserPermission, error) {
+	if len(roleIDs) == 0 {
+		return []domain.UserPermission{}, nil
+	}
+	offset := 0
+	rolePermissions := make([]domain.RolePermission, 0, limit)
+	for {
+		// 分批获取角色权限
+		permissions, err := r.rolePermissionRepo.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, limit)
+		if err != nil {
+			return nil, err
+		}
+		rolePermissions = append(rolePermissions, permissions...)
 
-func (r *rbacRepository) CreatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error) {
-	return r.permissionRepo.Create(ctx, permission)
+		// 如果返回的数量小于limit，说明已经取完了
+		if len(permissions) < limit {
+			break
+		}
+		offset += limit
+	}
+	// 将RolePermission转换为UserPermission格式
+	userPermissions := make([]domain.UserPermission, 0, len(rolePermissions))
+
+	for i := range rolePermissions {
+		userPermissions = append(userPermissions, domain.UserPermission{
+			ID:         0,
+			BizID:      bizID,
+			UserID:     userID,
+			Permission: rolePermissions[i].Permission,
+			StartTime:  time.Now().UnixMilli(),
+			EndTime:    time.Now().AddDate(oneHundredYears, 0, 0).UnixMilli(),
+			Effect:     domain.EffectAllow,
+			Ctime:      rolePermissions[i].Ctime,
+			Utime:      rolePermissions[i].Utime,
+		})
+	}
+	return userPermissions, nil
 }
 
-func (r *rbacRepository) FindPermissionByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error) {
-	return r.permissionRepo.FindByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindPermissionsByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error) {
-	return r.permissionRepo.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action, offset, limit)
-}
-
-func (r *rbacRepository) UpdatePermissionByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error) {
-	return r.permissionRepo.UpdateByBizIDAndID(ctx, permission)
-}
-
-func (r *rbacRepository) DeletePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.permissionRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error) {
-	return r.permissionRepo.FindByBizID(ctx, bizID, offset, limit)
-}
-
-// ========== 角色相关方法实现 ==========
-
-func (r *rbacRepository) CreateRole(ctx context.Context, role domain.Role) (domain.Role, error) {
-	return r.roleRepo.Create(ctx, role)
-}
-
-func (r *rbacRepository) FindRoleByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Role, error) {
-	return r.roleRepo.FindByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindRolesByBizIDAndType(ctx context.Context, bizID int64, roleType string, offset, limit int) ([]domain.Role, error) {
-	return r.roleRepo.FindByBizIDAndType(ctx, bizID, roleType, offset, limit)
-}
-
-func (r *rbacRepository) UpdateRoleByBizIDAndID(ctx context.Context, role domain.Role) (domain.Role, error) {
-	return r.roleRepo.UpdateByBizIDAndID(ctx, role)
-}
-
-func (r *rbacRepository) DeleteRoleByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.roleRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Role, error) {
-	return r.roleRepo.FindByBizID(ctx, bizID, offset, limit)
-}
-
-// ========== 角色包含关系相关方法实现 ==========
-
-func (r *rbacRepository) CreateRoleInclusion(ctx context.Context, roleInclusion domain.RoleInclusion) (domain.RoleInclusion, error) {
-	return r.roleInclusionRepo.Create(ctx, roleInclusion)
-}
-
-func (r *rbacRepository) FindRoleInclusionByBizIDAndID(ctx context.Context, bizID, id int64) (domain.RoleInclusion, error) {
-	return r.roleInclusionRepo.FindByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindRoleInclusionsByBizIDAndIncludingRoleID(ctx context.Context, bizID, includingRoleID int64, offset, limit int) ([]domain.RoleInclusion, error) {
-	return r.roleInclusionRepo.FindByBizIDAndIncludingRoleID(ctx, bizID, includingRoleID, offset, limit)
-}
-
-func (r *rbacRepository) FindRoleInclusionsByBizIDAndIncludedRoleID(ctx context.Context, bizID, includedRoleID int64, offset, limit int) ([]domain.RoleInclusion, error) {
-	return r.roleInclusionRepo.FindByBizIDAndIncludedRoleID(ctx, bizID, includedRoleID, offset, limit)
-}
-
-func (r *rbacRepository) DeleteRoleInclusionByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.roleInclusionRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindRoleInclusionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, error) {
-	return r.roleInclusionRepo.FindByBizID(ctx, bizID, offset, limit)
-}
-
-// ========== 角色权限相关方法实现 ==========
-
-func (r *rbacRepository) CreateRolePermission(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error) {
-	return r.rolePermissionRepo.Create(ctx, rolePermission)
-}
-
-func (r *rbacRepository) FindRolePermissionsByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error) {
-	return r.rolePermissionRepo.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, limit)
-}
-
-func (r *rbacRepository) DeleteRolePermissionByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.rolePermissionRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindRolePermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error) {
-	return r.rolePermissionRepo.FindByBizID(ctx, bizID, offset, limit)
-}
-
-// ========== 用户角色相关方法实现 ==========
-
-func (r *rbacRepository) CreateUserRole(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error) {
-	return r.userRoleRepo.Create(ctx, userRole)
-}
-
-func (r *rbacRepository) FindUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error) {
-	return r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
-}
-
-func (r *rbacRepository) FindValidUserRolesByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserRole, error) {
-	return r.userRoleRepo.FindValidByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, limit)
-}
-
-func (r *rbacRepository) DeleteUserRoleByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.userRoleRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindUserRolesByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error) {
-	return r.userRoleRepo.FindByBizID(ctx, bizID, offset, limit)
-}
-
-// ========== 用户权限相关方法实现 ==========
-
-func (r *rbacRepository) CreateUserPermission(ctx context.Context, userPermission domain.UserPermission) (domain.UserPermission, error) {
-	return r.userPermissionRepo.Create(ctx, userPermission)
-}
-
-func (r *rbacRepository) FindUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error) {
-	return r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
-}
-
-func (r *rbacRepository) FindValidUserPermissionsByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserPermission, error) {
-	return r.userPermissionRepo.FindValidByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, limit)
-}
-
-func (r *rbacRepository) DeleteUserPermissionByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.userPermissionRepo.DeleteByBizIDAndID(ctx, bizID, id)
-}
-
-func (r *rbacRepository) FindUserPermissionsByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error) {
-	return r.userPermissionRepo.FindByBizID(ctx, bizID, offset, limit)
+// mergePermissions 合并两组权限
+func (r *rbacRepository) mergePermissions(directPermissions, rolePermissions []domain.UserPermission) []domain.UserPermission {
+	if len(directPermissions) == 0 {
+		return rolePermissions
+	}
+	if len(rolePermissions) == 0 {
+		return directPermissions
+	}
+	mergedMap := make(map[int64]domain.UserPermission)
+	// 先处理角色权限
+	for i := range rolePermissions {
+		mergedMap[rolePermissions[i].Permission.ID] = rolePermissions[i]
+	}
+	// 再处理直接权限（直接权限优先级更高）
+	for i := range directPermissions {
+		mergedMap[directPermissions[i].Permission.ID] = directPermissions[i]
+	}
+	return mapx.Values(mergedMap)
 }

@@ -11,10 +11,13 @@ import (
 // BusinessConfigRepository 业务配置仓储接口
 type BusinessConfigRepository interface {
 	Create(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
+
 	Find(ctx context.Context, offset, limit int) ([]domain.BusinessConfig, error)
 	FindByID(ctx context.Context, id int64) (domain.BusinessConfig, error)
+
 	UpdateToken(ctx context.Context, id int64, token string) error
 	Update(ctx context.Context, config domain.BusinessConfig) (domain.BusinessConfig, error)
+
 	Delete(ctx context.Context, id int64) error
 }
 

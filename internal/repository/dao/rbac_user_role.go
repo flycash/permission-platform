@@ -30,18 +30,10 @@ type UserRoleDAO interface {
 	Create(ctx context.Context, userRole UserRole) (UserRole, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserRole, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (UserRole, error)
-
 	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64, offset, limit int) ([]UserRole, error)
-	CountByBizIDAndUserID(ctx context.Context, bizID int64, userID int64) (int64, error)
-
 	FindByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64, offset, limit int) ([]UserRole, error)
-	CountByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64) (int64, error)
-
-	FindValidUserRolesWithBizID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]UserRole, error)
-	CountValidUserRolesWithBizID(ctx context.Context, bizID, userID, currentTime int64) (int64, error)
+	FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error
@@ -73,8 +65,9 @@ func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID in
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindValidUserRolesWithBizID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]UserRole, error) {
+func (u *userRoleDAO) FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserRole, error) {
 	var userRoles []UserRole
+	currentTime := time.Now().UnixMilli()
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?",
 			bizID, userID, currentTime, currentTime).
@@ -94,33 +87,6 @@ func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID, userID
 	return u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
 		Delete(&UserRole{}).Error
-}
-
-func (u *userRoleDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserRole{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (u *userRoleDAO) CountByBizIDAndUserID(ctx context.Context, bizID, userID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserRole{}).Where("biz_id = ? AND user_id = ?", bizID, userID).Count(&count).Error
-	return count, err
-}
-
-func (u *userRoleDAO) CountByBizIDAndRoleID(ctx context.Context, bizID, roleID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserRole{}).Where("biz_id = ? AND role_id = ?", bizID, roleID).Count(&count).Error
-	return count, err
-}
-
-func (u *userRoleDAO) CountValidUserRolesWithBizID(ctx context.Context, bizID, userID, currentTime int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserRole{}).
-		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ? ",
-			bizID, userID, currentTime, currentTime).
-		Count(&count).Error
-	return count, err
 }
 
 func (u *userRoleDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {

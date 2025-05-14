@@ -11,10 +11,12 @@ import (
 // UserRoleRepository 用户角色关系仓储接口
 type UserRoleRepository interface {
 	Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
-	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserRole, error)
-	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
+
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
+	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
+
+	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
 // userRoleRepository 用户角色关系仓储实现
@@ -48,8 +50,8 @@ func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, us
 	}), nil
 }
 
-func (r *userRoleRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]domain.UserRole, error) {
-	userRoles, err := r.userRoleDAO.FindValidUserRolesWithBizID(ctx, bizID, userID, currentTime, offset, limit)
+func (r *userRoleRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error) {
+	userRoles, err := r.userRoleDAO.FindValidUserRolesWithBizID(ctx, bizID, userID, offset, limit)
 	if err != nil {
 		return nil, err
 	}

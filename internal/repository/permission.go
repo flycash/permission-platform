@@ -11,11 +11,14 @@ import (
 // PermissionRepository 权限仓储接口
 type PermissionRepository interface {
 	Create(ctx context.Context, permission domain.Permission) (domain.Permission, error)
+
+	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error)
 	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error)
+
 	UpdateByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error)
+
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 }
 
 // permissionRepository 权限仓储实现
