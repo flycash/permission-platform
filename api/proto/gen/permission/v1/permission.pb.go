@@ -321,7 +321,7 @@ func (x *Resource) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Resource.ProtoReflect.Descriptor instead.
+// Deprecated: Use resource.ProtoReflect.Descriptor instead.
 func (*Resource) Descriptor() ([]byte, []int) {
 	return file_permission_v1_permission_proto_rawDescGZIP(), []int{3}
 }
@@ -436,7 +436,7 @@ var (
 		(*Permission)(nil),              // 1: permission.v1.Permission
 		(*CheckPermissionRequest)(nil),  // 2: permission.v1.CheckPermissionRequest
 		(*CheckPermissionResponse)(nil), // 3: permission.v1.CheckPermissionResponse
-		(*Resource)(nil),                // 4: permission.v1.Resource
+		(*Resource)(nil),                // 4: permission.v1.resource
 	}
 )
 

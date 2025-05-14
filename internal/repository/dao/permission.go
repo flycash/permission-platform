@@ -60,6 +60,7 @@ type PermissionDAO interface {
 	Update(ctx context.Context, permission Permission) error
 	// Delete 删除权限
 	Delete(ctx context.Context, id int64) error
+	FindPermissions(ctx context.Context, bizID int64, resourceKey string, action ActionType) ([]Permission, error)
 }
 
 // permissionDAO 权限数据访问实现
@@ -72,6 +73,13 @@ func NewPermissionDAO(db *egorm.Component) PermissionDAO {
 	return &permissionDAO{
 		db: db,
 	}
+}
+
+func (p *permissionDAO) FindPermissions(ctx context.Context, bizID int64, resourceKey string, action ActionType) ([]Permission, error) {
+	var permissions []Permission
+	err := p.db.WithContext(ctx).
+		Where("biz_id = ? AND resource_key = ? AND action =?", bizID, resourceKey, action).Find(&permissions).Error
+	return permissions, err
 }
 
 func (p *permissionDAO) GetByID(ctx context.Context, id int64) (Permission, error) {

@@ -78,7 +78,7 @@ func (r *resourceDAO) FindByBizIDAndType(ctx context.Context, bizID int64, resou
 
 func (r *resourceDAO) FindByBizIDAndKey(ctx context.Context, bizID int64, key string) (Resource, error) {
 	var resource Resource
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND key = ?", bizID, key).First(&resource).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND `key` = ?", bizID, key).First(&resource).Error
 	return resource, err
 }
 

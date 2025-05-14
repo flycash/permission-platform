@@ -1392,7 +1392,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateResourceRequestValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1400,7 +1400,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateResourceRequestValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1409,7 +1409,7 @@ func (m *CreateResourceRequest) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateResourceRequestValidationError{
-				field:  "Resource",
+				field:  "resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1523,7 +1523,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CreateResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1531,7 +1531,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CreateResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1540,7 +1540,7 @@ func (m *CreateResourceResponse) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CreateResourceResponseValidationError{
-				field:  "Resource",
+				field:  "resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1758,7 +1758,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, GetResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1766,7 +1766,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, GetResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1775,7 +1775,7 @@ func (m *GetResourceResponse) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return GetResourceResponseValidationError{
-				field:  "Resource",
+				field:  "resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1889,7 +1889,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UpdateResourceRequestValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1897,7 +1897,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UpdateResourceRequestValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1906,7 +1906,7 @@ func (m *UpdateResourceRequest) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateResourceRequestValidationError{
-				field:  "Resource",
+				field:  "resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -2020,7 +2020,7 @@ func (m *UpdateResourceResponse) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UpdateResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -2028,7 +2028,7 @@ func (m *UpdateResourceResponse) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UpdateResourceResponseValidationError{
-					field:  "Resource",
+					field:  "resource",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -2037,7 +2037,7 @@ func (m *UpdateResourceResponse) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UpdateResourceResponseValidationError{
-				field:  "Resource",
+				field:  "resource",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

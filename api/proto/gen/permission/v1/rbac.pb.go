@@ -4413,7 +4413,7 @@ var (
 		(*RevokeUserPermissionResponse)(nil), // 69: permission.v1.RevokeUserPermissionResponse
 		(*ListUserPermissionsRequest)(nil),   // 70: permission.v1.ListUserPermissionsRequest
 		(*ListUserPermissionsResponse)(nil),  // 71: permission.v1.ListUserPermissionsResponse
-		(*Resource)(nil),                     // 72: permission.v1.Resource
+		(*Resource)(nil),                     // 72: permission.v1.resource
 		(*Permission)(nil),                   // 73: permission.v1.Permission
 	}
 )
@@ -4425,12 +4425,12 @@ var file_permission_v1_rbac_proto_depIdxs = []int32{
 	0,  // 3: permission.v1.UpdateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig
 	0,  // 4: permission.v1.UpdateBusinessConfigResponse.config:type_name -> permission.v1.BusinessConfig
 	0,  // 5: permission.v1.ListBusinessConfigsResponse.configs:type_name -> permission.v1.BusinessConfig
-	72, // 6: permission.v1.CreateResourceRequest.resource:type_name -> permission.v1.Resource
-	72, // 7: permission.v1.CreateResourceResponse.resource:type_name -> permission.v1.Resource
-	72, // 8: permission.v1.GetResourceResponse.resource:type_name -> permission.v1.Resource
-	72, // 9: permission.v1.UpdateResourceRequest.resource:type_name -> permission.v1.Resource
-	72, // 10: permission.v1.UpdateResourceResponse.resource:type_name -> permission.v1.Resource
-	72, // 11: permission.v1.ListResourcesResponse.resources:type_name -> permission.v1.Resource
+	72, // 6: permission.v1.CreateResourceRequest.resource:type_name -> permission.v1.resource
+	72, // 7: permission.v1.CreateResourceResponse.resource:type_name -> permission.v1.resource
+	72, // 8: permission.v1.GetResourceResponse.resource:type_name -> permission.v1.resource
+	72, // 9: permission.v1.UpdateResourceRequest.resource:type_name -> permission.v1.resource
+	72, // 10: permission.v1.UpdateResourceResponse.resource:type_name -> permission.v1.resource
+	72, // 11: permission.v1.ListResourcesResponse.resources:type_name -> permission.v1.resource
 	73, // 12: permission.v1.CreatePermissionRequest.permission:type_name -> permission.v1.Permission
 	73, // 13: permission.v1.CreatePermissionResponse.permission:type_name -> permission.v1.Permission
 	73, // 14: permission.v1.GetPermissionResponse.permission:type_name -> permission.v1.Permission

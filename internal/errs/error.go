@@ -14,4 +14,10 @@ var (
 	ErrBusinessConfigDuplicate = errors.New("业务配置记录唯一索引冲突")
 
 	ErrRolePermissionDuplicate = errors.New("角色权限关联记录唯一索引冲突")
+
+	ErrAttributeNotFound error = errors.New("对应属性没找到")
+
+	ErrUnknownOperator = errors.New("未知的比较符")
+
+	ErrUnknownDataType = errors.New("未知的数据类型")
 )

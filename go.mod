@@ -9,8 +9,10 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/wire v0.6.0
 	github.com/gotomicro/ego v1.2.3
+	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.8.0
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/sync v0.12.0
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
 	gorm.io/gorm v1.25.12

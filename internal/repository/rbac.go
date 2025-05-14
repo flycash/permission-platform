@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/ecodeclub/ekit/slice"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 )
@@ -27,6 +29,7 @@ type RBACRepository interface {
 	UpdateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error)
 	DeleteResource(ctx context.Context, id int64) error
 	ListResources(ctx context.Context, bizID int64, offset, limit int, resourceType, key string) ([]domain.Resource, int, error)
+	FindResource(ctx context.Context, bizID int64, key string) (domain.Resource, error)
 
 	// Permission相关方法
 
@@ -35,6 +38,7 @@ type RBACRepository interface {
 	UpdatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 	DeletePermission(ctx context.Context, id int64) error
 	ListPermissions(ctx context.Context, bizID int64, offset, limit int, resourceType, resourceKey, action string) ([]domain.Permission, int, error)
+	FindPermissions(ctx context.Context, bizID int64, resourceKey string, action domain.ActionType) ([]domain.Permission, error)
 
 	// 用户角色相关方法
 
@@ -124,6 +128,22 @@ func (r *rbacRepository) convertDomainActionToDAOAction(action domain.ActionType
 	default:
 		return dao.ActionTypeRead // 默认为读权限
 	}
+}
+
+func (r *rbacRepository) FindResource(ctx context.Context, bizID int64, key string) (domain.Resource, error) {
+	res, err := r.resourceDAO.FindByBizIDAndKey(ctx, bizID, key)
+	return r.toResourceDomain(res), err
+}
+
+func (r *rbacRepository) FindPermissions(ctx context.Context, bizID int64, resourceKey string, action domain.ActionType) ([]domain.Permission, error) {
+	permissions, err := r.permissionDAO.FindPermissions(ctx, bizID, resourceKey, r.convertDomainActionToDAOAction(action))
+	if err != nil {
+		return nil, err
+	}
+	list := slice.Map(permissions, func(_ int, src dao.Permission) domain.Permission {
+		return r.toPermissionDomain(src)
+	})
+	return list, nil
 }
 
 // CheckUserPermission 检查用户是否具有特定权限
