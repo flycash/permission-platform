@@ -25,7 +25,7 @@ func Init() *Service {
 	userPermissionDAO := dao.NewUserPermissionDAO(db)
 	userRoleDAO := dao.NewUserRoleDAO(db)
 	businessConfigDAO := dao.NewBusinessConfigDAO(db)
-	rbacRepository := repository.NewRBACRepository(resourceDAO, permissionDAO, roleDAO, rolePermissionDAO, roleInclusionDAO, userPermissionDAO, userRoleDAO, businessConfigDAO)
+	rbacRepository := repository.NewRBACRepositoryOld(resourceDAO, permissionDAO, roleDAO, rolePermissionDAO, roleInclusionDAO, userPermissionDAO, userRoleDAO, businessConfigDAO)
 	service := rbac.NewService(rbacRepository)
 	rbacService := &Service{
 		Svc:  service,

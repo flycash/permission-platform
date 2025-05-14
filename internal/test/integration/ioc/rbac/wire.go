@@ -21,7 +21,7 @@ func Init() *Service {
 		testioc.BaseSet,
 
 		rbacsvc.NewService,
-		repository.NewRBACRepository,
+		repository.NewRBACRepositoryOld,
 
 		dao.NewBusinessConfigDAO,
 		dao.NewResourceDAO,

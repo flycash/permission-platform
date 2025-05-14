@@ -101,14 +101,14 @@ func (s *permissionService) getUserPermissions(
 	var allUserPermissions []domain.UserPermission
 
 	for {
-		userPermissions, total, err := s.repo.FindValidUserPermissionsByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, s.limit)
+		userPermissions, err := s.repo.FindValidUserPermissionsByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, s.limit)
 		if err != nil {
 			return nil, err
 		}
 		allUserPermissions = append(allUserPermissions, userPermissions...)
 
 		// 优化分页边界条件判断
-		if len(userPermissions) < s.limit || int64(offset+s.limit) >= int64(total) {
+		if len(userPermissions) < s.limit {
 			break
 		}
 		offset += s.limit
@@ -172,7 +172,7 @@ func (s *permissionService) collectIncludedRoles(
 ) error {
 	offset := 0
 	for {
-		inclusions, total, err := s.repo.FindRoleInclusionsByBizIDAndIncludingRoleID(ctx, bizID, includingRoleID, offset, s.limit)
+		inclusions, err := s.repo.FindRoleInclusionsByBizIDAndIncludingRoleID(ctx, bizID, includingRoleID, offset, s.limit)
 		if err != nil {
 			return err
 		}
@@ -187,7 +187,7 @@ func (s *permissionService) collectIncludedRoles(
 			}
 		}
 		// 优化分页边界条件判断
-		if len(inclusions) < s.limit || int64(offset+s.limit) >= int64(total) {
+		if len(inclusions) < s.limit {
 			break
 		}
 		offset += s.limit
@@ -206,14 +206,14 @@ func (s *permissionService) getUserRoles(
 	var allUserRoles []domain.UserRole
 
 	for {
-		userRoles, total, err := s.repo.FindValidUserRolesByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, s.limit)
+		userRoles, err := s.repo.FindValidUserRolesByBizIDAndUserID(ctx, bizID, userID, currentTime, offset, s.limit)
 		if err != nil {
 			return nil, err
 		}
 		allUserRoles = append(allUserRoles, userRoles...)
 
 		// 优化分页边界条件判断
-		if len(userRoles) < s.limit || int64(offset+s.limit) >= int64(total) {
+		if len(userRoles) < s.limit {
 			break
 		}
 		offset += s.limit
@@ -257,14 +257,14 @@ func (s *permissionService) getRolePermissions(
 	var allRolePermissions []domain.RolePermission
 
 	for {
-		rolePermissions, total, err := s.repo.FindRolePermissionsByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, s.limit)
+		rolePermissions, err := s.repo.FindRolePermissionsByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, s.limit)
 		if err != nil {
 			return nil, err
 		}
 		allRolePermissions = append(allRolePermissions, rolePermissions...)
 
 		// 优化分页边界条件判断
-		if len(rolePermissions) < s.limit || int64(offset+s.limit) >= int64(total) {
+		if len(rolePermissions) < s.limit {
 			break
 		}
 		offset += s.limit

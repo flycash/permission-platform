@@ -16,7 +16,6 @@ type UserPermission struct {
 	PermissionName   string `gorm:"type:VARCHAR(255);NOT NULL;comment:'权限名称（冗余字段，加速查询与展示）'"`
 	ResourceType     string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_type,priority:2;index:idx_biz_resource_key_action,priority:2;comment:'资源类型（冗余字段，加速查询）'"`
 	ResourceKey      string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key_action,priority:3;comment:'资源标识符（冗余字段，加速查询）'"`
-	ResourceName     string `gorm:"type:VARCHAR(255);NOT NULL;comment:'资源名称（冗余字段，加速查询与展示）'"`
 	PermissionAction string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_action,priority:2;index:idx_biz_resource_key_action,priority:4;comment:'操作类型（冗余字段，加速查询）'"`
 	StartTime        int64  `gorm:"NOT NULL;index:idx_time_range,priority:2;index:idx_current_valid,priority:3;comment:'权限生效时间'"`
 	EndTime          int64  `gorm:"NOT NULL;index:idx_time_range,priority:3;index:idx_current_valid,priority:4;comment:'权限失效时间'"`

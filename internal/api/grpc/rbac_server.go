@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/ecodeclub/ekit/slice"
 	"google.golang.org/grpc/codes"
@@ -169,7 +170,7 @@ func (s *RBACServer) ListBusinessConfigs(ctx context.Context, req *permissionpb.
 		limit = 10 // 默认每页10条
 	}
 	// 调用服务获取业务配置列表
-	configs, total, err := s.rbacService.ListBusinessConfigs(ctx, offset, limit)
+	configs, err := s.rbacService.ListBusinessConfigs(ctx, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取业务配置列表失败: "+err.Error())
 	}
@@ -177,7 +178,6 @@ func (s *RBACServer) ListBusinessConfigs(ctx context.Context, req *permissionpb.
 		Configs: slice.Map(configs, func(_ int, src domain.BusinessConfig) *permissionpb.BusinessConfig {
 			return s.toBusinessConfigProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -324,7 +324,7 @@ func (s *RBACServer) ListResources(ctx context.Context, req *permissionpb.ListRe
 	}
 
 	// 调用服务获取资源列表
-	resources, total, err := s.rbacService.ListResources(ctx, bizID, offset, limit)
+	resources, err := s.rbacService.ListResources(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取资源列表失败: "+err.Error())
 	}
@@ -333,7 +333,6 @@ func (s *RBACServer) ListResources(ctx context.Context, req *permissionpb.ListRe
 		Resources: slice.Map(resources, func(_ int, src domain.Resource) *permissionpb.Resource {
 			return s.toResourceProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -501,7 +500,7 @@ func (s *RBACServer) ListPermissions(ctx context.Context, req *permissionpb.List
 	}
 
 	// 调用服务获取权限列表
-	permissions, total, err := s.rbacService.ListPermissions(ctx, bizID, offset, limit)
+	permissions, err := s.rbacService.ListPermissions(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取权限列表失败: "+err.Error())
 	}
@@ -510,7 +509,6 @@ func (s *RBACServer) ListPermissions(ctx context.Context, req *permissionpb.List
 		Permissions: slice.Map(permissions, func(_ int, src domain.Permission) *permissionpb.Permission {
 			return s.toPermissionProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -660,7 +658,7 @@ func (s *RBACServer) ListRoles(ctx context.Context, req *permissionpb.ListRolesR
 	}
 
 	// 调用服务获取角色列表
-	roles, total, err := s.rbacService.ListRoles(ctx, bizID, offset, limit)
+	roles, err := s.rbacService.ListRolesByRoleType(ctx, bizID, req.Type, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取角色列表失败: "+err.Error())
 	}
@@ -669,7 +667,6 @@ func (s *RBACServer) ListRoles(ctx context.Context, req *permissionpb.ListRolesR
 		Roles: slice.Map(roles, func(_ int, src domain.Role) *permissionpb.Role {
 			return s.toRoleProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -797,7 +794,7 @@ func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.L
 	}
 
 	// 调用服务获取角色包含关系列表
-	roleInclusions, total, err := s.rbacService.ListRoleInclusions(ctx, bizID, offset, limit)
+	roleInclusions, err := s.rbacService.ListRoleInclusions(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取角色包含关系列表失败: "+err.Error())
 	}
@@ -809,7 +806,6 @@ func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.L
 
 	return &permissionpb.ListRoleInclusionsResponse{
 		RoleInclusions: protoRoleInclusions,
-		Total:          int32(total),
 	}, nil
 }
 
@@ -917,7 +913,7 @@ func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.
 	}
 
 	// 调用服务获取角色权限列表
-	rolePermissions, total, err := s.rbacService.ListRolePermissions(ctx, bizID, offset, limit)
+	rolePermissions, err := s.rbacService.ListRolePermissions(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取角色权限列表失败: "+err.Error())
 	}
@@ -926,7 +922,6 @@ func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.
 		RolePermissions: slice.Map(rolePermissions, func(_ int, src domain.RolePermission) *permissionpb.RolePermission {
 			return s.toRolePermissionProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -963,6 +958,14 @@ func (s *RBACServer) GrantUserRole(ctx context.Context, req *permissionpb.GrantU
 
 // UserRole 转换
 func (s *RBACServer) toUserRoleDomain(ur *permissionpb.UserRole) domain.UserRole {
+	startTime := ur.StartTime
+	endTime := ur.EndTime
+	if startTime == 0 {
+		startTime = time.Now().UnixMilli()
+	}
+	if endTime == 0 {
+		endTime = time.Now().AddDate(100, 0, 0).UnixMilli()
+	}
 	return domain.UserRole{
 		ID:     ur.Id,
 		BizID:  ur.BizId,
@@ -972,8 +975,8 @@ func (s *RBACServer) toUserRoleDomain(ur *permissionpb.UserRole) domain.UserRole
 			Name: ur.RoleName,
 			Type: ur.RoleType,
 		},
-		StartTime: ur.StartTime,
-		EndTime:   ur.EndTime,
+		StartTime: startTime,
+		EndTime:   endTime,
 	}
 }
 
@@ -1030,7 +1033,7 @@ func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUs
 	}
 
 	// 调用服务获取用户角色列表
-	userRoles, total, err := s.rbacService.ListUserRoles(ctx, bizID, offset, limit)
+	userRoles, err := s.rbacService.ListUserRoles(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取用户角色列表失败: "+err.Error())
 	}
@@ -1040,7 +1043,6 @@ func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUs
 		UserRoles: slice.Map(userRoles, func(_ int, src domain.UserRole) *permissionpb.UserRole {
 			return s.toUserRoleProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
 
@@ -1084,6 +1086,15 @@ func (s *RBACServer) toUserPermissionDomain(up *permissionpb.UserPermission) dom
 		effect = domain.EffectAllow // 默认为允许
 	}
 
+	startTime := up.StartTime
+	endTime := up.EndTime
+	if startTime == 0 {
+		startTime = time.Now().UnixMilli()
+	}
+	if endTime == 0 {
+		endTime = time.Now().AddDate(100, 0, 0).UnixMilli()
+	}
+
 	return domain.UserPermission{
 		ID:     up.Id,
 		BizID:  up.BizId,
@@ -1094,12 +1105,11 @@ func (s *RBACServer) toUserPermissionDomain(up *permissionpb.UserPermission) dom
 			Resource: domain.Resource{
 				Type: up.ResourceType,
 				Key:  up.ResourceKey,
-				Name: up.ResourceName,
 			},
 			Action: up.PermissionAction,
 		},
-		StartTime: up.StartTime,
-		EndTime:   up.EndTime,
+		StartTime: startTime,
+		EndTime:   endTime,
 		Effect:    effect,
 	}
 }
@@ -1113,7 +1123,6 @@ func (s *RBACServer) toUserPermissionProto(up domain.UserPermission) *permission
 		PermissionName:   up.Permission.Name,
 		ResourceType:     up.Permission.Resource.Type,
 		ResourceKey:      up.Permission.Resource.Key,
-		ResourceName:     up.Permission.Resource.Name,
 		PermissionAction: up.Permission.Action,
 		StartTime:        up.StartTime,
 		EndTime:          up.EndTime,
@@ -1161,7 +1170,7 @@ func (s *RBACServer) ListUserPermissions(ctx context.Context, req *permissionpb.
 	}
 
 	// 调用服务获取用户权限列表
-	userPermissions, total, err := s.rbacService.ListUserPermissions(ctx, bizID, offset, limit)
+	userPermissions, err := s.rbacService.ListUserPermissions(ctx, bizID, offset, limit)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取用户权限列表失败: "+err.Error())
 	}
@@ -1171,6 +1180,5 @@ func (s *RBACServer) ListUserPermissions(ctx context.Context, req *permissionpb.
 		UserPermissions: slice.Map(userPermissions, func(_ int, src domain.UserPermission) *permissionpb.UserPermission {
 			return s.toUserPermissionProto(src)
 		}),
-		Total: int32(total),
 	}, nil
 }
