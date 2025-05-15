@@ -3,6 +3,8 @@ package rbac
 import (
 	"context"
 
+	"github.com/ecodeclub/ekit/slice"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository"
 )
@@ -10,7 +12,7 @@ import (
 // PermissionService RBAC模型下的权限服务接口
 type PermissionService interface {
 	// Check 检查用户是否有对特定权限
-	Check(ctx context.Context, bizID, userID int64, permission domain.Permission) (bool, error)
+	Check(ctx context.Context, bizID, userID int64, resource domain.Resource, actions []string) (bool, error)
 }
 
 type permissionService struct {
@@ -25,7 +27,7 @@ func NewPermissionService(repo repository.RBACRepository) PermissionService {
 }
 
 // Check 检查用户权限
-func (s *permissionService) Check(ctx context.Context, bizID, userID int64, permission domain.Permission) (bool, error) {
+func (s *permissionService) Check(ctx context.Context, bizID, userID int64, resource domain.Resource, actions []string) (bool, error) {
 	// 获取用户所有权限（包括直接权限和通过角色获得的权限）
 	permissions, err := s.repo.GetAllUserPermissions(ctx, bizID, userID)
 	if err != nil {
@@ -39,9 +41,9 @@ func (s *permissionService) Check(ctx context.Context, bizID, userID int64, perm
 	var res bool
 	for i := range permissions {
 		// 匹配资源类型、资源键和操作
-		if permissions[i].Permission.Resource.Type == permission.Resource.Type &&
-			permissions[i].Permission.Resource.Key == permission.Resource.Key &&
-			permissions[i].Permission.Action == permission.Action {
+		if permissions[i].Permission.Resource.Type == resource.Type &&
+			permissions[i].Permission.Resource.Key == resource.Key &&
+			slice.Contains(actions, permissions[i].Permission.Action) {
 
 			// 如果有拒绝权限，直接返回拒绝
 			if permissions[i].Effect.IsDeny() {
