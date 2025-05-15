@@ -94,106 +94,58 @@ func (r *rbacRepository) UserPermission() UserPermissionRepository {
 }
 
 func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
-	// 1. 获取用户直接分配的权限
-	directPermissions, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID)
+	perms, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2.获取用户通过角色获得的权限
-	// 2.1 获取用户的所有角色ID（包括继承的角色）
-	allRoleIDs, err := r.getAllRoleIDs(ctx, bizID, userID)
+	roleIDs, err := r.getAllRoleIDs(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2.2 如果用户没有任何角色，则只返回直接权限
-	if len(allRoleIDs) == 0 {
-		return directPermissions, nil
-	}
-
-	// 2.3 获取所有角色对应的权限
-	rolePermissions, err := r.getRolePermissions(ctx, bizID, userID, allRoleIDs)
+	// 包含了所需的冗余字段，所以我们不再需要查 Permission 表和 Resource
+	rolePerms, err := r.getRolePermissions(ctx, bizID, userID, roleIDs)
 	if err != nil {
 		return nil, err
 	}
-
-	// 3. 合并两条路径的权限
-	return r.mergePermissions(directPermissions, rolePermissions), nil
+	return append(perms, rolePerms...), nil
 }
 
 // getAllRoleIDs 获取用户所有角色ID，包括继承的角色
 func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
-	// 1. 获取用户直接角色
+	// 1. 先找到直接关联的角色
 	directRoles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	// 如果用户没有任何直接角色，返回空切片
-	if len(directRoles) == 0 {
-		return []int64{}, nil
-	}
+	allRoleIDs := make(map[int64]interface{}, len(directRoles))
 
-	// 2. 提取直接角色ID, 收集所有角色ID
-	directRoleIDs := make([]int64, 0, len(directRoles))
-	allRoleIDs := make(map[int64]struct{})
-	for i := range directRoles {
-		directRoleIDs = append(directRoleIDs, directRoles[i].Role.ID)
-		allRoleIDs[directRoles[i].Role.ID] = struct{}{}
-	}
+	directRoleIDs := slice.Map(directRoles, func(_ int, src domain.UserRole) int64 {
+		allRoleIDs[src.Role.ID] = struct{}{}
+		return src.Role.ID
+	})
 
-	// 3. 递归获取包含的角色
-	err = r.collectIncludedRoles(ctx, bizID, directRoleIDs, allRoleIDs)
-	if err != nil {
-		return nil, err
-	}
+	includedIDs := directRoleIDs
 
-	// 4. 将角色ID集合转为切片
-	result := make([]int64, 0, len(allRoleIDs))
-	for roleID := range allRoleIDs {
-		result = append(result, roleID)
-	}
-	return result, nil
-}
-
-// collectIncludedRoles 递归收集角色包含关系
-func (r *rbacRepository) collectIncludedRoles(ctx context.Context, bizID int64, roleIDs []int64, allRoleIDs map[int64]struct{}) error {
-	if len(roleIDs) == 0 {
-		return nil
-	}
 	for {
-		// 获取当前这批角色包含的所有角色
-		inclusions, err := r.roleInclusionRepo.FindByBizIDAndIncludingRoleIDs(ctx, bizID, roleIDs)
+		// 找到 directRoles 包含的角色
+		inclusions, err := r.roleInclusionRepo.FindByBizIDAndIncludingRoleIDs(ctx, bizID, includedIDs)
 		if err != nil {
-			return err
+			return nil, err
 		}
-
-		// 如果没有更多包含关系，跳出循环
 		if len(inclusions) == 0 {
 			break
 		}
-
-		// 收集新发现的角色ID
-		newRoleIDs := make([]int64, len(inclusions))
-		for i := range inclusions {
-			includedRoleID := inclusions[i].IncludedRole.ID
-			// 如果是新角色，加入待处理列表
-			if _, exists := allRoleIDs[includedRoleID]; !exists {
-				allRoleIDs[includedRoleID] = struct{}{}
-				newRoleIDs = append(newRoleIDs, includedRoleID)
-			}
-		}
-
-		// 递归处理新发现的角色
-		if len(newRoleIDs) > 0 {
-			if err1 := r.collectIncludedRoles(ctx, bizID, newRoleIDs, allRoleIDs); err1 != nil {
-				return err1
-			}
-		}
+		includedIDs = slice.Map(inclusions, func(_ int, src domain.RoleInclusion) int64 {
+			allRoleIDs[src.IncludedRole.ID] = struct{}{}
+			return src.IncludedRole.ID
+		})
 	}
 
-	return nil
+	// 你要根据 inclusions 里面的 IncludedRoleID 进步沿着包含链找下去
+	return mapx.Keys(allRoleIDs), nil
 }
 
 // getRolePermissions 获取指定角色ID列表对应的所有权限
@@ -219,24 +171,4 @@ func (r *rbacRepository) getRolePermissions(ctx context.Context, bizID, userID i
 			Utime:      src.Utime,
 		}
 	}), nil
-}
-
-// mergePermissions 合并两组权限
-func (r *rbacRepository) mergePermissions(directPermissions, rolePermissions []domain.UserPermission) []domain.UserPermission {
-	if len(directPermissions) == 0 {
-		return rolePermissions
-	}
-	if len(rolePermissions) == 0 {
-		return directPermissions
-	}
-	mergedMap := make(map[int64]domain.UserPermission)
-	// 先处理角色权限
-	for i := range rolePermissions {
-		mergedMap[rolePermissions[i].Permission.ID] = rolePermissions[i]
-	}
-	// 再处理直接权限（直接权限优先级更高）
-	for i := range directPermissions {
-		mergedMap[directPermissions[i].Permission.ID] = directPermissions[i]
-	}
-	return mapx.Values(mergedMap)
 }

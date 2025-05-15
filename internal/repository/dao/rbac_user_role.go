@@ -60,8 +60,12 @@ func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, 
 }
 
 func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
+	// 加上一个有效期的验证
+	now := time.Now().UnixMilli()
 	var userRoles []UserRole
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Find(&userRoles).Error
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= now",
+			bizID, userID, now, now).Find(&userRoles).Error
 	return userRoles, err
 }
 

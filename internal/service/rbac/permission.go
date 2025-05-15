@@ -28,31 +28,25 @@ func NewPermissionService(repo repository.RBACRepository) PermissionService {
 
 // Check 检查用户权限
 func (s *permissionService) Check(ctx context.Context, bizID, userID int64, resource domain.Resource, actions []string) (bool, error) {
-	// 获取用户所有权限（包括直接权限和通过角色获得的权限）
+	// 拿到用户的所有权限，看一下有没有我需要的权限
+	// allow or deny
 	permissions, err := s.repo.GetAllUserPermissions(ctx, bizID, userID)
 	if err != nil {
 		return false, err
 	}
-	// 如果没有任何权限，则无权限
-	if len(permissions) == 0 {
-		return false, nil
-	}
-	// 检查是否有匹配的权限
 	var res bool
 	for i := range permissions {
-		// 匹配资源类型、资源键和操作
-		if permissions[i].Permission.Resource.Type == resource.Type &&
-			permissions[i].Permission.Resource.Key == resource.Key &&
-			slice.Contains(actions, permissions[i].Permission.Action) {
-
-			// 如果有拒绝权限，直接返回拒绝
-			if permissions[i].Effect.IsDeny() {
+		p := permissions[i]
+		pr := p.Permission.Resource
+		if pr.Key == resource.Key && pr.Type == resource.Type &&
+			slice.Contains(actions, p.Permission.Action) {
+			// 找到了 resource，找到了 action
+			// 负权限
+			if p.Effect.IsDeny() {
 				return false, nil
 			}
-			// 要全部遍历一遍
 			res = true
 		}
 	}
-	// 没有找到匹配的权限，返回无权限
 	return res, nil
 }

@@ -70,8 +70,11 @@ func (u *userPermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset
 }
 
 func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error) {
+	now := time.Now().UnixMilli()
 	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Find(&userPermissions).Error
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?", bizID, userID, now, now).
+		Find(&userPermissions).Error
 	return userPermissions, err
 }
 
