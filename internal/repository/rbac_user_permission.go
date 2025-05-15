@@ -13,7 +13,7 @@ type UserPermissionRepository interface {
 	Create(ctx context.Context, userPermission domain.UserPermission) (domain.UserPermission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
 	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
@@ -39,8 +39,8 @@ func (r *userPermissionRepository) Create(ctx context.Context, userPermission do
 	return r.toDomain(created), nil
 }
 
-func (r *userPermissionRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error) {
-	userPermissions, err := r.userPermissionDAO.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
+func (r *userPermissionRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+	userPermissions, err := r.userPermissionDAO.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}

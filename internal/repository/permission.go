@@ -14,7 +14,7 @@ type PermissionRepository interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error)
-	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error)
+	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 
@@ -49,8 +49,8 @@ func (r *permissionRepository) FindByBizIDAndID(ctx context.Context, bizID, id i
 	return r.toDomain(permission), nil
 }
 
-func (r *permissionRepository) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error) {
-	permissions, err := r.permissionDAO.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action, offset, limit)
+func (r *permissionRepository) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
+	permissions, err := r.permissionDAO.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action)
 	if err != nil {
 		return nil, err
 	}

@@ -36,7 +36,7 @@ type PermissionDAO interface {
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error)
 	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
 	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
-	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error)
+	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission Permission) error
 
@@ -117,9 +117,9 @@ func (p *permissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64)
 	return p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Permission{}).Error
 }
 
-func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error) {
+func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error) {
 	var permissions []Permission
 	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
-		bizID, resourceType, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
+		bizID, resourceType, resourceKey, action).Find(&permissions).Error
 	return permissions, err
 }

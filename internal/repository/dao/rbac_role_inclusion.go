@@ -31,8 +31,8 @@ type RoleInclusionDAO interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RoleInclusion, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (RoleInclusion, error)
-	FindByBizIDAndIncludingRoleID(ctx context.Context, bizID int64, includingRoleIDs []int64, offset, limit int) ([]RoleInclusion, error)
-	FindByBizIDAndIncludedRoleID(ctx context.Context, bizID int64, includedRoleIDs []int64, offset, limit int) ([]RoleInclusion, error)
+	FindByBizIDAndIncludingRoleID(ctx context.Context, bizID int64, includingRoleIDs []int64) ([]RoleInclusion, error)
+	FindByBizIDAndIncludedRoleID(ctx context.Context, bizID int64, includedRoleIDs []int64) ([]RoleInclusion, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndIncludingRoleIDAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error
@@ -70,15 +70,15 @@ func (r *roleInclusionDAO) FindByBizIDAndID(ctx context.Context, bizID, id int64
 	return roleInclusion, err
 }
 
-func (r *roleInclusionDAO) FindByBizIDAndIncludingRoleID(ctx context.Context, bizID int64, includingRoleIDs []int64, offset, limit int) ([]RoleInclusion, error) {
+func (r *roleInclusionDAO) FindByBizIDAndIncludingRoleID(ctx context.Context, bizID int64, includingRoleIDs []int64) ([]RoleInclusion, error) {
 	var roleInclusions []RoleInclusion
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND including_role_id IN (?)", bizID, includingRoleIDs).Offset(offset).Limit(limit).Find(&roleInclusions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND including_role_id IN (?)", bizID, includingRoleIDs).Find(&roleInclusions).Error
 	return roleInclusions, err
 }
 
-func (r *roleInclusionDAO) FindByBizIDAndIncludedRoleID(ctx context.Context, bizID int64, includedRoleIDs []int64, offset, limit int) ([]RoleInclusion, error) {
+func (r *roleInclusionDAO) FindByBizIDAndIncludedRoleID(ctx context.Context, bizID int64, includedRoleIDs []int64) ([]RoleInclusion, error) {
 	var roleInclusions []RoleInclusion
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND included_role_id IN (?)", bizID, includedRoleIDs).Offset(offset).Limit(limit).Find(&roleInclusions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND included_role_id IN (?)", bizID, includedRoleIDs).Find(&roleInclusions).Error
 	return roleInclusions, err
 }
 

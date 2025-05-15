@@ -2863,8 +2863,6 @@ func (x *RevokeRolePermissionResponse) GetSuccess() bool {
 type ListRolePermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2902,20 +2900,6 @@ func (*ListRolePermissionsRequest) Descriptor() ([]byte, []int) {
 func (x *ListRolePermissionsRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListRolePermissionsRequest) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListRolePermissionsRequest) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
 	}
 	return 0
 }
@@ -3252,8 +3236,6 @@ func (x *RevokeUserRoleResponse) GetSuccess() bool {
 type ListUserRolesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	BizId         int64                  `protobuf:"varint,1,opt,name=biz_id,json=bizId,proto3" json:"biz_id,omitempty"`
-	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -3291,20 +3273,6 @@ func (*ListUserRolesRequest) Descriptor() ([]byte, []int) {
 func (x *ListUserRolesRequest) GetBizId() int64 {
 	if x != nil {
 		return x.BizId
-	}
-	return 0
-}
-
-func (x *ListUserRolesRequest) GetOffset() int32 {
-	if x != nil {
-		return x.Offset
-	}
-	return 0
-}
-
-func (x *ListUserRolesRequest) GetLimit() int32 {
-	if x != nil {
-		return x.Limit
 	}
 	return 0
 }
@@ -3938,11 +3906,9 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"8\n" +
 	"\x1cRevokeRolePermissionResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"a\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"3\n" +
 	"\x1aListRolePermissionsRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\"g\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\"g\n" +
 	"\x1bListRolePermissionsResponse\x12H\n" +
 	"\x10role_permissions\x18\x01 \x03(\v2\x1d.permission.v1.RolePermissionR\x0frolePermissions\"\xd7\x01\n" +
 	"\bUserRole\x12\x0e\n" +
@@ -3963,11 +3929,9 @@ const file_permission_v1_rbac_proto_rawDesc = "" +
 	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x0e\n" +
 	"\x02id\x18\x02 \x01(\x03R\x02id\"2\n" +
 	"\x16RevokeUserRoleResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"[\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"-\n" +
 	"\x14ListUserRolesRequest\x12\x15\n" +
-	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\x12\x16\n" +
-	"\x06offset\x18\x02 \x01(\x05R\x06offset\x12\x14\n" +
-	"\x05limit\x18\x03 \x01(\x05R\x05limit\"O\n" +
+	"\x06biz_id\x18\x01 \x01(\x03R\x05bizId\"O\n" +
 	"\x15ListUserRolesResponse\x126\n" +
 	"\n" +
 	"user_roles\x18\x01 \x03(\v2\x17.permission.v1.UserRoleR\tuserRoles\"\xe5\x02\n" +
@@ -4130,6 +4094,7 @@ var (
 		(*Permission)(nil),                   // 73: permission.v1.Permission
 	}
 )
+
 var file_permission_v1_rbac_proto_depIdxs = []int32{
 	0,  // 0: permission.v1.CreateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig
 	0,  // 1: permission.v1.CreateBusinessConfigResponse.config:type_name -> permission.v1.BusinessConfig

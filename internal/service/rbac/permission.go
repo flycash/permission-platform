@@ -36,6 +36,7 @@ func (s *permissionService) Check(ctx context.Context, bizID, userID int64, perm
 		return false, nil
 	}
 	// 检查是否有匹配的权限
+	var res bool
 	for i := range permissions {
 		// 匹配资源类型、资源键和操作
 		if permissions[i].Permission.Resource.Type == permission.Resource.Type &&
@@ -46,10 +47,10 @@ func (s *permissionService) Check(ctx context.Context, bizID, userID int64, perm
 			if permissions[i].Effect.IsDeny() {
 				return false, nil
 			}
-			// 找到匹配的允许权限
-			return true, nil
+			// 要全部遍历一遍
+			res = true
 		}
 	}
 	// 没有找到匹配的权限，返回无权限
-	return false, nil
+	return res, nil
 }

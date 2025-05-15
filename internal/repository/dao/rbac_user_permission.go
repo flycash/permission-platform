@@ -33,7 +33,7 @@ type UserPermissionDAO interface {
 	Create(ctx context.Context, userPermission UserPermission) (UserPermission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserPermission, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error)
 	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]UserPermission, error)
 	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]UserPermission, error)
 	FindByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]UserPermission, error)
@@ -69,9 +69,9 @@ func (u *userPermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error) {
+func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error) {
 	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Offset(offset).Limit(limit).Find(&userPermissions).Error
+	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Find(&userPermissions).Error
 	return userPermissions, err
 }
 

@@ -29,11 +29,11 @@ func (UserRole) TableName() string {
 type UserRoleDAO interface {
 	Create(ctx context.Context, userRole UserRole) (UserRole, error)
 
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserRole, error)
+	FindByBizID(ctx context.Context, bizID int64) ([]UserRole, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (UserRole, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64, offset, limit int) ([]UserRole, error)
-	FindByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64, offset, limit int) ([]UserRole, error)
-	FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserRole, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64) ([]UserRole, error)
+	FindByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64) ([]UserRole, error)
+	FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64) ([]UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error
@@ -59,27 +59,25 @@ func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, 
 	return userRole, err
 }
 
-func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserRole, error) {
+func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
 	var userRoles []UserRole
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Offset(offset).Limit(limit).Find(&userRoles).Error
+	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Find(&userRoles).Error
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserRole, error) {
+func (u *userRoleDAO) FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	currentTime := time.Now().UnixMilli()
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?",
 			bizID, userID, currentTime, currentTime).
-		Offset(offset).
-		Limit(limit).
 		Find(&userRoles).Error
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserRole, error) {
+func (u *userRoleDAO) FindByBizID(ctx context.Context, bizID int64) ([]UserRole, error) {
 	var userRoles []UserRole
-	err := u.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&userRoles).Error
+	err := u.db.WithContext(ctx).Where("biz_id = ?", bizID).Find(&userRoles).Error
 	return userRoles, err
 }
 
@@ -109,12 +107,10 @@ func (u *userRoleDAO) FindByBizIDAndID(ctx context.Context, bizID, id int64) (Us
 	return userRole, err
 }
 
-func (u *userRoleDAO) FindByBizIDAndRoleID(ctx context.Context, bizID, roleID int64, offset, limit int) ([]UserRole, error) {
+func (u *userRoleDAO) FindByBizIDAndRoleID(ctx context.Context, bizID, roleID int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND role_id = ?", bizID, roleID).
-		Offset(offset).
-		Limit(limit).
 		Find(&userRoles).Error
 	return userRoles, err
 }

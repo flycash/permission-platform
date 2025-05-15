@@ -2,13 +2,14 @@ package whitelist
 
 import (
 	"context"
+	"strings"
+	"sync"
+
 	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/jwt"
 	"github.com/ecodeclub/ekit/slice"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"strings"
-	"sync"
 )
 
 // InterceptorBuilder 它必须放在 JWT 之后

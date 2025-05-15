@@ -6698,10 +6698,6 @@ func (m *ListRolePermissionsRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for Offset
-
-	// no validation rules for Limit
-
 	if len(errors) > 0 {
 		return ListRolePermissionsRequestMultiError(errors)
 	}
@@ -7529,10 +7525,6 @@ func (m *ListUserRolesRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for BizId
-
-	// no validation rules for Offset
-
-	// no validation rules for Limit
 
 	if len(errors) > 0 {
 		return ListUserRolesRequestMultiError(errors)

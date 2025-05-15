@@ -12,8 +12,8 @@ import (
 type RolePermissionRepository interface {
 	Create(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error)
 
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error)
-	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error)
+	FindByBizID(ctx context.Context, bizID int64) ([]domain.RolePermission, error)
+	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.RolePermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
@@ -38,8 +38,8 @@ func (r *rolePermissionRepository) Create(ctx context.Context, rolePermission do
 	return r.toDomain(created), nil
 }
 
-func (r *rolePermissionRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]domain.RolePermission, error) {
-	rolePermissions, err := r.rolePermissionDAO.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, limit)
+func (r *rolePermissionRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.RolePermission, error) {
+	rolePermissions, err := r.rolePermissionDAO.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -53,8 +53,8 @@ func (r *rolePermissionRepository) DeleteByBizIDAndID(ctx context.Context, bizID
 	return r.rolePermissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 }
 
-func (r *rolePermissionRepository) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error) {
-	rolePermissions, err := r.rolePermissionDAO.FindByBizID(ctx, bizID, offset, limit)
+func (r *rolePermissionRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.RolePermission, error) {
+	rolePermissions, err := r.rolePermissionDAO.FindByBizID(ctx, bizID)
 	if err != nil {
 		return nil, err
 	}

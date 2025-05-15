@@ -901,19 +901,13 @@ func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
 
-	offset := int(req.Offset)
-	limit := int(req.Limit)
-	if limit <= 0 {
-		limit = 10 // 默认每页10条
-	}
-
 	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// 调用服务获取角色权限列表
-	rolePermissions, err := s.rbacService.ListRolePermissions(ctx, bizID, offset, limit)
+	rolePermissions, err := s.rbacService.ListRolePermissions(ctx, bizID)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取角色权限列表失败: "+err.Error())
 	}
@@ -1021,19 +1015,13 @@ func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUs
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
 
-	offset := int(req.Offset)
-	limit := int(req.Limit)
-	if limit <= 0 {
-		limit = 10 // 默认每页10条
-	}
-
 	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	// 调用服务获取用户角色列表
-	userRoles, err := s.rbacService.ListUserRoles(ctx, bizID, offset, limit)
+	userRoles, err := s.rbacService.ListUserRoles(ctx, bizID)
 	if err != nil {
 		return nil, status.Error(codes.Internal, "获取用户角色列表失败: "+err.Error())
 	}

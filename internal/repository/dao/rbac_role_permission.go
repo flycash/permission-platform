@@ -32,10 +32,10 @@ func (RolePermission) TableName() string {
 type RolePermissionDAO interface {
 	Create(ctx context.Context, rolePermission RolePermission) (RolePermission, error)
 
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error)
+	FindByBizID(ctx context.Context, bizID int64) ([]RolePermission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (RolePermission, error)
-	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]RolePermission, error)
-	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]RolePermission, error)
+	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]RolePermission, error)
+	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) ([]RolePermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error
@@ -67,9 +67,9 @@ func (r *rolePermissionDAO) Create(ctx context.Context, rolePermission RolePermi
 	return rolePermission, nil
 }
 
-func (r *rolePermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]RolePermission, error) {
+func (r *rolePermissionDAO) FindByBizID(ctx context.Context, bizID int64) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
-	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Offset(offset).Limit(limit).Find(&rolePermissions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ?", bizID).Find(&rolePermissions).Error
 	return rolePermissions, err
 }
 
@@ -79,16 +79,16 @@ func (r *rolePermissionDAO) FindByBizIDAndID(ctx context.Context, bizID, id int6
 	return rolePermission, err
 }
 
-func (r *rolePermissionDAO) FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]RolePermission, error) {
+func (r *rolePermissionDAO) FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
 	err := r.db.WithContext(ctx).Where("biz_id = ? AND permission_id = ?", bizID, permissionID).
-		Offset(offset).Limit(limit).Find(&rolePermissions).Error
+		Find(&rolePermissions).Error
 	return rolePermissions, err
 }
 
-func (r *rolePermissionDAO) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64, offset, limit int) ([]RolePermission, error) {
+func (r *rolePermissionDAO) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id IN (?)", bizID, roleIDs).Offset(offset).Limit(limit).Find(&rolePermissions).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id IN (?)", bizID, roleIDs).Find(&rolePermissions).Error
 	return rolePermissions, err
 }
 

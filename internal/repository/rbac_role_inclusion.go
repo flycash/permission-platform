@@ -14,8 +14,8 @@ type RoleInclusionRepository interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.RoleInclusion, error)
-	FindByBizIDAndIncludingRoleIDs(ctx context.Context, bizID int64, includingRoleIDs []int64, offset, limit int) ([]domain.RoleInclusion, error)
-	FindByBizIDAndIncludedRoleIDs(ctx context.Context, bizID int64, includedRoleIDs []int64, offset, limit int) ([]domain.RoleInclusion, error)
+	FindByBizIDAndIncludingRoleIDs(ctx context.Context, bizID int64, includingRoleIDs []int64) ([]domain.RoleInclusion, error)
+	FindByBizIDAndIncludedRoleIDs(ctx context.Context, bizID int64, includedRoleIDs []int64) ([]domain.RoleInclusion, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
@@ -48,8 +48,8 @@ func (r *roleInclusionRepository) FindByBizIDAndID(ctx context.Context, bizID, i
 	return r.toDomain(roleInclusion), nil
 }
 
-func (r *roleInclusionRepository) FindByBizIDAndIncludingRoleIDs(ctx context.Context, bizID int64, includingRoleIDs []int64, offset, limit int) ([]domain.RoleInclusion, error) {
-	roleInclusions, err := r.roleInclusionDAO.FindByBizIDAndIncludingRoleID(ctx, bizID, includingRoleIDs, offset, limit)
+func (r *roleInclusionRepository) FindByBizIDAndIncludingRoleIDs(ctx context.Context, bizID int64, includingRoleIDs []int64) ([]domain.RoleInclusion, error) {
+	roleInclusions, err := r.roleInclusionDAO.FindByBizIDAndIncludingRoleID(ctx, bizID, includingRoleIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -59,8 +59,8 @@ func (r *roleInclusionRepository) FindByBizIDAndIncludingRoleIDs(ctx context.Con
 	}), nil
 }
 
-func (r *roleInclusionRepository) FindByBizIDAndIncludedRoleIDs(ctx context.Context, bizID int64, includedRoleIDs []int64, offset, limit int) ([]domain.RoleInclusion, error) {
-	roleInclusions, err := r.roleInclusionDAO.FindByBizIDAndIncludedRoleID(ctx, bizID, includedRoleIDs, offset, limit)
+func (r *roleInclusionRepository) FindByBizIDAndIncludedRoleIDs(ctx context.Context, bizID int64, includedRoleIDs []int64) ([]domain.RoleInclusion, error) {
+	roleInclusions, err := r.roleInclusionDAO.FindByBizIDAndIncludedRoleID(ctx, bizID, includedRoleIDs)
 	if err != nil {
 		return nil, err
 	}

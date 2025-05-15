@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/ecodeclub/ekit/slice"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"github.com/ecodeclub/ekit/mapx"
 )
@@ -22,7 +24,6 @@ type RBACRepository interface {
 }
 
 const (
-	limit           = 100
 	oneHundredYears = 100
 )
 
@@ -94,7 +95,7 @@ func (r *rbacRepository) UserPermission() UserPermissionRepository {
 
 func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	// 1. 获取用户直接分配的权限
-	directPermissions, err := r.getUserDirectPermissions(ctx, bizID, userID)
+	directPermissions, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -121,32 +122,10 @@ func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userI
 	return r.mergePermissions(directPermissions, rolePermissions), nil
 }
 
-// getUserDirectPermissions 获取用户直接分配的所有权限
-func (r *rbacRepository) getUserDirectPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
-	offset := 0
-	var allPermissions []domain.UserPermission
-
-	for {
-		permissions, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
-		if err != nil {
-			return nil, err
-		}
-		allPermissions = append(allPermissions, permissions...)
-
-		// 如果返回的数量小于limit，说明已经取完了
-		if len(permissions) < limit {
-			break
-		}
-		offset += limit
-	}
-
-	return allPermissions, nil
-}
-
 // getAllRoleIDs 获取用户所有角色ID，包括继承的角色
 func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
 	// 1. 获取用户直接角色
-	directRoles, err := r.getUserRoles(ctx, bizID, userID)
+	directRoles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -178,37 +157,14 @@ func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64)
 	return result, nil
 }
 
-// getUserRoles 获取用户直接分配的所有角色
-func (r *rbacRepository) getUserRoles(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
-	offset := 0
-	var allRoles []domain.UserRole
-
-	for {
-		roles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
-		if err != nil {
-			return nil, err
-		}
-		allRoles = append(allRoles, roles...)
-
-		// 如果返回的数量小于limit，说明已经取完了
-		if len(roles) < limit {
-			break
-		}
-		offset += limit
-	}
-
-	return allRoles, nil
-}
-
 // collectIncludedRoles 递归收集角色包含关系
 func (r *rbacRepository) collectIncludedRoles(ctx context.Context, bizID int64, roleIDs []int64, allRoleIDs map[int64]struct{}) error {
 	if len(roleIDs) == 0 {
 		return nil
 	}
-	offset := 0
 	for {
 		// 获取当前这批角色包含的所有角色
-		inclusions, err := r.roleInclusionRepo.FindByBizIDAndIncludingRoleIDs(ctx, bizID, roleIDs, offset, limit)
+		inclusions, err := r.roleInclusionRepo.FindByBizIDAndIncludingRoleIDs(ctx, bizID, roleIDs)
 		if err != nil {
 			return err
 		}
@@ -219,7 +175,7 @@ func (r *rbacRepository) collectIncludedRoles(ctx context.Context, bizID int64, 
 		}
 
 		// 收集新发现的角色ID
-		newRoleIDs := make([]int64, 0)
+		newRoleIDs := make([]int64, len(inclusions))
 		for i := range inclusions {
 			includedRoleID := inclusions[i].IncludedRole.ID
 			// 如果是新角色，加入待处理列表
@@ -229,17 +185,12 @@ func (r *rbacRepository) collectIncludedRoles(ctx context.Context, bizID int64, 
 			}
 		}
 
-		// 如果返回的数量小于limit，说明当前页已取完
-		if len(inclusions) < limit {
-			// 递归处理新发现的角色
-			if len(newRoleIDs) > 0 {
-				if err1 := r.collectIncludedRoles(ctx, bizID, newRoleIDs, allRoleIDs); err1 != nil {
-					return err1
-				}
+		// 递归处理新发现的角色
+		if len(newRoleIDs) > 0 {
+			if err1 := r.collectIncludedRoles(ctx, bizID, newRoleIDs, allRoleIDs); err1 != nil {
+				return err1
 			}
-			break
 		}
-		offset += limit
 	}
 
 	return nil
@@ -250,39 +201,24 @@ func (r *rbacRepository) getRolePermissions(ctx context.Context, bizID, userID i
 	if len(roleIDs) == 0 {
 		return []domain.UserPermission{}, nil
 	}
-	offset := 0
-	rolePermissions := make([]domain.RolePermission, 0, limit)
-	for {
-		// 分批获取角色权限
-		permissions, err := r.rolePermissionRepo.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs, offset, limit)
-		if err != nil {
-			return nil, err
-		}
-		rolePermissions = append(rolePermissions, permissions...)
-
-		// 如果返回的数量小于limit，说明已经取完了
-		if len(permissions) < limit {
-			break
-		}
-		offset += limit
+	permissions, err := r.rolePermissionRepo.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs)
+	if err != nil {
+		return nil, err
 	}
 	// 将RolePermission转换为UserPermission格式
-	userPermissions := make([]domain.UserPermission, 0, len(rolePermissions))
-
-	for i := range rolePermissions {
-		userPermissions = append(userPermissions, domain.UserPermission{
+	return slice.Map(permissions, func(_ int, src domain.RolePermission) domain.UserPermission {
+		return domain.UserPermission{
 			ID:         0,
 			BizID:      bizID,
 			UserID:     userID,
-			Permission: rolePermissions[i].Permission,
+			Permission: src.Permission,
 			StartTime:  time.Now().UnixMilli(),
 			EndTime:    time.Now().AddDate(oneHundredYears, 0, 0).UnixMilli(),
 			Effect:     domain.EffectAllow,
-			Ctime:      rolePermissions[i].Ctime,
-			Utime:      rolePermissions[i].Utime,
-		})
-	}
-	return userPermissions, nil
+			Ctime:      src.Ctime,
+			Utime:      src.Utime,
+		}
+	}), nil
 }
 
 // mergePermissions 合并两组权限

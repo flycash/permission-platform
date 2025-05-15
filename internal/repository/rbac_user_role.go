@@ -12,9 +12,8 @@ import (
 type UserRoleRepository interface {
 	Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error)
 
-	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error)
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
-	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
+	FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error)
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
@@ -39,19 +38,8 @@ func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRol
 	return r.toDomain(created), nil
 }
 
-func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error) {
-	userRoles, err := r.userRoleDAO.FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.UserRole {
-		return r.toDomain(src)
-	}), nil
-}
-
-func (r *userRoleRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error) {
-	userRoles, err := r.userRoleDAO.FindValidUserRolesWithBizID(ctx, bizID, userID, offset, limit)
+func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
+	userRoles, err := r.userRoleDAO.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +53,8 @@ func (r *userRoleRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id i
 	return r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
 }
 
-func (r *userRoleRepository) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error) {
-	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID, offset, limit)
+func (r *userRoleRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
+	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID)
 	if err != nil {
 		return nil, err
 	}

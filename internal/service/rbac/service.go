@@ -33,7 +33,7 @@ type Service interface {
 	GetPermission(ctx context.Context, bizID, id int64) (domain.Permission, error)
 	UpdatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 	DeletePermission(ctx context.Context, bizID, id int64) error
-	ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error)
+	ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
 	ListPermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 
 	// 角色相关方法
@@ -50,28 +50,28 @@ type Service interface {
 	CreateRoleInclusion(ctx context.Context, roleInclusion domain.RoleInclusion) (domain.RoleInclusion, error)
 	GetRoleInclusion(ctx context.Context, bizID, id int64) (domain.RoleInclusion, error)
 	DeleteRoleInclusion(ctx context.Context, bizID, id int64) error
-	ListRoleInclusionsByRoleID(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, error)
+	ListRoleInclusionsByRoleID(ctx context.Context, bizID, roleID int64, isIncluding bool) ([]domain.RoleInclusion, error)
 	ListRoleInclusions(ctx context.Context, bizID int64, offset, limit int) ([]domain.RoleInclusion, error)
 
 	// 角色权限相关方法
 
 	GrantRolePermission(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error)
 	RevokeRolePermission(ctx context.Context, bizID, id int64) error
-	ListRolePermissionsByRoleID(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, error)
-	ListRolePermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error)
+	ListRolePermissionsByRoleID(ctx context.Context, bizID, roleID int64) ([]domain.RolePermission, error)
+	ListRolePermissions(ctx context.Context, bizID int64) ([]domain.RolePermission, error)
 
 	// 用户角色相关方法
 
 	GrantUserRole(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error)
 	RevokeUserRole(ctx context.Context, bizID, id int64) error
-	ListUserRolesByUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error)
-	ListUserRoles(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error)
+	ListUserRolesByUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error)
+	ListUserRoles(ctx context.Context, bizID int64) ([]domain.UserRole, error)
 
 	// 用户权限相关方法
 
 	GrantUserPermission(ctx context.Context, userPermission domain.UserPermission) (domain.UserPermission, error)
 	RevokeUserPermission(ctx context.Context, bizID, id int64) error
-	ListUserPermissionsByUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
+	ListUserPermissionsByUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
 	ListUserPermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error)
 }
 
@@ -174,8 +174,8 @@ func (s *rbacService) ListPermissions(ctx context.Context, bizID int64, offset, 
 	return s.repo.Permission().FindByBizID(ctx, bizID, offset, limit)
 }
 
-func (s *rbacService) ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]domain.Permission, error) {
-	return s.repo.Permission().FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action, offset, limit)
+func (s *rbacService) ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
+	return s.repo.Permission().FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action)
 }
 
 // 角色相关方法实现
@@ -222,11 +222,11 @@ func (s *rbacService) ListRoleInclusions(ctx context.Context, bizID int64, offse
 	return s.repo.RoleInclusion().FindByBizID(ctx, bizID, offset, limit)
 }
 
-func (s *rbacService) ListRoleInclusionsByRoleID(ctx context.Context, bizID, roleID int64, isIncluding bool, offset, limit int) ([]domain.RoleInclusion, error) {
+func (s *rbacService) ListRoleInclusionsByRoleID(ctx context.Context, bizID, roleID int64, isIncluding bool) ([]domain.RoleInclusion, error) {
 	if isIncluding {
-		return s.repo.RoleInclusion().FindByBizIDAndIncludingRoleIDs(ctx, bizID, []int64{roleID}, offset, limit)
+		return s.repo.RoleInclusion().FindByBizIDAndIncludingRoleIDs(ctx, bizID, []int64{roleID})
 	}
-	return s.repo.RoleInclusion().FindByBizIDAndIncludedRoleIDs(ctx, bizID, []int64{roleID}, offset, limit)
+	return s.repo.RoleInclusion().FindByBizIDAndIncludedRoleIDs(ctx, bizID, []int64{roleID})
 }
 
 // 角色权限相关方法实现
@@ -239,12 +239,12 @@ func (s *rbacService) RevokeRolePermission(ctx context.Context, bizID, id int64)
 	return s.repo.RolePermission().DeleteByBizIDAndID(ctx, bizID, id)
 }
 
-func (s *rbacService) ListRolePermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.RolePermission, error) {
-	return s.repo.RolePermission().FindByBizID(ctx, bizID, offset, limit)
+func (s *rbacService) ListRolePermissions(ctx context.Context, bizID int64) ([]domain.RolePermission, error) {
+	return s.repo.RolePermission().FindByBizID(ctx, bizID)
 }
 
-func (s *rbacService) ListRolePermissionsByRoleID(ctx context.Context, bizID, roleID int64, offset, limit int) ([]domain.RolePermission, error) {
-	return s.repo.RolePermission().FindByBizIDAndRoleIDs(ctx, bizID, []int64{roleID}, offset, limit)
+func (s *rbacService) ListRolePermissionsByRoleID(ctx context.Context, bizID, roleID int64) ([]domain.RolePermission, error) {
+	return s.repo.RolePermission().FindByBizIDAndRoleIDs(ctx, bizID, []int64{roleID})
 }
 
 // 用户角色相关方法实现
@@ -257,12 +257,12 @@ func (s *rbacService) RevokeUserRole(ctx context.Context, bizID, id int64) error
 	return s.repo.UserRole().DeleteByBizIDAndID(ctx, bizID, id)
 }
 
-func (s *rbacService) ListUserRoles(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserRole, error) {
-	return s.repo.UserRole().FindByBizID(ctx, bizID, offset, limit)
+func (s *rbacService) ListUserRoles(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
+	return s.repo.UserRole().FindByBizID(ctx, bizID)
 }
 
-func (s *rbacService) ListUserRolesByUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserRole, error) {
-	return s.repo.UserRole().FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
+func (s *rbacService) ListUserRolesByUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
+	return s.repo.UserRole().FindByBizIDAndUserID(ctx, bizID, userID)
 }
 
 // 用户权限相关方法实现
@@ -279,6 +279,6 @@ func (s *rbacService) ListUserPermissions(ctx context.Context, bizID int64, offs
 	return s.repo.UserPermission().FindByBizID(ctx, bizID, offset, limit)
 }
 
-func (s *rbacService) ListUserPermissionsByUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error) {
-	return s.repo.UserPermission().FindByBizIDAndUserID(ctx, bizID, userID, offset, limit)
+func (s *rbacService) ListUserPermissionsByUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+	return s.repo.UserPermission().FindByBizIDAndUserID(ctx, bizID, userID)
 }
