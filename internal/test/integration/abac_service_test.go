@@ -1020,7 +1020,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 			wantErr: false,
 			check: func(t *testing.T, policy domain.Policy, id int64) {
 				s.Greater(id, int64(0))
-				savedPolicy, err := s.policyRepo.First(ctx, id)
+				savedPolicy, err := s.policyRepo.First(ctx, bizID, id)
 				s.NoError(err)
 				s.Equal(bizID, savedPolicy.BizID)
 				s.Equal("测试策略", savedPolicy.Name)
@@ -1046,7 +1046,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 			},
 			wantErr: false,
 			check: func(t *testing.T, policy domain.Policy, id int64) {
-				savedPolicy, err := s.policyRepo.First(ctx, id)
+				savedPolicy, err := s.policyRepo.First(ctx, bizID, id)
 				s.NoError(err)
 				s.Equal(bizID, savedPolicy.BizID)
 				s.Equal("测试策略1", savedPolicy.Name)             // 名称保持不变
@@ -1124,7 +1124,7 @@ func (s *AbacServiceSuite) TestPolicy_Delete() {
 	s.NoError(err)
 
 	// 验证策略已被删除
-	_, err = s.policyRepo.First(ctx, id)
+	_, err = s.policyRepo.First(ctx, bizID, id)
 	s.Error(err)
 
 	// 验证权限策略关联已被删除
@@ -1250,7 +1250,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 	s.NoError(err)
 
 	// 测试查询策略
-	foundPolicy, err := s.policyRepo.First(ctx, id)
+	foundPolicy, err := s.policyRepo.First(ctx, bizID, id)
 	s.NoError(err)
 	s.Equal(bizID, foundPolicy.BizID)
 	s.Equal("测试策略", foundPolicy.Name)

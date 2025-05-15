@@ -137,9 +137,12 @@ type CheckPermissionRequest struct {
 	// 某人是否具有某个权限。目前来说只需要支持某个人具有某个权限的判定就可以了
 	Uid int64 `protobuf:"varint,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	// 检查的权限
-	Permission    *Permission `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Permission            *Permission       `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+	SubjectAttributes     map[string]string `protobuf:"bytes,3,rep,name=subject_attributes,json=subjectAttributes,proto3" json:"subject_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	ResourceAttributes    map[string]string `protobuf:"bytes,4,rep,name=resource_attributes,json=resourceAttributes,proto3" json:"resource_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	EnvironmentAttributes map[string]string `protobuf:"bytes,5,rep,name=environment_attributes,json=environmentAttributes,proto3" json:"environment_attributes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *CheckPermissionRequest) Reset() {
@@ -182,6 +185,27 @@ func (x *CheckPermissionRequest) GetUid() int64 {
 func (x *CheckPermissionRequest) GetPermission() *Permission {
 	if x != nil {
 		return x.Permission
+	}
+	return nil
+}
+
+func (x *CheckPermissionRequest) GetSubjectAttributes() map[string]string {
+	if x != nil {
+		return x.SubjectAttributes
+	}
+	return nil
+}
+
+func (x *CheckPermissionRequest) GetResourceAttributes() map[string]string {
+	if x != nil {
+		return x.ResourceAttributes
+	}
+	return nil
+}
+
+func (x *CheckPermissionRequest) GetEnvironmentAttributes() map[string]string {
+	if x != nil {
+		return x.EnvironmentAttributes
 	}
 	return nil
 }
@@ -341,12 +365,24 @@ const file_permission_v1_permission_proto_rawDesc = "" +
 	"\rresource_type\x18\x06 \x01(\tR\fresourceType\x12!\n" +
 	"\fresource_key\x18\a \x01(\tR\vresourceKey\x12\x18\n" +
 	"\aactions\x18\b \x03(\tR\aactions\x12\x1a\n" +
-	"\bmetadata\x18\t \x01(\tR\bmetadata\"e\n" +
+	"\bmetadata\x18\t \x01(\tR\bmetadata\"\x92\x05\n" +
 	"\x16CheckPermissionRequest\x12\x10\n" +
 	"\x03uid\x18\x01 \x01(\x03R\x03uid\x129\n" +
 	"\n" +
 	"permission\x18\x02 \x01(\v2\x19.permission.v1.PermissionR\n" +
-	"permission\"3\n" +
+	"permission\x12k\n" +
+	"\x12subject_attributes\x18\x03 \x03(\v2<.permission.v1.CheckPermissionRequest.SubjectAttributesEntryR\x11subjectAttributes\x12n\n" +
+	"\x13resource_attributes\x18\x04 \x03(\v2=.permission.v1.CheckPermissionRequest.ResourceAttributesEntryR\x12resourceAttributes\x12w\n" +
+	"\x16environment_attributes\x18\x05 \x03(\v2@.permission.v1.CheckPermissionRequest.EnvironmentAttributesEntryR\x15environmentAttributes\x1aD\n" +
+	"\x16SubjectAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1aE\n" +
+	"\x17ResourceAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1aH\n" +
+	"\x1aEnvironmentAttributesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"3\n" +
 	"\x17CheckPermissionResponse\x12\x18\n" +
 	"\aallowed\x18\x01 \x01(\bR\aallowed\"\xa9\x01\n" +
 	"\bResource\x12\x0e\n" +
@@ -374,24 +410,30 @@ func file_permission_v1_permission_proto_rawDescGZIP() []byte {
 }
 
 var (
-	file_permission_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+	file_permission_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 	file_permission_v1_permission_proto_goTypes  = []any{
 		(*Permission)(nil),              // 0: permission.v1.Permission
 		(*CheckPermissionRequest)(nil),  // 1: permission.v1.CheckPermissionRequest
 		(*CheckPermissionResponse)(nil), // 2: permission.v1.CheckPermissionResponse
 		(*Resource)(nil),                // 3: permission.v1.Resource
+		nil,                             // 4: permission.v1.CheckPermissionRequest.SubjectAttributesEntry
+		nil,                             // 5: permission.v1.CheckPermissionRequest.ResourceAttributesEntry
+		nil,                             // 6: permission.v1.CheckPermissionRequest.EnvironmentAttributesEntry
 	}
 )
 
 var file_permission_v1_permission_proto_depIdxs = []int32{
 	0, // 0: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission
-	1, // 1: permission.v1.PermissionService.CheckPermission:input_type -> permission.v1.CheckPermissionRequest
-	2, // 2: permission.v1.PermissionService.CheckPermission:output_type -> permission.v1.CheckPermissionResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 1: permission.v1.CheckPermissionRequest.subject_attributes:type_name -> permission.v1.CheckPermissionRequest.SubjectAttributesEntry
+	5, // 2: permission.v1.CheckPermissionRequest.resource_attributes:type_name -> permission.v1.CheckPermissionRequest.ResourceAttributesEntry
+	6, // 3: permission.v1.CheckPermissionRequest.environment_attributes:type_name -> permission.v1.CheckPermissionRequest.EnvironmentAttributesEntry
+	1, // 4: permission.v1.PermissionService.CheckPermission:input_type -> permission.v1.CheckPermissionRequest
+	2, // 5: permission.v1.PermissionService.CheckPermission:output_type -> permission.v1.CheckPermissionResponse
+	5, // [5:6] is the sub-list for method output_type
+	4, // [4:5] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_permission_v1_permission_proto_init() }
@@ -405,7 +447,7 @@ func file_permission_v1_permission_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_v1_permission_proto_rawDesc), len(file_permission_v1_permission_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

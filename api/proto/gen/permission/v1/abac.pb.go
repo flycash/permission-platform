@@ -8,6 +8,7 @@ package permissionv1
 
 import (
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -21,24 +22,3516 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PolicyStatus int32
+
+const (
+	PolicyStatus_POLICY_STATUS_UNKNOWN  PolicyStatus = 0
+	PolicyStatus_POLICY_STATUS_ACTIVE   PolicyStatus = 1
+	PolicyStatus_POLICY_STATUS_INACTIVE PolicyStatus = 2
+)
+
+// Enum value maps for PolicyStatus.
+var (
+	PolicyStatus_name = map[int32]string{
+		0: "POLICY_STATUS_UNKNOWN",
+		1: "POLICY_STATUS_ACTIVE",
+		2: "POLICY_STATUS_INACTIVE",
+	}
+	PolicyStatus_value = map[string]int32{
+		"POLICY_STATUS_UNKNOWN":  0,
+		"POLICY_STATUS_ACTIVE":   1,
+		"POLICY_STATUS_INACTIVE": 2,
+	}
+)
+
+func (x PolicyStatus) Enum() *PolicyStatus {
+	p := new(PolicyStatus)
+	*p = x
+	return p
+}
+
+func (x PolicyStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PolicyStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_permission_v1_abac_proto_enumTypes[0].Descriptor()
+}
+
+func (PolicyStatus) Type() protoreflect.EnumType {
+	return &file_permission_v1_abac_proto_enumTypes[0]
+}
+
+func (x PolicyStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PolicyStatus.Descriptor instead.
+func (PolicyStatus) EnumDescriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{0}
+}
+
+type RuleOperator int32
+
+const (
+	RuleOperator_RULE_OPERATOR_UNKNOWN          RuleOperator = 0
+	RuleOperator_RULE_OPERATOR_EQUALS           RuleOperator = 1
+	RuleOperator_RULE_OPERATOR_NOT_EQUALS       RuleOperator = 2
+	RuleOperator_RULE_OPERATOR_GREATER          RuleOperator = 3
+	RuleOperator_RULE_OPERATOR_LESS             RuleOperator = 4
+	RuleOperator_RULE_OPERATOR_GREATER_OR_EQUAL RuleOperator = 5
+	RuleOperator_RULE_OPERATOR_LESS_OR_EQUAL    RuleOperator = 6
+	RuleOperator_RULE_OPERATOR_AND              RuleOperator = 7
+	RuleOperator_RULE_OPERATOR_OR               RuleOperator = 8
+	RuleOperator_RULE_OPERATOR_IN               RuleOperator = 9
+	RuleOperator_RULE_OPERATOR_NOT_IN           RuleOperator = 10
+	RuleOperator_RULE_OPERATOR_NOT              RuleOperator = 11
+)
+
+// Enum value maps for RuleOperator.
+var (
+	RuleOperator_name = map[int32]string{
+		0:  "RULE_OPERATOR_UNKNOWN",
+		1:  "RULE_OPERATOR_EQUALS",
+		2:  "RULE_OPERATOR_NOT_EQUALS",
+		3:  "RULE_OPERATOR_GREATER",
+		4:  "RULE_OPERATOR_LESS",
+		5:  "RULE_OPERATOR_GREATER_OR_EQUAL",
+		6:  "RULE_OPERATOR_LESS_OR_EQUAL",
+		7:  "RULE_OPERATOR_AND",
+		8:  "RULE_OPERATOR_OR",
+		9:  "RULE_OPERATOR_IN",
+		10: "RULE_OPERATOR_NOT_IN",
+		11: "RULE_OPERATOR_NOT",
+	}
+	RuleOperator_value = map[string]int32{
+		"RULE_OPERATOR_UNKNOWN":          0,
+		"RULE_OPERATOR_EQUALS":           1,
+		"RULE_OPERATOR_NOT_EQUALS":       2,
+		"RULE_OPERATOR_GREATER":          3,
+		"RULE_OPERATOR_LESS":             4,
+		"RULE_OPERATOR_GREATER_OR_EQUAL": 5,
+		"RULE_OPERATOR_LESS_OR_EQUAL":    6,
+		"RULE_OPERATOR_AND":              7,
+		"RULE_OPERATOR_OR":               8,
+		"RULE_OPERATOR_IN":               9,
+		"RULE_OPERATOR_NOT_IN":           10,
+		"RULE_OPERATOR_NOT":              11,
+	}
+)
+
+func (x RuleOperator) Enum() *RuleOperator {
+	p := new(RuleOperator)
+	*p = x
+	return p
+}
+
+func (x RuleOperator) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RuleOperator) Descriptor() protoreflect.EnumDescriptor {
+	return file_permission_v1_abac_proto_enumTypes[1].Descriptor()
+}
+
+func (RuleOperator) Type() protoreflect.EnumType {
+	return &file_permission_v1_abac_proto_enumTypes[1]
+}
+
+func (x RuleOperator) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RuleOperator.Descriptor instead.
+func (RuleOperator) EnumDescriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{1}
+}
+
+type Effect int32
+
+const (
+	Effect_EFFECT_UNKNOWN Effect = 0
+	Effect_EFFECT_ALLOW   Effect = 1
+	Effect_EFFECT_DENY    Effect = 2
+)
+
+// Enum value maps for Effect.
+var (
+	Effect_name = map[int32]string{
+		0: "EFFECT_UNKNOWN",
+		1: "EFFECT_ALLOW",
+		2: "EFFECT_DENY",
+	}
+	Effect_value = map[string]int32{
+		"EFFECT_UNKNOWN": 0,
+		"EFFECT_ALLOW":   1,
+		"EFFECT_DENY":    2,
+	}
+)
+
+func (x Effect) Enum() *Effect {
+	p := new(Effect)
+	*p = x
+	return p
+}
+
+func (x Effect) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Effect) Descriptor() protoreflect.EnumDescriptor {
+	return file_permission_v1_abac_proto_enumTypes[2].Descriptor()
+}
+
+func (Effect) Type() protoreflect.EnumType {
+	return &file_permission_v1_abac_proto_enumTypes[2]
+}
+
+func (x Effect) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Effect.Descriptor instead.
+func (Effect) EnumDescriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{2}
+}
+
+type DataType int32
+
+const (
+	DataType_DATA_TYPE_UNKNOWN  DataType = 0
+	DataType_DATA_TYPE_STRING   DataType = 1
+	DataType_DATA_TYPE_NUMBER   DataType = 2
+	DataType_DATA_TYPE_BOOLEAN  DataType = 3
+	DataType_DATA_TYPE_FLOAT    DataType = 4
+	DataType_DATA_TYPE_DATETIME DataType = 5
+)
+
+// Enum value maps for DataType.
+var (
+	DataType_name = map[int32]string{
+		0: "DATA_TYPE_UNKNOWN",
+		1: "DATA_TYPE_STRING",
+		2: "DATA_TYPE_NUMBER",
+		3: "DATA_TYPE_BOOLEAN",
+		4: "DATA_TYPE_FLOAT",
+		5: "DATA_TYPE_DATETIME",
+	}
+	DataType_value = map[string]int32{
+		"DATA_TYPE_UNKNOWN":  0,
+		"DATA_TYPE_STRING":   1,
+		"DATA_TYPE_NUMBER":   2,
+		"DATA_TYPE_BOOLEAN":  3,
+		"DATA_TYPE_FLOAT":    4,
+		"DATA_TYPE_DATETIME": 5,
+	}
+)
+
+func (x DataType) Enum() *DataType {
+	p := new(DataType)
+	*p = x
+	return p
+}
+
+func (x DataType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (DataType) Descriptor() protoreflect.EnumDescriptor {
+	return file_permission_v1_abac_proto_enumTypes[3].Descriptor()
+}
+
+func (DataType) Type() protoreflect.EnumType {
+	return &file_permission_v1_abac_proto_enumTypes[3]
+}
+
+func (x DataType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use DataType.Descriptor instead.
+func (DataType) EnumDescriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{3}
+}
+
+type EntityType int32
+
+const (
+	EntityType_ENTITY_TYPE_UNKNOWN     EntityType = 0
+	EntityType_ENTITY_TYPE_SUBJECT     EntityType = 1
+	EntityType_ENTITY_TYPE_RESOURCE    EntityType = 2
+	EntityType_ENTITY_TYPE_ENVIRONMENT EntityType = 3
+)
+
+// Enum value maps for EntityType.
+var (
+	EntityType_name = map[int32]string{
+		0: "ENTITY_TYPE_UNKNOWN",
+		1: "ENTITY_TYPE_SUBJECT",
+		2: "ENTITY_TYPE_RESOURCE",
+		3: "ENTITY_TYPE_ENVIRONMENT",
+	}
+	EntityType_value = map[string]int32{
+		"ENTITY_TYPE_UNKNOWN":     0,
+		"ENTITY_TYPE_SUBJECT":     1,
+		"ENTITY_TYPE_RESOURCE":    2,
+		"ENTITY_TYPE_ENVIRONMENT": 3,
+	}
+)
+
+func (x EntityType) Enum() *EntityType {
+	p := new(EntityType)
+	*p = x
+	return p
+}
+
+func (x EntityType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EntityType) Descriptor() protoreflect.EnumDescriptor {
+	return file_permission_v1_abac_proto_enumTypes[4].Descriptor()
+}
+
+func (EntityType) Type() protoreflect.EnumType {
+	return &file_permission_v1_abac_proto_enumTypes[4]
+}
+
+func (x EntityType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EntityType.Descriptor instead.
+func (EntityType) EnumDescriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{4}
+}
+
+// Policy related messages
+type Policy struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	Status        PolicyStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=permission.v1.PolicyStatus" json:"status,omitempty"`
+	Effect        Effect                 `protobuf:"varint,6,opt,name=effect,proto3,enum=permission.v1.Effect" json:"effect,omitempty"`
+	Rules         []*PolicyRule          `protobuf:"bytes,7,rep,name=rules,proto3" json:"rules,omitempty"`
+	Ctime         int64                  `protobuf:"varint,8,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime         int64                  `protobuf:"varint,9,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Policy) Reset() {
+	*x = Policy{}
+	mi := &file_permission_v1_abac_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Policy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Policy) ProtoMessage() {}
+
+func (x *Policy) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Policy.ProtoReflect.Descriptor instead.
+func (*Policy) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Policy) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Policy) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Policy) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Policy) GetStatus() PolicyStatus {
+	if x != nil {
+		return x.Status
+	}
+	return PolicyStatus_POLICY_STATUS_UNKNOWN
+}
+
+func (x *Policy) GetEffect() Effect {
+	if x != nil {
+		return x.Effect
+	}
+	return Effect_EFFECT_UNKNOWN
+}
+
+func (x *Policy) GetRules() []*PolicyRule {
+	if x != nil {
+		return x.Rules
+	}
+	return nil
+}
+
+func (x *Policy) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *Policy) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+type PolicyRule struct {
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	AttributeDefinition *AttributeDefinition   `protobuf:"bytes,2,opt,name=attribute_definition,json=attributeDefinition,proto3" json:"attribute_definition,omitempty"`
+	Value               string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	LeftRule            *PolicyRule            `protobuf:"bytes,4,opt,name=left_rule,json=leftRule,proto3" json:"left_rule,omitempty"`
+	RightRule           *PolicyRule            `protobuf:"bytes,5,opt,name=right_rule,json=rightRule,proto3" json:"right_rule,omitempty"`
+	Operator            RuleOperator           `protobuf:"varint,6,opt,name=operator,proto3,enum=permission.v1.RuleOperator" json:"operator,omitempty"`
+	Ctime               int64                  `protobuf:"varint,7,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime               int64                  `protobuf:"varint,8,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *PolicyRule) Reset() {
+	*x = PolicyRule{}
+	mi := &file_permission_v1_abac_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyRule) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyRule) ProtoMessage() {}
+
+func (x *PolicyRule) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyRule.ProtoReflect.Descriptor instead.
+func (*PolicyRule) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PolicyRule) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *PolicyRule) GetAttributeDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.AttributeDefinition
+	}
+	return nil
+}
+
+func (x *PolicyRule) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *PolicyRule) GetLeftRule() *PolicyRule {
+	if x != nil {
+		return x.LeftRule
+	}
+	return nil
+}
+
+func (x *PolicyRule) GetRightRule() *PolicyRule {
+	if x != nil {
+		return x.RightRule
+	}
+	return nil
+}
+
+func (x *PolicyRule) GetOperator() RuleOperator {
+	if x != nil {
+		return x.Operator
+	}
+	return RuleOperator_RULE_OPERATOR_UNKNOWN
+}
+
+func (x *PolicyRule) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *PolicyRule) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+// Attribute related messages
+type SubjectAttributeValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Definition    *AttributeDefinition   `protobuf:"bytes,2,opt,name=definition,proto3" json:"definition,omitempty"`
+	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	Ctime         int64                  `protobuf:"varint,4,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime         int64                  `protobuf:"varint,5,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SubjectAttributeValue) Reset() {
+	*x = SubjectAttributeValue{}
+	mi := &file_permission_v1_abac_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubjectAttributeValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubjectAttributeValue) ProtoMessage() {}
+
+func (x *SubjectAttributeValue) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubjectAttributeValue.ProtoReflect.Descriptor instead.
+func (*SubjectAttributeValue) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SubjectAttributeValue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SubjectAttributeValue) GetDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+func (x *SubjectAttributeValue) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *SubjectAttributeValue) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *SubjectAttributeValue) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+type ResourceAttributeValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Definition    *AttributeDefinition   `protobuf:"bytes,2,opt,name=definition,proto3" json:"definition,omitempty"`
+	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	Ctime         int64                  `protobuf:"varint,4,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime         int64                  `protobuf:"varint,5,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResourceAttributeValue) Reset() {
+	*x = ResourceAttributeValue{}
+	mi := &file_permission_v1_abac_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResourceAttributeValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResourceAttributeValue) ProtoMessage() {}
+
+func (x *ResourceAttributeValue) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResourceAttributeValue.ProtoReflect.Descriptor instead.
+func (*ResourceAttributeValue) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *ResourceAttributeValue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ResourceAttributeValue) GetDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+func (x *ResourceAttributeValue) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *ResourceAttributeValue) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *ResourceAttributeValue) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+type EnvironmentAttributeValue struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Definition    *AttributeDefinition   `protobuf:"bytes,2,opt,name=definition,proto3" json:"definition,omitempty"`
+	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
+	Ctime         int64                  `protobuf:"varint,4,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime         int64                  `protobuf:"varint,5,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EnvironmentAttributeValue) Reset() {
+	*x = EnvironmentAttributeValue{}
+	mi := &file_permission_v1_abac_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnvironmentAttributeValue) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnvironmentAttributeValue) ProtoMessage() {}
+
+func (x *EnvironmentAttributeValue) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnvironmentAttributeValue.ProtoReflect.Descriptor instead.
+func (*EnvironmentAttributeValue) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *EnvironmentAttributeValue) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *EnvironmentAttributeValue) GetDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+func (x *EnvironmentAttributeValue) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *EnvironmentAttributeValue) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *EnvironmentAttributeValue) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+type SubjectObject struct {
+	state           protoimpl.MessageState   `protogen:"open.v1"`
+	Id              int64                    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	AttributeValues []*SubjectAttributeValue `protobuf:"bytes,3,rep,name=attribute_values,json=attributeValues,proto3" json:"attribute_values,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *SubjectObject) Reset() {
+	*x = SubjectObject{}
+	mi := &file_permission_v1_abac_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SubjectObject) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SubjectObject) ProtoMessage() {}
+
+func (x *SubjectObject) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SubjectObject.ProtoReflect.Descriptor instead.
+func (*SubjectObject) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SubjectObject) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *SubjectObject) GetAttributeValues() []*SubjectAttributeValue {
+	if x != nil {
+		return x.AttributeValues
+	}
+	return nil
+}
+
+type ResourceObject struct {
+	state           protoimpl.MessageState    `protogen:"open.v1"`
+	Id              int64                     `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	AttributeValues []*ResourceAttributeValue `protobuf:"bytes,3,rep,name=attribute_values,json=attributeValues,proto3" json:"attribute_values,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ResourceObject) Reset() {
+	*x = ResourceObject{}
+	mi := &file_permission_v1_abac_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResourceObject) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResourceObject) ProtoMessage() {}
+
+func (x *ResourceObject) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResourceObject.ProtoReflect.Descriptor instead.
+func (*ResourceObject) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ResourceObject) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ResourceObject) GetAttributeValues() []*ResourceAttributeValue {
+	if x != nil {
+		return x.AttributeValues
+	}
+	return nil
+}
+
+type EnvironmentObject struct {
+	state           protoimpl.MessageState       `protogen:"open.v1"`
+	AttributeValues []*EnvironmentAttributeValue `protobuf:"bytes,2,rep,name=attribute_values,json=attributeValues,proto3" json:"attribute_values,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *EnvironmentObject) Reset() {
+	*x = EnvironmentObject{}
+	mi := &file_permission_v1_abac_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EnvironmentObject) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EnvironmentObject) ProtoMessage() {}
+
+func (x *EnvironmentObject) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EnvironmentObject.ProtoReflect.Descriptor instead.
+func (*EnvironmentObject) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *EnvironmentObject) GetAttributeValues() []*EnvironmentAttributeValue {
+	if x != nil {
+		return x.AttributeValues
+	}
+	return nil
+}
+
+type AttributeDefinition struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name           string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description    string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	DataType       DataType               `protobuf:"varint,4,opt,name=data_type,json=dataType,proto3,enum=permission.v1.DataType" json:"data_type,omitempty"`
+	EntityType     EntityType             `protobuf:"varint,5,opt,name=entity_type,json=entityType,proto3,enum=permission.v1.EntityType" json:"entity_type,omitempty"`
+	ValidationRule string                 `protobuf:"bytes,6,opt,name=validation_rule,json=validationRule,proto3" json:"validation_rule,omitempty"`
+	Ctime          int64                  `protobuf:"varint,7,opt,name=ctime,proto3" json:"ctime,omitempty"`
+	Utime          int64                  `protobuf:"varint,8,opt,name=utime,proto3" json:"utime,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AttributeDefinition) Reset() {
+	*x = AttributeDefinition{}
+	mi := &file_permission_v1_abac_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinition) ProtoMessage() {}
+
+func (x *AttributeDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinition.ProtoReflect.Descriptor instead.
+func (*AttributeDefinition) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AttributeDefinition) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AttributeDefinition) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AttributeDefinition) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AttributeDefinition) GetDataType() DataType {
+	if x != nil {
+		return x.DataType
+	}
+	return DataType_DATA_TYPE_UNKNOWN
+}
+
+func (x *AttributeDefinition) GetEntityType() EntityType {
+	if x != nil {
+		return x.EntityType
+	}
+	return EntityType_ENTITY_TYPE_UNKNOWN
+}
+
+func (x *AttributeDefinition) GetValidationRule() string {
+	if x != nil {
+		return x.ValidationRule
+	}
+	return ""
+}
+
+func (x *AttributeDefinition) GetCtime() int64 {
+	if x != nil {
+		return x.Ctime
+	}
+	return 0
+}
+
+func (x *AttributeDefinition) GetUtime() int64 {
+	if x != nil {
+		return x.Utime
+	}
+	return 0
+}
+
+type BizDefinition struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	SubjectAttrs     []*AttributeDefinition `protobuf:"bytes,2,rep,name=subject_attrs,json=subjectAttrs,proto3" json:"subject_attrs,omitempty"`
+	ResourceAttrs    []*AttributeDefinition `protobuf:"bytes,3,rep,name=resource_attrs,json=resourceAttrs,proto3" json:"resource_attrs,omitempty"`
+	EnvironmentAttrs []*AttributeDefinition `protobuf:"bytes,4,rep,name=environment_attrs,json=environmentAttrs,proto3" json:"environment_attrs,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *BizDefinition) Reset() {
+	*x = BizDefinition{}
+	mi := &file_permission_v1_abac_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BizDefinition) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BizDefinition) ProtoMessage() {}
+
+func (x *BizDefinition) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BizDefinition.ProtoReflect.Descriptor instead.
+func (*BizDefinition) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *BizDefinition) GetSubjectAttrs() []*AttributeDefinition {
+	if x != nil {
+		return x.SubjectAttrs
+	}
+	return nil
+}
+
+func (x *BizDefinition) GetResourceAttrs() []*AttributeDefinition {
+	if x != nil {
+		return x.ResourceAttrs
+	}
+	return nil
+}
+
+func (x *BizDefinition) GetEnvironmentAttrs() []*AttributeDefinition {
+	if x != nil {
+		return x.EnvironmentAttrs
+	}
+	return nil
+}
+
+type PolicyServiceSaveRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Policy        *Policy                `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSaveRequest) Reset() {
+	*x = PolicyServiceSaveRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSaveRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSaveRequest) ProtoMessage() {}
+
+func (x *PolicyServiceSaveRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSaveRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSaveRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *PolicyServiceSaveRequest) GetPolicy() *Policy {
+	if x != nil {
+		return x.Policy
+	}
+	return nil
+}
+
+type PolicyServiceSaveResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSaveResponse) Reset() {
+	*x = PolicyServiceSaveResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSaveResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSaveResponse) ProtoMessage() {}
+
+func (x *PolicyServiceSaveResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSaveResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSaveResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PolicyServiceSaveResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type PolicyServiceDeleteRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceDeleteRequest) Reset() {
+	*x = PolicyServiceDeleteRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceDeleteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceDeleteRequest) ProtoMessage() {}
+
+func (x *PolicyServiceDeleteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceDeleteRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceDeleteRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *PolicyServiceDeleteRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type PolicyServiceDeleteResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceDeleteResponse) Reset() {
+	*x = PolicyServiceDeleteResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceDeleteResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceDeleteResponse) ProtoMessage() {}
+
+func (x *PolicyServiceDeleteResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceDeleteResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceDeleteResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{13}
+}
+
+type PolicyServiceFirstRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFirstRequest) Reset() {
+	*x = PolicyServiceFirstRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFirstRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFirstRequest) ProtoMessage() {}
+
+func (x *PolicyServiceFirstRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFirstRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFirstRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *PolicyServiceFirstRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type PolicyServiceFirstResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Policy        *Policy                `protobuf:"bytes,1,opt,name=policy,proto3" json:"policy,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFirstResponse) Reset() {
+	*x = PolicyServiceFirstResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFirstResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFirstResponse) ProtoMessage() {}
+
+func (x *PolicyServiceFirstResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFirstResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFirstResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *PolicyServiceFirstResponse) GetPolicy() *Policy {
+	if x != nil {
+		return x.Policy
+	}
+	return nil
+}
+
+type PolicyServiceSaveRuleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PolicyId      int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
+	Rule          *PolicyRule            `protobuf:"bytes,2,opt,name=rule,proto3" json:"rule,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSaveRuleRequest) Reset() {
+	*x = PolicyServiceSaveRuleRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSaveRuleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSaveRuleRequest) ProtoMessage() {}
+
+func (x *PolicyServiceSaveRuleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSaveRuleRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSaveRuleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *PolicyServiceSaveRuleRequest) GetPolicyId() int64 {
+	if x != nil {
+		return x.PolicyId
+	}
+	return 0
+}
+
+func (x *PolicyServiceSaveRuleRequest) GetRule() *PolicyRule {
+	if x != nil {
+		return x.Rule
+	}
+	return nil
+}
+
+type PolicyServiceSaveRuleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSaveRuleResponse) Reset() {
+	*x = PolicyServiceSaveRuleResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSaveRuleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSaveRuleResponse) ProtoMessage() {}
+
+func (x *PolicyServiceSaveRuleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSaveRuleResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSaveRuleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *PolicyServiceSaveRuleResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type PolicyServiceDeleteRuleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RuleId        int64                  `protobuf:"varint,1,opt,name=rule_id,json=ruleId,proto3" json:"rule_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceDeleteRuleRequest) Reset() {
+	*x = PolicyServiceDeleteRuleRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceDeleteRuleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceDeleteRuleRequest) ProtoMessage() {}
+
+func (x *PolicyServiceDeleteRuleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceDeleteRuleRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceDeleteRuleRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *PolicyServiceDeleteRuleRequest) GetRuleId() int64 {
+	if x != nil {
+		return x.RuleId
+	}
+	return 0
+}
+
+type PolicyServiceDeleteRuleResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceDeleteRuleResponse) Reset() {
+	*x = PolicyServiceDeleteRuleResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceDeleteRuleResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceDeleteRuleResponse) ProtoMessage() {}
+
+func (x *PolicyServiceDeleteRuleResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceDeleteRuleResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceDeleteRuleResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{19}
+}
+
+type PolicyServiceFindPoliciesByPermissionIDsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PermissionIds []int64                `protobuf:"varint,1,rep,packed,name=permission_ids,json=permissionIds,proto3" json:"permission_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsRequest) Reset() {
+	*x = PolicyServiceFindPoliciesByPermissionIDsRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFindPoliciesByPermissionIDsRequest) ProtoMessage() {}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFindPoliciesByPermissionIDsRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFindPoliciesByPermissionIDsRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsRequest) GetPermissionIds() []int64 {
+	if x != nil {
+		return x.PermissionIds
+	}
+	return nil
+}
+
+type PolicyServiceFindPoliciesByPermissionIDsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Policies      []*Policy              `protobuf:"bytes,1,rep,name=policies,proto3" json:"policies,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsResponse) Reset() {
+	*x = PolicyServiceFindPoliciesByPermissionIDsResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFindPoliciesByPermissionIDsResponse) ProtoMessage() {}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFindPoliciesByPermissionIDsResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFindPoliciesByPermissionIDsResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *PolicyServiceFindPoliciesByPermissionIDsResponse) GetPolicies() []*Policy {
+	if x != nil {
+		return x.Policies
+	}
+	return nil
+}
+
+type PolicyServiceSavePermissionPolicyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PolicyId      int64                  `protobuf:"varint,1,opt,name=policy_id,json=policyId,proto3" json:"policy_id,omitempty"`
+	PermissionId  int64                  `protobuf:"varint,2,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty"`
+	Effect        Effect                 `protobuf:"varint,3,opt,name=effect,proto3,enum=permission.v1.Effect" json:"effect,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) Reset() {
+	*x = PolicyServiceSavePermissionPolicyRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSavePermissionPolicyRequest) ProtoMessage() {}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSavePermissionPolicyRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSavePermissionPolicyRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) GetPolicyId() int64 {
+	if x != nil {
+		return x.PolicyId
+	}
+	return 0
+}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) GetPermissionId() int64 {
+	if x != nil {
+		return x.PermissionId
+	}
+	return 0
+}
+
+func (x *PolicyServiceSavePermissionPolicyRequest) GetEffect() Effect {
+	if x != nil {
+		return x.Effect
+	}
+	return Effect_EFFECT_UNKNOWN
+}
+
+type PolicyServiceSavePermissionPolicyResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceSavePermissionPolicyResponse) Reset() {
+	*x = PolicyServiceSavePermissionPolicyResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceSavePermissionPolicyResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceSavePermissionPolicyResponse) ProtoMessage() {}
+
+func (x *PolicyServiceSavePermissionPolicyResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceSavePermissionPolicyResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceSavePermissionPolicyResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{23}
+}
+
+type PolicyServiceFindPoliciesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Offset        int32                  `protobuf:"varint,1,opt,name=offset,proto3" json:"offset,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFindPoliciesRequest) Reset() {
+	*x = PolicyServiceFindPoliciesRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFindPoliciesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFindPoliciesRequest) ProtoMessage() {}
+
+func (x *PolicyServiceFindPoliciesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFindPoliciesRequest.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFindPoliciesRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *PolicyServiceFindPoliciesRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+func (x *PolicyServiceFindPoliciesRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type PolicyServiceFindPoliciesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	Policies      []*Policy              `protobuf:"bytes,2,rep,name=policies,proto3" json:"policies,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PolicyServiceFindPoliciesResponse) Reset() {
+	*x = PolicyServiceFindPoliciesResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PolicyServiceFindPoliciesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PolicyServiceFindPoliciesResponse) ProtoMessage() {}
+
+func (x *PolicyServiceFindPoliciesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PolicyServiceFindPoliciesResponse.ProtoReflect.Descriptor instead.
+func (*PolicyServiceFindPoliciesResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *PolicyServiceFindPoliciesResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
+func (x *PolicyServiceFindPoliciesResponse) GetPolicies() []*Policy {
+	if x != nil {
+		return x.Policies
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveSubjectValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SubjectId     int64                  `protobuf:"varint,1,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	Value         *SubjectAttributeValue `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveSubjectValueRequest) Reset() {
+	*x = AttributeValueServiceSaveSubjectValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveSubjectValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveSubjectValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveSubjectValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveSubjectValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveSubjectValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *AttributeValueServiceSaveSubjectValueRequest) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
+func (x *AttributeValueServiceSaveSubjectValueRequest) GetValue() *SubjectAttributeValue {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveSubjectValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveSubjectValueResponse) Reset() {
+	*x = AttributeValueServiceSaveSubjectValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveSubjectValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveSubjectValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveSubjectValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveSubjectValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveSubjectValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *AttributeValueServiceSaveSubjectValueResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteSubjectValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteSubjectValueRequest) Reset() {
+	*x = AttributeValueServiceDeleteSubjectValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteSubjectValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteSubjectValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteSubjectValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteSubjectValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteSubjectValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *AttributeValueServiceDeleteSubjectValueRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteSubjectValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteSubjectValueResponse) Reset() {
+	*x = AttributeValueServiceDeleteSubjectValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteSubjectValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteSubjectValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteSubjectValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteSubjectValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteSubjectValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{29}
+}
+
+type AttributeValueServiceFindSubjectValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SubjectId     int64                  `protobuf:"varint,1,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindSubjectValueRequest) Reset() {
+	*x = AttributeValueServiceFindSubjectValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindSubjectValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindSubjectValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindSubjectValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindSubjectValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindSubjectValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *AttributeValueServiceFindSubjectValueRequest) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
+type AttributeValueServiceFindSubjectValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Subject       *SubjectObject         `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindSubjectValueResponse) Reset() {
+	*x = AttributeValueServiceFindSubjectValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[31]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindSubjectValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindSubjectValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindSubjectValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[31]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindSubjectValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindSubjectValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{31}
+}
+
+func (x *AttributeValueServiceFindSubjectValueResponse) GetSubject() *SubjectObject {
+	if x != nil {
+		return x.Subject
+	}
+	return nil
+}
+
+type AttributeValueServiceFindSubjectValueWithDefinitionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SubjectId     int64                  `protobuf:"varint,1,opt,name=subject_id,json=subjectId,proto3" json:"subject_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionRequest) Reset() {
+	*x = AttributeValueServiceFindSubjectValueWithDefinitionRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindSubjectValueWithDefinitionRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindSubjectValueWithDefinitionRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindSubjectValueWithDefinitionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionRequest) GetSubjectId() int64 {
+	if x != nil {
+		return x.SubjectId
+	}
+	return 0
+}
+
+type AttributeValueServiceFindSubjectValueWithDefinitionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Subject       *SubjectObject         `protobuf:"bytes,1,opt,name=subject,proto3" json:"subject,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionResponse) Reset() {
+	*x = AttributeValueServiceFindSubjectValueWithDefinitionResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindSubjectValueWithDefinitionResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindSubjectValueWithDefinitionResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindSubjectValueWithDefinitionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *AttributeValueServiceFindSubjectValueWithDefinitionResponse) GetSubject() *SubjectObject {
+	if x != nil {
+		return x.Subject
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveResourceValueRequest struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	ResourceId    int64                   `protobuf:"varint,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	Value         *ResourceAttributeValue `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveResourceValueRequest) Reset() {
+	*x = AttributeValueServiceSaveResourceValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveResourceValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveResourceValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveResourceValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveResourceValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveResourceValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *AttributeValueServiceSaveResourceValueRequest) GetResourceId() int64 {
+	if x != nil {
+		return x.ResourceId
+	}
+	return 0
+}
+
+func (x *AttributeValueServiceSaveResourceValueRequest) GetValue() *ResourceAttributeValue {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveResourceValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveResourceValueResponse) Reset() {
+	*x = AttributeValueServiceSaveResourceValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveResourceValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveResourceValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveResourceValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveResourceValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveResourceValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *AttributeValueServiceSaveResourceValueResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteResourceValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteResourceValueRequest) Reset() {
+	*x = AttributeValueServiceDeleteResourceValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[36]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteResourceValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteResourceValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteResourceValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[36]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteResourceValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteResourceValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{36}
+}
+
+func (x *AttributeValueServiceDeleteResourceValueRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteResourceValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteResourceValueResponse) Reset() {
+	*x = AttributeValueServiceDeleteResourceValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[37]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteResourceValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteResourceValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteResourceValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[37]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteResourceValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteResourceValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{37}
+}
+
+type AttributeValueServiceFindResourceValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResourceId    int64                  `protobuf:"varint,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindResourceValueRequest) Reset() {
+	*x = AttributeValueServiceFindResourceValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[38]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindResourceValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindResourceValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindResourceValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[38]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindResourceValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindResourceValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{38}
+}
+
+func (x *AttributeValueServiceFindResourceValueRequest) GetResourceId() int64 {
+	if x != nil {
+		return x.ResourceId
+	}
+	return 0
+}
+
+type AttributeValueServiceFindResourceValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Resource      *ResourceObject        `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindResourceValueResponse) Reset() {
+	*x = AttributeValueServiceFindResourceValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindResourceValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindResourceValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindResourceValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindResourceValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindResourceValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *AttributeValueServiceFindResourceValueResponse) GetResource() *ResourceObject {
+	if x != nil {
+		return x.Resource
+	}
+	return nil
+}
+
+type AttributeValueServiceFindResourceValueWithDefinitionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResourceId    int64                  `protobuf:"varint,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionRequest) Reset() {
+	*x = AttributeValueServiceFindResourceValueWithDefinitionRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindResourceValueWithDefinitionRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindResourceValueWithDefinitionRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindResourceValueWithDefinitionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionRequest) GetResourceId() int64 {
+	if x != nil {
+		return x.ResourceId
+	}
+	return 0
+}
+
+type AttributeValueServiceFindResourceValueWithDefinitionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Resource      *ResourceObject        `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionResponse) Reset() {
+	*x = AttributeValueServiceFindResourceValueWithDefinitionResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindResourceValueWithDefinitionResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindResourceValueWithDefinitionResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindResourceValueWithDefinitionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *AttributeValueServiceFindResourceValueWithDefinitionResponse) GetResource() *ResourceObject {
+	if x != nil {
+		return x.Resource
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveEnvironmentValueRequest struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Value         *EnvironmentAttributeValue `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueRequest) Reset() {
+	*x = AttributeValueServiceSaveEnvironmentValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveEnvironmentValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveEnvironmentValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveEnvironmentValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveEnvironmentValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueRequest) GetValue() *EnvironmentAttributeValue {
+	if x != nil {
+		return x.Value
+	}
+	return nil
+}
+
+type AttributeValueServiceSaveEnvironmentValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueResponse) Reset() {
+	*x = AttributeValueServiceSaveEnvironmentValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceSaveEnvironmentValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceSaveEnvironmentValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceSaveEnvironmentValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceSaveEnvironmentValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *AttributeValueServiceSaveEnvironmentValueResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteEnvironmentValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueRequest) Reset() {
+	*x = AttributeValueServiceDeleteEnvironmentValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteEnvironmentValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteEnvironmentValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteEnvironmentValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeValueServiceDeleteEnvironmentValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueResponse) Reset() {
+	*x = AttributeValueServiceDeleteEnvironmentValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceDeleteEnvironmentValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceDeleteEnvironmentValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceDeleteEnvironmentValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceDeleteEnvironmentValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{45}
+}
+
+type AttributeValueServiceFindEnvironmentValueRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueRequest) Reset() {
+	*x = AttributeValueServiceFindEnvironmentValueRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindEnvironmentValueRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindEnvironmentValueRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindEnvironmentValueRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindEnvironmentValueRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{46}
+}
+
+type AttributeValueServiceFindEnvironmentValueResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Environment   *EnvironmentObject     `protobuf:"bytes,1,opt,name=environment,proto3" json:"environment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueResponse) Reset() {
+	*x = AttributeValueServiceFindEnvironmentValueResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[47]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindEnvironmentValueResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindEnvironmentValueResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[47]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindEnvironmentValueResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindEnvironmentValueResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{47}
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueResponse) GetEnvironment() *EnvironmentObject {
+	if x != nil {
+		return x.Environment
+	}
+	return nil
+}
+
+type AttributeValueServiceFindEnvironmentValueWithDefinitionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) Reset() {
+	*x = AttributeValueServiceFindEnvironmentValueWithDefinitionRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[48]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[48]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindEnvironmentValueWithDefinitionRequest.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{48}
+}
+
+type AttributeValueServiceFindEnvironmentValueWithDefinitionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Environment   *EnvironmentObject     `protobuf:"bytes,1,opt,name=environment,proto3" json:"environment,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) Reset() {
+	*x = AttributeValueServiceFindEnvironmentValueWithDefinitionResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[49]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) ProtoMessage() {}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[49]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeValueServiceFindEnvironmentValueWithDefinitionResponse.ProtoReflect.Descriptor instead.
+func (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{49}
+}
+
+func (x *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) GetEnvironment() *EnvironmentObject {
+	if x != nil {
+		return x.Environment
+	}
+	return nil
+}
+
+type AttributeDefinitionServiceSaveRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Definition    *AttributeDefinition   `protobuf:"bytes,1,opt,name=definition,proto3" json:"definition,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceSaveRequest) Reset() {
+	*x = AttributeDefinitionServiceSaveRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[50]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceSaveRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceSaveRequest) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceSaveRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[50]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceSaveRequest.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceSaveRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{50}
+}
+
+func (x *AttributeDefinitionServiceSaveRequest) GetDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+type AttributeDefinitionServiceSaveResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceSaveResponse) Reset() {
+	*x = AttributeDefinitionServiceSaveResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceSaveResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceSaveResponse) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceSaveResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceSaveResponse.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceSaveResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *AttributeDefinitionServiceSaveResponse) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeDefinitionServiceFirstRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceFirstRequest) Reset() {
+	*x = AttributeDefinitionServiceFirstRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceFirstRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceFirstRequest) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceFirstRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceFirstRequest.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceFirstRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{52}
+}
+
+func (x *AttributeDefinitionServiceFirstRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeDefinitionServiceFirstResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Definition    *AttributeDefinition   `protobuf:"bytes,1,opt,name=definition,proto3" json:"definition,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceFirstResponse) Reset() {
+	*x = AttributeDefinitionServiceFirstResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceFirstResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceFirstResponse) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceFirstResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceFirstResponse.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceFirstResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *AttributeDefinitionServiceFirstResponse) GetDefinition() *AttributeDefinition {
+	if x != nil {
+		return x.Definition
+	}
+	return nil
+}
+
+type AttributeDefinitionServiceDeleteRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceDeleteRequest) Reset() {
+	*x = AttributeDefinitionServiceDeleteRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceDeleteRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceDeleteRequest) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceDeleteRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceDeleteRequest.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceDeleteRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *AttributeDefinitionServiceDeleteRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+type AttributeDefinitionServiceDeleteResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceDeleteResponse) Reset() {
+	*x = AttributeDefinitionServiceDeleteResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceDeleteResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceDeleteResponse) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceDeleteResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceDeleteResponse.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceDeleteResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{55}
+}
+
+type AttributeDefinitionServiceFindRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceFindRequest) Reset() {
+	*x = AttributeDefinitionServiceFindRequest{}
+	mi := &file_permission_v1_abac_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceFindRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceFindRequest) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceFindRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceFindRequest.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceFindRequest) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{56}
+}
+
+type AttributeDefinitionServiceFindResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BizDefinition *BizDefinition         `protobuf:"bytes,1,opt,name=biz_definition,json=bizDefinition,proto3" json:"biz_definition,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AttributeDefinitionServiceFindResponse) Reset() {
+	*x = AttributeDefinitionServiceFindResponse{}
+	mi := &file_permission_v1_abac_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AttributeDefinitionServiceFindResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AttributeDefinitionServiceFindResponse) ProtoMessage() {}
+
+func (x *AttributeDefinitionServiceFindResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_v1_abac_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AttributeDefinitionServiceFindResponse.ProtoReflect.Descriptor instead.
+func (*AttributeDefinitionServiceFindResponse) Descriptor() ([]byte, []int) {
+	return file_permission_v1_abac_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *AttributeDefinitionServiceFindResponse) GetBizDefinition() *BizDefinition {
+	if x != nil {
+		return x.BizDefinition
+	}
+	return nil
+}
+
 var File_permission_v1_abac_proto protoreflect.FileDescriptor
 
 const file_permission_v1_abac_proto_rawDesc = "" +
 	"\n" +
-	"\x18permission/v1/abac.proto\x12\rpermission.v12\r\n" +
-	"\vABACServiceB\xc3\x01\n" +
+	"\x18permission/v1/abac.proto\x12\rpermission.v1\"\x8f\x02\n" +
+	"\x06Policy\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x123\n" +
+	"\x06status\x18\x05 \x01(\x0e2\x1b.permission.v1.PolicyStatusR\x06status\x12-\n" +
+	"\x06effect\x18\x06 \x01(\x0e2\x15.permission.v1.EffectR\x06effect\x12/\n" +
+	"\x05rules\x18\a \x03(\v2\x19.permission.v1.PolicyRuleR\x05rules\x12\x14\n" +
+	"\x05ctime\x18\b \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\t \x01(\x03R\x05utime\"\xe0\x02\n" +
+	"\n" +
+	"PolicyRule\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12U\n" +
+	"\x14attribute_definition\x18\x02 \x01(\v2\".permission.v1.AttributeDefinitionR\x13attributeDefinition\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\x126\n" +
+	"\tleft_rule\x18\x04 \x01(\v2\x19.permission.v1.PolicyRuleR\bleftRule\x128\n" +
+	"\n" +
+	"right_rule\x18\x05 \x01(\v2\x19.permission.v1.PolicyRuleR\trightRule\x127\n" +
+	"\boperator\x18\x06 \x01(\x0e2\x1b.permission.v1.RuleOperatorR\boperator\x12\x14\n" +
+	"\x05ctime\x18\a \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\b \x01(\x03R\x05utime\"\xad\x01\n" +
+	"\x15SubjectAttributeValue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"definition\x18\x02 \x01(\v2\".permission.v1.AttributeDefinitionR\n" +
+	"definition\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\x12\x14\n" +
+	"\x05ctime\x18\x04 \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\x05 \x01(\x03R\x05utime\"\xae\x01\n" +
+	"\x16ResourceAttributeValue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"definition\x18\x02 \x01(\v2\".permission.v1.AttributeDefinitionR\n" +
+	"definition\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\x12\x14\n" +
+	"\x05ctime\x18\x04 \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\x05 \x01(\x03R\x05utime\"\xb1\x01\n" +
+	"\x19EnvironmentAttributeValue\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12B\n" +
+	"\n" +
+	"definition\x18\x02 \x01(\v2\".permission.v1.AttributeDefinitionR\n" +
+	"definition\x12\x14\n" +
+	"\x05value\x18\x03 \x01(\tR\x05value\x12\x14\n" +
+	"\x05ctime\x18\x04 \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\x05 \x01(\x03R\x05utime\"p\n" +
+	"\rSubjectObject\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12O\n" +
+	"\x10attribute_values\x18\x03 \x03(\v2$.permission.v1.SubjectAttributeValueR\x0fattributeValues\"r\n" +
+	"\x0eResourceObject\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12P\n" +
+	"\x10attribute_values\x18\x03 \x03(\v2%.permission.v1.ResourceAttributeValueR\x0fattributeValues\"h\n" +
+	"\x11EnvironmentObject\x12S\n" +
+	"\x10attribute_values\x18\x02 \x03(\v2(.permission.v1.EnvironmentAttributeValueR\x0fattributeValues\"\xa2\x02\n" +
+	"\x13AttributeDefinition\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x124\n" +
+	"\tdata_type\x18\x04 \x01(\x0e2\x17.permission.v1.DataTypeR\bdataType\x12:\n" +
+	"\ventity_type\x18\x05 \x01(\x0e2\x19.permission.v1.EntityTypeR\n" +
+	"entityType\x12'\n" +
+	"\x0fvalidation_rule\x18\x06 \x01(\tR\x0evalidationRule\x12\x14\n" +
+	"\x05ctime\x18\a \x01(\x03R\x05ctime\x12\x14\n" +
+	"\x05utime\x18\b \x01(\x03R\x05utime\"\xf4\x01\n" +
+	"\rBizDefinition\x12G\n" +
+	"\rsubject_attrs\x18\x02 \x03(\v2\".permission.v1.AttributeDefinitionR\fsubjectAttrs\x12I\n" +
+	"\x0eresource_attrs\x18\x03 \x03(\v2\".permission.v1.AttributeDefinitionR\rresourceAttrs\x12O\n" +
+	"\x11environment_attrs\x18\x04 \x03(\v2\".permission.v1.AttributeDefinitionR\x10environmentAttrs\"I\n" +
+	"\x18PolicyServiceSaveRequest\x12-\n" +
+	"\x06policy\x18\x01 \x01(\v2\x15.permission.v1.PolicyR\x06policy\"+\n" +
+	"\x19PolicyServiceSaveResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\",\n" +
+	"\x1aPolicyServiceDeleteRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"\x1d\n" +
+	"\x1bPolicyServiceDeleteResponse\"+\n" +
+	"\x19PolicyServiceFirstRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"K\n" +
+	"\x1aPolicyServiceFirstResponse\x12-\n" +
+	"\x06policy\x18\x01 \x01(\v2\x15.permission.v1.PolicyR\x06policy\"j\n" +
+	"\x1cPolicyServiceSaveRuleRequest\x12\x1b\n" +
+	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12-\n" +
+	"\x04rule\x18\x02 \x01(\v2\x19.permission.v1.PolicyRuleR\x04rule\"/\n" +
+	"\x1dPolicyServiceSaveRuleResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"9\n" +
+	"\x1ePolicyServiceDeleteRuleRequest\x12\x17\n" +
+	"\arule_id\x18\x01 \x01(\x03R\x06ruleId\"!\n" +
+	"\x1fPolicyServiceDeleteRuleResponse\"X\n" +
+	"/PolicyServiceFindPoliciesByPermissionIDsRequest\x12%\n" +
+	"\x0epermission_ids\x18\x01 \x03(\x03R\rpermissionIds\"e\n" +
+	"0PolicyServiceFindPoliciesByPermissionIDsResponse\x121\n" +
+	"\bpolicies\x18\x01 \x03(\v2\x15.permission.v1.PolicyR\bpolicies\"\x9b\x01\n" +
+	"(PolicyServiceSavePermissionPolicyRequest\x12\x1b\n" +
+	"\tpolicy_id\x18\x01 \x01(\x03R\bpolicyId\x12#\n" +
+	"\rpermission_id\x18\x02 \x01(\x03R\fpermissionId\x12-\n" +
+	"\x06effect\x18\x03 \x01(\x0e2\x15.permission.v1.EffectR\x06effect\"+\n" +
+	")PolicyServiceSavePermissionPolicyResponse\"P\n" +
+	" PolicyServiceFindPoliciesRequest\x12\x16\n" +
+	"\x06offset\x18\x01 \x01(\x05R\x06offset\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\"l\n" +
+	"!PolicyServiceFindPoliciesResponse\x12\x14\n" +
+	"\x05total\x18\x01 \x01(\x03R\x05total\x121\n" +
+	"\bpolicies\x18\x02 \x03(\v2\x15.permission.v1.PolicyR\bpolicies\"\x89\x01\n" +
+	",AttributeValueServiceSaveSubjectValueRequest\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x01 \x01(\x03R\tsubjectId\x12:\n" +
+	"\x05value\x18\x02 \x01(\v2$.permission.v1.SubjectAttributeValueR\x05value\"?\n" +
+	"-AttributeValueServiceSaveSubjectValueResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"@\n" +
+	".AttributeValueServiceDeleteSubjectValueRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"1\n" +
+	"/AttributeValueServiceDeleteSubjectValueResponse\"M\n" +
+	",AttributeValueServiceFindSubjectValueRequest\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x01 \x01(\x03R\tsubjectId\"g\n" +
+	"-AttributeValueServiceFindSubjectValueResponse\x126\n" +
+	"\asubject\x18\x01 \x01(\v2\x1c.permission.v1.SubjectObjectR\asubject\"[\n" +
+	":AttributeValueServiceFindSubjectValueWithDefinitionRequest\x12\x1d\n" +
+	"\n" +
+	"subject_id\x18\x01 \x01(\x03R\tsubjectId\"u\n" +
+	";AttributeValueServiceFindSubjectValueWithDefinitionResponse\x126\n" +
+	"\asubject\x18\x01 \x01(\v2\x1c.permission.v1.SubjectObjectR\asubject\"\x8d\x01\n" +
+	"-AttributeValueServiceSaveResourceValueRequest\x12\x1f\n" +
+	"\vresource_id\x18\x01 \x01(\x03R\n" +
+	"resourceId\x12;\n" +
+	"\x05value\x18\x02 \x01(\v2%.permission.v1.ResourceAttributeValueR\x05value\"@\n" +
+	".AttributeValueServiceSaveResourceValueResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"A\n" +
+	"/AttributeValueServiceDeleteResourceValueRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"2\n" +
+	"0AttributeValueServiceDeleteResourceValueResponse\"P\n" +
+	"-AttributeValueServiceFindResourceValueRequest\x12\x1f\n" +
+	"\vresource_id\x18\x01 \x01(\x03R\n" +
+	"resourceId\"k\n" +
+	".AttributeValueServiceFindResourceValueResponse\x129\n" +
+	"\bresource\x18\x01 \x01(\v2\x1d.permission.v1.ResourceObjectR\bresource\"^\n" +
+	";AttributeValueServiceFindResourceValueWithDefinitionRequest\x12\x1f\n" +
+	"\vresource_id\x18\x01 \x01(\x03R\n" +
+	"resourceId\"y\n" +
+	"<AttributeValueServiceFindResourceValueWithDefinitionResponse\x129\n" +
+	"\bresource\x18\x01 \x01(\v2\x1d.permission.v1.ResourceObjectR\bresource\"r\n" +
+	"0AttributeValueServiceSaveEnvironmentValueRequest\x12>\n" +
+	"\x05value\x18\x01 \x01(\v2(.permission.v1.EnvironmentAttributeValueR\x05value\"C\n" +
+	"1AttributeValueServiceSaveEnvironmentValueResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"D\n" +
+	"2AttributeValueServiceDeleteEnvironmentValueRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"5\n" +
+	"3AttributeValueServiceDeleteEnvironmentValueResponse\"2\n" +
+	"0AttributeValueServiceFindEnvironmentValueRequest\"w\n" +
+	"1AttributeValueServiceFindEnvironmentValueResponse\x12B\n" +
+	"\venvironment\x18\x01 \x01(\v2 .permission.v1.EnvironmentObjectR\venvironment\"@\n" +
+	">AttributeValueServiceFindEnvironmentValueWithDefinitionRequest\"\x85\x01\n" +
+	"?AttributeValueServiceFindEnvironmentValueWithDefinitionResponse\x12B\n" +
+	"\venvironment\x18\x01 \x01(\v2 .permission.v1.EnvironmentObjectR\venvironment\"k\n" +
+	"%AttributeDefinitionServiceSaveRequest\x12B\n" +
+	"\n" +
+	"definition\x18\x01 \x01(\v2\".permission.v1.AttributeDefinitionR\n" +
+	"definition\"8\n" +
+	"&AttributeDefinitionServiceSaveResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"8\n" +
+	"&AttributeDefinitionServiceFirstRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"m\n" +
+	"'AttributeDefinitionServiceFirstResponse\x12B\n" +
+	"\n" +
+	"definition\x18\x01 \x01(\v2\".permission.v1.AttributeDefinitionR\n" +
+	"definition\"9\n" +
+	"'AttributeDefinitionServiceDeleteRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\"*\n" +
+	"(AttributeDefinitionServiceDeleteResponse\"'\n" +
+	"%AttributeDefinitionServiceFindRequest\"m\n" +
+	"&AttributeDefinitionServiceFindResponse\x12C\n" +
+	"\x0ebiz_definition\x18\x01 \x01(\v2\x1c.permission.v1.BizDefinitionR\rbizDefinition*_\n" +
+	"\fPolicyStatus\x12\x19\n" +
+	"\x15POLICY_STATUS_UNKNOWN\x10\x00\x12\x18\n" +
+	"\x14POLICY_STATUS_ACTIVE\x10\x01\x12\x1a\n" +
+	"\x16POLICY_STATUS_INACTIVE\x10\x02*\xcd\x02\n" +
+	"\fRuleOperator\x12\x19\n" +
+	"\x15RULE_OPERATOR_UNKNOWN\x10\x00\x12\x18\n" +
+	"\x14RULE_OPERATOR_EQUALS\x10\x01\x12\x1c\n" +
+	"\x18RULE_OPERATOR_NOT_EQUALS\x10\x02\x12\x19\n" +
+	"\x15RULE_OPERATOR_GREATER\x10\x03\x12\x16\n" +
+	"\x12RULE_OPERATOR_LESS\x10\x04\x12\"\n" +
+	"\x1eRULE_OPERATOR_GREATER_OR_EQUAL\x10\x05\x12\x1f\n" +
+	"\x1bRULE_OPERATOR_LESS_OR_EQUAL\x10\x06\x12\x15\n" +
+	"\x11RULE_OPERATOR_AND\x10\a\x12\x14\n" +
+	"\x10RULE_OPERATOR_OR\x10\b\x12\x14\n" +
+	"\x10RULE_OPERATOR_IN\x10\t\x12\x18\n" +
+	"\x14RULE_OPERATOR_NOT_IN\x10\n" +
+	"\x12\x15\n" +
+	"\x11RULE_OPERATOR_NOT\x10\v*?\n" +
+	"\x06Effect\x12\x12\n" +
+	"\x0eEFFECT_UNKNOWN\x10\x00\x12\x10\n" +
+	"\fEFFECT_ALLOW\x10\x01\x12\x0f\n" +
+	"\vEFFECT_DENY\x10\x02*\x91\x01\n" +
+	"\bDataType\x12\x15\n" +
+	"\x11DATA_TYPE_UNKNOWN\x10\x00\x12\x14\n" +
+	"\x10DATA_TYPE_STRING\x10\x01\x12\x14\n" +
+	"\x10DATA_TYPE_NUMBER\x10\x02\x12\x15\n" +
+	"\x11DATA_TYPE_BOOLEAN\x10\x03\x12\x13\n" +
+	"\x0fDATA_TYPE_FLOAT\x10\x04\x12\x16\n" +
+	"\x12DATA_TYPE_DATETIME\x10\x05*u\n" +
+	"\n" +
+	"EntityType\x12\x17\n" +
+	"\x13ENTITY_TYPE_UNKNOWN\x10\x00\x12\x17\n" +
+	"\x13ENTITY_TYPE_SUBJECT\x10\x01\x12\x18\n" +
+	"\x14ENTITY_TYPE_RESOURCE\x10\x02\x12\x1b\n" +
+	"\x17ENTITY_TYPE_ENVIRONMENT\x10\x032\x8a\x06\n" +
+	"\rPolicyService\x12[\n" +
+	"\x04Save\x12'.permission.v1.PolicyServiceSaveRequest\x1a(.permission.v1.PolicyServiceSaveResponse\"\x00\x12a\n" +
+	"\x06Delete\x12).permission.v1.PolicyServiceDeleteRequest\x1a*.permission.v1.PolicyServiceDeleteResponse\"\x00\x12^\n" +
+	"\x05First\x12(.permission.v1.PolicyServiceFirstRequest\x1a).permission.v1.PolicyServiceFirstResponse\"\x00\x12g\n" +
+	"\bSaveRule\x12+.permission.v1.PolicyServiceSaveRuleRequest\x1a,.permission.v1.PolicyServiceSaveRuleResponse\"\x00\x12m\n" +
+	"\n" +
+	"DeleteRule\x12-.permission.v1.PolicyServiceDeleteRuleRequest\x1a..permission.v1.PolicyServiceDeleteRuleResponse\"\x00\x12\x8b\x01\n" +
+	"\x14SavePermissionPolicy\x127.permission.v1.PolicyServiceSavePermissionPolicyRequest\x1a8.permission.v1.PolicyServiceSavePermissionPolicyResponse\"\x00\x12s\n" +
+	"\fFindPolicies\x12/.permission.v1.PolicyServiceFindPoliciesRequest\x1a0.permission.v1.PolicyServiceFindPoliciesResponse\"\x002\xf6\v\n" +
+	"\x15AttributeValueService\x12\x8f\x01\n" +
+	"\x10SaveSubjectValue\x12;.permission.v1.AttributeValueServiceSaveSubjectValueRequest\x1a<.permission.v1.AttributeValueServiceSaveSubjectValueResponse\"\x00\x12\x95\x01\n" +
+	"\x12DeleteSubjectValue\x12=.permission.v1.AttributeValueServiceDeleteSubjectValueRequest\x1a>.permission.v1.AttributeValueServiceDeleteSubjectValueResponse\"\x00\x12\xb9\x01\n" +
+	"\x1eFindSubjectValueWithDefinition\x12I.permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionRequest\x1aJ.permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse\"\x00\x12\x92\x01\n" +
+	"\x11SaveResourceValue\x12<.permission.v1.AttributeValueServiceSaveResourceValueRequest\x1a=.permission.v1.AttributeValueServiceSaveResourceValueResponse\"\x00\x12\x98\x01\n" +
+	"\x13DeleteResourceValue\x12>.permission.v1.AttributeValueServiceDeleteResourceValueRequest\x1a?.permission.v1.AttributeValueServiceDeleteResourceValueResponse\"\x00\x12\xbc\x01\n" +
+	"\x1fFindResourceValueWithDefinition\x12J.permission.v1.AttributeValueServiceFindResourceValueWithDefinitionRequest\x1aK.permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse\"\x00\x12\x9b\x01\n" +
+	"\x14SaveEnvironmentValue\x12?.permission.v1.AttributeValueServiceSaveEnvironmentValueRequest\x1a@.permission.v1.AttributeValueServiceSaveEnvironmentValueResponse\"\x00\x12\xa1\x01\n" +
+	"\x16DeleteEnvironmentValue\x12A.permission.v1.AttributeValueServiceDeleteEnvironmentValueRequest\x1aB.permission.v1.AttributeValueServiceDeleteEnvironmentValueResponse\"\x00\x12\xc5\x01\n" +
+	"\"FindEnvironmentValueWithDefinition\x12M.permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest\x1aN.permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse\"\x002\x81\x04\n" +
+	"\x1aAttributeDefinitionService\x12u\n" +
+	"\x04Save\x124.permission.v1.AttributeDefinitionServiceSaveRequest\x1a5.permission.v1.AttributeDefinitionServiceSaveResponse\"\x00\x12x\n" +
+	"\x05First\x125.permission.v1.AttributeDefinitionServiceFirstRequest\x1a6.permission.v1.AttributeDefinitionServiceFirstResponse\"\x00\x12{\n" +
+	"\x06Delete\x126.permission.v1.AttributeDefinitionServiceDeleteRequest\x1a7.permission.v1.AttributeDefinitionServiceDeleteResponse\"\x00\x12u\n" +
+	"\x04Find\x124.permission.v1.AttributeDefinitionServiceFindRequest\x1a5.permission.v1.AttributeDefinitionServiceFindResponse\"\x00B\xc3\x01\n" +
 	"\x11com.permission.v1B\tAbacProtoP\x01ZNgitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionv1\xa2\x02\x03PXX\xaa\x02\rPermission.V1\xca\x02\rPermission\\V1\xe2\x02\x19Permission\\V1\\GPBMetadata\xea\x02\x0ePermission::V1b\x06proto3"
 
 var (
-	file_permission_v1_abac_proto_goTypes = []any{}
-	file_permission_v1_abac_proto_depIdxs = []int32{
-		0, // [0:0] is the sub-list for method output_type
-		0, // [0:0] is the sub-list for method input_type
-		0, // [0:0] is the sub-list for extension type_name
-		0, // [0:0] is the sub-list for extension extendee
-		0, // [0:0] is the sub-list for field type_name
+	file_permission_v1_abac_proto_rawDescOnce sync.Once
+	file_permission_v1_abac_proto_rawDescData []byte
+)
+
+func file_permission_v1_abac_proto_rawDescGZIP() []byte {
+	file_permission_v1_abac_proto_rawDescOnce.Do(func() {
+		file_permission_v1_abac_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_permission_v1_abac_proto_rawDesc), len(file_permission_v1_abac_proto_rawDesc)))
+	})
+	return file_permission_v1_abac_proto_rawDescData
+}
+
+var (
+	file_permission_v1_abac_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+	file_permission_v1_abac_proto_msgTypes  = make([]protoimpl.MessageInfo, 58)
+	file_permission_v1_abac_proto_goTypes   = []any{
+		(PolicyStatus)(0),                                                       // 0: permission.v1.PolicyStatus
+		(RuleOperator)(0),                                                       // 1: permission.v1.RuleOperator
+		(Effect)(0),                                                             // 2: permission.v1.Effect
+		(DataType)(0),                                                           // 3: permission.v1.DataType
+		(EntityType)(0),                                                         // 4: permission.v1.EntityType
+		(*Policy)(nil),                                                          // 5: permission.v1.Policy
+		(*PolicyRule)(nil),                                                      // 6: permission.v1.PolicyRule
+		(*SubjectAttributeValue)(nil),                                           // 7: permission.v1.SubjectAttributeValue
+		(*ResourceAttributeValue)(nil),                                          // 8: permission.v1.ResourceAttributeValue
+		(*EnvironmentAttributeValue)(nil),                                       // 9: permission.v1.EnvironmentAttributeValue
+		(*SubjectObject)(nil),                                                   // 10: permission.v1.SubjectObject
+		(*ResourceObject)(nil),                                                  // 11: permission.v1.ResourceObject
+		(*EnvironmentObject)(nil),                                               // 12: permission.v1.EnvironmentObject
+		(*AttributeDefinition)(nil),                                             // 13: permission.v1.AttributeDefinition
+		(*BizDefinition)(nil),                                                   // 14: permission.v1.BizDefinition
+		(*PolicyServiceSaveRequest)(nil),                                        // 15: permission.v1.PolicyServiceSaveRequest
+		(*PolicyServiceSaveResponse)(nil),                                       // 16: permission.v1.PolicyServiceSaveResponse
+		(*PolicyServiceDeleteRequest)(nil),                                      // 17: permission.v1.PolicyServiceDeleteRequest
+		(*PolicyServiceDeleteResponse)(nil),                                     // 18: permission.v1.PolicyServiceDeleteResponse
+		(*PolicyServiceFirstRequest)(nil),                                       // 19: permission.v1.PolicyServiceFirstRequest
+		(*PolicyServiceFirstResponse)(nil),                                      // 20: permission.v1.PolicyServiceFirstResponse
+		(*PolicyServiceSaveRuleRequest)(nil),                                    // 21: permission.v1.PolicyServiceSaveRuleRequest
+		(*PolicyServiceSaveRuleResponse)(nil),                                   // 22: permission.v1.PolicyServiceSaveRuleResponse
+		(*PolicyServiceDeleteRuleRequest)(nil),                                  // 23: permission.v1.PolicyServiceDeleteRuleRequest
+		(*PolicyServiceDeleteRuleResponse)(nil),                                 // 24: permission.v1.PolicyServiceDeleteRuleResponse
+		(*PolicyServiceFindPoliciesByPermissionIDsRequest)(nil),                 // 25: permission.v1.PolicyServiceFindPoliciesByPermissionIDsRequest
+		(*PolicyServiceFindPoliciesByPermissionIDsResponse)(nil),                // 26: permission.v1.PolicyServiceFindPoliciesByPermissionIDsResponse
+		(*PolicyServiceSavePermissionPolicyRequest)(nil),                        // 27: permission.v1.PolicyServiceSavePermissionPolicyRequest
+		(*PolicyServiceSavePermissionPolicyResponse)(nil),                       // 28: permission.v1.PolicyServiceSavePermissionPolicyResponse
+		(*PolicyServiceFindPoliciesRequest)(nil),                                // 29: permission.v1.PolicyServiceFindPoliciesRequest
+		(*PolicyServiceFindPoliciesResponse)(nil),                               // 30: permission.v1.PolicyServiceFindPoliciesResponse
+		(*AttributeValueServiceSaveSubjectValueRequest)(nil),                    // 31: permission.v1.AttributeValueServiceSaveSubjectValueRequest
+		(*AttributeValueServiceSaveSubjectValueResponse)(nil),                   // 32: permission.v1.AttributeValueServiceSaveSubjectValueResponse
+		(*AttributeValueServiceDeleteSubjectValueRequest)(nil),                  // 33: permission.v1.AttributeValueServiceDeleteSubjectValueRequest
+		(*AttributeValueServiceDeleteSubjectValueResponse)(nil),                 // 34: permission.v1.AttributeValueServiceDeleteSubjectValueResponse
+		(*AttributeValueServiceFindSubjectValueRequest)(nil),                    // 35: permission.v1.AttributeValueServiceFindSubjectValueRequest
+		(*AttributeValueServiceFindSubjectValueResponse)(nil),                   // 36: permission.v1.AttributeValueServiceFindSubjectValueResponse
+		(*AttributeValueServiceFindSubjectValueWithDefinitionRequest)(nil),      // 37: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionRequest
+		(*AttributeValueServiceFindSubjectValueWithDefinitionResponse)(nil),     // 38: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse
+		(*AttributeValueServiceSaveResourceValueRequest)(nil),                   // 39: permission.v1.AttributeValueServiceSaveResourceValueRequest
+		(*AttributeValueServiceSaveResourceValueResponse)(nil),                  // 40: permission.v1.AttributeValueServiceSaveResourceValueResponse
+		(*AttributeValueServiceDeleteResourceValueRequest)(nil),                 // 41: permission.v1.AttributeValueServiceDeleteResourceValueRequest
+		(*AttributeValueServiceDeleteResourceValueResponse)(nil),                // 42: permission.v1.AttributeValueServiceDeleteResourceValueResponse
+		(*AttributeValueServiceFindResourceValueRequest)(nil),                   // 43: permission.v1.AttributeValueServiceFindResourceValueRequest
+		(*AttributeValueServiceFindResourceValueResponse)(nil),                  // 44: permission.v1.AttributeValueServiceFindResourceValueResponse
+		(*AttributeValueServiceFindResourceValueWithDefinitionRequest)(nil),     // 45: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionRequest
+		(*AttributeValueServiceFindResourceValueWithDefinitionResponse)(nil),    // 46: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse
+		(*AttributeValueServiceSaveEnvironmentValueRequest)(nil),                // 47: permission.v1.AttributeValueServiceSaveEnvironmentValueRequest
+		(*AttributeValueServiceSaveEnvironmentValueResponse)(nil),               // 48: permission.v1.AttributeValueServiceSaveEnvironmentValueResponse
+		(*AttributeValueServiceDeleteEnvironmentValueRequest)(nil),              // 49: permission.v1.AttributeValueServiceDeleteEnvironmentValueRequest
+		(*AttributeValueServiceDeleteEnvironmentValueResponse)(nil),             // 50: permission.v1.AttributeValueServiceDeleteEnvironmentValueResponse
+		(*AttributeValueServiceFindEnvironmentValueRequest)(nil),                // 51: permission.v1.AttributeValueServiceFindEnvironmentValueRequest
+		(*AttributeValueServiceFindEnvironmentValueResponse)(nil),               // 52: permission.v1.AttributeValueServiceFindEnvironmentValueResponse
+		(*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest)(nil),  // 53: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest
+		(*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse)(nil), // 54: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse
+		(*AttributeDefinitionServiceSaveRequest)(nil),                           // 55: permission.v1.AttributeDefinitionServiceSaveRequest
+		(*AttributeDefinitionServiceSaveResponse)(nil),                          // 56: permission.v1.AttributeDefinitionServiceSaveResponse
+		(*AttributeDefinitionServiceFirstRequest)(nil),                          // 57: permission.v1.AttributeDefinitionServiceFirstRequest
+		(*AttributeDefinitionServiceFirstResponse)(nil),                         // 58: permission.v1.AttributeDefinitionServiceFirstResponse
+		(*AttributeDefinitionServiceDeleteRequest)(nil),                         // 59: permission.v1.AttributeDefinitionServiceDeleteRequest
+		(*AttributeDefinitionServiceDeleteResponse)(nil),                        // 60: permission.v1.AttributeDefinitionServiceDeleteResponse
+		(*AttributeDefinitionServiceFindRequest)(nil),                           // 61: permission.v1.AttributeDefinitionServiceFindRequest
+		(*AttributeDefinitionServiceFindResponse)(nil),                          // 62: permission.v1.AttributeDefinitionServiceFindResponse
 	}
 )
+
+var file_permission_v1_abac_proto_depIdxs = []int32{
+	0,  // 0: permission.v1.Policy.status:type_name -> permission.v1.PolicyStatus
+	2,  // 1: permission.v1.Policy.effect:type_name -> permission.v1.Effect
+	6,  // 2: permission.v1.Policy.rules:type_name -> permission.v1.PolicyRule
+	13, // 3: permission.v1.PolicyRule.attribute_definition:type_name -> permission.v1.AttributeDefinition
+	6,  // 4: permission.v1.PolicyRule.left_rule:type_name -> permission.v1.PolicyRule
+	6,  // 5: permission.v1.PolicyRule.right_rule:type_name -> permission.v1.PolicyRule
+	1,  // 6: permission.v1.PolicyRule.operator:type_name -> permission.v1.RuleOperator
+	13, // 7: permission.v1.SubjectAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 8: permission.v1.ResourceAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 9: permission.v1.EnvironmentAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
+	7,  // 10: permission.v1.SubjectObject.attribute_values:type_name -> permission.v1.SubjectAttributeValue
+	8,  // 11: permission.v1.ResourceObject.attribute_values:type_name -> permission.v1.ResourceAttributeValue
+	9,  // 12: permission.v1.EnvironmentObject.attribute_values:type_name -> permission.v1.EnvironmentAttributeValue
+	3,  // 13: permission.v1.AttributeDefinition.data_type:type_name -> permission.v1.DataType
+	4,  // 14: permission.v1.AttributeDefinition.entity_type:type_name -> permission.v1.EntityType
+	13, // 15: permission.v1.BizDefinition.subject_attrs:type_name -> permission.v1.AttributeDefinition
+	13, // 16: permission.v1.BizDefinition.resource_attrs:type_name -> permission.v1.AttributeDefinition
+	13, // 17: permission.v1.BizDefinition.environment_attrs:type_name -> permission.v1.AttributeDefinition
+	5,  // 18: permission.v1.PolicyServiceSaveRequest.policy:type_name -> permission.v1.Policy
+	5,  // 19: permission.v1.PolicyServiceFirstResponse.policy:type_name -> permission.v1.Policy
+	6,  // 20: permission.v1.PolicyServiceSaveRuleRequest.rule:type_name -> permission.v1.PolicyRule
+	5,  // 21: permission.v1.PolicyServiceFindPoliciesByPermissionIDsResponse.policies:type_name -> permission.v1.Policy
+	2,  // 22: permission.v1.PolicyServiceSavePermissionPolicyRequest.effect:type_name -> permission.v1.Effect
+	5,  // 23: permission.v1.PolicyServiceFindPoliciesResponse.policies:type_name -> permission.v1.Policy
+	7,  // 24: permission.v1.AttributeValueServiceSaveSubjectValueRequest.value:type_name -> permission.v1.SubjectAttributeValue
+	10, // 25: permission.v1.AttributeValueServiceFindSubjectValueResponse.subject:type_name -> permission.v1.SubjectObject
+	10, // 26: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse.subject:type_name -> permission.v1.SubjectObject
+	8,  // 27: permission.v1.AttributeValueServiceSaveResourceValueRequest.value:type_name -> permission.v1.ResourceAttributeValue
+	11, // 28: permission.v1.AttributeValueServiceFindResourceValueResponse.resource:type_name -> permission.v1.ResourceObject
+	11, // 29: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse.resource:type_name -> permission.v1.ResourceObject
+	9,  // 30: permission.v1.AttributeValueServiceSaveEnvironmentValueRequest.value:type_name -> permission.v1.EnvironmentAttributeValue
+	12, // 31: permission.v1.AttributeValueServiceFindEnvironmentValueResponse.environment:type_name -> permission.v1.EnvironmentObject
+	12, // 32: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse.environment:type_name -> permission.v1.EnvironmentObject
+	13, // 33: permission.v1.AttributeDefinitionServiceSaveRequest.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 34: permission.v1.AttributeDefinitionServiceFirstResponse.definition:type_name -> permission.v1.AttributeDefinition
+	14, // 35: permission.v1.AttributeDefinitionServiceFindResponse.biz_definition:type_name -> permission.v1.BizDefinition
+	15, // 36: permission.v1.PolicyService.Save:input_type -> permission.v1.PolicyServiceSaveRequest
+	17, // 37: permission.v1.PolicyService.Delete:input_type -> permission.v1.PolicyServiceDeleteRequest
+	19, // 38: permission.v1.PolicyService.First:input_type -> permission.v1.PolicyServiceFirstRequest
+	21, // 39: permission.v1.PolicyService.SaveRule:input_type -> permission.v1.PolicyServiceSaveRuleRequest
+	23, // 40: permission.v1.PolicyService.DeleteRule:input_type -> permission.v1.PolicyServiceDeleteRuleRequest
+	27, // 41: permission.v1.PolicyService.SavePermissionPolicy:input_type -> permission.v1.PolicyServiceSavePermissionPolicyRequest
+	29, // 42: permission.v1.PolicyService.FindPolicies:input_type -> permission.v1.PolicyServiceFindPoliciesRequest
+	31, // 43: permission.v1.AttributeValueService.SaveSubjectValue:input_type -> permission.v1.AttributeValueServiceSaveSubjectValueRequest
+	33, // 44: permission.v1.AttributeValueService.DeleteSubjectValue:input_type -> permission.v1.AttributeValueServiceDeleteSubjectValueRequest
+	37, // 45: permission.v1.AttributeValueService.FindSubjectValueWithDefinition:input_type -> permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionRequest
+	39, // 46: permission.v1.AttributeValueService.SaveResourceValue:input_type -> permission.v1.AttributeValueServiceSaveResourceValueRequest
+	41, // 47: permission.v1.AttributeValueService.DeleteResourceValue:input_type -> permission.v1.AttributeValueServiceDeleteResourceValueRequest
+	45, // 48: permission.v1.AttributeValueService.FindResourceValueWithDefinition:input_type -> permission.v1.AttributeValueServiceFindResourceValueWithDefinitionRequest
+	47, // 49: permission.v1.AttributeValueService.SaveEnvironmentValue:input_type -> permission.v1.AttributeValueServiceSaveEnvironmentValueRequest
+	49, // 50: permission.v1.AttributeValueService.DeleteEnvironmentValue:input_type -> permission.v1.AttributeValueServiceDeleteEnvironmentValueRequest
+	53, // 51: permission.v1.AttributeValueService.FindEnvironmentValueWithDefinition:input_type -> permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest
+	55, // 52: permission.v1.AttributeDefinitionService.Save:input_type -> permission.v1.AttributeDefinitionServiceSaveRequest
+	57, // 53: permission.v1.AttributeDefinitionService.First:input_type -> permission.v1.AttributeDefinitionServiceFirstRequest
+	59, // 54: permission.v1.AttributeDefinitionService.Delete:input_type -> permission.v1.AttributeDefinitionServiceDeleteRequest
+	61, // 55: permission.v1.AttributeDefinitionService.Find:input_type -> permission.v1.AttributeDefinitionServiceFindRequest
+	16, // 56: permission.v1.PolicyService.Save:output_type -> permission.v1.PolicyServiceSaveResponse
+	18, // 57: permission.v1.PolicyService.Delete:output_type -> permission.v1.PolicyServiceDeleteResponse
+	20, // 58: permission.v1.PolicyService.First:output_type -> permission.v1.PolicyServiceFirstResponse
+	22, // 59: permission.v1.PolicyService.SaveRule:output_type -> permission.v1.PolicyServiceSaveRuleResponse
+	24, // 60: permission.v1.PolicyService.DeleteRule:output_type -> permission.v1.PolicyServiceDeleteRuleResponse
+	28, // 61: permission.v1.PolicyService.SavePermissionPolicy:output_type -> permission.v1.PolicyServiceSavePermissionPolicyResponse
+	30, // 62: permission.v1.PolicyService.FindPolicies:output_type -> permission.v1.PolicyServiceFindPoliciesResponse
+	32, // 63: permission.v1.AttributeValueService.SaveSubjectValue:output_type -> permission.v1.AttributeValueServiceSaveSubjectValueResponse
+	34, // 64: permission.v1.AttributeValueService.DeleteSubjectValue:output_type -> permission.v1.AttributeValueServiceDeleteSubjectValueResponse
+	38, // 65: permission.v1.AttributeValueService.FindSubjectValueWithDefinition:output_type -> permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse
+	40, // 66: permission.v1.AttributeValueService.SaveResourceValue:output_type -> permission.v1.AttributeValueServiceSaveResourceValueResponse
+	42, // 67: permission.v1.AttributeValueService.DeleteResourceValue:output_type -> permission.v1.AttributeValueServiceDeleteResourceValueResponse
+	46, // 68: permission.v1.AttributeValueService.FindResourceValueWithDefinition:output_type -> permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse
+	48, // 69: permission.v1.AttributeValueService.SaveEnvironmentValue:output_type -> permission.v1.AttributeValueServiceSaveEnvironmentValueResponse
+	50, // 70: permission.v1.AttributeValueService.DeleteEnvironmentValue:output_type -> permission.v1.AttributeValueServiceDeleteEnvironmentValueResponse
+	54, // 71: permission.v1.AttributeValueService.FindEnvironmentValueWithDefinition:output_type -> permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse
+	56, // 72: permission.v1.AttributeDefinitionService.Save:output_type -> permission.v1.AttributeDefinitionServiceSaveResponse
+	58, // 73: permission.v1.AttributeDefinitionService.First:output_type -> permission.v1.AttributeDefinitionServiceFirstResponse
+	60, // 74: permission.v1.AttributeDefinitionService.Delete:output_type -> permission.v1.AttributeDefinitionServiceDeleteResponse
+	62, // 75: permission.v1.AttributeDefinitionService.Find:output_type -> permission.v1.AttributeDefinitionServiceFindResponse
+	56, // [56:76] is the sub-list for method output_type
+	36, // [36:56] is the sub-list for method input_type
+	36, // [36:36] is the sub-list for extension type_name
+	36, // [36:36] is the sub-list for extension extendee
+	0,  // [0:36] is the sub-list for field type_name
+}
 
 func init() { file_permission_v1_abac_proto_init() }
 func file_permission_v1_abac_proto_init() {
@@ -50,13 +3543,15 @@ func file_permission_v1_abac_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_v1_abac_proto_rawDesc), len(file_permission_v1_abac_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   0,
+			NumEnums:      5,
+			NumMessages:   58,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   3,
 		},
 		GoTypes:           file_permission_v1_abac_proto_goTypes,
 		DependencyIndexes: file_permission_v1_abac_proto_depIdxs,
+		EnumInfos:         file_permission_v1_abac_proto_enumTypes,
+		MessageInfos:      file_permission_v1_abac_proto_msgTypes,
 	}.Build()
 	File_permission_v1_abac_proto = out.File
 	file_permission_v1_abac_proto_goTypes = nil

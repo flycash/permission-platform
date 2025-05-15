@@ -72,7 +72,7 @@ type PolicyDAO interface {
 	SavePolicy(ctx context.Context, policy Policy) (int64, error)
 	UpdatePolicyStatus(ctx context.Context, id int64, status string) error
 	DeletePolicy(ctx context.Context, bizID, id int64) error
-	FindPolicy(ctx context.Context, id int64) (Policy, error)
+	FindPolicy(ctx context.Context, bizID, id int64) (Policy, error)
 	FindPoliciesByIDs(ctx context.Context, ids []int64) ([]Policy, error)
 	FindPoliciesByBiz(ctx context.Context, bizID int64) ([]Policy, error)
 	PolicyList(ctx context.Context, bizID int64, offset, limit int) ([]Policy, error)
@@ -80,9 +80,9 @@ type PolicyDAO interface {
 
 	// PolicyRule 相关方法
 	SavePolicyRule(ctx context.Context, rule PolicyRule) (int64, error)
-	DeletePolicyRule(ctx context.Context, id int64) error
+	DeletePolicyRule(ctx context.Context, bizID, id int64) error
 	FindPolicyRule(ctx context.Context, id int64) (PolicyRule, error)
-	FindPolicyRulesByPolicyID(ctx context.Context, policyID int64) ([]PolicyRule, error)
+	FindPolicyRulesByPolicyID(ctx context.Context, bizID, policyID int64) ([]PolicyRule, error)
 	FindPolicyRulesByPolicyIDs(ctx context.Context, policyIDs []int64) (map[int64][]PolicyRule, error)
 
 	// PermissionPolicy 相关方法
@@ -157,10 +157,10 @@ func (p *policyDAO) DeletePolicy(ctx context.Context, bizID, id int64) error {
 	})
 }
 
-func (p *policyDAO) FindPolicy(ctx context.Context, id int64) (Policy, error) {
+func (p *policyDAO) FindPolicy(ctx context.Context, bizID, id int64) (Policy, error) {
 	var policy Policy
 	err := p.db.WithContext(ctx).
-		Where("id = ?", id).
+		Where("id = ? AND biz_id", id, bizID).
 		First(&policy).Error
 	return policy, err
 }
@@ -196,9 +196,9 @@ func (p *policyDAO) SavePolicyRule(ctx context.Context, rule PolicyRule) (int64,
 	return rule.ID, err
 }
 
-func (p *policyDAO) DeletePolicyRule(ctx context.Context, id int64) error {
+func (p *policyDAO) DeletePolicyRule(ctx context.Context, bizID, id int64) error {
 	return p.db.WithContext(ctx).
-		Where("id = ?", id).
+		Where("id = ? AND biz_id", id, bizID).
 		Delete(&PolicyRule{}).Error
 }
 
@@ -210,10 +210,10 @@ func (p *policyDAO) FindPolicyRule(ctx context.Context, id int64) (PolicyRule, e
 	return rule, err
 }
 
-func (p *policyDAO) FindPolicyRulesByPolicyID(ctx context.Context, policyID int64) ([]PolicyRule, error) {
+func (p *policyDAO) FindPolicyRulesByPolicyID(ctx context.Context, bizID, policyID int64) ([]PolicyRule, error) {
 	var rules []PolicyRule
 	err := p.db.WithContext(ctx).
-		Where(" policy_id = ?", policyID).
+		Where(" policy_id = ? AND biz_id = ?", policyID, bizID).
 		Find(&rules).Error
 	return rules, err
 }

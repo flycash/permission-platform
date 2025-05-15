@@ -13,9 +13,9 @@ import (
 type PolicyRepo interface {
 	Save(ctx context.Context, policy domain.Policy) (int64, error)
 	Delete(ctx context.Context, bizID, id int64) error
-	First(ctx context.Context, id int64) (domain.Policy, error) // 包含规则
+	First(ctx context.Context, bizID, id int64) (domain.Policy, error) // 包含规则
 	SaveRule(ctx context.Context, bizID, policyID int64, rule domain.PolicyRule) (int64, error)
-	DeleteRule(ctx context.Context, ruleID int64) error
+	DeleteRule(ctx context.Context, bizID, ruleID int64) error
 	FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionIDs []int64) ([]domain.Policy, error)
 	SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.Effect) error
 	FindPolicies(ctx context.Context, bizID int64, offset, limit int) (int64, []domain.Policy, error)
@@ -84,20 +84,20 @@ func (p *policyRepo) Delete(ctx context.Context, bizID, id int64) error {
 	return p.policyDAO.DeletePolicy(ctx, bizID, id)
 }
 
-func (p *policyRepo) First(ctx context.Context, id int64) (domain.Policy, error) {
+func (p *policyRepo) First(ctx context.Context, bizID, id int64) (domain.Policy, error) {
 	// 获取策略基本信息
 	var policy dao.Policy
 	var rules []dao.PolicyRule
 	var eg errgroup.Group
 	eg.Go(func() error {
 		var eerr error
-		policy, eerr = p.policyDAO.FindPolicy(ctx, id)
+		policy, eerr = p.policyDAO.FindPolicy(ctx, bizID, id)
 		return eerr
 	})
 
 	eg.Go(func() error {
 		var eerr error
-		rules, eerr = p.policyDAO.FindPolicyRulesByPolicyID(ctx, id)
+		rules, eerr = p.policyDAO.FindPolicyRulesByPolicyID(ctx, bizID, id)
 		return eerr
 	})
 
@@ -126,8 +126,8 @@ func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule d
 	return p.policyDAO.SavePolicyRule(ctx, ruleDAO)
 }
 
-func (p *policyRepo) DeleteRule(ctx context.Context, ruleID int64) error {
-	return p.policyDAO.DeletePolicyRule(ctx, ruleID)
+func (p *policyRepo) DeleteRule(ctx context.Context, bizID, ruleID int64) error {
+	return p.policyDAO.DeletePolicyRule(ctx, bizID, ruleID)
 }
 
 func (p *policyRepo) FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionID []int64) ([]domain.Policy, error) {

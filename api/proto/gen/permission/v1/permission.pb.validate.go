@@ -203,6 +203,12 @@ func (m *CheckPermissionRequest) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for SubjectAttributes
+
+	// no validation rules for ResourceAttributes
+
+	// no validation rules for EnvironmentAttributes
+
 	if len(errors) > 0 {
 		return CheckPermissionRequestMultiError(errors)
 	}

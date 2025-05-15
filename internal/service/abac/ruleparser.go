@@ -67,11 +67,11 @@ func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.Polic
 		default:
 			return false
 		}
-		checker, err := r.checkSelector.Select(rule.AttributeDefinition.DataType)
+		checkor, err := r.checkSelector.Select(rule.AttributeDefinition.DataType)
 		if err != nil {
 			return false
 		}
-		ok, err := checker.CheckAttribute(rule.Value, actualVal, rule.Operator)
+		ok, err := checkor.CheckAttribute(rule.Value, actualVal, rule.Operator)
 		if err != nil {
 			return false
 		}

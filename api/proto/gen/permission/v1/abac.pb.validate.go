@@ -34,3 +34,7264 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on Policy with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Policy) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Policy with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in PolicyMultiError, or nil if none found.
+func (m *Policy) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Policy) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for Description
+
+	// no validation rules for Status
+
+	// no validation rules for Effect
+
+	for idx, item := range m.GetRules() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PolicyValidationError{
+						field:  fmt.Sprintf("Rules[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PolicyValidationError{
+						field:  fmt.Sprintf("Rules[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PolicyValidationError{
+					field:  fmt.Sprintf("Rules[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return PolicyMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyMultiError is an error wrapping multiple validation errors returned by
+// Policy.ValidateAll() if the designated constraints aren't met.
+type PolicyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyMultiError) AllErrors() []error { return m }
+
+// PolicyValidationError is the validation error returned by Policy.Validate if
+// the designated constraints aren't met.
+type PolicyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyValidationError) ErrorName() string { return "PolicyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PolicyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicy.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyValidationError{}
+
+// Validate checks the field values on PolicyRule with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PolicyRule) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyRule with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PolicyRuleMultiError, or
+// nil if none found.
+func (m *PolicyRule) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyRule) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetAttributeDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "AttributeDefinition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "AttributeDefinition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAttributeDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyRuleValidationError{
+				field:  "AttributeDefinition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Value
+
+	if all {
+		switch v := interface{}(m.GetLeftRule()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "LeftRule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "LeftRule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLeftRule()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyRuleValidationError{
+				field:  "LeftRule",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetRightRule()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "RightRule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyRuleValidationError{
+					field:  "RightRule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRightRule()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyRuleValidationError{
+				field:  "RightRule",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Operator
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return PolicyRuleMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyRuleMultiError is an error wrapping multiple validation errors
+// returned by PolicyRule.ValidateAll() if the designated constraints aren't met.
+type PolicyRuleMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyRuleMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyRuleMultiError) AllErrors() []error { return m }
+
+// PolicyRuleValidationError is the validation error returned by
+// PolicyRule.Validate if the designated constraints aren't met.
+type PolicyRuleValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyRuleValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyRuleValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyRuleValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyRuleValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyRuleValidationError) ErrorName() string { return "PolicyRuleValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PolicyRuleValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyRule.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyRuleValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyRuleValidationError{}
+
+// Validate checks the field values on SubjectAttributeValue with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubjectAttributeValue) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubjectAttributeValue with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubjectAttributeValueMultiError, or nil if none found.
+func (m *SubjectAttributeValue) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubjectAttributeValue) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubjectAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubjectAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubjectAttributeValueValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Value
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return SubjectAttributeValueMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubjectAttributeValueMultiError is an error wrapping multiple validation
+// errors returned by SubjectAttributeValue.ValidateAll() if the designated
+// constraints aren't met.
+type SubjectAttributeValueMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubjectAttributeValueMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubjectAttributeValueMultiError) AllErrors() []error { return m }
+
+// SubjectAttributeValueValidationError is the validation error returned by
+// SubjectAttributeValue.Validate if the designated constraints aren't met.
+type SubjectAttributeValueValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubjectAttributeValueValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubjectAttributeValueValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubjectAttributeValueValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubjectAttributeValueValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubjectAttributeValueValidationError) ErrorName() string {
+	return "SubjectAttributeValueValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubjectAttributeValueValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubjectAttributeValue.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubjectAttributeValueValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubjectAttributeValueValidationError{}
+
+// Validate checks the field values on ResourceAttributeValue with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResourceAttributeValue) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResourceAttributeValue with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResourceAttributeValueMultiError, or nil if none found.
+func (m *ResourceAttributeValue) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResourceAttributeValue) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ResourceAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ResourceAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ResourceAttributeValueValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Value
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return ResourceAttributeValueMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResourceAttributeValueMultiError is an error wrapping multiple validation
+// errors returned by ResourceAttributeValue.ValidateAll() if the designated
+// constraints aren't met.
+type ResourceAttributeValueMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResourceAttributeValueMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResourceAttributeValueMultiError) AllErrors() []error { return m }
+
+// ResourceAttributeValueValidationError is the validation error returned by
+// ResourceAttributeValue.Validate if the designated constraints aren't met.
+type ResourceAttributeValueValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResourceAttributeValueValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResourceAttributeValueValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResourceAttributeValueValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResourceAttributeValueValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResourceAttributeValueValidationError) ErrorName() string {
+	return "ResourceAttributeValueValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResourceAttributeValueValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResourceAttributeValue.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResourceAttributeValueValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResourceAttributeValueValidationError{}
+
+// Validate checks the field values on EnvironmentAttributeValue with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *EnvironmentAttributeValue) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EnvironmentAttributeValue with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// EnvironmentAttributeValueMultiError, or nil if none found.
+func (m *EnvironmentAttributeValue) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EnvironmentAttributeValue) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, EnvironmentAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, EnvironmentAttributeValueValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return EnvironmentAttributeValueValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Value
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return EnvironmentAttributeValueMultiError(errors)
+	}
+
+	return nil
+}
+
+// EnvironmentAttributeValueMultiError is an error wrapping multiple validation
+// errors returned by EnvironmentAttributeValue.ValidateAll() if the
+// designated constraints aren't met.
+type EnvironmentAttributeValueMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EnvironmentAttributeValueMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EnvironmentAttributeValueMultiError) AllErrors() []error { return m }
+
+// EnvironmentAttributeValueValidationError is the validation error returned by
+// EnvironmentAttributeValue.Validate if the designated constraints aren't met.
+type EnvironmentAttributeValueValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EnvironmentAttributeValueValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EnvironmentAttributeValueValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EnvironmentAttributeValueValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EnvironmentAttributeValueValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EnvironmentAttributeValueValidationError) ErrorName() string {
+	return "EnvironmentAttributeValueValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EnvironmentAttributeValueValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEnvironmentAttributeValue.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EnvironmentAttributeValueValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EnvironmentAttributeValueValidationError{}
+
+// Validate checks the field values on SubjectObject with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SubjectObject) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubjectObject with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SubjectObjectMultiError, or
+// nil if none found.
+func (m *SubjectObject) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubjectObject) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	for idx, item := range m.GetAttributeValues() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SubjectObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SubjectObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SubjectObjectValidationError{
+					field:  fmt.Sprintf("AttributeValues[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SubjectObjectMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubjectObjectMultiError is an error wrapping multiple validation errors
+// returned by SubjectObject.ValidateAll() if the designated constraints
+// aren't met.
+type SubjectObjectMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubjectObjectMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubjectObjectMultiError) AllErrors() []error { return m }
+
+// SubjectObjectValidationError is the validation error returned by
+// SubjectObject.Validate if the designated constraints aren't met.
+type SubjectObjectValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubjectObjectValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubjectObjectValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubjectObjectValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubjectObjectValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubjectObjectValidationError) ErrorName() string { return "SubjectObjectValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SubjectObjectValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubjectObject.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubjectObjectValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubjectObjectValidationError{}
+
+// Validate checks the field values on ResourceObject with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ResourceObject) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResourceObject with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ResourceObjectMultiError,
+// or nil if none found.
+func (m *ResourceObject) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResourceObject) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	for idx, item := range m.GetAttributeValues() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ResourceObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ResourceObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ResourceObjectValidationError{
+					field:  fmt.Sprintf("AttributeValues[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ResourceObjectMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResourceObjectMultiError is an error wrapping multiple validation errors
+// returned by ResourceObject.ValidateAll() if the designated constraints
+// aren't met.
+type ResourceObjectMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResourceObjectMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResourceObjectMultiError) AllErrors() []error { return m }
+
+// ResourceObjectValidationError is the validation error returned by
+// ResourceObject.Validate if the designated constraints aren't met.
+type ResourceObjectValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResourceObjectValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResourceObjectValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResourceObjectValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResourceObjectValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResourceObjectValidationError) ErrorName() string { return "ResourceObjectValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ResourceObjectValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResourceObject.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResourceObjectValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResourceObjectValidationError{}
+
+// Validate checks the field values on EnvironmentObject with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *EnvironmentObject) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on EnvironmentObject with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// EnvironmentObjectMultiError, or nil if none found.
+func (m *EnvironmentObject) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *EnvironmentObject) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAttributeValues() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, EnvironmentObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, EnvironmentObjectValidationError{
+						field:  fmt.Sprintf("AttributeValues[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EnvironmentObjectValidationError{
+					field:  fmt.Sprintf("AttributeValues[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return EnvironmentObjectMultiError(errors)
+	}
+
+	return nil
+}
+
+// EnvironmentObjectMultiError is an error wrapping multiple validation errors
+// returned by EnvironmentObject.ValidateAll() if the designated constraints
+// aren't met.
+type EnvironmentObjectMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m EnvironmentObjectMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m EnvironmentObjectMultiError) AllErrors() []error { return m }
+
+// EnvironmentObjectValidationError is the validation error returned by
+// EnvironmentObject.Validate if the designated constraints aren't met.
+type EnvironmentObjectValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e EnvironmentObjectValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e EnvironmentObjectValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e EnvironmentObjectValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e EnvironmentObjectValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e EnvironmentObjectValidationError) ErrorName() string {
+	return "EnvironmentObjectValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e EnvironmentObjectValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sEnvironmentObject.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = EnvironmentObjectValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = EnvironmentObjectValidationError{}
+
+// Validate checks the field values on AttributeDefinition with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeDefinition) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AttributeDefinition with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeDefinitionMultiError, or nil if none found.
+func (m *AttributeDefinition) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinition) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Name
+
+	// no validation rules for Description
+
+	// no validation rules for DataType
+
+	// no validation rules for EntityType
+
+	// no validation rules for ValidationRule
+
+	// no validation rules for Ctime
+
+	// no validation rules for Utime
+
+	if len(errors) > 0 {
+		return AttributeDefinitionMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionMultiError is an error wrapping multiple validation
+// errors returned by AttributeDefinition.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionValidationError is the validation error returned by
+// AttributeDefinition.Validate if the designated constraints aren't met.
+type AttributeDefinitionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionValidationError) ErrorName() string {
+	return "AttributeDefinitionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinition.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionValidationError{}
+
+// Validate checks the field values on BizDefinition with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *BizDefinition) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on BizDefinition with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in BizDefinitionMultiError, or
+// nil if none found.
+func (m *BizDefinition) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *BizDefinition) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetSubjectAttrs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BizDefinitionValidationError{
+					field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetResourceAttrs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BizDefinitionValidationError{
+					field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetEnvironmentAttrs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, BizDefinitionValidationError{
+						field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return BizDefinitionValidationError{
+					field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return BizDefinitionMultiError(errors)
+	}
+
+	return nil
+}
+
+// BizDefinitionMultiError is an error wrapping multiple validation errors
+// returned by BizDefinition.ValidateAll() if the designated constraints
+// aren't met.
+type BizDefinitionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m BizDefinitionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m BizDefinitionMultiError) AllErrors() []error { return m }
+
+// BizDefinitionValidationError is the validation error returned by
+// BizDefinition.Validate if the designated constraints aren't met.
+type BizDefinitionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e BizDefinitionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e BizDefinitionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e BizDefinitionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e BizDefinitionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e BizDefinitionValidationError) ErrorName() string { return "BizDefinitionValidationError" }
+
+// Error satisfies the builtin error interface
+func (e BizDefinitionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sBizDefinition.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = BizDefinitionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = BizDefinitionValidationError{}
+
+// Validate checks the field values on PolicyServiceSaveRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceSaveRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceSaveRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceSaveRequestMultiError, or nil if none found.
+func (m *PolicyServiceSaveRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSaveRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPolicy()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyServiceSaveRequestValidationError{
+					field:  "Policy",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyServiceSaveRequestValidationError{
+					field:  "Policy",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPolicy()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyServiceSaveRequestValidationError{
+				field:  "Policy",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PolicyServiceSaveRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSaveRequestMultiError is an error wrapping multiple validation
+// errors returned by PolicyServiceSaveRequest.ValidateAll() if the designated
+// constraints aren't met.
+type PolicyServiceSaveRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSaveRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSaveRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSaveRequestValidationError is the validation error returned by
+// PolicyServiceSaveRequest.Validate if the designated constraints aren't met.
+type PolicyServiceSaveRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSaveRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSaveRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSaveRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSaveRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSaveRequestValidationError) ErrorName() string {
+	return "PolicyServiceSaveRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSaveRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSaveRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSaveRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSaveRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceSaveResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceSaveResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceSaveResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceSaveResponseMultiError, or nil if none found.
+func (m *PolicyServiceSaveResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSaveResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return PolicyServiceSaveResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSaveResponseMultiError is an error wrapping multiple validation
+// errors returned by PolicyServiceSaveResponse.ValidateAll() if the
+// designated constraints aren't met.
+type PolicyServiceSaveResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSaveResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSaveResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSaveResponseValidationError is the validation error returned by
+// PolicyServiceSaveResponse.Validate if the designated constraints aren't met.
+type PolicyServiceSaveResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSaveResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSaveResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSaveResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSaveResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSaveResponseValidationError) ErrorName() string {
+	return "PolicyServiceSaveResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSaveResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSaveResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSaveResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSaveResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceDeleteRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceDeleteRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceDeleteRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceDeleteRequestMultiError, or nil if none found.
+func (m *PolicyServiceDeleteRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceDeleteRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return PolicyServiceDeleteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceDeleteRequestMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceDeleteRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PolicyServiceDeleteRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceDeleteRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceDeleteRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceDeleteRequestValidationError is the validation error returned
+// by PolicyServiceDeleteRequest.Validate if the designated constraints aren't met.
+type PolicyServiceDeleteRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceDeleteRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceDeleteRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceDeleteRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceDeleteRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceDeleteRequestValidationError) ErrorName() string {
+	return "PolicyServiceDeleteRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceDeleteRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceDeleteRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceDeleteRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceDeleteRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceDeleteResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceDeleteResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceDeleteResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceDeleteResponseMultiError, or nil if none found.
+func (m *PolicyServiceDeleteResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceDeleteResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PolicyServiceDeleteResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceDeleteResponseMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceDeleteResponse.ValidateAll() if
+// the designated constraints aren't met.
+type PolicyServiceDeleteResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceDeleteResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceDeleteResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceDeleteResponseValidationError is the validation error returned
+// by PolicyServiceDeleteResponse.Validate if the designated constraints
+// aren't met.
+type PolicyServiceDeleteResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceDeleteResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceDeleteResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceDeleteResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceDeleteResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceDeleteResponseValidationError) ErrorName() string {
+	return "PolicyServiceDeleteResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceDeleteResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceDeleteResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceDeleteResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceDeleteResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceFirstRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceFirstRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceFirstRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceFirstRequestMultiError, or nil if none found.
+func (m *PolicyServiceFirstRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFirstRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return PolicyServiceFirstRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFirstRequestMultiError is an error wrapping multiple validation
+// errors returned by PolicyServiceFirstRequest.ValidateAll() if the
+// designated constraints aren't met.
+type PolicyServiceFirstRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFirstRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFirstRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFirstRequestValidationError is the validation error returned by
+// PolicyServiceFirstRequest.Validate if the designated constraints aren't met.
+type PolicyServiceFirstRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFirstRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceFirstRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceFirstRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceFirstRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFirstRequestValidationError) ErrorName() string {
+	return "PolicyServiceFirstRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFirstRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFirstRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFirstRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFirstRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceFirstResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceFirstResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceFirstResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceFirstResponseMultiError, or nil if none found.
+func (m *PolicyServiceFirstResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFirstResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPolicy()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyServiceFirstResponseValidationError{
+					field:  "Policy",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyServiceFirstResponseValidationError{
+					field:  "Policy",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPolicy()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyServiceFirstResponseValidationError{
+				field:  "Policy",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PolicyServiceFirstResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFirstResponseMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceFirstResponse.ValidateAll() if
+// the designated constraints aren't met.
+type PolicyServiceFirstResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFirstResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFirstResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFirstResponseValidationError is the validation error returned
+// by PolicyServiceFirstResponse.Validate if the designated constraints aren't met.
+type PolicyServiceFirstResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFirstResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceFirstResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceFirstResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceFirstResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFirstResponseValidationError) ErrorName() string {
+	return "PolicyServiceFirstResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFirstResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFirstResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFirstResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFirstResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceSaveRuleRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceSaveRuleRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceSaveRuleRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PolicyServiceSaveRuleRequestMultiError, or nil if none found.
+func (m *PolicyServiceSaveRuleRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSaveRuleRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PolicyId
+
+	if all {
+		switch v := interface{}(m.GetRule()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PolicyServiceSaveRuleRequestValidationError{
+					field:  "Rule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PolicyServiceSaveRuleRequestValidationError{
+					field:  "Rule",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRule()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PolicyServiceSaveRuleRequestValidationError{
+				field:  "Rule",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PolicyServiceSaveRuleRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSaveRuleRequestMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceSaveRuleRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PolicyServiceSaveRuleRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSaveRuleRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSaveRuleRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSaveRuleRequestValidationError is the validation error returned
+// by PolicyServiceSaveRuleRequest.Validate if the designated constraints
+// aren't met.
+type PolicyServiceSaveRuleRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSaveRuleRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSaveRuleRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSaveRuleRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSaveRuleRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSaveRuleRequestValidationError) ErrorName() string {
+	return "PolicyServiceSaveRuleRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSaveRuleRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSaveRuleRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSaveRuleRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSaveRuleRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceSaveRuleResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceSaveRuleResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceSaveRuleResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PolicyServiceSaveRuleResponseMultiError, or nil if none found.
+func (m *PolicyServiceSaveRuleResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSaveRuleResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return PolicyServiceSaveRuleResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSaveRuleResponseMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceSaveRuleResponse.ValidateAll()
+// if the designated constraints aren't met.
+type PolicyServiceSaveRuleResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSaveRuleResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSaveRuleResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSaveRuleResponseValidationError is the validation error
+// returned by PolicyServiceSaveRuleResponse.Validate if the designated
+// constraints aren't met.
+type PolicyServiceSaveRuleResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSaveRuleResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSaveRuleResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSaveRuleResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSaveRuleResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSaveRuleResponseValidationError) ErrorName() string {
+	return "PolicyServiceSaveRuleResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSaveRuleResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSaveRuleResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSaveRuleResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSaveRuleResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceDeleteRuleRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceDeleteRuleRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceDeleteRuleRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PolicyServiceDeleteRuleRequestMultiError, or nil if none found.
+func (m *PolicyServiceDeleteRuleRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceDeleteRuleRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RuleId
+
+	if len(errors) > 0 {
+		return PolicyServiceDeleteRuleRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceDeleteRuleRequestMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceDeleteRuleRequest.ValidateAll()
+// if the designated constraints aren't met.
+type PolicyServiceDeleteRuleRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceDeleteRuleRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceDeleteRuleRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceDeleteRuleRequestValidationError is the validation error
+// returned by PolicyServiceDeleteRuleRequest.Validate if the designated
+// constraints aren't met.
+type PolicyServiceDeleteRuleRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceDeleteRuleRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceDeleteRuleRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceDeleteRuleRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceDeleteRuleRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceDeleteRuleRequestValidationError) ErrorName() string {
+	return "PolicyServiceDeleteRuleRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceDeleteRuleRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceDeleteRuleRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceDeleteRuleRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceDeleteRuleRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceDeleteRuleResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceDeleteRuleResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceDeleteRuleResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PolicyServiceDeleteRuleResponseMultiError, or nil if none found.
+func (m *PolicyServiceDeleteRuleResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceDeleteRuleResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PolicyServiceDeleteRuleResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceDeleteRuleResponseMultiError is an error wrapping multiple
+// validation errors returned by PolicyServiceDeleteRuleResponse.ValidateAll()
+// if the designated constraints aren't met.
+type PolicyServiceDeleteRuleResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceDeleteRuleResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceDeleteRuleResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceDeleteRuleResponseValidationError is the validation error
+// returned by PolicyServiceDeleteRuleResponse.Validate if the designated
+// constraints aren't met.
+type PolicyServiceDeleteRuleResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceDeleteRuleResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceDeleteRuleResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceDeleteRuleResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceDeleteRuleResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceDeleteRuleResponseValidationError) ErrorName() string {
+	return "PolicyServiceDeleteRuleResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceDeleteRuleResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceDeleteRuleResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceDeleteRuleResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceDeleteRuleResponseValidationError{}
+
+// Validate checks the field values on
+// PolicyServiceFindPoliciesByPermissionIDsRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceFindPoliciesByPermissionIDsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// PolicyServiceFindPoliciesByPermissionIDsRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// PolicyServiceFindPoliciesByPermissionIDsRequestMultiError, or nil if none found.
+func (m *PolicyServiceFindPoliciesByPermissionIDsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFindPoliciesByPermissionIDsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PolicyServiceFindPoliciesByPermissionIDsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFindPoliciesByPermissionIDsRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// PolicyServiceFindPoliciesByPermissionIDsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type PolicyServiceFindPoliciesByPermissionIDsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFindPoliciesByPermissionIDsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFindPoliciesByPermissionIDsRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFindPoliciesByPermissionIDsRequestValidationError is the
+// validation error returned by
+// PolicyServiceFindPoliciesByPermissionIDsRequest.Validate if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesByPermissionIDsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) ErrorName() string {
+	return "PolicyServiceFindPoliciesByPermissionIDsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFindPoliciesByPermissionIDsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFindPoliciesByPermissionIDsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFindPoliciesByPermissionIDsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFindPoliciesByPermissionIDsRequestValidationError{}
+
+// Validate checks the field values on
+// PolicyServiceFindPoliciesByPermissionIDsResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceFindPoliciesByPermissionIDsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// PolicyServiceFindPoliciesByPermissionIDsResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// PolicyServiceFindPoliciesByPermissionIDsResponseMultiError, or nil if none found.
+func (m *PolicyServiceFindPoliciesByPermissionIDsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFindPoliciesByPermissionIDsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetPolicies() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PolicyServiceFindPoliciesByPermissionIDsResponseValidationError{
+						field:  fmt.Sprintf("Policies[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PolicyServiceFindPoliciesByPermissionIDsResponseValidationError{
+						field:  fmt.Sprintf("Policies[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PolicyServiceFindPoliciesByPermissionIDsResponseValidationError{
+					field:  fmt.Sprintf("Policies[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PolicyServiceFindPoliciesByPermissionIDsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFindPoliciesByPermissionIDsResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// PolicyServiceFindPoliciesByPermissionIDsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type PolicyServiceFindPoliciesByPermissionIDsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFindPoliciesByPermissionIDsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFindPoliciesByPermissionIDsResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFindPoliciesByPermissionIDsResponseValidationError is the
+// validation error returned by
+// PolicyServiceFindPoliciesByPermissionIDsResponse.Validate if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesByPermissionIDsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) ErrorName() string {
+	return "PolicyServiceFindPoliciesByPermissionIDsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFindPoliciesByPermissionIDsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFindPoliciesByPermissionIDsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFindPoliciesByPermissionIDsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFindPoliciesByPermissionIDsResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceSavePermissionPolicyRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *PolicyServiceSavePermissionPolicyRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// PolicyServiceSavePermissionPolicyRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// PolicyServiceSavePermissionPolicyRequestMultiError, or nil if none found.
+func (m *PolicyServiceSavePermissionPolicyRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSavePermissionPolicyRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for PolicyId
+
+	// no validation rules for PermissionId
+
+	// no validation rules for Effect
+
+	if len(errors) > 0 {
+		return PolicyServiceSavePermissionPolicyRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSavePermissionPolicyRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// PolicyServiceSavePermissionPolicyRequest.ValidateAll() if the designated
+// constraints aren't met.
+type PolicyServiceSavePermissionPolicyRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSavePermissionPolicyRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSavePermissionPolicyRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSavePermissionPolicyRequestValidationError is the validation
+// error returned by PolicyServiceSavePermissionPolicyRequest.Validate if the
+// designated constraints aren't met.
+type PolicyServiceSavePermissionPolicyRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) ErrorName() string {
+	return "PolicyServiceSavePermissionPolicyRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSavePermissionPolicyRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSavePermissionPolicyRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSavePermissionPolicyRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSavePermissionPolicyRequestValidationError{}
+
+// Validate checks the field values on
+// PolicyServiceSavePermissionPolicyResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PolicyServiceSavePermissionPolicyResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// PolicyServiceSavePermissionPolicyResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// PolicyServiceSavePermissionPolicyResponseMultiError, or nil if none found.
+func (m *PolicyServiceSavePermissionPolicyResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceSavePermissionPolicyResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return PolicyServiceSavePermissionPolicyResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceSavePermissionPolicyResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// PolicyServiceSavePermissionPolicyResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PolicyServiceSavePermissionPolicyResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceSavePermissionPolicyResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceSavePermissionPolicyResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceSavePermissionPolicyResponseValidationError is the validation
+// error returned by PolicyServiceSavePermissionPolicyResponse.Validate if the
+// designated constraints aren't met.
+type PolicyServiceSavePermissionPolicyResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) ErrorName() string {
+	return "PolicyServiceSavePermissionPolicyResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceSavePermissionPolicyResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceSavePermissionPolicyResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceSavePermissionPolicyResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceSavePermissionPolicyResponseValidationError{}
+
+// Validate checks the field values on PolicyServiceFindPoliciesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *PolicyServiceFindPoliciesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceFindPoliciesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// PolicyServiceFindPoliciesRequestMultiError, or nil if none found.
+func (m *PolicyServiceFindPoliciesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFindPoliciesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Offset
+
+	// no validation rules for Limit
+
+	if len(errors) > 0 {
+		return PolicyServiceFindPoliciesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFindPoliciesRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// PolicyServiceFindPoliciesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFindPoliciesRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFindPoliciesRequestMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFindPoliciesRequestValidationError is the validation error
+// returned by PolicyServiceFindPoliciesRequest.Validate if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFindPoliciesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceFindPoliciesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceFindPoliciesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceFindPoliciesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFindPoliciesRequestValidationError) ErrorName() string {
+	return "PolicyServiceFindPoliciesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFindPoliciesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFindPoliciesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFindPoliciesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFindPoliciesRequestValidationError{}
+
+// Validate checks the field values on PolicyServiceFindPoliciesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *PolicyServiceFindPoliciesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PolicyServiceFindPoliciesResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// PolicyServiceFindPoliciesResponseMultiError, or nil if none found.
+func (m *PolicyServiceFindPoliciesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PolicyServiceFindPoliciesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Total
+
+	for idx, item := range m.GetPolicies() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PolicyServiceFindPoliciesResponseValidationError{
+						field:  fmt.Sprintf("Policies[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PolicyServiceFindPoliciesResponseValidationError{
+						field:  fmt.Sprintf("Policies[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PolicyServiceFindPoliciesResponseValidationError{
+					field:  fmt.Sprintf("Policies[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PolicyServiceFindPoliciesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// PolicyServiceFindPoliciesResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// PolicyServiceFindPoliciesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PolicyServiceFindPoliciesResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PolicyServiceFindPoliciesResponseMultiError) AllErrors() []error { return m }
+
+// PolicyServiceFindPoliciesResponseValidationError is the validation error
+// returned by PolicyServiceFindPoliciesResponse.Validate if the designated
+// constraints aren't met.
+type PolicyServiceFindPoliciesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PolicyServiceFindPoliciesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PolicyServiceFindPoliciesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PolicyServiceFindPoliciesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PolicyServiceFindPoliciesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PolicyServiceFindPoliciesResponseValidationError) ErrorName() string {
+	return "PolicyServiceFindPoliciesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PolicyServiceFindPoliciesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPolicyServiceFindPoliciesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PolicyServiceFindPoliciesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PolicyServiceFindPoliciesResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveSubjectValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveSubjectValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveSubjectValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceSaveSubjectValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveSubjectValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveSubjectValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SubjectId
+
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveSubjectValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveSubjectValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceSaveSubjectValueRequestValidationError{
+				field:  "Value",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveSubjectValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveSubjectValueRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceSaveSubjectValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveSubjectValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveSubjectValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveSubjectValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveSubjectValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveSubjectValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceSaveSubjectValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveSubjectValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveSubjectValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveSubjectValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveSubjectValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveSubjectValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveSubjectValueResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveSubjectValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveSubjectValueResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceSaveSubjectValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveSubjectValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveSubjectValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveSubjectValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveSubjectValueResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceSaveSubjectValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveSubjectValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveSubjectValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveSubjectValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveSubjectValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveSubjectValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceSaveSubjectValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveSubjectValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveSubjectValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveSubjectValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveSubjectValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveSubjectValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteSubjectValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteSubjectValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteSubjectValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteSubjectValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceDeleteSubjectValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteSubjectValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteSubjectValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteSubjectValueRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteSubjectValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteSubjectValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteSubjectValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteSubjectValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteSubjectValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteSubjectValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceDeleteSubjectValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteSubjectValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteSubjectValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteSubjectValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteSubjectValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteSubjectValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteSubjectValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteSubjectValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteSubjectValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteSubjectValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceDeleteSubjectValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteSubjectValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteSubjectValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteSubjectValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteSubjectValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteSubjectValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteSubjectValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteSubjectValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteSubjectValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteSubjectValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceDeleteSubjectValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteSubjectValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteSubjectValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteSubjectValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteSubjectValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteSubjectValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindSubjectValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindSubjectValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindSubjectValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceFindSubjectValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceFindSubjectValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindSubjectValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SubjectId
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindSubjectValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindSubjectValueRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceFindSubjectValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindSubjectValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindSubjectValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindSubjectValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceFindSubjectValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceFindSubjectValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindSubjectValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindSubjectValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindSubjectValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindSubjectValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindSubjectValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindSubjectValueResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindSubjectValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindSubjectValueResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceFindSubjectValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceFindSubjectValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindSubjectValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSubject()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindSubjectValueResponseValidationError{
+					field:  "Subject",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindSubjectValueResponseValidationError{
+					field:  "Subject",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSubject()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindSubjectValueResponseValidationError{
+				field:  "Subject",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindSubjectValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindSubjectValueResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceFindSubjectValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindSubjectValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindSubjectValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindSubjectValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceFindSubjectValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceFindSubjectValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindSubjectValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindSubjectValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindSubjectValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindSubjectValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindSubjectValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindSubjectValueWithDefinitionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindSubjectValueWithDefinitionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError, or
+// nil if none found.
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for SubjectId
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError is an
+// error wrapping multiple validation errors returned by
+// AttributeValueServiceFindSubjectValueWithDefinitionRequest.ValidateAll() if
+// the designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindSubjectValueWithDefinitionRequestMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError is
+// the validation error returned by
+// AttributeValueServiceFindSubjectValueWithDefinitionRequest.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindSubjectValueWithDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindSubjectValueWithDefinitionRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindSubjectValueWithDefinitionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindSubjectValueWithDefinitionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError, or
+// nil if none found.
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindSubjectValueWithDefinitionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSubject()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError{
+					field:  "Subject",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError{
+					field:  "Subject",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSubject()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError{
+				field:  "Subject",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError is an
+// error wrapping multiple validation errors returned by
+// AttributeValueServiceFindSubjectValueWithDefinitionResponse.ValidateAll()
+// if the designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindSubjectValueWithDefinitionResponseMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError
+// is the validation error returned by
+// AttributeValueServiceFindSubjectValueWithDefinitionResponse.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindSubjectValueWithDefinitionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindSubjectValueWithDefinitionResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveResourceValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveResourceValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveResourceValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceSaveResourceValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveResourceValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveResourceValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ResourceId
+
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveResourceValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveResourceValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceSaveResourceValueRequestValidationError{
+				field:  "Value",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveResourceValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveResourceValueRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceSaveResourceValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveResourceValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveResourceValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveResourceValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveResourceValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveResourceValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceSaveResourceValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveResourceValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveResourceValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveResourceValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveResourceValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveResourceValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveResourceValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceSaveResourceValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveResourceValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveResourceValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveResourceValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveResourceValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceSaveResourceValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveResourceValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveResourceValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveResourceValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveResourceValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveResourceValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceSaveResourceValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveResourceValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveResourceValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveResourceValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveResourceValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveResourceValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteResourceValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteResourceValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteResourceValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteResourceValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceDeleteResourceValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteResourceValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteResourceValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteResourceValueRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteResourceValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteResourceValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteResourceValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteResourceValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteResourceValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteResourceValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceDeleteResourceValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteResourceValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteResourceValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteResourceValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteResourceValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteResourceValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteResourceValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteResourceValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceDeleteResourceValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteResourceValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteResourceValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteResourceValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteResourceValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteResourceValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteResourceValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteResourceValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteResourceValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteResourceValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceDeleteResourceValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteResourceValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteResourceValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteResourceValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteResourceValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteResourceValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindResourceValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindResourceValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindResourceValueRequest with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeValueServiceFindResourceValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceFindResourceValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindResourceValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ResourceId
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindResourceValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindResourceValueRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeValueServiceFindResourceValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindResourceValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindResourceValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindResourceValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindResourceValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceFindResourceValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceFindResourceValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindResourceValueRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindResourceValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindResourceValueRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceFindResourceValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindResourceValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindResourceValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindResourceValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindResourceValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindResourceValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindResourceValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindResourceValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindResourceValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceFindResourceValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceFindResourceValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindResourceValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetResource()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindResourceValueResponseValidationError{
+					field:  "Resource",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindResourceValueResponseValidationError{
+					field:  "Resource",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindResourceValueResponseValidationError{
+				field:  "Resource",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindResourceValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindResourceValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceFindResourceValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindResourceValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindResourceValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindResourceValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindResourceValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceFindResourceValueResponse.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceFindResourceValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindResourceValueResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindResourceValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindResourceValueResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeValueServiceFindResourceValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindResourceValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindResourceValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindResourceValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindResourceValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindResourceValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindResourceValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindResourceValueWithDefinitionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindResourceValueWithDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindResourceValueWithDefinitionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError, or
+// nil if none found.
+func (m *AttributeValueServiceFindResourceValueWithDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindResourceValueWithDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ResourceId
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError is an
+// error wrapping multiple validation errors returned by
+// AttributeValueServiceFindResourceValueWithDefinitionRequest.ValidateAll()
+// if the designated constraints aren't met.
+type AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindResourceValueWithDefinitionRequestMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError
+// is the validation error returned by
+// AttributeValueServiceFindResourceValueWithDefinitionRequest.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindResourceValueWithDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindResourceValueWithDefinitionRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindResourceValueWithDefinitionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindResourceValueWithDefinitionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindResourceValueWithDefinitionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError, or
+// nil if none found.
+func (m *AttributeValueServiceFindResourceValueWithDefinitionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindResourceValueWithDefinitionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetResource()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError{
+					field:  "Resource",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError{
+					field:  "Resource",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetResource()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError{
+				field:  "Resource",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError is an
+// error wrapping multiple validation errors returned by
+// AttributeValueServiceFindResourceValueWithDefinitionResponse.ValidateAll()
+// if the designated constraints aren't met.
+type AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindResourceValueWithDefinitionResponseMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError
+// is the validation error returned by
+// AttributeValueServiceFindResourceValueWithDefinitionResponse.Validate if
+// the designated constraints aren't met.
+type AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindResourceValueWithDefinitionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindResourceValueWithDefinitionResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveEnvironmentValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveEnvironmentValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveEnvironmentValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceSaveEnvironmentValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveEnvironmentValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveEnvironmentValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveEnvironmentValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceSaveEnvironmentValueRequestValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceSaveEnvironmentValueRequestValidationError{
+				field:  "Value",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveEnvironmentValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveEnvironmentValueRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceSaveEnvironmentValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveEnvironmentValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveEnvironmentValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveEnvironmentValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveEnvironmentValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveEnvironmentValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceSaveEnvironmentValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveEnvironmentValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveEnvironmentValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveEnvironmentValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveEnvironmentValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveEnvironmentValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceSaveEnvironmentValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceSaveEnvironmentValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceSaveEnvironmentValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceSaveEnvironmentValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceSaveEnvironmentValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceSaveEnvironmentValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceSaveEnvironmentValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceSaveEnvironmentValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceSaveEnvironmentValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveEnvironmentValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceSaveEnvironmentValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceSaveEnvironmentValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceSaveEnvironmentValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceSaveEnvironmentValueResponse.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceSaveEnvironmentValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceSaveEnvironmentValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceSaveEnvironmentValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceSaveEnvironmentValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceSaveEnvironmentValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceSaveEnvironmentValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteEnvironmentValueRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteEnvironmentValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteEnvironmentValueRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteEnvironmentValueRequestMultiError, or nil if
+// none found.
+func (m *AttributeValueServiceDeleteEnvironmentValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteEnvironmentValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteEnvironmentValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteEnvironmentValueRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteEnvironmentValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteEnvironmentValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteEnvironmentValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteEnvironmentValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteEnvironmentValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteEnvironmentValueRequest.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteEnvironmentValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteEnvironmentValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteEnvironmentValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteEnvironmentValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteEnvironmentValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteEnvironmentValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceDeleteEnvironmentValueResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceDeleteEnvironmentValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceDeleteEnvironmentValueResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceDeleteEnvironmentValueResponseMultiError, or nil if
+// none found.
+func (m *AttributeValueServiceDeleteEnvironmentValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceDeleteEnvironmentValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeValueServiceDeleteEnvironmentValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceDeleteEnvironmentValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceDeleteEnvironmentValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteEnvironmentValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceDeleteEnvironmentValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceDeleteEnvironmentValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceDeleteEnvironmentValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceDeleteEnvironmentValueResponse.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceDeleteEnvironmentValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceDeleteEnvironmentValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceDeleteEnvironmentValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceDeleteEnvironmentValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceDeleteEnvironmentValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceDeleteEnvironmentValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindEnvironmentValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindEnvironmentValueRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindEnvironmentValueRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceFindEnvironmentValueRequestMultiError, or nil if none found.
+func (m *AttributeValueServiceFindEnvironmentValueRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindEnvironmentValueRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindEnvironmentValueRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindEnvironmentValueRequestMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceFindEnvironmentValueRequest.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindEnvironmentValueRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindEnvironmentValueRequestMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindEnvironmentValueRequestValidationError is the
+// validation error returned by
+// AttributeValueServiceFindEnvironmentValueRequest.Validate if the designated
+// constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindEnvironmentValueRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindEnvironmentValueRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindEnvironmentValueRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindEnvironmentValueRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindEnvironmentValueRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindEnvironmentValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindEnvironmentValueResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindEnvironmentValueResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in
+// AttributeValueServiceFindEnvironmentValueResponseMultiError, or nil if none found.
+func (m *AttributeValueServiceFindEnvironmentValueResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindEnvironmentValueResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetEnvironment()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindEnvironmentValueResponseValidationError{
+					field:  "Environment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindEnvironmentValueResponseValidationError{
+					field:  "Environment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEnvironment()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindEnvironmentValueResponseValidationError{
+				field:  "Environment",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindEnvironmentValueResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindEnvironmentValueResponseMultiError is an error
+// wrapping multiple validation errors returned by
+// AttributeValueServiceFindEnvironmentValueResponse.ValidateAll() if the
+// designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindEnvironmentValueResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindEnvironmentValueResponseMultiError) AllErrors() []error { return m }
+
+// AttributeValueServiceFindEnvironmentValueResponseValidationError is the
+// validation error returned by
+// AttributeValueServiceFindEnvironmentValueResponse.Validate if the
+// designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindEnvironmentValueResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindEnvironmentValueResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindEnvironmentValueResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindEnvironmentValueResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindEnvironmentValueResponseValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError,
+// or nil if none found.
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError is
+// an error wrapping multiple validation errors returned by
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequest.ValidateAll()
+// if the designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindEnvironmentValueWithDefinitionRequestMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError
+// is the validation error returned by
+// AttributeValueServiceFindEnvironmentValueWithDefinitionRequest.Validate if
+// the designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) ErrorName() string {
+	return "AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindEnvironmentValueWithDefinitionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindEnvironmentValueWithDefinitionRequestValidationError{}
+
+// Validate checks the field values on
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError,
+// or nil if none found.
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetEnvironment()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError{
+					field:  "Environment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError{
+					field:  "Environment",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEnvironment()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError{
+				field:  "Environment",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError is
+// an error wrapping multiple validation errors returned by
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponse.ValidateAll()
+// if the designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeValueServiceFindEnvironmentValueWithDefinitionResponseMultiError) AllErrors() []error {
+	return m
+}
+
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError
+// is the validation error returned by
+// AttributeValueServiceFindEnvironmentValueWithDefinitionResponse.Validate if
+// the designated constraints aren't met.
+type AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) Field() string {
+	return e.field
+}
+
+// Reason function returns reason value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) Reason() string {
+	return e.reason
+}
+
+// Cause function returns cause value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) Cause() error {
+	return e.cause
+}
+
+// Key function returns key value.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) Key() bool {
+	return e.key
+}
+
+// ErrorName returns error name.
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) ErrorName() string {
+	return "AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeValueServiceFindEnvironmentValueWithDefinitionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeValueServiceFindEnvironmentValueWithDefinitionResponseValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceSaveRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceSaveRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AttributeDefinitionServiceSaveRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// AttributeDefinitionServiceSaveRequestMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceSaveRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceSaveRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceSaveRequestValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceSaveRequestValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeDefinitionServiceSaveRequestValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceSaveRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceSaveRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceSaveRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceSaveRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceSaveRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceSaveRequestMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceSaveRequestValidationError is the validation error
+// returned by AttributeDefinitionServiceSaveRequest.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceSaveRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceSaveRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceSaveRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceSaveRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceSaveRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceSaveRequestValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceSaveRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceSaveRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceSaveRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceSaveRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceSaveRequestValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceSaveResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceSaveResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceSaveResponse with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AttributeDefinitionServiceSaveResponseMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceSaveResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceSaveResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceSaveResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceSaveResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceSaveResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceSaveResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceSaveResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceSaveResponseMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceSaveResponseValidationError is the validation
+// error returned by AttributeDefinitionServiceSaveResponse.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceSaveResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceSaveResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceSaveResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceSaveResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceSaveResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceSaveResponseValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceSaveResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceSaveResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceSaveResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceSaveResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceSaveResponseValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceFirstRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceFirstRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceFirstRequest with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AttributeDefinitionServiceFirstRequestMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceFirstRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceFirstRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceFirstRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceFirstRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceFirstRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceFirstRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceFirstRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceFirstRequestMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceFirstRequestValidationError is the validation
+// error returned by AttributeDefinitionServiceFirstRequest.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceFirstRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceFirstRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceFirstRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceFirstRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceFirstRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceFirstRequestValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceFirstRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceFirstRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceFirstRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceFirstRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceFirstRequestValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceFirstResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceFirstResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceFirstResponse with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AttributeDefinitionServiceFirstResponseMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceFirstResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceFirstResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceFirstResponseValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceFirstResponseValidationError{
+					field:  "Definition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeDefinitionServiceFirstResponseValidationError{
+				field:  "Definition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceFirstResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceFirstResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceFirstResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceFirstResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceFirstResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceFirstResponseMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceFirstResponseValidationError is the validation
+// error returned by AttributeDefinitionServiceFirstResponse.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceFirstResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceFirstResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceFirstResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceFirstResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceFirstResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceFirstResponseValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceFirstResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceFirstResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceFirstResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceFirstResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceFirstResponseValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceDeleteRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceDeleteRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceDeleteRequest with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AttributeDefinitionServiceDeleteRequestMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceDeleteRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceDeleteRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceDeleteRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceDeleteRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceDeleteRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceDeleteRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceDeleteRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceDeleteRequestMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceDeleteRequestValidationError is the validation
+// error returned by AttributeDefinitionServiceDeleteRequest.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceDeleteRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceDeleteRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceDeleteRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceDeleteRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceDeleteRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceDeleteRequestValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceDeleteRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceDeleteRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceDeleteRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceDeleteRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceDeleteRequestValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceDeleteResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceDeleteResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceDeleteResponse with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in
+// AttributeDefinitionServiceDeleteResponseMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceDeleteResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceDeleteResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceDeleteResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceDeleteResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceDeleteResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceDeleteResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceDeleteResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceDeleteResponseMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceDeleteResponseValidationError is the validation
+// error returned by AttributeDefinitionServiceDeleteResponse.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceDeleteResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceDeleteResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceDeleteResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceDeleteResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceDeleteResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceDeleteResponseValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceDeleteResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceDeleteResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceDeleteResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceDeleteResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceDeleteResponseValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceFindRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceFindRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AttributeDefinitionServiceFindRequest
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// AttributeDefinitionServiceFindRequestMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceFindRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceFindRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceFindRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceFindRequestMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceFindRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceFindRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceFindRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceFindRequestMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceFindRequestValidationError is the validation error
+// returned by AttributeDefinitionServiceFindRequest.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceFindRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceFindRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceFindRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceFindRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceFindRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceFindRequestValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceFindRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceFindRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceFindRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceFindRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceFindRequestValidationError{}
+
+// Validate checks the field values on AttributeDefinitionServiceFindResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the first error encountered is returned, or nil if
+// there are no violations.
+func (m *AttributeDefinitionServiceFindResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on
+// AttributeDefinitionServiceFindResponse with the rules defined in the proto
+// definition for this message. If any rules are violated, the result is a
+// list of violation errors wrapped in
+// AttributeDefinitionServiceFindResponseMultiError, or nil if none found.
+func (m *AttributeDefinitionServiceFindResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AttributeDefinitionServiceFindResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetBizDefinition()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceFindResponseValidationError{
+					field:  "BizDefinition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AttributeDefinitionServiceFindResponseValidationError{
+					field:  "BizDefinition",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetBizDefinition()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AttributeDefinitionServiceFindResponseValidationError{
+				field:  "BizDefinition",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AttributeDefinitionServiceFindResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AttributeDefinitionServiceFindResponseMultiError is an error wrapping
+// multiple validation errors returned by
+// AttributeDefinitionServiceFindResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AttributeDefinitionServiceFindResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AttributeDefinitionServiceFindResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AttributeDefinitionServiceFindResponseMultiError) AllErrors() []error { return m }
+
+// AttributeDefinitionServiceFindResponseValidationError is the validation
+// error returned by AttributeDefinitionServiceFindResponse.Validate if the
+// designated constraints aren't met.
+type AttributeDefinitionServiceFindResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AttributeDefinitionServiceFindResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AttributeDefinitionServiceFindResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AttributeDefinitionServiceFindResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AttributeDefinitionServiceFindResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AttributeDefinitionServiceFindResponseValidationError) ErrorName() string {
+	return "AttributeDefinitionServiceFindResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AttributeDefinitionServiceFindResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAttributeDefinitionServiceFindResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AttributeDefinitionServiceFindResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AttributeDefinitionServiceFindResponseValidationError{}

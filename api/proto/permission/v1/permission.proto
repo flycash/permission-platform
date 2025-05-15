@@ -23,9 +23,9 @@ message CheckPermissionRequest {
   int64 uid = 1;
   // 检查的权限
   Permission permission = 2;
-  map<string, string>  subject_attributes =3;
-  map<string, string>  resource_attributes =4;
-  map<string, string>  environment_attributes =5;
+  map<string, string> subject_attributes = 3;
+  map<string, string> resource_attributes = 4;
+  map<string, string> environment_attributes = 5;
 }
 
 // 权限检查响应
@@ -50,5 +50,3 @@ message Resource {
   // 原封不动的返回
   string metadata = 7;
 }
-
-

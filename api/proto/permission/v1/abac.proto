@@ -4,6 +4,337 @@ package permission.v1;
 
 option go_package = "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1;permissionpb";
 
-service ABACService {
-  // 在这里定义和 RBAC 有关的接口，如授予权限
+// Policy related messages
+message Policy {
+  int64 id = 1;
+  string name = 3;
+  string description = 4;
+  PolicyStatus status = 5;
+  Effect effect = 6;
+  repeated PolicyRule rules = 7;
+  int64 ctime = 8;
+  int64 utime = 9;
+}
+
+enum PolicyStatus {
+  POLICY_STATUS_UNKNOWN = 0;
+  POLICY_STATUS_ACTIVE = 1;
+  POLICY_STATUS_INACTIVE = 2;
+}
+
+message PolicyRule {
+  int64 id = 1;
+  AttributeDefinition attribute_definition = 2;
+  string value = 3;
+  PolicyRule left_rule = 4;
+  PolicyRule right_rule = 5;
+  RuleOperator operator = 6;
+  int64 ctime = 7;
+  int64 utime = 8;
+}
+
+enum RuleOperator {
+  RULE_OPERATOR_UNKNOWN = 0;
+  RULE_OPERATOR_EQUALS = 1;
+  RULE_OPERATOR_NOT_EQUALS = 2;
+  RULE_OPERATOR_GREATER = 3;
+  RULE_OPERATOR_LESS = 4;
+  RULE_OPERATOR_GREATER_OR_EQUAL = 5;
+  RULE_OPERATOR_LESS_OR_EQUAL = 6;
+  RULE_OPERATOR_AND = 7;
+  RULE_OPERATOR_OR = 8;
+  RULE_OPERATOR_IN = 9;
+  RULE_OPERATOR_NOT_IN = 10;
+  RULE_OPERATOR_NOT = 11;
+}
+
+enum Effect {
+  EFFECT_UNKNOWN = 0;
+  EFFECT_ALLOW = 1;
+  EFFECT_DENY = 2;
+}
+
+// Attribute related messages
+message SubjectAttributeValue {
+  int64 id = 1;
+  AttributeDefinition definition = 2;
+  string value = 3;
+  int64 ctime = 4;
+  int64 utime = 5;
+}
+
+message ResourceAttributeValue {
+  int64 id = 1;
+  AttributeDefinition definition = 2;
+  string value = 3;
+  int64 ctime = 4;
+  int64 utime = 5;
+}
+
+message EnvironmentAttributeValue {
+  int64 id = 1;
+  AttributeDefinition definition = 2;
+  string value = 3;
+  int64 ctime = 4;
+  int64 utime = 5;
+}
+
+message SubjectObject {
+  int64 id = 2;
+  repeated SubjectAttributeValue attribute_values = 3;
+}
+
+message ResourceObject {
+  int64 id = 2;
+  repeated ResourceAttributeValue attribute_values = 3;
+}
+
+message EnvironmentObject {
+  repeated EnvironmentAttributeValue attribute_values = 2;
+}
+
+message AttributeDefinition {
+  int64 id = 1;
+  string name = 2;
+  string description = 3;
+  DataType data_type = 4;
+  EntityType entity_type = 5;
+  string validation_rule = 6;
+  int64 ctime = 7;
+  int64 utime = 8;
+}
+
+enum DataType {
+  DATA_TYPE_UNKNOWN = 0;
+  DATA_TYPE_STRING = 1;
+  DATA_TYPE_NUMBER = 2;
+  DATA_TYPE_BOOLEAN = 3;
+  DATA_TYPE_FLOAT = 4;
+  DATA_TYPE_DATETIME = 5;
+}
+
+enum EntityType {
+  ENTITY_TYPE_UNKNOWN = 0;
+  ENTITY_TYPE_SUBJECT = 1;
+  ENTITY_TYPE_RESOURCE = 2;
+  ENTITY_TYPE_ENVIRONMENT = 3;
+}
+
+message BizDefinition {
+  repeated AttributeDefinition subject_attrs = 2;
+  repeated AttributeDefinition resource_attrs = 3;
+  repeated AttributeDefinition environment_attrs = 4;
+}
+
+// Policy Service
+service PolicyService {
+  rpc Save(PolicyServiceSaveRequest) returns (PolicyServiceSaveResponse) {}
+  rpc Delete(PolicyServiceDeleteRequest) returns (PolicyServiceDeleteResponse) {}
+  rpc First(PolicyServiceFirstRequest) returns (PolicyServiceFirstResponse) {}
+  rpc SaveRule(PolicyServiceSaveRuleRequest) returns (PolicyServiceSaveRuleResponse) {}
+  rpc DeleteRule(PolicyServiceDeleteRuleRequest) returns (PolicyServiceDeleteRuleResponse) {}
+  rpc SavePermissionPolicy(PolicyServiceSavePermissionPolicyRequest) returns (PolicyServiceSavePermissionPolicyResponse) {}
+  rpc FindPolicies(PolicyServiceFindPoliciesRequest) returns (PolicyServiceFindPoliciesResponse) {}
+}
+
+message PolicyServiceSaveRequest {
+  Policy policy = 1;
+}
+
+message PolicyServiceSaveResponse {
+  int64 id = 1;
+}
+
+message PolicyServiceDeleteRequest {
+  int64 id = 1;
+}
+
+message PolicyServiceDeleteResponse {}
+
+message PolicyServiceFirstRequest {
+  int64 id = 1;
+}
+
+message PolicyServiceFirstResponse {
+  Policy policy = 1;
+}
+
+message PolicyServiceSaveRuleRequest {
+  int64 policy_id = 1;
+  PolicyRule rule = 2;
+}
+
+message PolicyServiceSaveRuleResponse {
+  int64 id = 1;
+}
+
+message PolicyServiceDeleteRuleRequest {
+  int64 rule_id = 1;
+}
+
+message PolicyServiceDeleteRuleResponse {}
+
+message PolicyServiceFindPoliciesByPermissionIDsRequest {
+  repeated int64 permission_ids = 1;
+}
+
+message PolicyServiceFindPoliciesByPermissionIDsResponse {
+  repeated Policy policies = 1;
+}
+
+message PolicyServiceSavePermissionPolicyRequest {
+  int64 policy_id = 1;
+  int64 permission_id = 2;
+  Effect effect = 3;
+}
+
+message PolicyServiceSavePermissionPolicyResponse {}
+
+message PolicyServiceFindPoliciesRequest {
+  int32 offset = 1;
+  int32 limit = 2;
+}
+
+message PolicyServiceFindPoliciesResponse {
+  int64 total = 1;
+  repeated Policy policies = 2;
+}
+
+// Attribute Value Service
+service AttributeValueService {
+  rpc SaveSubjectValue(AttributeValueServiceSaveSubjectValueRequest) returns (AttributeValueServiceSaveSubjectValueResponse) {}
+  rpc DeleteSubjectValue(AttributeValueServiceDeleteSubjectValueRequest) returns (AttributeValueServiceDeleteSubjectValueResponse) {}
+  rpc FindSubjectValueWithDefinition(AttributeValueServiceFindSubjectValueWithDefinitionRequest) returns (AttributeValueServiceFindSubjectValueWithDefinitionResponse) {}
+
+  rpc SaveResourceValue(AttributeValueServiceSaveResourceValueRequest) returns (AttributeValueServiceSaveResourceValueResponse) {}
+  rpc DeleteResourceValue(AttributeValueServiceDeleteResourceValueRequest) returns (AttributeValueServiceDeleteResourceValueResponse) {}
+  rpc FindResourceValueWithDefinition(AttributeValueServiceFindResourceValueWithDefinitionRequest) returns (AttributeValueServiceFindResourceValueWithDefinitionResponse) {}
+
+  rpc SaveEnvironmentValue(AttributeValueServiceSaveEnvironmentValueRequest) returns (AttributeValueServiceSaveEnvironmentValueResponse) {}
+  rpc DeleteEnvironmentValue(AttributeValueServiceDeleteEnvironmentValueRequest) returns (AttributeValueServiceDeleteEnvironmentValueResponse) {}
+  rpc FindEnvironmentValueWithDefinition(AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) returns (AttributeValueServiceFindEnvironmentValueWithDefinitionResponse) {}
+}
+
+message AttributeValueServiceSaveSubjectValueRequest {
+  int64 subject_id = 1;
+  SubjectAttributeValue value = 2;
+}
+
+message AttributeValueServiceSaveSubjectValueResponse {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteSubjectValueRequest {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteSubjectValueResponse {}
+
+message AttributeValueServiceFindSubjectValueRequest {
+  int64 subject_id = 1;
+}
+
+message AttributeValueServiceFindSubjectValueResponse {
+  SubjectObject subject = 1;
+}
+
+message AttributeValueServiceFindSubjectValueWithDefinitionRequest {
+  int64 subject_id = 1;
+}
+
+message AttributeValueServiceFindSubjectValueWithDefinitionResponse {
+  SubjectObject subject = 1;
+}
+
+message AttributeValueServiceSaveResourceValueRequest {
+  int64 resource_id = 1;
+  ResourceAttributeValue value = 2;
+}
+
+message AttributeValueServiceSaveResourceValueResponse {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteResourceValueRequest {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteResourceValueResponse {}
+
+message AttributeValueServiceFindResourceValueRequest {
+  int64 resource_id = 1;
+}
+
+message AttributeValueServiceFindResourceValueResponse {
+  ResourceObject resource = 1;
+}
+
+message AttributeValueServiceFindResourceValueWithDefinitionRequest {
+  int64 resource_id = 1;
+}
+
+message AttributeValueServiceFindResourceValueWithDefinitionResponse {
+  ResourceObject resource = 1;
+}
+
+message AttributeValueServiceSaveEnvironmentValueRequest {
+  EnvironmentAttributeValue value = 1;
+}
+
+message AttributeValueServiceSaveEnvironmentValueResponse {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteEnvironmentValueRequest {
+  int64 id = 1;
+}
+
+message AttributeValueServiceDeleteEnvironmentValueResponse {}
+
+message AttributeValueServiceFindEnvironmentValueRequest {}
+
+message AttributeValueServiceFindEnvironmentValueResponse {
+  EnvironmentObject environment = 1;
+}
+
+message AttributeValueServiceFindEnvironmentValueWithDefinitionRequest {}
+
+message AttributeValueServiceFindEnvironmentValueWithDefinitionResponse {
+  EnvironmentObject environment = 1;
+}
+
+// Attribute Definition Service
+service AttributeDefinitionService {
+  rpc Save(AttributeDefinitionServiceSaveRequest) returns (AttributeDefinitionServiceSaveResponse) {}
+  rpc First(AttributeDefinitionServiceFirstRequest) returns (AttributeDefinitionServiceFirstResponse) {}
+  rpc Delete(AttributeDefinitionServiceDeleteRequest) returns (AttributeDefinitionServiceDeleteResponse) {}
+  rpc Find(AttributeDefinitionServiceFindRequest) returns (AttributeDefinitionServiceFindResponse) {}
+}
+
+message AttributeDefinitionServiceSaveRequest {
+  AttributeDefinition definition = 1;
+}
+
+message AttributeDefinitionServiceSaveResponse {
+  int64 id = 1;
+}
+
+message AttributeDefinitionServiceFirstRequest {
+  int64 id = 1;
+}
+
+message AttributeDefinitionServiceFirstResponse {
+  AttributeDefinition definition = 1;
+}
+
+message AttributeDefinitionServiceDeleteRequest {
+  int64 id = 1;
+}
+
+message AttributeDefinitionServiceDeleteResponse {}
+
+message AttributeDefinitionServiceFindRequest {}
+
+message AttributeDefinitionServiceFindResponse {
+  BizDefinition biz_definition = 1;
 }

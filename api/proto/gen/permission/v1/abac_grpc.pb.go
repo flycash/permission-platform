@@ -7,7 +7,11 @@
 package permissionv1
 
 import (
+	context "context"
+
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,58 +19,977 @@ import (
 // Requires gRPC-Go v1.64.0 or later.
 const _ = grpc.SupportPackageIsVersion9
 
-// ABACServiceClient is the client API for ABACService service.
+const (
+	PolicyService_Save_FullMethodName                 = "/permission.v1.PolicyService/Save"
+	PolicyService_Delete_FullMethodName               = "/permission.v1.PolicyService/Delete"
+	PolicyService_First_FullMethodName                = "/permission.v1.PolicyService/First"
+	PolicyService_SaveRule_FullMethodName             = "/permission.v1.PolicyService/SaveRule"
+	PolicyService_DeleteRule_FullMethodName           = "/permission.v1.PolicyService/DeleteRule"
+	PolicyService_SavePermissionPolicy_FullMethodName = "/permission.v1.PolicyService/SavePermissionPolicy"
+	PolicyService_FindPolicies_FullMethodName         = "/permission.v1.PolicyService/FindPolicies"
+)
+
+// PolicyServiceClient is the client API for PolicyService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ABACServiceClient interface{}
+//
+// Policy Service
+type PolicyServiceClient interface {
+	Save(ctx context.Context, in *PolicyServiceSaveRequest, opts ...grpc.CallOption) (*PolicyServiceSaveResponse, error)
+	Delete(ctx context.Context, in *PolicyServiceDeleteRequest, opts ...grpc.CallOption) (*PolicyServiceDeleteResponse, error)
+	First(ctx context.Context, in *PolicyServiceFirstRequest, opts ...grpc.CallOption) (*PolicyServiceFirstResponse, error)
+	SaveRule(ctx context.Context, in *PolicyServiceSaveRuleRequest, opts ...grpc.CallOption) (*PolicyServiceSaveRuleResponse, error)
+	DeleteRule(ctx context.Context, in *PolicyServiceDeleteRuleRequest, opts ...grpc.CallOption) (*PolicyServiceDeleteRuleResponse, error)
+	SavePermissionPolicy(ctx context.Context, in *PolicyServiceSavePermissionPolicyRequest, opts ...grpc.CallOption) (*PolicyServiceSavePermissionPolicyResponse, error)
+	FindPolicies(ctx context.Context, in *PolicyServiceFindPoliciesRequest, opts ...grpc.CallOption) (*PolicyServiceFindPoliciesResponse, error)
+}
 
-type aBACServiceClient struct {
+type policyServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewABACServiceClient(cc grpc.ClientConnInterface) ABACServiceClient {
-	return &aBACServiceClient{cc}
+func NewPolicyServiceClient(cc grpc.ClientConnInterface) PolicyServiceClient {
+	return &policyServiceClient{cc}
 }
 
-// ABACServiceServer is the server API for ABACService service.
-// All implementations should embed UnimplementedABACServiceServer
-// for forward compatibility.
-type ABACServiceServer interface{}
+func (c *policyServiceClient) Save(ctx context.Context, in *PolicyServiceSaveRequest, opts ...grpc.CallOption) (*PolicyServiceSaveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceSaveResponse)
+	err := c.cc.Invoke(ctx, PolicyService_Save_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
 
-// UnimplementedABACServiceServer should be embedded to have
+func (c *policyServiceClient) Delete(ctx context.Context, in *PolicyServiceDeleteRequest, opts ...grpc.CallOption) (*PolicyServiceDeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceDeleteResponse)
+	err := c.cc.Invoke(ctx, PolicyService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policyServiceClient) First(ctx context.Context, in *PolicyServiceFirstRequest, opts ...grpc.CallOption) (*PolicyServiceFirstResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceFirstResponse)
+	err := c.cc.Invoke(ctx, PolicyService_First_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policyServiceClient) SaveRule(ctx context.Context, in *PolicyServiceSaveRuleRequest, opts ...grpc.CallOption) (*PolicyServiceSaveRuleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceSaveRuleResponse)
+	err := c.cc.Invoke(ctx, PolicyService_SaveRule_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policyServiceClient) DeleteRule(ctx context.Context, in *PolicyServiceDeleteRuleRequest, opts ...grpc.CallOption) (*PolicyServiceDeleteRuleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceDeleteRuleResponse)
+	err := c.cc.Invoke(ctx, PolicyService_DeleteRule_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policyServiceClient) SavePermissionPolicy(ctx context.Context, in *PolicyServiceSavePermissionPolicyRequest, opts ...grpc.CallOption) (*PolicyServiceSavePermissionPolicyResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceSavePermissionPolicyResponse)
+	err := c.cc.Invoke(ctx, PolicyService_SavePermissionPolicy_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policyServiceClient) FindPolicies(ctx context.Context, in *PolicyServiceFindPoliciesRequest, opts ...grpc.CallOption) (*PolicyServiceFindPoliciesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PolicyServiceFindPoliciesResponse)
+	err := c.cc.Invoke(ctx, PolicyService_FindPolicies_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PolicyServiceServer is the server API for PolicyService service.
+// All implementations should embed UnimplementedPolicyServiceServer
+// for forward compatibility.
+//
+// Policy Service
+type PolicyServiceServer interface {
+	Save(context.Context, *PolicyServiceSaveRequest) (*PolicyServiceSaveResponse, error)
+	Delete(context.Context, *PolicyServiceDeleteRequest) (*PolicyServiceDeleteResponse, error)
+	First(context.Context, *PolicyServiceFirstRequest) (*PolicyServiceFirstResponse, error)
+	SaveRule(context.Context, *PolicyServiceSaveRuleRequest) (*PolicyServiceSaveRuleResponse, error)
+	DeleteRule(context.Context, *PolicyServiceDeleteRuleRequest) (*PolicyServiceDeleteRuleResponse, error)
+	SavePermissionPolicy(context.Context, *PolicyServiceSavePermissionPolicyRequest) (*PolicyServiceSavePermissionPolicyResponse, error)
+	FindPolicies(context.Context, *PolicyServiceFindPoliciesRequest) (*PolicyServiceFindPoliciesResponse, error)
+}
+
+// UnimplementedPolicyServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedABACServiceServer struct{}
+type UnimplementedPolicyServiceServer struct{}
 
-func (UnimplementedABACServiceServer) testEmbeddedByValue() {}
-
-// UnsafeABACServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ABACServiceServer will
-// result in compilation errors.
-type UnsafeABACServiceServer interface {
-	mustEmbedUnimplementedABACServiceServer()
+func (UnimplementedPolicyServiceServer) Save(context.Context, *PolicyServiceSaveRequest) (*PolicyServiceSaveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
 }
 
-func RegisterABACServiceServer(s grpc.ServiceRegistrar, srv ABACServiceServer) {
-	// If the following call pancis, it indicates UnimplementedABACServiceServer was
+func (UnimplementedPolicyServiceServer) Delete(context.Context, *PolicyServiceDeleteRequest) (*PolicyServiceDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+
+func (UnimplementedPolicyServiceServer) First(context.Context, *PolicyServiceFirstRequest) (*PolicyServiceFirstResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method First not implemented")
+}
+
+func (UnimplementedPolicyServiceServer) SaveRule(context.Context, *PolicyServiceSaveRuleRequest) (*PolicyServiceSaveRuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveRule not implemented")
+}
+
+func (UnimplementedPolicyServiceServer) DeleteRule(context.Context, *PolicyServiceDeleteRuleRequest) (*PolicyServiceDeleteRuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRule not implemented")
+}
+
+func (UnimplementedPolicyServiceServer) SavePermissionPolicy(context.Context, *PolicyServiceSavePermissionPolicyRequest) (*PolicyServiceSavePermissionPolicyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SavePermissionPolicy not implemented")
+}
+
+func (UnimplementedPolicyServiceServer) FindPolicies(context.Context, *PolicyServiceFindPoliciesRequest) (*PolicyServiceFindPoliciesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindPolicies not implemented")
+}
+func (UnimplementedPolicyServiceServer) testEmbeddedByValue() {}
+
+// UnsafePolicyServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PolicyServiceServer will
+// result in compilation errors.
+type UnsafePolicyServiceServer interface {
+	mustEmbedUnimplementedPolicyServiceServer()
+}
+
+func RegisterPolicyServiceServer(s grpc.ServiceRegistrar, srv PolicyServiceServer) {
+	// If the following call pancis, it indicates UnimplementedPolicyServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&ABACService_ServiceDesc, srv)
+	s.RegisterService(&PolicyService_ServiceDesc, srv)
 }
 
-// ABACService_ServiceDesc is the grpc.ServiceDesc for ABACService service.
+func _PolicyService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceSaveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_Save_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).Save(ctx, req.(*PolicyServiceSaveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).Delete(ctx, req.(*PolicyServiceDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_First_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceFirstRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).First(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_First_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).First(ctx, req.(*PolicyServiceFirstRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_SaveRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceSaveRuleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).SaveRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_SaveRule_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).SaveRule(ctx, req.(*PolicyServiceSaveRuleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_DeleteRule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceDeleteRuleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).DeleteRule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_DeleteRule_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).DeleteRule(ctx, req.(*PolicyServiceDeleteRuleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_SavePermissionPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceSavePermissionPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).SavePermissionPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_SavePermissionPolicy_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).SavePermissionPolicy(ctx, req.(*PolicyServiceSavePermissionPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicyService_FindPolicies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PolicyServiceFindPoliciesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicyServiceServer).FindPolicies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicyService_FindPolicies_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicyServiceServer).FindPolicies(ctx, req.(*PolicyServiceFindPoliciesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// PolicyService_ServiceDesc is the grpc.ServiceDesc for PolicyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ABACService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "permission.v1.ABACService",
-	HandlerType: (*ABACServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "permission/v1/abac.proto",
+var PolicyService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "permission.v1.PolicyService",
+	HandlerType: (*PolicyServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Save",
+			Handler:    _PolicyService_Save_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _PolicyService_Delete_Handler,
+		},
+		{
+			MethodName: "First",
+			Handler:    _PolicyService_First_Handler,
+		},
+		{
+			MethodName: "SaveRule",
+			Handler:    _PolicyService_SaveRule_Handler,
+		},
+		{
+			MethodName: "DeleteRule",
+			Handler:    _PolicyService_DeleteRule_Handler,
+		},
+		{
+			MethodName: "SavePermissionPolicy",
+			Handler:    _PolicyService_SavePermissionPolicy_Handler,
+		},
+		{
+			MethodName: "FindPolicies",
+			Handler:    _PolicyService_FindPolicies_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "permission/v1/abac.proto",
+}
+
+const (
+	AttributeValueService_SaveSubjectValue_FullMethodName                   = "/permission.v1.AttributeValueService/SaveSubjectValue"
+	AttributeValueService_DeleteSubjectValue_FullMethodName                 = "/permission.v1.AttributeValueService/DeleteSubjectValue"
+	AttributeValueService_FindSubjectValueWithDefinition_FullMethodName     = "/permission.v1.AttributeValueService/FindSubjectValueWithDefinition"
+	AttributeValueService_SaveResourceValue_FullMethodName                  = "/permission.v1.AttributeValueService/SaveResourceValue"
+	AttributeValueService_DeleteResourceValue_FullMethodName                = "/permission.v1.AttributeValueService/DeleteResourceValue"
+	AttributeValueService_FindResourceValueWithDefinition_FullMethodName    = "/permission.v1.AttributeValueService/FindResourceValueWithDefinition"
+	AttributeValueService_SaveEnvironmentValue_FullMethodName               = "/permission.v1.AttributeValueService/SaveEnvironmentValue"
+	AttributeValueService_DeleteEnvironmentValue_FullMethodName             = "/permission.v1.AttributeValueService/DeleteEnvironmentValue"
+	AttributeValueService_FindEnvironmentValueWithDefinition_FullMethodName = "/permission.v1.AttributeValueService/FindEnvironmentValueWithDefinition"
+)
+
+// AttributeValueServiceClient is the client API for AttributeValueService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Attribute Value Service
+type AttributeValueServiceClient interface {
+	SaveSubjectValue(ctx context.Context, in *AttributeValueServiceSaveSubjectValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveSubjectValueResponse, error)
+	DeleteSubjectValue(ctx context.Context, in *AttributeValueServiceDeleteSubjectValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteSubjectValueResponse, error)
+	FindSubjectValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindSubjectValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindSubjectValueWithDefinitionResponse, error)
+	SaveResourceValue(ctx context.Context, in *AttributeValueServiceSaveResourceValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveResourceValueResponse, error)
+	DeleteResourceValue(ctx context.Context, in *AttributeValueServiceDeleteResourceValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteResourceValueResponse, error)
+	FindResourceValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindResourceValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindResourceValueWithDefinitionResponse, error)
+	SaveEnvironmentValue(ctx context.Context, in *AttributeValueServiceSaveEnvironmentValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveEnvironmentValueResponse, error)
+	DeleteEnvironmentValue(ctx context.Context, in *AttributeValueServiceDeleteEnvironmentValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteEnvironmentValueResponse, error)
+	FindEnvironmentValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error)
+}
+
+type attributeValueServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAttributeValueServiceClient(cc grpc.ClientConnInterface) AttributeValueServiceClient {
+	return &attributeValueServiceClient{cc}
+}
+
+func (c *attributeValueServiceClient) SaveSubjectValue(ctx context.Context, in *AttributeValueServiceSaveSubjectValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveSubjectValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceSaveSubjectValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_SaveSubjectValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) DeleteSubjectValue(ctx context.Context, in *AttributeValueServiceDeleteSubjectValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteSubjectValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceDeleteSubjectValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_DeleteSubjectValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) FindSubjectValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindSubjectValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindSubjectValueWithDefinitionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceFindSubjectValueWithDefinitionResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_FindSubjectValueWithDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) SaveResourceValue(ctx context.Context, in *AttributeValueServiceSaveResourceValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveResourceValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceSaveResourceValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_SaveResourceValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) DeleteResourceValue(ctx context.Context, in *AttributeValueServiceDeleteResourceValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteResourceValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceDeleteResourceValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_DeleteResourceValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) FindResourceValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindResourceValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindResourceValueWithDefinitionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceFindResourceValueWithDefinitionResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_FindResourceValueWithDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) SaveEnvironmentValue(ctx context.Context, in *AttributeValueServiceSaveEnvironmentValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceSaveEnvironmentValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceSaveEnvironmentValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_SaveEnvironmentValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) DeleteEnvironmentValue(ctx context.Context, in *AttributeValueServiceDeleteEnvironmentValueRequest, opts ...grpc.CallOption) (*AttributeValueServiceDeleteEnvironmentValueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceDeleteEnvironmentValueResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_DeleteEnvironmentValue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeValueServiceClient) FindEnvironmentValueWithDefinition(ctx context.Context, in *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest, opts ...grpc.CallOption) (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeValueServiceFindEnvironmentValueWithDefinitionResponse)
+	err := c.cc.Invoke(ctx, AttributeValueService_FindEnvironmentValueWithDefinition_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AttributeValueServiceServer is the server API for AttributeValueService service.
+// All implementations should embed UnimplementedAttributeValueServiceServer
+// for forward compatibility.
+//
+// Attribute Value Service
+type AttributeValueServiceServer interface {
+	SaveSubjectValue(context.Context, *AttributeValueServiceSaveSubjectValueRequest) (*AttributeValueServiceSaveSubjectValueResponse, error)
+	DeleteSubjectValue(context.Context, *AttributeValueServiceDeleteSubjectValueRequest) (*AttributeValueServiceDeleteSubjectValueResponse, error)
+	FindSubjectValueWithDefinition(context.Context, *AttributeValueServiceFindSubjectValueWithDefinitionRequest) (*AttributeValueServiceFindSubjectValueWithDefinitionResponse, error)
+	SaveResourceValue(context.Context, *AttributeValueServiceSaveResourceValueRequest) (*AttributeValueServiceSaveResourceValueResponse, error)
+	DeleteResourceValue(context.Context, *AttributeValueServiceDeleteResourceValueRequest) (*AttributeValueServiceDeleteResourceValueResponse, error)
+	FindResourceValueWithDefinition(context.Context, *AttributeValueServiceFindResourceValueWithDefinitionRequest) (*AttributeValueServiceFindResourceValueWithDefinitionResponse, error)
+	SaveEnvironmentValue(context.Context, *AttributeValueServiceSaveEnvironmentValueRequest) (*AttributeValueServiceSaveEnvironmentValueResponse, error)
+	DeleteEnvironmentValue(context.Context, *AttributeValueServiceDeleteEnvironmentValueRequest) (*AttributeValueServiceDeleteEnvironmentValueResponse, error)
+	FindEnvironmentValueWithDefinition(context.Context, *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error)
+}
+
+// UnimplementedAttributeValueServiceServer should be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAttributeValueServiceServer struct{}
+
+func (UnimplementedAttributeValueServiceServer) SaveSubjectValue(context.Context, *AttributeValueServiceSaveSubjectValueRequest) (*AttributeValueServiceSaveSubjectValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveSubjectValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) DeleteSubjectValue(context.Context, *AttributeValueServiceDeleteSubjectValueRequest) (*AttributeValueServiceDeleteSubjectValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubjectValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) FindSubjectValueWithDefinition(context.Context, *AttributeValueServiceFindSubjectValueWithDefinitionRequest) (*AttributeValueServiceFindSubjectValueWithDefinitionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindSubjectValueWithDefinition not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) SaveResourceValue(context.Context, *AttributeValueServiceSaveResourceValueRequest) (*AttributeValueServiceSaveResourceValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveResourceValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) DeleteResourceValue(context.Context, *AttributeValueServiceDeleteResourceValueRequest) (*AttributeValueServiceDeleteResourceValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteResourceValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) FindResourceValueWithDefinition(context.Context, *AttributeValueServiceFindResourceValueWithDefinitionRequest) (*AttributeValueServiceFindResourceValueWithDefinitionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindResourceValueWithDefinition not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) SaveEnvironmentValue(context.Context, *AttributeValueServiceSaveEnvironmentValueRequest) (*AttributeValueServiceSaveEnvironmentValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveEnvironmentValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) DeleteEnvironmentValue(context.Context, *AttributeValueServiceDeleteEnvironmentValueRequest) (*AttributeValueServiceDeleteEnvironmentValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEnvironmentValue not implemented")
+}
+
+func (UnimplementedAttributeValueServiceServer) FindEnvironmentValueWithDefinition(context.Context, *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindEnvironmentValueWithDefinition not implemented")
+}
+func (UnimplementedAttributeValueServiceServer) testEmbeddedByValue() {}
+
+// UnsafeAttributeValueServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AttributeValueServiceServer will
+// result in compilation errors.
+type UnsafeAttributeValueServiceServer interface {
+	mustEmbedUnimplementedAttributeValueServiceServer()
+}
+
+func RegisterAttributeValueServiceServer(s grpc.ServiceRegistrar, srv AttributeValueServiceServer) {
+	// If the following call pancis, it indicates UnimplementedAttributeValueServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AttributeValueService_ServiceDesc, srv)
+}
+
+func _AttributeValueService_SaveSubjectValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceSaveSubjectValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).SaveSubjectValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_SaveSubjectValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).SaveSubjectValue(ctx, req.(*AttributeValueServiceSaveSubjectValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_DeleteSubjectValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceDeleteSubjectValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).DeleteSubjectValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_DeleteSubjectValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).DeleteSubjectValue(ctx, req.(*AttributeValueServiceDeleteSubjectValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_FindSubjectValueWithDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceFindSubjectValueWithDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).FindSubjectValueWithDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_FindSubjectValueWithDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).FindSubjectValueWithDefinition(ctx, req.(*AttributeValueServiceFindSubjectValueWithDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_SaveResourceValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceSaveResourceValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).SaveResourceValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_SaveResourceValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).SaveResourceValue(ctx, req.(*AttributeValueServiceSaveResourceValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_DeleteResourceValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceDeleteResourceValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).DeleteResourceValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_DeleteResourceValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).DeleteResourceValue(ctx, req.(*AttributeValueServiceDeleteResourceValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_FindResourceValueWithDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceFindResourceValueWithDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).FindResourceValueWithDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_FindResourceValueWithDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).FindResourceValueWithDefinition(ctx, req.(*AttributeValueServiceFindResourceValueWithDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_SaveEnvironmentValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceSaveEnvironmentValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).SaveEnvironmentValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_SaveEnvironmentValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).SaveEnvironmentValue(ctx, req.(*AttributeValueServiceSaveEnvironmentValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_DeleteEnvironmentValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceDeleteEnvironmentValueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).DeleteEnvironmentValue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_DeleteEnvironmentValue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).DeleteEnvironmentValue(ctx, req.(*AttributeValueServiceDeleteEnvironmentValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeValueService_FindEnvironmentValueWithDefinition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeValueServiceFindEnvironmentValueWithDefinitionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeValueServiceServer).FindEnvironmentValueWithDefinition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeValueService_FindEnvironmentValueWithDefinition_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeValueServiceServer).FindEnvironmentValueWithDefinition(ctx, req.(*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AttributeValueService_ServiceDesc is the grpc.ServiceDesc for AttributeValueService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AttributeValueService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "permission.v1.AttributeValueService",
+	HandlerType: (*AttributeValueServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SaveSubjectValue",
+			Handler:    _AttributeValueService_SaveSubjectValue_Handler,
+		},
+		{
+			MethodName: "DeleteSubjectValue",
+			Handler:    _AttributeValueService_DeleteSubjectValue_Handler,
+		},
+		{
+			MethodName: "FindSubjectValueWithDefinition",
+			Handler:    _AttributeValueService_FindSubjectValueWithDefinition_Handler,
+		},
+		{
+			MethodName: "SaveResourceValue",
+			Handler:    _AttributeValueService_SaveResourceValue_Handler,
+		},
+		{
+			MethodName: "DeleteResourceValue",
+			Handler:    _AttributeValueService_DeleteResourceValue_Handler,
+		},
+		{
+			MethodName: "FindResourceValueWithDefinition",
+			Handler:    _AttributeValueService_FindResourceValueWithDefinition_Handler,
+		},
+		{
+			MethodName: "SaveEnvironmentValue",
+			Handler:    _AttributeValueService_SaveEnvironmentValue_Handler,
+		},
+		{
+			MethodName: "DeleteEnvironmentValue",
+			Handler:    _AttributeValueService_DeleteEnvironmentValue_Handler,
+		},
+		{
+			MethodName: "FindEnvironmentValueWithDefinition",
+			Handler:    _AttributeValueService_FindEnvironmentValueWithDefinition_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "permission/v1/abac.proto",
+}
+
+const (
+	AttributeDefinitionService_Save_FullMethodName   = "/permission.v1.AttributeDefinitionService/Save"
+	AttributeDefinitionService_First_FullMethodName  = "/permission.v1.AttributeDefinitionService/First"
+	AttributeDefinitionService_Delete_FullMethodName = "/permission.v1.AttributeDefinitionService/Delete"
+	AttributeDefinitionService_Find_FullMethodName   = "/permission.v1.AttributeDefinitionService/Find"
+)
+
+// AttributeDefinitionServiceClient is the client API for AttributeDefinitionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Attribute Definition Service
+type AttributeDefinitionServiceClient interface {
+	Save(ctx context.Context, in *AttributeDefinitionServiceSaveRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceSaveResponse, error)
+	First(ctx context.Context, in *AttributeDefinitionServiceFirstRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceFirstResponse, error)
+	Delete(ctx context.Context, in *AttributeDefinitionServiceDeleteRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceDeleteResponse, error)
+	Find(ctx context.Context, in *AttributeDefinitionServiceFindRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceFindResponse, error)
+}
+
+type attributeDefinitionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAttributeDefinitionServiceClient(cc grpc.ClientConnInterface) AttributeDefinitionServiceClient {
+	return &attributeDefinitionServiceClient{cc}
+}
+
+func (c *attributeDefinitionServiceClient) Save(ctx context.Context, in *AttributeDefinitionServiceSaveRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceSaveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeDefinitionServiceSaveResponse)
+	err := c.cc.Invoke(ctx, AttributeDefinitionService_Save_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeDefinitionServiceClient) First(ctx context.Context, in *AttributeDefinitionServiceFirstRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceFirstResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeDefinitionServiceFirstResponse)
+	err := c.cc.Invoke(ctx, AttributeDefinitionService_First_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeDefinitionServiceClient) Delete(ctx context.Context, in *AttributeDefinitionServiceDeleteRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceDeleteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeDefinitionServiceDeleteResponse)
+	err := c.cc.Invoke(ctx, AttributeDefinitionService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *attributeDefinitionServiceClient) Find(ctx context.Context, in *AttributeDefinitionServiceFindRequest, opts ...grpc.CallOption) (*AttributeDefinitionServiceFindResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttributeDefinitionServiceFindResponse)
+	err := c.cc.Invoke(ctx, AttributeDefinitionService_Find_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AttributeDefinitionServiceServer is the server API for AttributeDefinitionService service.
+// All implementations should embed UnimplementedAttributeDefinitionServiceServer
+// for forward compatibility.
+//
+// Attribute Definition Service
+type AttributeDefinitionServiceServer interface {
+	Save(context.Context, *AttributeDefinitionServiceSaveRequest) (*AttributeDefinitionServiceSaveResponse, error)
+	First(context.Context, *AttributeDefinitionServiceFirstRequest) (*AttributeDefinitionServiceFirstResponse, error)
+	Delete(context.Context, *AttributeDefinitionServiceDeleteRequest) (*AttributeDefinitionServiceDeleteResponse, error)
+	Find(context.Context, *AttributeDefinitionServiceFindRequest) (*AttributeDefinitionServiceFindResponse, error)
+}
+
+// UnimplementedAttributeDefinitionServiceServer should be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAttributeDefinitionServiceServer struct{}
+
+func (UnimplementedAttributeDefinitionServiceServer) Save(context.Context, *AttributeDefinitionServiceSaveRequest) (*AttributeDefinitionServiceSaveResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
+}
+
+func (UnimplementedAttributeDefinitionServiceServer) First(context.Context, *AttributeDefinitionServiceFirstRequest) (*AttributeDefinitionServiceFirstResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method First not implemented")
+}
+
+func (UnimplementedAttributeDefinitionServiceServer) Delete(context.Context, *AttributeDefinitionServiceDeleteRequest) (*AttributeDefinitionServiceDeleteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+}
+
+func (UnimplementedAttributeDefinitionServiceServer) Find(context.Context, *AttributeDefinitionServiceFindRequest) (*AttributeDefinitionServiceFindResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
+}
+func (UnimplementedAttributeDefinitionServiceServer) testEmbeddedByValue() {}
+
+// UnsafeAttributeDefinitionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AttributeDefinitionServiceServer will
+// result in compilation errors.
+type UnsafeAttributeDefinitionServiceServer interface {
+	mustEmbedUnimplementedAttributeDefinitionServiceServer()
+}
+
+func RegisterAttributeDefinitionServiceServer(s grpc.ServiceRegistrar, srv AttributeDefinitionServiceServer) {
+	// If the following call pancis, it indicates UnimplementedAttributeDefinitionServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AttributeDefinitionService_ServiceDesc, srv)
+}
+
+func _AttributeDefinitionService_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeDefinitionServiceSaveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeDefinitionServiceServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeDefinitionService_Save_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeDefinitionServiceServer).Save(ctx, req.(*AttributeDefinitionServiceSaveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeDefinitionService_First_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeDefinitionServiceFirstRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeDefinitionServiceServer).First(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeDefinitionService_First_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeDefinitionServiceServer).First(ctx, req.(*AttributeDefinitionServiceFirstRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeDefinitionService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeDefinitionServiceDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeDefinitionServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeDefinitionService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeDefinitionServiceServer).Delete(ctx, req.(*AttributeDefinitionServiceDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AttributeDefinitionService_Find_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttributeDefinitionServiceFindRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AttributeDefinitionServiceServer).Find(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AttributeDefinitionService_Find_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AttributeDefinitionServiceServer).Find(ctx, req.(*AttributeDefinitionServiceFindRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AttributeDefinitionService_ServiceDesc is the grpc.ServiceDesc for AttributeDefinitionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AttributeDefinitionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "permission.v1.AttributeDefinitionService",
+	HandlerType: (*AttributeDefinitionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Save",
+			Handler:    _AttributeDefinitionService_Save_Handler,
+		},
+		{
+			MethodName: "First",
+			Handler:    _AttributeDefinitionService_First_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _AttributeDefinitionService_Delete_Handler,
+		},
+		{
+			MethodName: "Find",
+			Handler:    _AttributeDefinitionService_Find_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "permission/v1/abac.proto",
 }
