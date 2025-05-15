@@ -19,7 +19,7 @@ type Permission struct {
 	ResourceType string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_type,priority:2;comment:'资源类型，冗余字段，加速查询'"`
 	ResourceKey  string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，冗余字段，加速查询'"`
 	Action       string `gorm:"type:VARCHAR(255);NOT NULL;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:3;index:idx_biz_action,priority:2;comment:'操作类型'"`
-	Metadata     string `gorm:"type:JSON;comment:'权限元数据，可扩展字段'"`
+	Metadata     string `gorm:"type:TEXT;comment:'权限元数据，可扩展字段'"`
 	Ctime        int64
 	Utime        int64
 }

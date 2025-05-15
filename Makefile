@@ -61,3 +61,11 @@ grpc:
 .PHONY: gen
 gen:
 	@go generate ./...
+
+
+.PHONY: mysqldump
+mysqldump:
+	@docker exec -i permission-platform-mysql-1 mysqldump -u root -proot --databases permission > ./scripts/mysql/data.sql 2>/dev/null
+	@cat ./scripts/mysql/database.sql >  ./scripts/mysql/init.sql
+	@echo ""                          >> ./scripts/mysql/init.sql
+	@cat ./scripts/mysql/data.sql    >> ./scripts/mysql/init.sql

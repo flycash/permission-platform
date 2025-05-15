@@ -1,0 +1,35 @@
+mysql:
+  dsn: "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
+
+redis:
+  addr: "localhost:6379"
+
+etcd:
+  addrs:
+    - "127.0.0.1:2379"
+  connectTimeout: "1s"
+  secure: false
+server:
+  governor:
+    host: 0.0.0.0
+    port: 9003
+  grpc:
+    host: "0.0.0.0"
+    port: 9002
+
+trace:
+  zipkin:
+    endpoint: "http://localhost:9411/api/v2/spans"
+    serviceName: "notification-platform"
+
+
+jwt:
+  key: "permission_platform_key"
+cron:
+  quotaMonthlyReset:
+    spec: "0 0 1 1 *"
+  loadBusinessLocalCache:
+    # 调小的问题是：会不会对数据库造成压力?
+    # 你产生的读 QPS  = N(节点数量) * 频率（比如说 1秒钟一次）
+    spec: "* * * * *" # 每分钟执行一次，你可以调小，甚至于到 1 秒钟一次
+

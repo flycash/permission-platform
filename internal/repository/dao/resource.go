@@ -17,7 +17,7 @@ type Resource struct {
 	Key         string `gorm:"type:VARCHAR(255);NOT NULL;uniqueIndex:uk_biz_type_key,priority:3;index:idx_biz_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，被冗余，创建后不允许修改'"`
 	Name        string `gorm:"type:VARCHAR(255);NOT NULL;comment:'资源名称'"`
 	Description string `gorm:"type:TEXT;comment:'资源描述'"`
-	Metadata    string `gorm:"type:JSON;comment:'资源元数据'"`
+	Metadata    string `gorm:"type:TEXT;comment:'资源元数据'"`
 	Ctime       int64
 	Utime       int64
 }

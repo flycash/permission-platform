@@ -93,10 +93,12 @@ func (s *rbacService) CreateBusinessConfig(ctx context.Context, config domain.Bu
 	if err != nil {
 		return domain.BusinessConfig{}, err
 	}
+	const years = 100
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iat":    time.Now().Unix(),
 		"iss":    "permission-platform",
 		"biz_id": businessConfig.ID,
+		"exp":    time.Now().AddDate(years, 0, 0).Unix(),
 	})
 	token, err := jwtToken.SignedString([]byte(businessConfig.Name))
 	if err != nil {

@@ -14,7 +14,7 @@ type BusinessConfig struct {
 	OwnerType string `gorm:"type:ENUM('person', 'organization');comment:'业务方类型：person-个人,organization-组织'"`
 	Name      string `gorm:"type:VARCHAR(255);NOT NULL;comment:'业务名称'"`
 	RateLimit int    `gorm:"type:INT;DEFAULT:1000;comment:'每秒最大请求数'"`
-	Token     string `gorm:"type:TXT;NOT NULL;comment:'业务方Token，内部包含bizID'"`
+	Token     string `gorm:"type:TEXT;NOT NULL;comment:'业务方Token，内部包含bizID'"`
 	Ctime     int64
 	Utime     int64
 }
