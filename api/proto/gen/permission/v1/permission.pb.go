@@ -382,7 +382,6 @@ var (
 		(*Resource)(nil),                // 3: permission.v1.Resource
 	}
 )
-
 var file_permission_v1_permission_proto_depIdxs = []int32{
 	0, // 0: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission
 	1, // 1: permission.v1.PermissionService.CheckPermission:input_type -> permission.v1.CheckPermissionRequest
