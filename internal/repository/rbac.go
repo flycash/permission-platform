@@ -120,7 +120,7 @@ func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64)
 		return nil, err
 	}
 
-	allRoleIDs := make(map[int64]interface{}, len(directRoles))
+	allRoleIDs := make(map[int64]any, len(directRoles))
 
 	directRoleIDs := slice.Map(directRoles, func(_ int, src domain.UserRole) int64 {
 		allRoleIDs[src.Role.ID] = struct{}{}

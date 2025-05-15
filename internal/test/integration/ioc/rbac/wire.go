@@ -12,13 +12,16 @@ import (
 )
 
 type Service struct {
-	Svc  rbacsvc.Service
-	Repo repository.RBACRepository
+	Svc           rbacsvc.Service
+	PermissionSvc rbacsvc.PermissionService
+	Repo          repository.RBACRepository
 }
 
 func Init() *Service {
 	wire.Build(
 		testioc.BaseSet,
+
+		rbacsvc.NewPermissionService,
 
 		rbacsvc.NewService,
 		repository.NewRBACRepository,

@@ -1,8 +1,9 @@
 //go:build e2e
 
-package integration
+package rbac
 
 import (
+	"context"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,11 +12,34 @@ import (
 	jwtauth "gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/jwt"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
 	rbacioc "gitee.com/flycash/permission-platform/internal/test/integration/ioc/rbac"
+	testioc "gitee.com/flycash/permission-platform/internal/test/ioc"
 	"github.com/gotomicro/ego/core/econf"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/assert/yaml"
 	"github.com/stretchr/testify/require"
 )
+
+// TestMain 测试主函数，设置与清理测试环境
+func TestMain(m *testing.M) {
+	// 初始化数据库
+	_ = testioc.InitDBAndTables()
+
+	// 初始化RBAC服务
+	svc := rbacioc.Init()
+
+	// 清理除预设数据外的测试数据
+	ctx := context.Background()
+	t := &testing.T{}
+	cleanTestEnvironment(t, ctx, svc)
+
+	// 运行测试
+	exitCode := m.Run()
+
+	// 测试完成后再次清理
+	cleanTestEnvironment(t, ctx, svc)
+
+	os.Exit(exitCode)
+}
 
 func TestRBACInit(t *testing.T) {
 	t.Skip("用于演示生成权限平台的SQL脚本的过程")
