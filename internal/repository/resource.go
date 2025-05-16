@@ -62,11 +62,12 @@ func (r *resourceRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id i
 }
 
 func (r *resourceRepository) FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string) (domain.Resource, error) {
-	res, err := r.resourceDAO.FindByBizIDAndKey(ctx, bizID, resourceType, resourceKey)
+	resource, err := r.resourceDAO.FindByBizIDAndTypeAndKey(ctx, bizID, resourceType, resourceKey)
 	if err != nil {
 		return domain.Resource{}, err
 	}
-	return r.toDomain(res), nil
+
+	return r.toDomain(resource), nil
 }
 
 func (r *resourceRepository) FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, error) {

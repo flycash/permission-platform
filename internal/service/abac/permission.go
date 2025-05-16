@@ -119,7 +119,7 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, pe
 	)
 	eg.Go(func() error {
 		var eerr error
-		permissions, eerr = p.permissionRepo.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, permission.Resource.Type, permission.Resource.Key, permission.Action)
+		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, permission.Resource.Type, permission.Resource.Key, permission.Action)
 		return eerr
 	})
 	eg.Go(func() error {

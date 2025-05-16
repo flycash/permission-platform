@@ -11,10 +11,9 @@ import (
 // PermissionRepository 权限仓储接口
 type PermissionRepository interface {
 	Create(ctx context.Context, permission domain.Permission) (domain.Permission, error)
-
+	FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error)
-	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 
@@ -24,6 +23,17 @@ type PermissionRepository interface {
 // permissionRepository 权限仓储实现
 type permissionRepository struct {
 	permissionDAO dao.PermissionDAO
+}
+
+func (r *permissionRepository) FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
+	permissions, err := r.permissionDAO.FindPermissions(ctx, bizID, resourceType, resourceKey, action)
+	if err != nil {
+		return nil, err
+	}
+	list := slice.Map(permissions, func(idx int, src dao.Permission) domain.Permission {
+		return r.toDomain(src)
+	})
+	return list, nil
 }
 
 // NewPermissionRepository 创建权限仓储实例
@@ -47,17 +57,6 @@ func (r *permissionRepository) FindByBizIDAndID(ctx context.Context, bizID, id i
 		return domain.Permission{}, err
 	}
 	return r.toDomain(permission), nil
-}
-
-func (r *permissionRepository) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
-	permissions, err := r.permissionDAO.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action)
-	if err != nil {
-		return nil, err
-	}
-
-	return slice.Map(permissions, func(_ int, src dao.Permission) domain.Permission {
-		return r.toDomain(src)
-	}), nil
 }
 
 func (r *permissionRepository) UpdateByBizIDAndID(ctx context.Context, permission domain.Permission) (domain.Permission, error) {

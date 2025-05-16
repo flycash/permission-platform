@@ -32,8 +32,7 @@ type ResourceDAO interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Resource, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Resource, error)
-	FindByBizIDAndType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Resource, error)
-	FindByBizIDAndKey(ctx context.Context, bizID int64, typ, key string) (Resource, error)
+	FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string) (Resource, error)
 
 	UpdateByBizIDAndID(ctx context.Context, resource Resource) error
 
@@ -78,15 +77,9 @@ func (r *resourceDAO) FindByBizID(ctx context.Context, bizID int64, offset, limi
 	return resources, err
 }
 
-func (r *resourceDAO) FindByBizIDAndType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Resource, error) {
-	var resources []Resource
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ?", bizID, resourceType).Offset(offset).Limit(limit).Find(&resources).Error
-	return resources, err
-}
-
-func (r *resourceDAO) FindByBizIDAndKey(ctx context.Context, bizID int64, typ, key string) (Resource, error) {
+func (r *resourceDAO) FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string) (Resource, error) {
 	var resource Resource
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ? AND `key` = ?", bizID, typ, key).First(&resource).Error
+	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ? AND `key` = ?", bizID, resourceType, resourceKey).First(&resource).Error
 	return resource, err
 }
 
@@ -105,11 +98,4 @@ func (r *resourceDAO) UpdateByBizIDAndID(ctx context.Context, resource Resource)
 
 func (r *resourceDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Resource{}).Error
-}
-
-func (r *resourceDAO) FindByBizIDAndTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]Resource, error) {
-	var resources []Resource
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND type = ? AND `key` = ?", bizID, resourceType, resourceKey).
-		Offset(offset).Limit(limit).Find(&resources).Error
-	return resources, err
 }

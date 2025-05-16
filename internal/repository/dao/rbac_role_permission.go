@@ -35,10 +35,8 @@ type RolePermissionDAO interface {
 	FindByBizID(ctx context.Context, bizID int64) ([]RolePermission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (RolePermission, error)
 	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]RolePermission, error)
-	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) ([]RolePermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	DeleteByBizIDAndRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error
 }
 
 // rolePermissionDAO 角色权限关联数据访问实现
@@ -79,13 +77,6 @@ func (r *rolePermissionDAO) FindByBizIDAndID(ctx context.Context, bizID, id int6
 	return rolePermission, err
 }
 
-func (r *rolePermissionDAO) FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) ([]RolePermission, error) {
-	var rolePermissions []RolePermission
-	err := r.db.WithContext(ctx).Where("biz_id = ? AND permission_id = ?", bizID, permissionID).
-		Find(&rolePermissions).Error
-	return rolePermissions, err
-}
-
 func (r *rolePermissionDAO) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]RolePermission, error) {
 	var rolePermissions []RolePermission
 	err := r.db.WithContext(ctx).Where("biz_id = ? AND role_id IN (?)", bizID, roleIDs).Find(&rolePermissions).Error
@@ -104,8 +95,4 @@ func (r *rolePermissionDAO) FindByBizIDAndResourceType(ctx context.Context, bizI
 
 func (r *rolePermissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&RolePermission{}).Error
-}
-
-func (r *rolePermissionDAO) DeleteByBizIDAndRoleIDAndPermissionID(ctx context.Context, bizID, roleID, permissionID int64) error {
-	return r.db.WithContext(ctx).Where("biz_id = ? AND role_id = ? AND permission_id = ?", bizID, roleID, permissionID).Delete(&RolePermission{}).Error
 }
