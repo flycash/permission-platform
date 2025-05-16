@@ -33,7 +33,7 @@ type UserRoleDAO interface {
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (UserRole, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64) ([]UserRole, error)
 	FindByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64) ([]UserRole, error)
-	FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64) ([]UserRole, error)
+	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error
@@ -60,16 +60,14 @@ func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, 
 }
 
 func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
-	// 加上一个有效期的验证
-	now := time.Now().UnixMilli()
 	var userRoles []UserRole
 	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= now",
-			bizID, userID, now, now).Find(&userRoles).Error
+		Where("biz_id = ? AND user_id = ?",
+			bizID, userID).Find(&userRoles).Error
 	return userRoles, err
 }
 
-func (u *userRoleDAO) FindValidUserRolesWithBizID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
+func (u *userRoleDAO) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	currentTime := time.Now().UnixMilli()
 	err := u.db.WithContext(ctx).

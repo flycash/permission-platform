@@ -115,7 +115,7 @@ func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userI
 // getAllRoleIDs 获取用户所有角色ID，包括继承的角色
 func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
 	// 1. 先找到直接关联的角色
-	directRoles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID)
+	directRoles, err := r.userRoleRepo.FindValidByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
 	}
