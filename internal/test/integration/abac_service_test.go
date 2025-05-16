@@ -25,7 +25,8 @@ type AbacServiceSuite struct {
 	suite.Suite
 	valRepo        repository.AttributeValueRepository
 	definitionRepo repository.AttributeDefinitionRepository
-	permissionRepo repository.RBACRepository
+	permissionRepo repository.PermissionRepository
+	resourceRepo   repository.ResourceRepository
 	policyRepo     repository.PolicyRepo
 	db             *egorm.Component
 }

@@ -1,8 +1,12 @@
+//go:build e2e
+
 package gorm
 
 import (
 	"context"
 	"testing"
+
+	"gitee.com/flycash/permission-platform/internal/test/ioc"
 
 	"github.com/stretchr/testify/require"
 
@@ -20,11 +24,11 @@ type User struct {
 }
 
 // Implement AuthRequired interface for User
-func (u User) ResourceKey(ctx context.Context) string {
+func (u User) ResourceKey(_ context.Context) string {
 	return "user"
 }
 
-func (u User) ResourceType(ctx context.Context) string {
+func (u User) ResourceType(_ context.Context) string {
 	return "user"
 }
 
@@ -43,7 +47,7 @@ func newMockPermissionServiceClient() *mockPermissionServiceClient {
 	return &mockPermissionServiceClient{}
 }
 
-func (m *mockPermissionServiceClient) CheckPermission(ctx context.Context, req *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
+func (*mockPermissionServiceClient) CheckPermission(_ context.Context, req *permissionv1.CheckPermissionRequest, _ ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	// 检查请求中的action
 	for _, action := range req.Permission.Actions {
 		switch action {
@@ -79,6 +83,7 @@ type GormAccessPluginTestSuite struct {
 func (s *GormAccessPluginTestSuite) SetupSuite() {
 	// 创建数据库连接
 	dsn := "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
+	ioc.WaitForDBSetup(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	s.Require().NoError(err)
 	s.db = db
@@ -154,7 +159,7 @@ func (s *GormAccessPluginTestSuite) TestSimpleModelWithResourceInContext() {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, bizIDKey, int64(1))
 	ctx = context.WithValue(ctx, uidKey, int64(1))
-	ctx = context.WithValue(ctx, resourceKey, permissionv1.Resource{
+	ctx = context.WithValue(ctx, resourceKey, &permissionv1.Resource{
 		Key:  "simple",
 		Type: "simple",
 	})

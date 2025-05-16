@@ -25,7 +25,8 @@ type PermissionSuite struct {
 	permissionSvc  abacsvc.PermissionSvc
 	valRepo        repository.AttributeValueRepository
 	definitionRepo repository.AttributeDefinitionRepository
-	permissionRepo repository.RBACRepository
+	permissionRepo repository.PermissionRepository
+	resourceRepo   repository.ResourceRepository
 	policyRepo     repository.PolicyRepo
 	db             *egorm.Component
 }
@@ -38,12 +39,12 @@ func (s *PermissionSuite) SetupSuite() {
 	s.valRepo = svc.ValRepo
 	s.policyRepo = svc.PolicyRepo
 	s.permissionRepo = svc.PermissionRepo
+	s.resourceRepo = svc.ResourceRepo
 	s.db = db
 }
 
 func (s *PermissionSuite) TestPermission() {
 	bizId := int64(10000)
-	t := s.T()
 
 	testcase := []struct {
 		name       string
@@ -58,7 +59,8 @@ func (s *PermissionSuite) TestPermission() {
 			uid:  22,
 			permission: domain.Permission{
 				Resource: domain.Resource{
-					Key: "/order/tab",
+					Key:  "/order/tab",
+					Type: "table",
 				},
 				Action: "read",
 			},
@@ -115,11 +117,11 @@ func (s *PermissionSuite) TestPermission() {
 					Action:   "read",
 					Metadata: "[1]",
 				}
-				per, err := s.permissionRepo.CreatePermission(t.Context(), permission)
+				per, err := s.permissionRepo.Create(t.Context(), permission)
 				require.NoError(t, err)
 				// 创建资源
 				res := domain.Resource{
-					ID:          10020,
+					ID:          33,
 					BizID:       bizId,
 					Type:        "table",
 					Name:        "order_table",
@@ -127,11 +129,12 @@ func (s *PermissionSuite) TestPermission() {
 					Key:         "/order/tab",
 					Metadata:    "[1]",
 				}
-				_, err = s.permissionRepo.CreateResource(t.Context(), res)
+				_, err = s.resourceRepo.Create(t.Context(), res)
 				require.NoError(t, err)
 
 				// 创建策略
 				policy := domain.Policy{
+					BizID:       bizId,
 					Name:        "订单读取策略",
 					Description: "允许用户读取订单信息",
 					Status:      domain.PolicyStatusActive,
@@ -217,7 +220,8 @@ func (s *PermissionSuite) TestPermission() {
 			uid:  23,
 			permission: domain.Permission{
 				Resource: domain.Resource{
-					Key: "/order/tab",
+					Key:  "/order/tab",
+					Type: "order",
 				},
 				Action: "read",
 			},
@@ -275,23 +279,24 @@ func (s *PermissionSuite) TestPermission() {
 
 					Action: "read",
 				}
-				per, err := s.permissionRepo.CreatePermission(t.Context(), permission)
+				per, err := s.permissionRepo.Create(t.Context(), permission)
 				require.NoError(t, err)
 				// 创建资源
 				res := domain.Resource{
 					ID:          10020,
 					BizID:       bizId,
-					Type:        "table",
+					Type:        "order",
 					Name:        "order_table",
 					Description: "desc",
 					Key:         "/order/tab",
 					Metadata:    "[1]",
 				}
-				_, err = s.permissionRepo.CreateResource(t.Context(), res)
+				_, err = s.resourceRepo.Create(t.Context(), res)
 				require.NoError(t, err)
 
 				// 创建permit策略
 				permitPolicy := domain.Policy{
+					BizID:       bizId,
 					Name:        "permit策略",
 					Description: "允许用户读取订单信息",
 					Status:      domain.PolicyStatusActive,
@@ -346,6 +351,7 @@ func (s *PermissionSuite) TestPermission() {
 
 				// 创建deny策略，规则与permit类似但ID不同
 				denyPolicy := domain.Policy{
+					BizID:       bizId,
 					Name:        "deny策略",
 					Description: "拒绝用户读取订单信息",
 					Status:      domain.PolicyStatusActive,
@@ -403,7 +409,7 @@ func (s *PermissionSuite) TestPermission() {
 	}
 	for idx := range testcase {
 		tc := testcase[idx]
-		t.Run(tc.name, func(t *testing.T) {
+		s.T().Run(tc.name, func(t *testing.T) {
 			defer s.clearBizVal(bizId)
 			tc.before(t)
 			pass, err := s.permissionSvc.Check(t.Context(), bizId, tc.uid, tc.permission, tc.attrs)

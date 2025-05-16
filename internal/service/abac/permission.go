@@ -15,14 +15,16 @@ type PermissionSvc interface {
 }
 
 type permissionSvc struct {
-	permissionRepo repository.RBACRepository
+	permissionRepo repository.PermissionRepository
+	resourceRepo   repository.ResourceRepository
 	policyRepo     repository.PolicyRepo
 	valRepo        repository.AttributeValueRepository
 	definitionRepo repository.AttributeDefinitionRepository
 	parser         RuleParser
 }
 
-func NewPermissionSvc(permissionRepo repository.RBACRepository,
+func NewPermissionSvc(permissionRepo repository.PermissionRepository,
+	resourceRepo repository.ResourceRepository,
 	policyRepo repository.PolicyRepo,
 	valRepo repository.AttributeValueRepository,
 	definitionRepo repository.AttributeDefinitionRepository,
@@ -30,6 +32,7 @@ func NewPermissionSvc(permissionRepo repository.RBACRepository,
 ) PermissionSvc {
 	return &permissionSvc{
 		permissionRepo: permissionRepo,
+		resourceRepo:   resourceRepo,
 		policyRepo:     policyRepo,
 		valRepo:        valRepo,
 		definitionRepo: definitionRepo,
@@ -78,10 +81,13 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
 	if err != nil {
 		return false, err
 	}
-
 	attributeValReq := p.buildAttributeValReq(bizDefinition, &subObj, &resObj, &envObj, attrs)
+
 	var hasPermit bool
 	var hasDeny bool
+	if len(policies) == 0 {
+		return true, nil
+	}
 	for idx := range policies {
 		policy := policies[idx]
 		p.setPolicyDefinition(bizDefinition, policy.Rules)
@@ -113,12 +119,12 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, pe
 	)
 	eg.Go(func() error {
 		var eerr error
-		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, permission.Resource.Key, permission.Action)
+		permissions, eerr = p.permissionRepo.FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, permission.Resource.Type, permission.Resource.Key, permission.Action)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
-		res, eerr = p.permissionRepo.FindResource(ctx, bizID, permission.Resource.Key)
+		res, eerr = p.resourceRepo.FindByBizIDAndTypeAndKey(ctx, bizID, permission.Resource.Type, permission.Resource.Key)
 		return eerr
 	})
 	err := eg.Wait()

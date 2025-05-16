@@ -19,7 +19,7 @@ type Permission struct {
 	ResourceType string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_type,priority:2;comment:'资源类型，冗余字段，加速查询'"`
 	ResourceKey  string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key,priority:2;comment:'资源业务标识符 (如 用户ID, 文档路径)，冗余字段，加速查询'"`
 	Action       string `gorm:"type:VARCHAR(255);NOT NULL;NOT NULL;uniqueIndex:uk_biz_resource_action,priority:3;index:idx_biz_action,priority:2;comment:'操作类型'"`
-	Metadata     string `gorm:"type:JSON;comment:'权限元数据，可扩展字段'"`
+	Metadata     string `gorm:"type:TEXT;comment:'权限元数据，可扩展字段'"`
 	Ctime        int64
 	Utime        int64
 }
@@ -33,18 +33,10 @@ type PermissionDAO interface {
 	Create(ctx context.Context, permission Permission) (Permission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error)
-
 	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error)
-
 	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error)
-
-	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error)
-	CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error)
+	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission Permission) error
 
@@ -134,35 +126,9 @@ func (p *permissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64)
 	return p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Permission{}).Error
 }
 
-func (p *permissionDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Count(&count).Error
-	return count, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Count(&count).Error
-	return count, err
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string, offset, limit int) ([]Permission, error) {
+func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error) {
 	var permissions []Permission
 	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
-		bizID, resourceType, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
+		bizID, resourceType, resourceKey, action).Find(&permissions).Error
 	return permissions, err
-}
-
-func (p *permissionDAO) CountByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) (int64, error) {
-	var count int64
-	err := p.db.WithContext(ctx).Model(&Permission{}).
-		Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
-			bizID, resourceType, resourceKey, action).Count(&count).Error
-	return count, err
 }

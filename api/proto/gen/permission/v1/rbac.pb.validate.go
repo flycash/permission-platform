@@ -1259,8 +1259,6 @@ func (m *ListBusinessConfigsResponse) validate(all bool) error {
 
 	}
 
-	// no validation rules for Total
-
 	if len(errors) > 0 {
 		return ListBusinessConfigsResponseMultiError(errors)
 	}
@@ -2450,8 +2448,6 @@ func (m *ListResourcesResponse) validate(all bool) error {
 
 	}
 
-	// no validation rules for Total
-
 	if len(errors) > 0 {
 		return ListResourcesResponseMultiError(errors)
 	}
@@ -3640,8 +3636,6 @@ func (m *ListPermissionsResponse) validate(all bool) error {
 
 	}
 
-	// no validation rules for Total
-
 	if len(errors) > 0 {
 		return ListPermissionsResponseMultiError(errors)
 	}
@@ -4796,6 +4790,8 @@ func (m *ListRolesRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
+	// no validation rules for Type
+
 	// no validation rules for Offset
 
 	// no validation rules for Limit
@@ -4933,8 +4929,6 @@ func (m *ListRolesResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for Total
 
 	if len(errors) > 0 {
 		return ListRolesResponseMultiError(errors)
@@ -6007,8 +6001,6 @@ func (m *ListRoleInclusionsResponse) validate(all bool) error {
 
 	}
 
-	// no validation rules for Total
-
 	if len(errors) > 0 {
 		return ListRoleInclusionsResponseMultiError(errors)
 	}
@@ -6706,10 +6698,6 @@ func (m *ListRolePermissionsRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for Offset
-
-	// no validation rules for Limit
-
 	if len(errors) > 0 {
 		return ListRolePermissionsRequestMultiError(errors)
 	}
@@ -6845,8 +6833,6 @@ func (m *ListRolePermissionsResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for Total
 
 	if len(errors) > 0 {
 		return ListRolePermissionsResponseMultiError(errors)
@@ -7540,10 +7526,6 @@ func (m *ListUserRolesRequest) validate(all bool) error {
 
 	// no validation rules for BizId
 
-	// no validation rules for Offset
-
-	// no validation rules for Limit
-
 	if len(errors) > 0 {
 		return ListUserRolesRequestMultiError(errors)
 	}
@@ -7680,8 +7662,6 @@ func (m *ListUserRolesResponse) validate(all bool) error {
 
 	}
 
-	// no validation rules for Total
-
 	if len(errors) > 0 {
 		return ListUserRolesResponseMultiError(errors)
 	}
@@ -7797,8 +7777,6 @@ func (m *UserPermission) validate(all bool) error {
 	// no validation rules for ResourceType
 
 	// no validation rules for ResourceKey
-
-	// no validation rules for ResourceName
 
 	// no validation rules for PermissionAction
 
@@ -8524,8 +8502,6 @@ func (m *ListUserPermissionsResponse) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for Total
 
 	if len(errors) > 0 {
 		return ListUserPermissionsResponseMultiError(errors)

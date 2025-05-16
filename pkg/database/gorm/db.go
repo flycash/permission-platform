@@ -93,7 +93,7 @@ func (p *GormAccessPlugin) delete(db *gorm.DB) {
 
 func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 	ctx := db.Statement.Context
-	bizId, err := getBizID(ctx)
+	bizID, err := getBizID(ctx)
 	if err != nil {
 		// 没找到就不做权限校验了
 		return
@@ -122,7 +122,7 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 			_ = db.AddError(fmt.Errorf("权限校验失败 %w", err))
 			elog.Error("权限校验失败",
 				elog.FieldErr(err),
-				elog.Int64("bizID", bizId),
+				elog.Int64("bizID", bizID),
 				elog.Int64("uid", uid),
 				elog.String("action", action),
 				elog.String("resourceKey", key),
@@ -149,7 +149,7 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 			_ = db.AddError(fmt.Errorf("权限校验失败 %w", err))
 			elog.Error("权限校验失败",
 				elog.FieldErr(err),
-				elog.Int64("bizID", bizId),
+				elog.Int64("bizID", bizID),
 				elog.Int64("uid", uid),
 				elog.String("action", action),
 				elog.String("resourceKey", val.Key),
@@ -193,14 +193,14 @@ func getUID(ctx context.Context) (int64, error) {
 	return uid, nil
 }
 
-func getResource(ctx context.Context) (permissionv1.Resource, error) {
+func getResource(ctx context.Context) (*permissionv1.Resource, error) {
 	value := ctx.Value(resourceKey)
 	if value == nil {
-		return permissionv1.Resource{}, fmt.Errorf("resource not found in context")
+		return nil, fmt.Errorf("resource not found in context")
 	}
-	res, ok := value.(permissionv1.Resource)
+	res, ok := value.(*permissionv1.Resource)
 	if !ok {
-		return permissionv1.Resource{}, fmt.Errorf("invalid resource type, expected permissionv1.Resource")
+		return nil, fmt.Errorf("invalid resource type, expected permissionv1.Resource")
 	}
 	return res, nil
 }

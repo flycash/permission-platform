@@ -17,19 +17,29 @@ import (
 
 func Init() *Service {
 	db := ioc.InitDBAndTables()
-	resourceDAO := dao.NewResourceDAO(db)
-	permissionDAO := dao.NewPermissionDAO(db)
-	roleDAO := dao.NewRoleDAO(db)
-	rolePermissionDAO := dao.NewRolePermissionDAO(db)
-	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
-	userPermissionDAO := dao.NewUserPermissionDAO(db)
-	userRoleDAO := dao.NewUserRoleDAO(db)
 	businessConfigDAO := dao.NewBusinessConfigDAO(db)
-	rbacRepository := repository.NewRBACRepository(resourceDAO, permissionDAO, roleDAO, rolePermissionDAO, roleInclusionDAO, userPermissionDAO, userRoleDAO, businessConfigDAO)
+	businessConfigRepository := repository.NewBusinessConfigRepository(businessConfigDAO)
+	resourceDAO := dao.NewResourceDAO(db)
+	resourceRepository := repository.NewResourceRepository(resourceDAO)
+	permissionDAO := dao.NewPermissionDAO(db)
+	permissionRepository := repository.NewPermissionRepository(permissionDAO)
+	roleDAO := dao.NewRoleDAO(db)
+	roleRepository := repository.NewRoleRepository(roleDAO)
+	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
+	roleInclusionRepository := repository.NewRoleInclusionRepository(roleInclusionDAO)
+	rolePermissionDAO := dao.NewRolePermissionDAO(db)
+	rolePermissionRepository := repository.NewRolePermissionRepository(rolePermissionDAO)
+	userRoleDAO := dao.NewUserRoleDAO(db)
+	userRoleRepository := repository.NewUserRoleRepository(userRoleDAO)
+	userPermissionDAO := dao.NewUserPermissionDAO(db)
+	userPermissionRepository := repository.NewUserPermissionRepository(userPermissionDAO)
+	rbacRepository := repository.NewRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
 	service := rbac.NewService(rbacRepository)
+	permissionService := rbac.NewPermissionService(rbacRepository)
 	rbacService := &Service{
-		Svc:  service,
-		Repo: rbacRepository,
+		Svc:           service,
+		PermissionSvc: permissionService,
+		Repo:          rbacRepository,
 	}
 	return rbacService
 }
@@ -37,6 +47,7 @@ func Init() *Service {
 // wire.go:
 
 type Service struct {
-	Svc  rbac.Service
-	Repo repository.RBACRepository
+	Svc           rbac.Service
+	PermissionSvc rbac.PermissionService
+	Repo          repository.RBACRepository
 }

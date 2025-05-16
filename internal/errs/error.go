@@ -3,6 +3,8 @@ package errs
 import "errors"
 
 var (
+	ErrBizIDNotFound = errors.New("BizID不存在")
+
 	ErrInvalidParameter = errors.New("参数错误")
 
 	ErrRoleDuplicate = errors.New("角色记录biz、type、name唯一索引冲突")

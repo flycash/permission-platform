@@ -1,0 +1,50 @@
+{"lv":"info","ts":1747317092,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747386423,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747386520,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"error","ts":1747386524,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.policies","cost":2075.155,"event":"slow","error":"dial tcp: lookup localhost: i/o timeout","req":"/* tid=00000000000000000000000000000000 */ SELECT * FROM `policies` WHERE id = 10 AND biz_id ORDER BY `policies`.`id` LIMIT 17"}
+{"lv":"info","ts":1747386544,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"error","ts":1747386550,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.policies","cost":1917.717,"event":"slow","error":"sql: expected 2 arguments, got 3","req":"/* tid=00000000000000000000000000000000 */ SELECT * FROM `policies` WHERE id = 11 AND biz_id ORDER BY `policies`.`id` LIMIT 17"}
+2025-05-16 17:12:40	[32mINFO[0m	egorm@v1.1.4/container.go:82	start db                        	{"comp": "component.egorm", "compName": "mysql", "addr": "localhost:13316", "name": "permission"}
+2025-05-16 17:13:11	[32mINFO[0m	egorm@v1.1.4/container.go:82	start db                        	{"comp": "component.egorm", "compName": "mysql", "addr": "localhost:13316", "name": "permission"}
+2025-05-16 17:13:21	[31mERROR[0m	egorm@v1.1.4/interceptor.go:124	access                          	{"comp": "component.egorm", "compName": "mysql", "addr": "localhost:13316", "method": "gorm:query", "name": "permission.policies", "cost": 6325.551, "event": "slow", "error": "sql: expected 2 arguments, got 3", "req": "/* tid=00000000000000000000000000000000 */ SELECT * FROM `policies` WHERE id = 18 AND biz_id ORDER BY `policies`.`id` LIMIT 17"}
+2025-05-16 17:15:34	[32mINFO[0m	egorm@v1.1.4/container.go:82	start db                        	{"comp": "component.egorm", "compName": "mysql", "addr": "localhost:13316", "name": "permission"}
+{"lv":"info","ts":1747387289,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747387305,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"error","ts":1747387306,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:create","name":"permission.permissions","cost":0.814,"event":"normal","error":"Error 1062 (23000): Duplicate entry '10000-10001-read' for key 'permissions.uk_biz_resource_action'","req":"/* tid=00000000000000000000000000000000 */ INSERT INTO `permissions` (`biz_id`,`name`,`description`,`resource_id`,`resource_type`,`resource_key`,`action`,`metadata`,`ctime`,`utime`) VALUES (10000,'读取订单权限','允许读取订单信息',10001,'order','/order/tab','read','[1]',1747387306109,1747387306109)"}
+{"lv":"error","ts":1747387308,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.resources","cost":2406.203,"event":"slow","error":"dial tcp [::1]:13316: i/o timeout","req":"/* tid=00000000000000000000000000000000 */ SELECT * FROM `resources` WHERE biz_id = 10000 AND type = '' AND `key` = '/order/tab' ORDER BY `resources`.`id` LIMIT 1"}
+{"lv":"info","ts":1747387399,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"error","ts":1747387402,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.resources","cost":2467.611,"event":"slow","error":"dial tcp: lookup localhost: i/o timeout","req":"/* tid=00000000000000000000000000000000 */ SELECT * FROM `resources` WHERE biz_id = 10000 AND type = 'table' AND `key` = '/order/tab' ORDER BY `resources`.`id` LIMIT 1"}
+{"lv":"info","ts":1747387433,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747387508,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"warn","ts":1747387658,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.subject_attribute_values","cost":52425.381,"event":"slow"}
+{"lv":"info","ts":1747388102,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"warn","ts":1747388133,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.policies","cost":3796.595,"event":"slow"}
+{"lv":"warn","ts":1747388133,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.policy_rules","cost":3798.184,"event":"slow"}
+{"lv":"info","ts":1747388154,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388286,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388372,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388459,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388595,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388618,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388845,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747388928,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747389167,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747389469,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747389769,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747389898,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390187,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390281,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390308,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"warn","ts":1747390363,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.subject_attribute_values","cost":53852.13,"event":"slow"}
+{"lv":"info","ts":1747390410,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"warn","ts":1747390439,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.resource_attribute_values","cost":28113.274,"event":"slow"}
+{"lv":"warn","ts":1747390439,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.subject_attribute_values","cost":28113.34,"event":"slow"}
+{"lv":"info","ts":1747390485,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390661,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390686,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747390748,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"warn","ts":1747390761,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.policy_rules","cost":2999.719,"event":"slow"}
+{"lv":"warn","ts":1747390761,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.resource_attribute_values","cost":9179.137,"event":"slow"}
+{"lv":"warn","ts":1747390761,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.environment_attribute_values","cost":9179.191,"event":"slow"}
+{"lv":"warn","ts":1747390761,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.subject_attribute_values","cost":9179.352,"event":"slow"}
+{"lv":"info","ts":1747390822,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}

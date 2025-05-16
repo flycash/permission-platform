@@ -234,7 +234,7 @@ func convertToDomainPolicyStatus(s permissionpb.PolicyStatus) domain.PolicyStatu
 	case permissionpb.PolicyStatus_POLICY_STATUS_INACTIVE:
 		return domain.PolicyStatusInactive
 	default:
-		return domain.PolicyStatus(0) // Use zero value instead of undefined constant
+		return ""
 	}
 }
 
@@ -256,7 +256,7 @@ func convertToDomainEffect(e permissionpb.Effect) domain.Effect {
 	case permissionpb.Effect_EFFECT_DENY:
 		return domain.EffectDeny
 	default:
-		return domain.Effect(0) // Use zero value instead of undefined constant
+		return "" // Use zero value instead of undefined constant
 	}
 }
 
@@ -298,7 +298,7 @@ func convertToProtoDataType(d domain.DataType) permissionpb.DataType {
 		return permissionpb.DataType_DATA_TYPE_BOOLEAN
 	case domain.DataTypeFloat:
 		return permissionpb.DataType_DATA_TYPE_FLOAT
-	case domain.DataType(4): // Match the numeric value used above
+	case domain.DataTypeDatetime:
 		return permissionpb.DataType_DATA_TYPE_DATETIME
 	default:
 		return permissionpb.DataType_DATA_TYPE_UNKNOWN
@@ -314,7 +314,7 @@ func convertToDomainEntityType(e permissionpb.EntityType) domain.EntityType {
 	case permissionpb.EntityType_ENTITY_TYPE_ENVIRONMENT:
 		return domain.EntityTypeEnvironment
 	default:
-		return domain.EntityType(0)
+		return ""
 	}
 }
 

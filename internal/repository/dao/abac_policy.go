@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/domain"
+
 	"github.com/pkg/errors"
 
 	"github.com/ego-component/egorm"
@@ -160,7 +162,7 @@ func (p *policyDAO) DeletePolicy(ctx context.Context, bizID, id int64) error {
 func (p *policyDAO) FindPolicy(ctx context.Context, bizID, id int64) (Policy, error) {
 	var policy Policy
 	err := p.db.WithContext(ctx).
-		Where("id = ? AND biz_id", id, bizID).
+		Where("id = ? AND biz_id = ?", id, bizID).
 		First(&policy).Error
 	return policy, err
 }
@@ -168,7 +170,7 @@ func (p *policyDAO) FindPolicy(ctx context.Context, bizID, id int64) (Policy, er
 func (p *policyDAO) FindPoliciesByIDs(ctx context.Context, ids []int64) ([]Policy, error) {
 	var policies []Policy
 	err := p.db.WithContext(ctx).
-		Where(" id IN ?", ids).
+		Where(" id IN ? AND status = ?", ids, domain.PolicyStatusActive).
 		Find(&policies).Error
 	return policies, err
 }
@@ -238,6 +240,7 @@ func (p *policyDAO) FindPolicyRulesByPolicyIDs(ctx context.Context, policyIDs []
 
 func (p *policyDAO) SavePermissionPolicy(ctx context.Context, permissionPolicy PermissionPolicy) error {
 	permissionPolicy.Ctime = time.Now().UnixMilli()
+	permissionPolicy.Utime = time.Now().UnixMilli()
 	err := p.db.WithContext(ctx).Create(&permissionPolicy).Error
 	return err
 }

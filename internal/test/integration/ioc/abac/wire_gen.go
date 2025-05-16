@@ -17,15 +17,10 @@ import (
 // Injectors from wire.go:
 
 func Init(db *egorm.Component) *Service {
-	resourceDAO := dao.NewResourceDAO(db)
 	permissionDAO := dao.NewPermissionDAO(db)
-	roleDAO := dao.NewRoleDAO(db)
-	rolePermissionDAO := dao.NewRolePermissionDAO(db)
-	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
-	userPermissionDAO := dao.NewUserPermissionDAO(db)
-	userRoleDAO := dao.NewUserRoleDAO(db)
-	businessConfigDAO := dao.NewBusinessConfigDAO(db)
-	rbacRepository := repository.NewRBACRepository(resourceDAO, permissionDAO, roleDAO, rolePermissionDAO, roleInclusionDAO, userPermissionDAO, userRoleDAO, businessConfigDAO)
+	permissionRepository := repository.NewPermissionRepository(permissionDAO)
+	resourceDAO := dao.NewResourceDAO(db)
+	resourceRepository := repository.NewResourceRepository(resourceDAO)
 	policyDAO := dao.NewPolicyDAO(db)
 	policyRepo := repository.NewPolicyRepository(policyDAO)
 	environmentAttributeDAO := dao.NewEnvironmentAttributeDAO(db)
@@ -36,12 +31,13 @@ func Init(db *egorm.Component) *Service {
 	attributeDefinitionRepository := repository.NewAttributeDefinitionRepository(attributeDefinitionDAO)
 	attributeCheckerSelector := checker.NewCheckerBuilder()
 	ruleParser := abac.NewRuleParser(attributeCheckerSelector)
-	permissionSvc := abac.NewPermissionSvc(rbacRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, ruleParser)
+	permissionSvc := abac.NewPermissionSvc(permissionRepository, resourceRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, ruleParser)
 	service := &Service{
 		PermissionSvc:  permissionSvc,
 		ValRepo:        attributeValueRepository,
 		DefinitionRepo: attributeDefinitionRepository,
-		PermissionRepo: rbacRepository,
+		PermissionRepo: permissionRepository,
+		ResourceRepo:   resourceRepository,
 		PolicyRepo:     policyRepo,
 	}
 	return service
@@ -53,6 +49,7 @@ type Service struct {
 	PermissionSvc  abac.PermissionSvc
 	ValRepo        repository.AttributeValueRepository
 	DefinitionRepo repository.AttributeDefinitionRepository
-	PermissionRepo repository.RBACRepository
+	PermissionRepo repository.PermissionRepository
+	ResourceRepo   repository.ResourceRepository
 	PolicyRepo     repository.PolicyRepo
 }

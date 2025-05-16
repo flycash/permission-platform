@@ -61,33 +61,18 @@ func (s *PermissionServiceServer) CheckPermission(ctx context.Context, req *perm
 	}
 
 	// 检查所有action的权限
-	for i := range req.Permission.Actions {
-		// 将proto的权限转换为domain模型的Permission
-		domainPermission := domain.Permission{
-			BizID: bizID,
-			Resource: domain.Resource{
-				BizID: bizID,
-				Type:  req.Permission.ResourceType,
-				Key:   req.Permission.ResourceKey,
-			},
-			Action: req.Permission.Actions[i],
-		}
-
-		// 调用服务层检查权限
-		hasPermission, err1 := s.rbacService.Check(ctx, bizID, req.Uid, domainPermission)
-		if err1 != nil {
-			return nil, status.Error(codes.Internal, "检查权限时发生错误")
-		}
-
-		if !hasPermission {
-			return &permissionpb.CheckPermissionResponse{
-				Allowed: false,
-			}, nil
-		}
+	// 调用服务层检查权限
+	hasPermission, err1 := s.rbacService.Check(ctx, bizID, req.Uid, domain.Resource{
+		BizID: bizID,
+		Type:  req.Permission.ResourceType,
+		Key:   req.Permission.ResourceKey,
+	}, req.Permission.Actions)
+	if err1 != nil {
+		return nil, status.Error(codes.Internal, "检查权限时发生错误")
 	}
 
 	// 所有action都有权限
 	return &permissionpb.CheckPermissionResponse{
-		Allowed: true,
+		Allowed: hasPermission,
 	}, nil
 }

@@ -16,7 +16,6 @@ type UserPermission struct {
 	PermissionName   string `gorm:"type:VARCHAR(255);NOT NULL;comment:'权限名称（冗余字段，加速查询与展示）'"`
 	ResourceType     string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_type,priority:2;index:idx_biz_resource_key_action,priority:2;comment:'资源类型（冗余字段，加速查询）'"`
 	ResourceKey      string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_resource_key_action,priority:3;comment:'资源标识符（冗余字段，加速查询）'"`
-	ResourceName     string `gorm:"type:VARCHAR(255);NOT NULL;comment:'资源名称（冗余字段，加速查询与展示）'"`
 	PermissionAction string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_action,priority:2;index:idx_biz_resource_key_action,priority:4;comment:'操作类型（冗余字段，加速查询）'"`
 	StartTime        int64  `gorm:"NOT NULL;index:idx_time_range,priority:2;index:idx_current_valid,priority:3;comment:'权限生效时间'"`
 	EndTime          int64  `gorm:"NOT NULL;index:idx_time_range,priority:3;index:idx_current_valid,priority:4;comment:'权限失效时间'"`
@@ -31,26 +30,14 @@ func (UserPermission) TableName() string {
 
 // UserPermissionDAO 用户权限关联数据访问接口
 type UserPermissionDAO interface {
-	// Create 创建用户权限关联
 	Create(ctx context.Context, userPermission UserPermission) (UserPermission, error)
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserPermission, error)
-	CountByBizID(ctx context.Context, bizID int64) (int64, error)
-
-	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error)
-	CountByBizIDAndUserID(ctx context.Context, bizID, userID int64) (int64, error)
-
+	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error)
 	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]UserPermission, error)
-	CountByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) (int64, error)
-
 	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]UserPermission, error)
-	CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error)
-
 	FindByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]UserPermission, error)
-	CountByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string) (int64, error)
-
-	FindValidPermissionsWithBizID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]UserPermission, error)
-	CountValidPermissionsWithBizID(ctx context.Context, bizID, userID, currentTime int64) (int64, error)
+	FindValidPermissionsWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error
@@ -82,9 +69,12 @@ func (u *userPermissionDAO) FindByBizID(ctx context.Context, bizID int64, offset
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error) {
+func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error) {
+	now := time.Now().UnixMilli()
 	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ?", bizID, userID).Offset(offset).Limit(limit).Find(&userPermissions).Error
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?", bizID, userID, now, now).
+		Find(&userPermissions).Error
 	return userPermissions, err
 }
 
@@ -114,8 +104,9 @@ func (u *userPermissionDAO) FindByBizIDAndResourceKeyANDAction(ctx context.Conte
 	return userPermissions, err
 }
 
-func (u *userPermissionDAO) FindValidPermissionsWithBizID(ctx context.Context, bizID, userID, currentTime int64, offset, limit int) ([]UserPermission, error) {
+func (u *userPermissionDAO) FindValidPermissionsWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error) {
 	var userPermissions []UserPermission
+	currentTime := time.Now().UnixMilli()
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ? ",
 			bizID, userID, currentTime, currentTime).
@@ -130,43 +121,4 @@ func (u *userPermissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id in
 
 func (u *userPermissionDAO) DeleteByBizIDAndUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error {
 	return u.db.WithContext(ctx).Where("biz_id = ? AND user_id = ? AND permission_id = ?", bizID, userID, permissionID).Delete(&UserPermission{}).Error
-}
-
-func (u *userPermissionDAO) CountByBizID(ctx context.Context, bizID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).Where("biz_id = ?", bizID).Count(&count).Error
-	return count, err
-}
-
-func (u *userPermissionDAO) CountByBizIDAndUserID(ctx context.Context, bizID, userID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).Where("biz_id = ? AND user_id = ?", bizID, userID).Count(&count).Error
-	return count, err
-}
-
-func (u *userPermissionDAO) CountByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).Where("biz_id = ? AND permission_id = ?", bizID, permissionID).Count(&count).Error
-	return count, err
-}
-
-func (u *userPermissionDAO) CountByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Count(&count).Error
-	return count, err
-}
-
-func (u *userPermissionDAO) CountByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).Where("biz_id = ? AND resource_key = ? AND permission_action = ?", bizID, resourceKey, action).Count(&count).Error
-	return count, err
-}
-
-func (u *userPermissionDAO) CountValidPermissionsWithBizID(ctx context.Context, bizID, userID, currentTime int64) (int64, error) {
-	var count int64
-	err := u.db.WithContext(ctx).Model(&UserPermission{}).
-		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ? ",
-			bizID, userID, currentTime, currentTime).
-		Count(&count).Error
-	return count, err
 }

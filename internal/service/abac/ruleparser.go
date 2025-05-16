@@ -1,6 +1,8 @@
 package abac
 
 import (
+	"fmt"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/pkg/checker"
 	"github.com/gotomicro/ego/core/elog"
@@ -49,18 +51,21 @@ func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.Polic
 		case domain.EntityTypeSubject:
 			wantVal, err := attributes.subject.AttributeVal(rule.AttributeDefinition.ID)
 			if err != nil {
+				fmt.Println(rule.AttributeDefinition.ID, "1111111111")
 				return false
 			}
 			actualVal = wantVal.Value
 		case domain.EntityTypeResource:
 			wantVal, err := attributes.resource.AttributeVal(rule.AttributeDefinition.ID)
 			if err != nil {
+				fmt.Println(rule.AttributeDefinition.ID, "222222222")
 				return false
 			}
 			actualVal = wantVal.Value
 		case domain.EntityTypeEnvironment:
 			wantVal, err := attributes.environment.AttributeVal(rule.AttributeDefinition.ID)
 			if err != nil {
+				fmt.Println(rule.AttributeDefinition.ID, "333333333333")
 				return false
 			}
 			actualVal = wantVal.Value
@@ -69,11 +74,16 @@ func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.Polic
 		}
 		checkor, err := r.checkSelector.Select(rule.AttributeDefinition.DataType)
 		if err != nil {
+			fmt.Println(rule.AttributeDefinition.ID, "44444444444")
 			return false
 		}
 		ok, err := checkor.CheckAttribute(rule.Value, actualVal, rule.Operator)
 		if err != nil {
+			fmt.Println(rule.AttributeDefinition.ID, "55555555555")
 			return false
+		}
+		if !ok {
+			fmt.Println(rule.AttributeDefinition.ID, "1111111111")
 		}
 		return ok
 	}
