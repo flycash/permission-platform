@@ -30,7 +30,7 @@ func (r *permissionRepository) FindPermissions(ctx context.Context, bizID int64,
 	if err != nil {
 		return nil, err
 	}
-	list := slice.Map(permissions, func(idx int, src dao.Permission) domain.Permission {
+	list := slice.Map(permissions, func(_ int, src dao.Permission) domain.Permission {
 		return r.toDomain(src)
 	})
 	return list, nil
