@@ -14,7 +14,6 @@ type UserPermissionRepository interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.UserPermission, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
-	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
@@ -41,17 +40,6 @@ func (r *userPermissionRepository) Create(ctx context.Context, userPermission do
 
 func (r *userPermissionRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	userPermissions, err := r.userPermissionDAO.FindByBizIDAndUserID(ctx, bizID, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return slice.Map(userPermissions, func(_ int, src dao.UserPermission) domain.UserPermission {
-		return r.toDomain(src)
-	}), nil
-}
-
-func (r *userPermissionRepository) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64, offset, limit int) ([]domain.UserPermission, error) {
-	userPermissions, err := r.userPermissionDAO.FindValidPermissionsWithBizID(ctx, bizID, userID, offset, limit)
 	if err != nil {
 		return nil, err
 	}

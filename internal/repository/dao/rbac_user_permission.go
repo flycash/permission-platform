@@ -34,10 +34,6 @@ type UserPermissionDAO interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserPermission, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error)
-	FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]UserPermission, error)
-	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]UserPermission, error)
-	FindByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]UserPermission, error)
-	FindValidPermissionsWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error
@@ -74,43 +70,6 @@ func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, use
 	var userPermissions []UserPermission
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?", bizID, userID, now, now).
-		Find(&userPermissions).Error
-	return userPermissions, err
-}
-
-func (u *userPermissionDAO) FindByBizIDAndPermissionID(ctx context.Context, bizID, permissionID int64, offset, limit int) ([]UserPermission, error) {
-	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).Where("biz_id = ? AND permission_id = ?", bizID, permissionID).Offset(offset).Limit(limit).Find(&userPermissions).Error
-	return userPermissions, err
-}
-
-func (u *userPermissionDAO) FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]UserPermission, error) {
-	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND resource_type = ?", bizID, resourceType).
-		Offset(offset).
-		Limit(limit).
-		Find(&userPermissions).Error
-	return userPermissions, err
-}
-
-func (u *userPermissionDAO) FindByBizIDAndResourceKeyANDAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]UserPermission, error) {
-	var userPermissions []UserPermission
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND resource_key = ? AND permission_action = ?", bizID, resourceKey, action).
-		Offset(offset).
-		Limit(limit).
-		Find(&userPermissions).Error
-	return userPermissions, err
-}
-
-func (u *userPermissionDAO) FindValidPermissionsWithBizID(ctx context.Context, bizID, userID int64, offset, limit int) ([]UserPermission, error) {
-	var userPermissions []UserPermission
-	currentTime := time.Now().UnixMilli()
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ? ",
-			bizID, userID, currentTime, currentTime).
-		Offset(offset).Limit(limit).
 		Find(&userPermissions).Error
 	return userPermissions, err
 }

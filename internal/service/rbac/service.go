@@ -25,7 +25,6 @@ type Service interface {
 	GetResource(ctx context.Context, bizID, id int64) (domain.Resource, error)
 	UpdateResource(ctx context.Context, resource domain.Resource) (domain.Resource, error)
 	DeleteResource(ctx context.Context, bizID, id int64) error
-	ListResourcesByTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error)
 	ListResources(ctx context.Context, bizID int64, offset, limit int) ([]domain.Resource, error)
 	// 权限相关方法
 
@@ -33,7 +32,6 @@ type Service interface {
 	GetPermission(ctx context.Context, bizID, id int64) (domain.Permission, error)
 	UpdatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error)
 	DeletePermission(ctx context.Context, bizID, id int64) error
-	ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
 	ListPermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 
 	// 角色相关方法
@@ -150,10 +148,6 @@ func (s *rbacService) ListResources(ctx context.Context, bizID int64, offset, li
 	return s.repo.Resource().FindByBizID(ctx, bizID, offset, limit)
 }
 
-func (s *rbacService) ListResourcesByTypeAndKey(ctx context.Context, bizID int64, resourceType, resourceKey string, offset, limit int) ([]domain.Resource, error) {
-	return s.repo.Resource().FindByBizIDAndTypeAndKey(ctx, bizID, resourceType, resourceKey, offset, limit)
-}
-
 // 权限相关方法实现
 
 func (s *rbacService) CreatePermission(ctx context.Context, permission domain.Permission) (domain.Permission, error) {
@@ -174,10 +168,6 @@ func (s *rbacService) DeletePermission(ctx context.Context, bizID, id int64) err
 
 func (s *rbacService) ListPermissions(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error) {
 	return s.repo.Permission().FindByBizID(ctx, bizID, offset, limit)
-}
-
-func (s *rbacService) ListPermissionsByResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
-	return s.repo.Permission().FindByBizIDAndResourceTypeAndKeyAndAction(ctx, bizID, resourceType, resourceKey, action)
 }
 
 // 角色相关方法实现

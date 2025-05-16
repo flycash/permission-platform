@@ -32,11 +32,8 @@ type UserRoleDAO interface {
 	FindByBizID(ctx context.Context, bizID int64) ([]UserRole, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (UserRole, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64) ([]UserRole, error)
-	FindByBizIDAndRoleID(ctx context.Context, bizID int64, roleID int64) ([]UserRole, error)
-	FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	DeleteByBizIDAndUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error
 }
 
 // userRoleDAO 用户角色关联数据访问实现
@@ -61,14 +58,6 @@ func (u *userRoleDAO) Create(ctx context.Context, userRole UserRole) (UserRole, 
 
 func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
 	var userRoles []UserRole
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ?",
-			bizID, userID).Find(&userRoles).Error
-	return userRoles, err
-}
-
-func (u *userRoleDAO) FindValidByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserRole, error) {
-	var userRoles []UserRole
 	currentTime := time.Now().UnixMilli()
 	err := u.db.WithContext(ctx).
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?",
@@ -83,21 +72,9 @@ func (u *userRoleDAO) FindByBizID(ctx context.Context, bizID int64) ([]UserRole,
 	return userRoles, err
 }
 
-func (u *userRoleDAO) DeleteByUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error {
-	return u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
-		Delete(&UserRole{}).Error
-}
-
 func (u *userRoleDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return u.db.WithContext(ctx).
 		Where("biz_id = ? AND id = ?", bizID, id).
-		Delete(&UserRole{}).Error
-}
-
-func (u *userRoleDAO) DeleteByBizIDAndUserIDAndRoleID(ctx context.Context, bizID, userID, roleID int64) error {
-	return u.db.WithContext(ctx).
-		Where("biz_id = ? AND user_id = ? AND role_id = ?", bizID, userID, roleID).
 		Delete(&UserRole{}).Error
 }
 
@@ -107,12 +84,4 @@ func (u *userRoleDAO) FindByBizIDAndID(ctx context.Context, bizID, id int64) (Us
 		Where("biz_id = ? AND id = ?", bizID, id).
 		First(&userRole).Error
 	return userRole, err
-}
-
-func (u *userRoleDAO) FindByBizIDAndRoleID(ctx context.Context, bizID, roleID int64) ([]UserRole, error) {
-	var userRoles []UserRole
-	err := u.db.WithContext(ctx).
-		Where("biz_id = ? AND role_id = ?", bizID, roleID).
-		Find(&userRoles).Error
-	return userRoles, err
 }

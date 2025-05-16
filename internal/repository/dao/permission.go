@@ -34,9 +34,6 @@ type PermissionDAO interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]Permission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (Permission, error)
-	FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error)
-	FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error)
-	FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error)
 
 	UpdateByBizIDAndID(ctx context.Context, permission Permission) error
 
@@ -81,24 +78,6 @@ func (p *permissionDAO) FindByBizIDAndID(ctx context.Context, bizID, id int64) (
 	return permission, err
 }
 
-func (p *permissionDAO) FindByBizIDAndResourceType(ctx context.Context, bizID int64, resourceType string, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ?", bizID, resourceType).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceKey(ctx context.Context, bizID int64, resourceKey string, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_key = ?", bizID, resourceKey).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceKeyAndAction(ctx context.Context, bizID int64, resourceKey, action string, offset, limit int) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_key = ? AND action = ?", bizID, resourceKey, action).Offset(offset).Limit(limit).Find(&permissions).Error
-	return permissions, err
-}
-
 func (p *permissionDAO) UpdateByBizIDAndID(ctx context.Context, permission Permission) error {
 	permission.Utime = time.Now().UnixMilli()
 	return p.db.WithContext(ctx).
@@ -115,11 +94,4 @@ func (p *permissionDAO) UpdateByBizIDAndID(ctx context.Context, permission Permi
 
 func (p *permissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return p.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).Delete(&Permission{}).Error
-}
-
-func (p *permissionDAO) FindByBizIDAndResourceTypeAndKeyAndAction(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]Permission, error) {
-	var permissions []Permission
-	err := p.db.WithContext(ctx).Where("biz_id = ? AND resource_type = ? AND resource_key = ? AND action = ?",
-		bizID, resourceType, resourceKey, action).Find(&permissions).Error
-	return permissions, err
 }

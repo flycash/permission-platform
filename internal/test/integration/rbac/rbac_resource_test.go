@@ -399,18 +399,6 @@ func (s *ResourceTestSuite) TestResource_List() {
 				assert.GreaterOrEqual(t, len(resources), 5)
 			},
 		},
-		{
-			name: "基于资源类型和Key查询",
-			listFunc: func() ([]domain.Resource, error) {
-				return s.svc.Svc.ListResourcesByTypeAndKey(ctx, s.bizID, "api", "/test/resource/0", 0, 10)
-			},
-			assertErr: assert.NoError,
-			after: func(t *testing.T, resources []domain.Resource) {
-				assert.NotEmpty(t, resources)
-				assert.Equal(t, "api", resources[0].Type)
-				assert.Equal(t, "/test/resource/0", resources[0].Key)
-			},
-		},
 	}
 
 	for _, tt := range tests {

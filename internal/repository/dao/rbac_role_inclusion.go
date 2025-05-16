@@ -35,7 +35,6 @@ type RoleInclusionDAO interface {
 	FindByBizIDAndIncludedRoleID(ctx context.Context, bizID int64, includedRoleIDs []int64) ([]RoleInclusion, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
-	DeleteByBizIDAndIncludingRoleIDAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error
 }
 
 // roleInclusionDAO 角色包含关系数据访问实现
@@ -85,11 +84,5 @@ func (r *roleInclusionDAO) FindByBizIDAndIncludedRoleID(ctx context.Context, biz
 func (r *roleInclusionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	return r.db.WithContext(ctx).
 		Where("biz_id = ? AND id = ?", bizID, id).
-		Delete(&RoleInclusion{}).Error
-}
-
-func (r *roleInclusionDAO) DeleteByBizIDAndIncludingRoleIDAndIncludedRoleID(ctx context.Context, bizID, includingRoleID, includedRoleID int64) error {
-	return r.db.WithContext(ctx).
-		Where("biz_id = ? AND including_role_id = ? AND included_role_id  = ?", bizID, includingRoleID, includedRoleID).
 		Delete(&RoleInclusion{}).Error
 }
