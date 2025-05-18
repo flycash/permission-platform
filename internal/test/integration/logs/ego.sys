@@ -49,3 +49,5 @@
 {"lv":"warn","ts":1747390761,"msg":"access","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","method":"gorm:query","name":"permission.subject_attribute_values","cost":9179.352,"event":"slow"}
 {"lv":"info","ts":1747390822,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
 {"lv":"info","ts":1747392907,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747534122,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}
+{"lv":"info","ts":1747534181,"msg":"start db","comp":"component.egorm","compName":"mysql","addr":"localhost:13316","name":"permission"}

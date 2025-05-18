@@ -4,9 +4,10 @@ import (
 	"context"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 	"gitee.com/flycash/permission-platform/internal/domain"
+	"gitee.com/flycash/permission-platform/internal/pkg/jwt"
 	"gitee.com/flycash/permission-platform/internal/repository"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 // Service RBAC模型的管理接口
@@ -74,13 +75,15 @@ type Service interface {
 }
 
 type rbacService struct {
-	repo repository.RBACRepository
+	repo     repository.RBACRepository
+	jwtToken *jwt.Token
 }
 
 // NewService 创建RBAC服务实例
-func NewService(repo repository.RBACRepository) Service {
+func NewService(repo repository.RBACRepository, jwtToken *jwt.Token) Service {
 	return &rbacService{
-		repo: repo,
+		repo:     repo,
+		jwtToken: jwtToken,
 	}
 }
 
@@ -92,13 +95,10 @@ func (s *rbacService) CreateBusinessConfig(ctx context.Context, config domain.Bu
 		return domain.BusinessConfig{}, err
 	}
 	const years = 100
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iat":    time.Now().Unix(),
-		"iss":    "permission-platform",
-		"biz_id": businessConfig.ID,
-		"exp":    time.Now().AddDate(years, 0, 0).Unix(),
+	token, err := s.jwtToken.Encode(jwt.MapClaims{
+		auth.BizIDName: businessConfig.ID,
+		"exp":          time.Now().AddDate(years, 0, 0).Unix(),
 	})
-	token, err := jwtToken.SignedString([]byte(businessConfig.Name))
 	if err != nil {
 		return domain.BusinessConfig{}, err
 	}

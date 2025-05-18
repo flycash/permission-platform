@@ -25,6 +25,7 @@ trace:
 
 jwt:
   key: "permission_platform_key"
+  issuer: "permission-platform"
 cron:
   quotaMonthlyReset:
     spec: "0 0 1 1 *"

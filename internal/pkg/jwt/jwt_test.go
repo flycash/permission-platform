@@ -1,19 +1,23 @@
 //go:build unit
 
-package jwt
+package jwt_test
 
 import (
 	"testing"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"gitee.com/flycash/permission-platform/internal/pkg/jwt"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestJwtAuth_Encode(t *testing.T) {
-	// 创建 JwtAuth 实例
+const (
+	defaultIssuer = "permission-platform"
+)
+
+func TestEncode(t *testing.T) {
+	// 创建 JWTToken 实例
 	testKey := "test_key"
-	jwtAuth := NewJwtAuth(testKey)
+	jwtToken := jwt.New(testKey, defaultIssuer)
 
 	// 测试场景
 	tests := []struct {
@@ -37,7 +41,7 @@ func TestJwtAuth_Encode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			token, err := jwtAuth.Encode(tt.customClaims)
+			token, err := jwtToken.Encode(tt.customClaims)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
@@ -47,13 +51,13 @@ func TestJwtAuth_Encode(t *testing.T) {
 			assert.NotEmpty(t, token)
 
 			// 验证生成的令牌可以被解析
-			claims, err := jwtAuth.Decode(token)
+			claims, err := jwtToken.Decode(token)
 			assert.NoError(t, err)
 
 			// 验证标准声明存在
 			assert.NotEmpty(t, claims["iat"])
 			assert.NotEmpty(t, claims["exp"])
-			assert.Equal(t, "notification-platform", claims["iss"])
+			assert.Equal(t, defaultIssuer, claims["iss"])
 
 			// 验证自定义声明存在
 			for k, v := range tt.customClaims {
@@ -63,24 +67,24 @@ func TestJwtAuth_Encode(t *testing.T) {
 	}
 }
 
-func TestJwtAuth_Decode(t *testing.T) {
-	// 创建 JwtAuth 实例
+func TestDecode(t *testing.T) {
+	// 创建 JWTToken 实例
 	testKey := "test-secret-key"
-	jwtAuth := NewJwtAuth(testKey)
+	jwtToken := jwt.New(testKey, defaultIssuer)
 
 	// 创建一个有效的令牌用于测试
 	validClaims := jwt.MapClaims{
 		"user_id": "123456",
 		"role":    "admin",
 	}
-	validToken, err := jwtAuth.Encode(validClaims)
+	validToken, err := jwtToken.Encode(validClaims)
 	assert.NoError(t, err)
 
 	// 创建一个已过期的令牌
 	expiredClaims := jwt.MapClaims{
 		"exp": time.Now().Add(-1 * time.Hour).Unix(),
 	}
-	expiredToken, err := jwtAuth.Encode(expiredClaims)
+	expiredToken, err := jwtToken.Encode(expiredClaims)
 	assert.NoError(t, err)
 
 	// 测试场景
@@ -118,7 +122,7 @@ func TestJwtAuth_Decode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			claims, err := jwtAuth.Decode(tt.tokenInput)
+			claims, err := jwtToken.Decode(tt.tokenInput)
 			if tt.wantErr {
 				assert.Error(t, err)
 				return
@@ -136,13 +140,13 @@ func TestJwtAuth_Decode(t *testing.T) {
 	}
 }
 
-func TestNewJwtAuth(t *testing.T) {
+func TestNew(t *testing.T) {
 	testKey := "test-secret-key"
-	jwtAuth := NewJwtAuth(testKey)
+	jwtToken := jwt.New(testKey, defaultIssuer)
 
-	assert.NotNil(t, jwtAuth)
+	assert.NotNil(t, jwtToken)
 	// 生成令牌测试实例是否正常工作
-	token, err := jwtAuth.Encode(jwt.MapClaims{})
+	token, err := jwtToken.Encode(jwt.MapClaims{})
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 }

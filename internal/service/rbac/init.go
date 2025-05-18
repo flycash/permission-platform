@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
-	jwtauth "gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/jwt"
+	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 	"gitee.com/flycash/permission-platform/internal/domain"
+	"gitee.com/flycash/permission-platform/internal/pkg/jwt"
 	"gitee.com/flycash/permission-platform/internal/repository"
-	"github.com/golang-jwt/jwt/v4"
 )
 
 type SystemTableResource string
@@ -68,20 +68,20 @@ func (a PermissionActionType) String() string {
 const DefaultAccountRoleType = "admin_account"
 
 type InitService struct {
-	bizID      int64
-	userID     int64
-	rateLimit  int
-	jwtAuthKey string
-	repo       repository.RBACRepository
+	bizID     int64
+	userID    int64
+	rateLimit int
+	jwtToken  *jwt.Token
+	repo      repository.RBACRepository
 }
 
-func NewInitService(bizID, userID int64, rateLimit int, jwtAuthKey string, repo repository.RBACRepository) *InitService {
+func NewInitService(bizID, userID int64, rateLimit int, jwtToken *jwt.Token, repo repository.RBACRepository) *InitService {
 	return &InitService{
-		bizID:      bizID,
-		userID:     userID,
-		rateLimit:  rateLimit,
-		jwtAuthKey: jwtAuthKey,
-		repo:       repo,
+		bizID:     bizID,
+		userID:    userID,
+		rateLimit: rateLimit,
+		jwtToken:  jwtToken,
+		repo:      repo,
 	}
 }
 
@@ -116,10 +116,9 @@ func (s *InitService) Init(ctx context.Context) error {
 func (s *InitService) createSystemBusinessConfig(ctx context.Context) error {
 	// 生成Token
 	const years = 100
-	auth := jwtauth.NewJwtAuth(s.jwtAuthKey)
-	token, err := auth.Encode(jwt.MapClaims{
-		jwtauth.BizIDName: s.bizID,
-		"exp":             time.Now().AddDate(years, 0, 0).Unix(),
+	token, err := s.jwtToken.Encode(jwt.MapClaims{
+		auth.BizIDName: s.bizID,
+		"exp":          time.Now().AddDate(years, 0, 0).Unix(),
 	})
 	if err != nil {
 		return fmt.Errorf("生成Token失败: %w", err)

@@ -34,7 +34,8 @@ func Init() *Service {
 	userPermissionDAO := dao.NewUserPermissionDAO(db)
 	userPermissionRepository := repository.NewUserPermissionRepository(userPermissionDAO)
 	rbacRepository := repository.NewRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
-	service := rbac.NewService(rbacRepository)
+	token := ioc.InitJWTToken()
+	service := rbac.NewService(rbacRepository, token)
 	permissionService := rbac.NewPermissionService(rbacRepository)
 	rbacService := &Service{
 		Svc:           service,

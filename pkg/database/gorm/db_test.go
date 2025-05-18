@@ -2,8 +2,9 @@ package gorm
 
 import (
 	"context"
-	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"testing"
+
+	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
@@ -18,11 +19,11 @@ type User struct {
 }
 
 // Implement AuthRequired interface for User
-func (u User) ResourceKey(ctx context.Context) string {
+func (u User) ResourceKey(_ context.Context) string {
 	return "user"
 }
 
-func (u User) ResourceType(ctx context.Context) string {
+func (u User) ResourceType(_ context.Context) string {
 	return "user"
 }
 
@@ -35,7 +36,7 @@ func newMockPermissionServiceClient() *mockPermissionServiceClient {
 	return &mockPermissionServiceClient{}
 }
 
-func (m *mockPermissionServiceClient) CheckPermission(ctx context.Context, req *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
+func (m *mockPermissionServiceClient) CheckPermission(_ context.Context, req *permissionv1.CheckPermissionRequest, _ ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	// 检查请求中的action
 	for _, action := range req.Permission.Actions {
 		switch action {
@@ -62,6 +63,8 @@ func (m *mockPermissionServiceClient) CheckPermission(ctx context.Context, req *
 }
 
 func TestGormAccessPlugin(t *testing.T) {
+	t.Parallel()
+
 	// Create test cases
 	tests := []struct {
 		name          string
@@ -145,6 +148,7 @@ func TestGormAccessPlugin(t *testing.T) {
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			// Create a test database connection
 			dsn := "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
 			db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -157,7 +161,7 @@ func TestGormAccessPlugin(t *testing.T) {
 			require.NoError(t, err)
 
 			// Create context with test values
-			ctx := tt.setupContext(context.Background())
+			ctx := tt.setupContext(t.Context())
 			db = db.WithContext(ctx)
 
 			// Run the operation

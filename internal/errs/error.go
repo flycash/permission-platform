@@ -22,4 +22,8 @@ var (
 	ErrUnknownOperator = errors.New("未知的比较符")
 
 	ErrUnknownDataType = errors.New("未知的数据类型")
+
+	ErrSupportedSignAlgorithm = errors.New("不支持的签名算法")
+	ErrDecodeJWTTokenFailed   = errors.New("JWT令牌解析失败")
+	ErrInvalidJWTToken        = errors.New("无效的令牌")
 )
