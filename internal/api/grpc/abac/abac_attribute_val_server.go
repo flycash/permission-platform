@@ -1,4 +1,4 @@
-package grpc
+package abac
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 type ABACAttributeValServer struct {
 	permissionpb.UnsafeAttributeValueServiceServer
+	baseServer
 	svc abacSvc.AttributeValueSvc
 }
 
@@ -18,7 +19,7 @@ func NewABACAttributeValServer(svc abacSvc.AttributeValueSvc) *ABACAttributeValS
 }
 
 func (a *ABACAttributeValServer) SaveSubjectValue(ctx context.Context, request *permissionpb.AttributeValueServiceSaveSubjectValueRequest) (*permissionpb.AttributeValueServiceSaveSubjectValueResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func (a *ABACAttributeValServer) DeleteSubjectValue(ctx context.Context, request
 }
 
 func (a *ABACAttributeValServer) FindSubjectValueWithDefinition(ctx context.Context, request *permissionpb.AttributeValueServiceFindSubjectValueWithDefinitionRequest) (*permissionpb.AttributeValueServiceFindSubjectValueWithDefinitionResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +64,7 @@ func (a *ABACAttributeValServer) FindSubjectValueWithDefinition(ctx context.Cont
 }
 
 func (a *ABACAttributeValServer) SaveResourceValue(ctx context.Context, request *permissionpb.AttributeValueServiceSaveResourceValueRequest) (*permissionpb.AttributeValueServiceSaveResourceValueResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +91,7 @@ func (a *ABACAttributeValServer) DeleteResourceValue(ctx context.Context, reques
 }
 
 func (a *ABACAttributeValServer) FindResourceValueWithDefinition(ctx context.Context, request *permissionpb.AttributeValueServiceFindResourceValueWithDefinitionRequest) (*permissionpb.AttributeValueServiceFindResourceValueWithDefinitionResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +109,7 @@ func (a *ABACAttributeValServer) FindResourceValueWithDefinition(ctx context.Con
 }
 
 func (a *ABACAttributeValServer) SaveEnvironmentValue(ctx context.Context, request *permissionpb.AttributeValueServiceSaveEnvironmentValueRequest) (*permissionpb.AttributeValueServiceSaveEnvironmentValueResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (a *ABACAttributeValServer) DeleteEnvironmentValue(ctx context.Context, req
 }
 
 func (a *ABACAttributeValServer) FindEnvironmentValueWithDefinition(ctx context.Context, request *permissionpb.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) (*permissionpb.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

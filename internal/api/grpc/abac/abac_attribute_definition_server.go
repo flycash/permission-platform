@@ -1,4 +1,4 @@
-package grpc
+package abac
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 type ABACAttributeDefinitionServer struct {
 	permissionpb.UnsafeAttributeDefinitionServiceServer
+	baseServer
 	svc abacSvc.AttributeDefinitionSvc
 }
 
@@ -18,7 +19,7 @@ func NewABACAttributeDefinitionServer(svc abacSvc.AttributeDefinitionSvc) *ABACA
 }
 
 func (a *ABACAttributeDefinitionServer) Save(ctx context.Context, request *permissionpb.AttributeDefinitionServiceSaveRequest) (*permissionpb.AttributeDefinitionServiceSaveResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +32,7 @@ func (a *ABACAttributeDefinitionServer) Save(ctx context.Context, request *permi
 }
 
 func (a *ABACAttributeDefinitionServer) First(ctx context.Context, request *permissionpb.AttributeDefinitionServiceFirstRequest) (*permissionpb.AttributeDefinitionServiceFirstResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +46,7 @@ func (a *ABACAttributeDefinitionServer) First(ctx context.Context, request *perm
 }
 
 func (a *ABACAttributeDefinitionServer) Delete(ctx context.Context, request *permissionpb.AttributeDefinitionServiceDeleteRequest) (*permissionpb.AttributeDefinitionServiceDeleteResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +58,7 @@ func (a *ABACAttributeDefinitionServer) Delete(ctx context.Context, request *per
 }
 
 func (a *ABACAttributeDefinitionServer) Find(ctx context.Context, request *permissionpb.AttributeDefinitionServiceFindRequest) (*permissionpb.AttributeDefinitionServiceFindResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := a.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

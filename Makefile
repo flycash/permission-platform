@@ -62,10 +62,20 @@ grpc:
 gen:
 	@go generate ./...
 
-
 .PHONY: mysqldump
 mysqldump:
 	@docker exec -i permission-platform-mysql-1 mysqldump -u root -proot --databases permission > ./scripts/mysql/data.sql 2>/dev/null
 	@cat ./scripts/mysql/database.sql >  ./scripts/mysql/init.sql
 	@echo ""                          >> ./scripts/mysql/init.sql
 	@cat ./scripts/mysql/data.sql    >> ./scripts/mysql/init.sql
+
+.PHONY: run_platform_only
+run_platform_only:
+	@cd cmd/platform && export EGO_DEBUG=true && go run main.go --config=../../config/config.yaml
+
+.PHONY: run_platform
+run_platform:
+	@$(MAKE) e2e_down
+	@$(MAKE) e2e_up
+	@sleep 15
+	@cd cmd/platform && export EGO_DEBUG=true && go run main.go --config=../../config/config.yaml

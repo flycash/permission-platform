@@ -18,7 +18,7 @@ type InterceptorBuilder struct {
 	token *jwt.Token
 }
 
-func NewJwtAuth(token *jwt.Token) *InterceptorBuilder {
+func New(token *jwt.Token) *InterceptorBuilder {
 	return &InterceptorBuilder{
 		token: token,
 	}
