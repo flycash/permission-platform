@@ -90,7 +90,7 @@ func (c *CheckPermissionMiddlewareBuilder) Build() gin.HandlerFunc {
 		}
 
 		// 如果Session中不存在,实时校验权限（慢路径）
-		permission := domain.Permission{
+		ok, err = c.svc.Check(ctx.Request.Context(), bizID, uid, domain.Permission{
 			BizID: bizID,
 			Resource: domain.Resource{
 				BizID: bizID,
@@ -98,8 +98,7 @@ func (c *CheckPermissionMiddlewareBuilder) Build() gin.HandlerFunc {
 				Key:   resourceKey,
 			},
 			Action: PermissionAction,
-		}
-		ok, err = c.svc.Check(ctx.Request.Context(), bizID, uid, permission, domain.PermissionRequest{
+		}, domain.PermissionRequest{
 			SubjectAttrs:     map[string]string{},
 			ResourceAttrs:    map[string]string{},
 			EnvironmentAttrs: map[string]string{},
@@ -114,7 +113,7 @@ func (c *CheckPermissionMiddlewareBuilder) Build() gin.HandlerFunc {
 		if _, ok = permissionLists[resourceKey]; !ok {
 			permissionLists[resourceKey] = make([]string, 0, 1)
 		}
-		permissionLists[resourceKey] = append(permissionLists[resourceKey], permission.Action)
+		permissionLists[resourceKey] = append(permissionLists[resourceKey], PermissionAction)
 		v, _ := json.Marshal(permissionLists)
 		err = sess.Set(ctx.Request.Context(), permissionsKey, v)
 		if err != nil {
