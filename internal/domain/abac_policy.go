@@ -5,12 +5,17 @@ type Policy struct {
 	BizID       int64
 	Name        string
 	Description string
+	ExecuteType ExecuteType
 	Status      PolicyStatus
 	Effect      Effect
 	Rules       []*PolicyRule
 	Ctime       int64
 	Utime       int64
 }
+
+type ExecuteType string
+
+const LogicType ExecuteType = "logic" // 逻辑运算符执行方法
 
 type PolicyStatus string
 

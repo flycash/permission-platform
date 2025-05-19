@@ -20,7 +20,7 @@ type permissionSvc struct {
 	policyRepo     repository.PolicyRepo
 	valRepo        repository.AttributeValueRepository
 	definitionRepo repository.AttributeDefinitionRepository
-	parser         RuleParser
+	parser         PolicyExecutor
 }
 
 func NewPermissionSvc(permissionRepo repository.PermissionRepository,
@@ -28,7 +28,7 @@ func NewPermissionSvc(permissionRepo repository.PermissionRepository,
 	policyRepo repository.PolicyRepo,
 	valRepo repository.AttributeValueRepository,
 	definitionRepo repository.AttributeDefinitionRepository,
-	parser RuleParser,
+	parser PolicyExecutor,
 ) PermissionSvc {
 	return &permissionSvc{
 		permissionRepo: permissionRepo,
@@ -91,7 +91,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
 	for idx := range policies {
 		policy := policies[idx]
 		p.setPolicyDefinition(bizDefinition, policy.Rules)
-		if p.parser.Check(attributeValReq, policy.Rules) {
+		if p.parser.Check(attributeValReq, policy) {
 			if policy.Effect == domain.EffectAllow {
 				hasPermit = true
 			}

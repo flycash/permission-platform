@@ -1014,6 +1014,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 			after: func(policy domain.Policy) domain.Policy {
 				return domain.Policy{
 					BizID:       bizID,
+					ExecuteType: "priority",
 					Name:        "测试策略",
 					Description: "这是一个测试策略",
 				}
@@ -1026,6 +1027,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 				s.Equal(bizID, savedPolicy.BizID)
 				s.Equal("测试策略", savedPolicy.Name)
 				s.Equal("这是一个测试策略", savedPolicy.Description)
+				s.Equal("priority", string(savedPolicy.ExecuteType))
 			},
 		},
 		{
@@ -1256,6 +1258,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 	s.Equal(bizID, foundPolicy.BizID)
 	s.Equal("测试策略", foundPolicy.Name)
 	s.Equal("这是一个测试策略", foundPolicy.Description)
+	s.Equal("logic", string(foundPolicy.ExecuteType))
 
 	// 验证策略规则
 	s.Len(foundPolicy.Rules, 1)

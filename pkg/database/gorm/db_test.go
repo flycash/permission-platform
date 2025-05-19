@@ -1,8 +1,12 @@
+//go:build e2e
+
 package gorm
 
 import (
 	"context"
 	"testing"
+
+	"gitee.com/flycash/permission-platform/internal/test/ioc"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 
@@ -63,7 +67,16 @@ func (m *mockPermissionServiceClient) CheckPermission(_ context.Context, req *pe
 }
 
 func TestGormAccessPlugin(t *testing.T) {
-	t.Parallel()
+	dsn := "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
+	ioc.WaitForDBSetup(dsn)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	require.NoError(t, err)
+	err = db.AutoMigrate(&User{})
+	require.NoError(t, err)
+	// Create and initialize the plugin with mock client
+	mockClient := newMockPermissionServiceClient()
+	plugin := NewGormAccessPlugin(mockClient)
+	err = plugin.Initialize(db)
 
 	// Create test cases
 	tests := []struct {
@@ -77,6 +90,10 @@ func TestGormAccessPlugin(t *testing.T) {
 			setupContext: func(ctx context.Context) context.Context {
 				ctx = context.WithValue(ctx, bizIDKey, int64(1))
 				ctx = context.WithValue(ctx, uidKey, int64(1))
+				db.Create(&User{
+					ID:   1,
+					Name: "test",
+				})
 				return ctx
 			},
 			operation: func(db *gorm.DB) error {
@@ -100,12 +117,16 @@ func TestGormAccessPlugin(t *testing.T) {
 		{
 			name: "update operation - allowed",
 			setupContext: func(ctx context.Context) context.Context {
-				ctx = context.WithValue(ctx, bizIDKey, int64(1))
+				ctx = context.WithValue(ctx, bizIDKey, int64(2))
 				ctx = context.WithValue(ctx, uidKey, int64(1))
+				db.Create(&User{
+					ID:   2,
+					Name: "test",
+				})
 				return ctx
 			},
 			operation: func(db *gorm.DB) error {
-				return db.Model(&User{}).Where("id = ?", 1).Update("name", "updated").Error
+				return db.Model(&User{}).Where("id = ?", 2).Update("name", "updated").Error
 			},
 			expectedError: false,
 		},
@@ -148,19 +169,6 @@ func TestGormAccessPlugin(t *testing.T) {
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			// Create a test database connection
-			dsn := "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
-			db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-			require.NoError(t, err)
-
-			// Create and initialize the plugin with mock client
-			mockClient := newMockPermissionServiceClient()
-			plugin := NewGormAccessPlugin(mockClient)
-			err = plugin.Initialize(db)
-			require.NoError(t, err)
-
-			// Create context with test values
 			ctx := tt.setupContext(t.Context())
 			db = db.WithContext(ctx)
 

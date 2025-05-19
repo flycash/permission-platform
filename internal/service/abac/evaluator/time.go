@@ -1,10 +1,12 @@
-package checker
+package evaluator
 
 import (
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	"gitee.com/flycash/permission-platform/internal/service/abac/converter"
 
 	"github.com/ecodeclub/ekit/slice"
 
@@ -55,22 +57,25 @@ func parseTimeRule(rule string) (*timeRule, error) {
 	}, nil
 }
 
-type TimeChecker struct{}
+type TimeEvaluator struct {
+	converter converter.Converter[time.Time]
+}
 
-func (t TimeChecker) CheckAttribute(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
-	timestamp, err := strconv.ParseInt(actualVal, 10, 64)
-	if err != nil {
-		return false, fmt.Errorf("invalid timestamp: %s", actualVal)
+func NewTimeEvaluator() TimeEvaluator {
+	return TimeEvaluator{
+		converter: converter.NewTimeConverter(),
 	}
+}
 
+func (t TimeEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
 	rule, err := parseTimeRule(wantVal)
 	if err != nil {
 		return false, err
 	}
-
-	// Convert millisecond timestamp to time.Time
-	checkTime := time.UnixMilli(timestamp)
-
+	checkTime, err := t.converter.Decode(actualVal)
+	if err != nil {
+		return false, err
+	}
 	// Check based on rule type
 	switch rule.Type {
 	case timeType:

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"gitee.com/flycash/permission-platform/internal/domain"
-	"gitee.com/flycash/permission-platform/internal/service/abac"
+	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
+
 	"github.com/ecodeclub/ekit/slice"
 	"github.com/ecodeclub/ginx"
 	"github.com/ecodeclub/ginx/session"
@@ -18,11 +18,11 @@ import (
 
 type CheckPermissionMiddlewareBuilder struct {
 	sp     session.Provider
-	svc    abac.PermissionSvc
+	svc    permissionv1.PermissionServiceClient
 	logger *elog.Component
 }
 
-func NewCheckPermissionMiddlewareBuilder(svc abac.PermissionSvc) *CheckPermissionMiddlewareBuilder {
+func NewCheckPermissionMiddlewareBuilder(svc permissionv1.PermissionServiceClient) *CheckPermissionMiddlewareBuilder {
 	return &CheckPermissionMiddlewareBuilder{
 		svc:    svc,
 		logger: elog.DefaultLogger,
@@ -88,22 +88,18 @@ func (c *CheckPermissionMiddlewareBuilder) Build() gin.HandlerFunc {
 				return
 			}
 		}
-
-		// 如果Session中不存在,实时校验权限（慢路径）
-		ok, err = c.svc.Check(ctx.Request.Context(), bizID, uid, domain.Permission{
-			BizID: bizID,
-			Resource: domain.Resource{
-				BizID: bizID,
-				Type:  resourceType,
-				Key:   resourceKey,
+		req := &permissionv1.CheckPermissionRequest{
+			Uid: uid,
+			Permission: &permissionv1.Permission{
+				BizId:        bizID,
+				ResourceKey:  resourceKey,
+				ResourceType: resourceType,
+				Actions:      []string{PermissionAction},
 			},
-			Action: PermissionAction,
-		}, domain.PermissionRequest{
-			SubjectAttrs:     map[string]string{},
-			ResourceAttrs:    map[string]string{},
-			EnvironmentAttrs: map[string]string{},
-		})
-		if err != nil || !ok {
+		}
+		// 如果Session中不存在,实时校验权限（慢路径）
+		resp, err := c.svc.CheckPermission(ctx.Request.Context(), req)
+		if err != nil || !resp.Allowed {
 			gCtx.AbortWithStatus(http.StatusForbidden)
 			c.logger.Debug("用户无权限", elog.FieldErr(err))
 			return

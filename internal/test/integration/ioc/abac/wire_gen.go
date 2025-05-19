@@ -7,10 +7,10 @@
 package abac
 
 import (
-	"gitee.com/flycash/permission-platform/internal/pkg/checker"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"gitee.com/flycash/permission-platform/internal/service/abac"
+	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/ego-component/egorm"
 )
 
@@ -29,9 +29,9 @@ func Init(db *egorm.Component) *Service {
 	attributeDefinitionDAO := dao.NewAttributeDefinitionDAO(db)
 	attributeValueRepository := repository.NewAttributeValueRepository(environmentAttributeDAO, resourceAttributeValueDAO, subjectAttributeValueDAO, attributeDefinitionDAO)
 	attributeDefinitionRepository := repository.NewAttributeDefinitionRepository(attributeDefinitionDAO)
-	attributeCheckerSelector := checker.NewCheckerBuilder()
-	ruleParser := abac.NewRuleParser(attributeCheckerSelector)
-	permissionSvc := abac.NewPermissionSvc(permissionRepository, resourceRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, ruleParser)
+	selector := evaluator.NewSelector()
+	policyExecutor := abac.NewRuleParser(selector)
+	permissionSvc := abac.NewPermissionSvc(permissionRepository, resourceRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, policyExecutor)
 	service := &Service{
 		PermissionSvc:  permissionSvc,
 		ValRepo:        attributeValueRepository,

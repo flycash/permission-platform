@@ -3,10 +3,10 @@
 package abac
 
 import (
-	"gitee.com/flycash/permission-platform/internal/pkg/checker"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	abacsvc "gitee.com/flycash/permission-platform/internal/service/abac"
+	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/ego-component/egorm"
 	"github.com/google/wire"
 )
@@ -35,7 +35,7 @@ func Init(db *egorm.Component) *Service {
 		repository.NewPolicyRepository,
 		repository.NewAttributeDefinitionRepository,
 		repository.NewAttributeValueRepository,
-		checker.NewCheckerBuilder,
+		evaluator.NewSelector,
 		abacsvc.NewRuleParser,
 		abacsvc.NewPermissionSvc,
 		wire.Struct(new(Service), "*"),

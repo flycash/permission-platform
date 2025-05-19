@@ -71,6 +71,7 @@ func (p *policyRepo) Save(ctx context.Context, policy domain.Policy) (int64, err
 		ID:          policy.ID,
 		BizID:       policy.BizID,
 		Name:        policy.Name,
+		ExecuteType: string(policy.ExecuteType),
 		Description: policy.Description,
 		Status:      string(policy.Status),
 	}
@@ -171,6 +172,7 @@ func (p *policyRepo) toPolicyDomain(policy dao.Policy, rules []dao.PolicyRule, p
 		ID:          policy.ID,
 		BizID:       policy.BizID,
 		Name:        policy.Name,
+		ExecuteType: domain.ExecuteType(policy.ExecuteType),
 		Description: policy.Description,
 		Status:      domain.PolicyStatus(policy.Status),
 		Rules:       genDomainPolicyRules(rules),

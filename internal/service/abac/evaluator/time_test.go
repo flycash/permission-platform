@@ -1,4 +1,4 @@
-package checker
+package evaluator
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 func TestTimeChecker_CheckAttribute(t *testing.T) {
 	t.Parallel()
-	checker := TimeChecker{}
+	evaluator := NewTimeEvaluator()
 	now := time.Now()
 
 	tests := []struct {
@@ -156,13 +156,13 @@ func TestTimeChecker_CheckAttribute(t *testing.T) {
 		tt := tests[idx]
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			got, err := checker.CheckAttribute(tt.wantVal, tt.actualVal, tt.op)
+			got, err := evaluator.Evaluate(tt.wantVal, tt.actualVal, tt.op)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("TimeChecker.CheckAttribute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("TimeEvaluator.CheckAttribute() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !tt.wantErr && got != tt.want {
-				t.Errorf("TimeChecker.CheckAttribute() = %v, want %v", got, tt.want)
+				t.Errorf("TimeEvaluator.CheckAttribute() = %v, want %v", got, tt.want)
 			}
 		})
 	}

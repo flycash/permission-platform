@@ -36,7 +36,3 @@ const (
 func (t EntityType) String() string {
 	return string(t)
 }
-
-// 负责转化和比较，用户需要提供对应类型的转化方式，和比较方法
-// case1: actualVal = 20 wantval = []int
-// case2: actualval = [1,3,5] wantval = [1,2,3,4,5] 不支持 anymatch

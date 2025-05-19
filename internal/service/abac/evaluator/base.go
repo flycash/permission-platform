@@ -1,4 +1,4 @@
-package checker
+package evaluator
 
 import (
 	"gitee.com/flycash/permission-platform/internal/domain"
@@ -9,7 +9,7 @@ type Numbered interface {
 	~int | ~int8 | ~int16 | ~int32 | ~int64 | ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~float32 | ~float64
 }
 
-func baseChecker[T Numbered](wantVal, actualVal T, op domain.RuleOperator) (bool, error) {
+func baseEvaluator[T Numbered](wantVal, actualVal T, op domain.RuleOperator) (bool, error) {
 	switch op {
 	case domain.Equals:
 		return wantVal == actualVal, nil
@@ -28,7 +28,7 @@ func baseChecker[T Numbered](wantVal, actualVal T, op domain.RuleOperator) (bool
 	}
 }
 
-func sliceCheck[T comparable](wantVal []T, actualVal T, op domain.RuleOperator) (bool, error) {
+func sliceEvaluator[T comparable](wantVal []T, actualVal T, op domain.RuleOperator) (bool, error) {
 	switch op {
 	case domain.IN:
 		for id := range wantVal {

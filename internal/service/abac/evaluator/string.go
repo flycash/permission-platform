@@ -1,4 +1,4 @@
-package checker
+package evaluator
 
 import (
 	"encoding/json"
@@ -7,15 +7,15 @@ import (
 	"gitee.com/flycash/permission-platform/internal/errs"
 )
 
-type StringChecker struct{}
+type StringEvaluator struct{}
 
-func (s StringChecker) CheckAttribute(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
+func (s StringEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
 	if isSlice(op) {
 		list, convActualVal, err := s.getSliceData(wantVal, actualVal)
 		if err != nil {
 			return false, err
 		}
-		return sliceCheck[string](list, convActualVal, op)
+		return sliceEvaluator[string](list, convActualVal, op)
 	}
 	switch op {
 	case domain.Equals:
@@ -27,7 +27,7 @@ func (s StringChecker) CheckAttribute(wantVal, actualVal string, op domain.RuleO
 	}
 }
 
-func (StringChecker) getSliceData(wantVal, actualVal string) (res []string, ans string, err error) {
+func (StringEvaluator) getSliceData(wantVal, actualVal string) (res []string, ans string, err error) {
 	err = json.Unmarshal([]byte(wantVal), &res)
 	if err != nil {
 		return nil, "", err

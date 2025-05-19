@@ -2,13 +2,13 @@ package abac
 
 import (
 	"gitee.com/flycash/permission-platform/internal/domain"
-	"gitee.com/flycash/permission-platform/internal/pkg/checker"
+	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/gotomicro/ego/core/elog"
 )
 
-// 规则解析器
-type RuleParser interface {
-	Check(req AttributeValReq, rules []*domain.PolicyRule) bool
+// 策略执行器
+type PolicyExecutor interface {
+	Check(req AttributeValReq, policy domain.Policy) bool
 }
 
 type AttributeValReq struct {
@@ -20,29 +20,31 @@ type AttributeValReq struct {
 	environment *domain.EnvironmentObject
 }
 
-type ruleParser struct {
-	checkSelector checker.AttributeCheckerSelector
-	logger        *elog.Component
+// 基于逻辑运算符的方法
+type logicOperatorExecutor struct {
+	selector evaluator.Selector
+	logger   *elog.Component
 }
 
-func NewRuleParser(checkBuilder checker.AttributeCheckerSelector) RuleParser {
-	return &ruleParser{
-		checkSelector: checkBuilder,
-		logger:        elog.DefaultLogger,
+func NewRuleParser(checkBuilder evaluator.Selector) PolicyExecutor {
+	return &logicOperatorExecutor{
+		selector: checkBuilder,
+		logger:   elog.DefaultLogger,
 	}
 }
 
-func (r *ruleParser) Check(attributes AttributeValReq, rules []*domain.PolicyRule) bool {
+func (r *logicOperatorExecutor) Check(attributes AttributeValReq, policy domain.Policy) bool {
 	res := true
-	for idx := range rules {
+	for idx := range policy.Rules {
+		rule := policy.Rules[idx]
 		// 各个独立的规则之间是且的关系
-		res = res && r.checkOneRule(attributes, rules[idx])
+		res = res && r.checkOneRule(attributes, rule)
 	}
 	return res
 }
 
 //nolint:funlen // 忽略
-func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.PolicyRule) bool {
+func (r *logicOperatorExecutor) checkOneRule(attributes AttributeValReq, rule *domain.PolicyRule) bool {
 	if rule.LeftRule == nil && rule.RightRule == nil {
 		var actualVal string
 		switch rule.AttributeDefinition.EntityType {
@@ -67,11 +69,11 @@ func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.Polic
 		default:
 			return false
 		}
-		checkor, err := r.checkSelector.Select(rule.AttributeDefinition.DataType)
+		eva, err := r.selector.Select(rule.AttributeDefinition.DataType)
 		if err != nil {
 			return false
 		}
-		ok, err := checkor.CheckAttribute(rule.Value, actualVal, rule.Operator)
+		ok, err := eva.Evaluate(rule.Value, actualVal, rule.Operator)
 		if err != nil {
 			return false
 		}
