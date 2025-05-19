@@ -1,0 +1,20 @@
+package kafka
+
+import (
+	"context"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"time"
+)
+
+type Producer interface {
+	Produce(ctx context.Context, msg *kafka.Message, deliveryChan chan kafka.Event) error
+}
+
+type Consumer interface {
+	// 订阅
+	Subscribe(ctx context.Context, topic string, rebalanceCb kafka.RebalanceCb) error
+	ReadMessage(ctx context.Context, timeout time.Duration) (*kafka.Message, error)
+	CommitMessage(m *kafka.Message) ([]kafka.TopicPartition, error)
+}
+
+

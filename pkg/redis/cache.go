@@ -93,13 +93,13 @@ func (p *AccessPlugin) checkPermission(ctx context.Context, cmd redis.Cmder) err
 	bizID, err := getBizID(ctx)
 	if err != nil {
 		elog.Warn("get BizID fail", zap.Error(err))
-		return nil
+		return fmt.Errorf("权限校验未通过: 未找到bizID")
 	}
 
 	uid, err := getUID(ctx)
 	if err != nil {
 		elog.Warn("get uid fail", zap.Error(err))
-		return nil
+		return fmt.Errorf("权限校验未通过: uid")
 	}
 
 	// 根据命令类型获取对应的操作类型

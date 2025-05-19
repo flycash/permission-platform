@@ -95,11 +95,12 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 	ctx := db.Statement.Context
 	bizID, err := getBizID(ctx)
 	if err != nil {
-		// 没找到就不做权限校验了
+		_ = db.AddError(fmt.Errorf("获取bizId失败 %w", err))
 		return
 	}
 	uid, err := getUID(ctx)
 	if err != nil {
+		_ = db.AddError(fmt.Errorf("获取uid失败 %w", err))
 		return
 	}
 	action, ok := p.statementMap[stmtType]

@@ -151,7 +151,7 @@ func TestGormAccessPlugin(t *testing.T) {
 			operation: func(db *gorm.DB) error {
 				return db.Create(&User{Name: "test", Age: 20}).Error
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 		{
 			name: "missing uid",
@@ -162,7 +162,7 @@ func TestGormAccessPlugin(t *testing.T) {
 			operation: func(db *gorm.DB) error {
 				return db.Create(&User{Name: "test", Age: 20}).Error
 			},
-			expectedError: false,
+			expectedError: true,
 		},
 	}
 
