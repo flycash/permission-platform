@@ -1,13 +1,11 @@
-package grpc
+package rbac
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/ecodeclub/ekit/slice"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	permissionpb "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
@@ -15,61 +13,22 @@ import (
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
 )
 
-type RBACServer struct {
+type Server struct {
 	permissionpb.UnimplementedRBACServiceServer
+	baseServer
 	rbacService rbac.Service
 }
 
-// NewRBACServer 创建RBAC服务器实例
-func NewRBACServer(rbacService rbac.Service) *RBACServer {
-	return &RBACServer{
+// NewServer 创建RBAC服务器实例
+func NewServer(rbacService rbac.Service) *Server {
+	return &Server{
 		rbacService: rbacService,
 	}
 }
 
-// 从gRPC上下文中获取调用者ID
-func (s *RBACServer) getUserIDFromContext(ctx context.Context) (int64, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return 0, status.Error(codes.Unauthenticated, "缺少认证信息")
-	}
-
-	userIDValues := md.Get("user-id")
-	if len(userIDValues) == 0 {
-		return 0, status.Error(codes.Unauthenticated, "缺少用户ID")
-	}
-
-	userID, err := strconv.ParseInt(userIDValues[0], 10, 64)
-	if err != nil {
-		return 0, status.Error(codes.InvalidArgument, "用户ID格式不正确")
-	}
-
-	return userID, nil
-}
-
-// 从gRPC上下文中获取业务ID
-func getBizIDFromContext(ctx context.Context) (int64, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return 0, status.Error(codes.InvalidArgument, "无法获取元数据")
-	}
-
-	bizIDValues := md.Get("biz-id")
-	if len(bizIDValues) == 0 {
-		return 0, status.Error(codes.InvalidArgument, "未提供业务ID")
-	}
-
-	bizID, err := strconv.ParseInt(bizIDValues[0], 10, 64)
-	if err != nil {
-		return 0, status.Error(codes.InvalidArgument, "业务ID格式不正确")
-	}
-
-	return bizID, nil
-}
-
 // ==== 业务配置相关方法 ====
 
-func (s *RBACServer) CreateBusinessConfig(ctx context.Context, req *permissionpb.CreateBusinessConfigRequest) (*permissionpb.CreateBusinessConfigResponse, error) {
+func (s *Server) CreateBusinessConfig(ctx context.Context, req *permissionpb.CreateBusinessConfigRequest) (*permissionpb.CreateBusinessConfigResponse, error) {
 	if req.Config == nil {
 		return nil, status.Error(codes.InvalidArgument, "业务配置不能为空")
 	}
@@ -90,7 +49,7 @@ func (s *RBACServer) CreateBusinessConfig(ctx context.Context, req *permissionpb
 	}, nil
 }
 
-func (s *RBACServer) toBusinessConfigDomain(req *permissionpb.BusinessConfig) domain.BusinessConfig {
+func (s *Server) toBusinessConfigDomain(req *permissionpb.BusinessConfig) domain.BusinessConfig {
 	return domain.BusinessConfig{
 		ID:        req.Id,
 		OwnerID:   req.OwnerId,
@@ -101,7 +60,7 @@ func (s *RBACServer) toBusinessConfigDomain(req *permissionpb.BusinessConfig) do
 	}
 }
 
-func (s *RBACServer) toBusinessConfigProto(created domain.BusinessConfig) *permissionpb.BusinessConfig {
+func (s *Server) toBusinessConfigProto(created domain.BusinessConfig) *permissionpb.BusinessConfig {
 	return &permissionpb.BusinessConfig{
 		Id:        created.ID,
 		OwnerId:   created.OwnerID,
@@ -112,7 +71,7 @@ func (s *RBACServer) toBusinessConfigProto(created domain.BusinessConfig) *permi
 	}
 }
 
-func (s *RBACServer) GetBusinessConfig(ctx context.Context, req *permissionpb.GetBusinessConfigRequest) (*permissionpb.GetBusinessConfigResponse, error) {
+func (s *Server) GetBusinessConfig(ctx context.Context, req *permissionpb.GetBusinessConfigRequest) (*permissionpb.GetBusinessConfigResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
@@ -127,7 +86,7 @@ func (s *RBACServer) GetBusinessConfig(ctx context.Context, req *permissionpb.Ge
 	}, nil
 }
 
-func (s *RBACServer) UpdateBusinessConfig(ctx context.Context, req *permissionpb.UpdateBusinessConfigRequest) (*permissionpb.UpdateBusinessConfigResponse, error) {
+func (s *Server) UpdateBusinessConfig(ctx context.Context, req *permissionpb.UpdateBusinessConfigRequest) (*permissionpb.UpdateBusinessConfigResponse, error) {
 	if req.Config == nil || req.Config.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务配置不能为空且ID必须大于0")
 	}
@@ -146,7 +105,7 @@ func (s *RBACServer) UpdateBusinessConfig(ctx context.Context, req *permissionpb
 	}, nil
 }
 
-func (s *RBACServer) DeleteBusinessConfig(ctx context.Context, req *permissionpb.DeleteBusinessConfigRequest) (*permissionpb.DeleteBusinessConfigResponse, error) {
+func (s *Server) DeleteBusinessConfig(ctx context.Context, req *permissionpb.DeleteBusinessConfigRequest) (*permissionpb.DeleteBusinessConfigResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
@@ -162,7 +121,7 @@ func (s *RBACServer) DeleteBusinessConfig(ctx context.Context, req *permissionpb
 	}, nil
 }
 
-func (s *RBACServer) ListBusinessConfigs(ctx context.Context, req *permissionpb.ListBusinessConfigsRequest) (*permissionpb.ListBusinessConfigsResponse, error) {
+func (s *Server) ListBusinessConfigs(ctx context.Context, req *permissionpb.ListBusinessConfigsRequest) (*permissionpb.ListBusinessConfigsResponse, error) {
 	// 参数校验 - 设置默认分页
 	offset := int(req.Offset)
 	limit := int(req.Limit)
@@ -183,12 +142,12 @@ func (s *RBACServer) ListBusinessConfigs(ctx context.Context, req *permissionpb.
 
 // ==== 资源相关方法 ====
 
-func (s *RBACServer) CreateResource(ctx context.Context, req *permissionpb.CreateResourceRequest) (*permissionpb.CreateResourceResponse, error) {
+func (s *Server) CreateResource(ctx context.Context, req *permissionpb.CreateResourceRequest) (*permissionpb.CreateResourceResponse, error) {
 	if req.Resource == nil {
 		return nil, status.Error(codes.InvalidArgument, "资源不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +168,7 @@ func (s *RBACServer) CreateResource(ctx context.Context, req *permissionpb.Creat
 	}, nil
 }
 
-func (s *RBACServer) toResourceDomain(req *permissionpb.Resource) domain.Resource {
+func (s *Server) toResourceDomain(req *permissionpb.Resource) domain.Resource {
 	var md string
 	if req.Metadata != "" {
 		md = req.Metadata
@@ -226,7 +185,7 @@ func (s *RBACServer) toResourceDomain(req *permissionpb.Resource) domain.Resourc
 	}
 }
 
-func (s *RBACServer) toResourceProto(created domain.Resource) *permissionpb.Resource {
+func (s *Server) toResourceProto(created domain.Resource) *permissionpb.Resource {
 	return &permissionpb.Resource{
 		Id:          created.ID,
 		BizId:       created.BizID,
@@ -238,12 +197,12 @@ func (s *RBACServer) toResourceProto(created domain.Resource) *permissionpb.Reso
 	}
 }
 
-func (s *RBACServer) GetResource(ctx context.Context, req *permissionpb.GetResourceRequest) (*permissionpb.GetResourceResponse, error) {
+func (s *Server) GetResource(ctx context.Context, req *permissionpb.GetResourceRequest) (*permissionpb.GetResourceResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "资源ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -260,12 +219,12 @@ func (s *RBACServer) GetResource(ctx context.Context, req *permissionpb.GetResou
 	}, nil
 }
 
-func (s *RBACServer) UpdateResource(ctx context.Context, req *permissionpb.UpdateResourceRequest) (*permissionpb.UpdateResourceResponse, error) {
+func (s *Server) UpdateResource(ctx context.Context, req *permissionpb.UpdateResourceRequest) (*permissionpb.UpdateResourceResponse, error) {
 	if req.Resource == nil || req.Resource.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "资源不能为空且ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -285,12 +244,12 @@ func (s *RBACServer) UpdateResource(ctx context.Context, req *permissionpb.Updat
 	}, nil
 }
 
-func (s *RBACServer) DeleteResource(ctx context.Context, req *permissionpb.DeleteResourceRequest) (*permissionpb.DeleteResourceResponse, error) {
+func (s *Server) DeleteResource(ctx context.Context, req *permissionpb.DeleteResourceRequest) (*permissionpb.DeleteResourceResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "资源ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -306,7 +265,7 @@ func (s *RBACServer) DeleteResource(ctx context.Context, req *permissionpb.Delet
 	}, nil
 }
 
-func (s *RBACServer) ListResources(ctx context.Context, req *permissionpb.ListResourcesRequest) (*permissionpb.ListResourcesResponse, error) {
+func (s *Server) ListResources(ctx context.Context, req *permissionpb.ListResourcesRequest) (*permissionpb.ListResourcesResponse, error) {
 	// 参数校验
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
@@ -318,7 +277,7 @@ func (s *RBACServer) ListResources(ctx context.Context, req *permissionpb.ListRe
 		limit = 10 // 默认每页10条
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -338,12 +297,12 @@ func (s *RBACServer) ListResources(ctx context.Context, req *permissionpb.ListRe
 
 // ==== 权限相关方法 ====
 
-func (s *RBACServer) CreatePermission(ctx context.Context, req *permissionpb.CreatePermissionRequest) (*permissionpb.CreatePermissionResponse, error) {
+func (s *Server) CreatePermission(ctx context.Context, req *permissionpb.CreatePermissionRequest) (*permissionpb.CreatePermissionResponse, error) {
 	if req.Permission == nil {
 		return nil, status.Error(codes.InvalidArgument, "权限不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -365,7 +324,7 @@ func (s *RBACServer) CreatePermission(ctx context.Context, req *permissionpb.Cre
 	}, nil
 }
 
-func (s *RBACServer) toPermissionDomain(req *permissionpb.Permission) domain.Permission {
+func (s *Server) toPermissionDomain(req *permissionpb.Permission) domain.Permission {
 	// 处理Actions字段，proto是repeated字段，domain中是单个Action
 	// 因目前领域模型只支持一个Action，所以暂时只取第一个
 	var action string
@@ -394,7 +353,7 @@ func (s *RBACServer) toPermissionDomain(req *permissionpb.Permission) domain.Per
 	}
 }
 
-func (s *RBACServer) toPermissionProto(created domain.Permission) *permissionpb.Permission {
+func (s *Server) toPermissionProto(created domain.Permission) *permissionpb.Permission {
 	// 将domain的单个Action转为proto的actions数组
 	var actions []string
 	if created.Action != "" {
@@ -414,12 +373,12 @@ func (s *RBACServer) toPermissionProto(created domain.Permission) *permissionpb.
 	}
 }
 
-func (s *RBACServer) GetPermission(ctx context.Context, req *permissionpb.GetPermissionRequest) (*permissionpb.GetPermissionResponse, error) {
+func (s *Server) GetPermission(ctx context.Context, req *permissionpb.GetPermissionRequest) (*permissionpb.GetPermissionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "权限ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -436,12 +395,12 @@ func (s *RBACServer) GetPermission(ctx context.Context, req *permissionpb.GetPer
 	}, nil
 }
 
-func (s *RBACServer) UpdatePermission(ctx context.Context, req *permissionpb.UpdatePermissionRequest) (*permissionpb.UpdatePermissionResponse, error) {
+func (s *Server) UpdatePermission(ctx context.Context, req *permissionpb.UpdatePermissionRequest) (*permissionpb.UpdatePermissionResponse, error) {
 	if req.Permission == nil || req.Permission.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "权限不能为空且ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -461,12 +420,12 @@ func (s *RBACServer) UpdatePermission(ctx context.Context, req *permissionpb.Upd
 	}, nil
 }
 
-func (s *RBACServer) DeletePermission(ctx context.Context, req *permissionpb.DeletePermissionRequest) (*permissionpb.DeletePermissionResponse, error) {
+func (s *Server) DeletePermission(ctx context.Context, req *permissionpb.DeletePermissionRequest) (*permissionpb.DeletePermissionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "权限ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -482,7 +441,7 @@ func (s *RBACServer) DeletePermission(ctx context.Context, req *permissionpb.Del
 	}, nil
 }
 
-func (s *RBACServer) ListPermissions(ctx context.Context, req *permissionpb.ListPermissionsRequest) (*permissionpb.ListPermissionsResponse, error) {
+func (s *Server) ListPermissions(ctx context.Context, req *permissionpb.ListPermissionsRequest) (*permissionpb.ListPermissionsResponse, error) {
 	// 参数校验
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
@@ -494,7 +453,7 @@ func (s *RBACServer) ListPermissions(ctx context.Context, req *permissionpb.List
 		limit = 10 // 默认每页10条
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -514,12 +473,12 @@ func (s *RBACServer) ListPermissions(ctx context.Context, req *permissionpb.List
 
 // ==== 角色相关接口实现 ====
 
-func (s *RBACServer) CreateRole(ctx context.Context, req *permissionpb.CreateRoleRequest) (*permissionpb.CreateRoleResponse, error) {
+func (s *Server) CreateRole(ctx context.Context, req *permissionpb.CreateRoleRequest) (*permissionpb.CreateRoleResponse, error) {
 	if req.Role == nil {
 		return nil, status.Error(codes.InvalidArgument, "角色不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -541,7 +500,7 @@ func (s *RBACServer) CreateRole(ctx context.Context, req *permissionpb.CreateRol
 	}, nil
 }
 
-func (s *RBACServer) toRoleDomain(req *permissionpb.Role) domain.Role {
+func (s *Server) toRoleDomain(req *permissionpb.Role) domain.Role {
 	var md string
 	if req.Metadata != "" {
 		md = req.Metadata
@@ -557,7 +516,7 @@ func (s *RBACServer) toRoleDomain(req *permissionpb.Role) domain.Role {
 	}
 }
 
-func (s *RBACServer) toRoleProto(created domain.Role) *permissionpb.Role {
+func (s *Server) toRoleProto(created domain.Role) *permissionpb.Role {
 	return &permissionpb.Role{
 		Id:          created.ID,
 		BizId:       created.BizID,
@@ -569,12 +528,12 @@ func (s *RBACServer) toRoleProto(created domain.Role) *permissionpb.Role {
 }
 
 // GetRole 获取角色信息
-func (s *RBACServer) GetRole(ctx context.Context, req *permissionpb.GetRoleRequest) (*permissionpb.GetRoleResponse, error) {
+func (s *Server) GetRole(ctx context.Context, req *permissionpb.GetRoleRequest) (*permissionpb.GetRoleResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -592,12 +551,12 @@ func (s *RBACServer) GetRole(ctx context.Context, req *permissionpb.GetRoleReque
 }
 
 // UpdateRole 更新角色信息
-func (s *RBACServer) UpdateRole(ctx context.Context, req *permissionpb.UpdateRoleRequest) (*permissionpb.UpdateRoleResponse, error) {
+func (s *Server) UpdateRole(ctx context.Context, req *permissionpb.UpdateRoleRequest) (*permissionpb.UpdateRoleResponse, error) {
 	if req.Role == nil || req.Role.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色不能为空且ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -618,12 +577,12 @@ func (s *RBACServer) UpdateRole(ctx context.Context, req *permissionpb.UpdateRol
 }
 
 // DeleteRole 删除角色
-func (s *RBACServer) DeleteRole(ctx context.Context, req *permissionpb.DeleteRoleRequest) (*permissionpb.DeleteRoleResponse, error) {
+func (s *Server) DeleteRole(ctx context.Context, req *permissionpb.DeleteRoleRequest) (*permissionpb.DeleteRoleResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -640,7 +599,7 @@ func (s *RBACServer) DeleteRole(ctx context.Context, req *permissionpb.DeleteRol
 }
 
 // ListRoles 获取角色列表
-func (s *RBACServer) ListRoles(ctx context.Context, req *permissionpb.ListRolesRequest) (*permissionpb.ListRolesResponse, error) {
+func (s *Server) ListRoles(ctx context.Context, req *permissionpb.ListRolesRequest) (*permissionpb.ListRolesResponse, error) {
 	// 参数校验
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
@@ -652,7 +611,7 @@ func (s *RBACServer) ListRoles(ctx context.Context, req *permissionpb.ListRolesR
 		limit = 10 // 默认每页10条
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -673,12 +632,12 @@ func (s *RBACServer) ListRoles(ctx context.Context, req *permissionpb.ListRolesR
 // ==== 角色包含关系相关方法 ====
 
 // CreateRoleInclusion 创建角色包含关系
-func (s *RBACServer) CreateRoleInclusion(ctx context.Context, req *permissionpb.CreateRoleInclusionRequest) (*permissionpb.CreateRoleInclusionResponse, error) {
+func (s *Server) CreateRoleInclusion(ctx context.Context, req *permissionpb.CreateRoleInclusionRequest) (*permissionpb.CreateRoleInclusionResponse, error) {
 	if req.RoleInclusion == nil {
 		return nil, status.Error(codes.InvalidArgument, "角色包含关系不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -700,7 +659,7 @@ func (s *RBACServer) CreateRoleInclusion(ctx context.Context, req *permissionpb.
 	}, nil
 }
 
-func (s *RBACServer) toRoleInclusionDomain(ri *permissionpb.RoleInclusion) domain.RoleInclusion {
+func (s *Server) toRoleInclusionDomain(ri *permissionpb.RoleInclusion) domain.RoleInclusion {
 	return domain.RoleInclusion{
 		ID:    ri.Id,
 		BizID: ri.BizId,
@@ -717,7 +676,7 @@ func (s *RBACServer) toRoleInclusionDomain(ri *permissionpb.RoleInclusion) domai
 	}
 }
 
-func (s *RBACServer) toRoleInclusionProto(created domain.RoleInclusion) *permissionpb.RoleInclusion {
+func (s *Server) toRoleInclusionProto(created domain.RoleInclusion) *permissionpb.RoleInclusion {
 	return &permissionpb.RoleInclusion{
 		Id:                created.ID,
 		BizId:             created.BizID,
@@ -731,12 +690,12 @@ func (s *RBACServer) toRoleInclusionProto(created domain.RoleInclusion) *permiss
 }
 
 // GetRoleInclusion 获取角色包含关系
-func (s *RBACServer) GetRoleInclusion(ctx context.Context, req *permissionpb.GetRoleInclusionRequest) (*permissionpb.GetRoleInclusionResponse, error) {
+func (s *Server) GetRoleInclusion(ctx context.Context, req *permissionpb.GetRoleInclusionRequest) (*permissionpb.GetRoleInclusionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色包含关系ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -754,12 +713,12 @@ func (s *RBACServer) GetRoleInclusion(ctx context.Context, req *permissionpb.Get
 }
 
 // DeleteRoleInclusion 删除角色包含关系
-func (s *RBACServer) DeleteRoleInclusion(ctx context.Context, req *permissionpb.DeleteRoleInclusionRequest) (*permissionpb.DeleteRoleInclusionResponse, error) {
+func (s *Server) DeleteRoleInclusion(ctx context.Context, req *permissionpb.DeleteRoleInclusionRequest) (*permissionpb.DeleteRoleInclusionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色包含关系ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -776,7 +735,7 @@ func (s *RBACServer) DeleteRoleInclusion(ctx context.Context, req *permissionpb.
 }
 
 // ListRoleInclusions 获取角色包含关系列表
-func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.ListRoleInclusionsRequest) (*permissionpb.ListRoleInclusionsResponse, error) {
+func (s *Server) ListRoleInclusions(ctx context.Context, req *permissionpb.ListRoleInclusionsRequest) (*permissionpb.ListRoleInclusionsResponse, error) {
 	// 参数校验
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
@@ -788,7 +747,7 @@ func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.L
 		limit = 10 // 默认每页10条
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -812,12 +771,12 @@ func (s *RBACServer) ListRoleInclusions(ctx context.Context, req *permissionpb.L
 // ==== 角色权限相关方法 ====
 
 // GrantRolePermission 授予角色权限
-func (s *RBACServer) GrantRolePermission(ctx context.Context, req *permissionpb.GrantRolePermissionRequest) (*permissionpb.GrantRolePermissionResponse, error) {
+func (s *Server) GrantRolePermission(ctx context.Context, req *permissionpb.GrantRolePermissionRequest) (*permissionpb.GrantRolePermissionResponse, error) {
 	if req.RolePermission == nil {
 		return nil, status.Error(codes.InvalidArgument, "角色权限关系不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -839,7 +798,7 @@ func (s *RBACServer) GrantRolePermission(ctx context.Context, req *permissionpb.
 	}, nil
 }
 
-func (s *RBACServer) toRolePermissionDomain(req *permissionpb.RolePermission) domain.RolePermission {
+func (s *Server) toRolePermissionDomain(req *permissionpb.RolePermission) domain.RolePermission {
 	return domain.RolePermission{
 		ID:    req.Id,
 		BizID: req.BizId,
@@ -859,7 +818,7 @@ func (s *RBACServer) toRolePermissionDomain(req *permissionpb.RolePermission) do
 	}
 }
 
-func (s *RBACServer) toRolePermissionProto(created domain.RolePermission) *permissionpb.RolePermission {
+func (s *Server) toRolePermissionProto(created domain.RolePermission) *permissionpb.RolePermission {
 	return &permissionpb.RolePermission{
 		Id:               created.ID,
 		BizId:            created.BizID,
@@ -874,12 +833,12 @@ func (s *RBACServer) toRolePermissionProto(created domain.RolePermission) *permi
 }
 
 // RevokeRolePermission 撤销角色权限
-func (s *RBACServer) RevokeRolePermission(ctx context.Context, req *permissionpb.RevokeRolePermissionRequest) (*permissionpb.RevokeRolePermissionResponse, error) {
+func (s *Server) RevokeRolePermission(ctx context.Context, req *permissionpb.RevokeRolePermissionRequest) (*permissionpb.RevokeRolePermissionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "角色权限关系ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -896,12 +855,12 @@ func (s *RBACServer) RevokeRolePermission(ctx context.Context, req *permissionpb
 }
 
 // ListRolePermissions 获取角色权限列表
-func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.ListRolePermissionsRequest) (*permissionpb.ListRolePermissionsResponse, error) {
+func (s *Server) ListRolePermissions(ctx context.Context, req *permissionpb.ListRolePermissionsRequest) (*permissionpb.ListRolePermissionsResponse, error) {
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -922,12 +881,12 @@ func (s *RBACServer) ListRolePermissions(ctx context.Context, req *permissionpb.
 // ==== 用户角色相关方法 ====
 
 // GrantUserRole 授予用户角色
-func (s *RBACServer) GrantUserRole(ctx context.Context, req *permissionpb.GrantUserRoleRequest) (*permissionpb.GrantUserRoleResponse, error) {
+func (s *Server) GrantUserRole(ctx context.Context, req *permissionpb.GrantUserRoleRequest) (*permissionpb.GrantUserRoleResponse, error) {
 	if req.UserRole == nil {
 		return nil, status.Error(codes.InvalidArgument, "用户角色关系不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -951,7 +910,7 @@ func (s *RBACServer) GrantUserRole(ctx context.Context, req *permissionpb.GrantU
 }
 
 // UserRole 转换
-func (s *RBACServer) toUserRoleDomain(ur *permissionpb.UserRole) domain.UserRole {
+func (s *Server) toUserRoleDomain(ur *permissionpb.UserRole) domain.UserRole {
 	startTime := ur.StartTime
 	endTime := ur.EndTime
 	if startTime == 0 {
@@ -974,7 +933,7 @@ func (s *RBACServer) toUserRoleDomain(ur *permissionpb.UserRole) domain.UserRole
 	}
 }
 
-func (s *RBACServer) toUserRoleProto(ur domain.UserRole) *permissionpb.UserRole {
+func (s *Server) toUserRoleProto(ur domain.UserRole) *permissionpb.UserRole {
 	return &permissionpb.UserRole{
 		Id:        ur.ID,
 		BizId:     ur.BizID,
@@ -988,12 +947,12 @@ func (s *RBACServer) toUserRoleProto(ur domain.UserRole) *permissionpb.UserRole 
 }
 
 // RevokeUserRole 撤销用户角色
-func (s *RBACServer) RevokeUserRole(ctx context.Context, req *permissionpb.RevokeUserRoleRequest) (*permissionpb.RevokeUserRoleResponse, error) {
+func (s *Server) RevokeUserRole(ctx context.Context, req *permissionpb.RevokeUserRoleRequest) (*permissionpb.RevokeUserRoleResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "用户角色关系ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -1010,12 +969,12 @@ func (s *RBACServer) RevokeUserRole(ctx context.Context, req *permissionpb.Revok
 }
 
 // ListUserRoles 获取用户角色列表
-func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUserRolesRequest) (*permissionpb.ListUserRolesResponse, error) {
+func (s *Server) ListUserRoles(ctx context.Context, req *permissionpb.ListUserRolesRequest) (*permissionpb.ListUserRolesResponse, error) {
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,12 +996,12 @@ func (s *RBACServer) ListUserRoles(ctx context.Context, req *permissionpb.ListUs
 // ==== 用户权限相关方法 ====
 
 // GrantUserPermission 授予用户权限
-func (s *RBACServer) GrantUserPermission(ctx context.Context, req *permissionpb.GrantUserPermissionRequest) (*permissionpb.GrantUserPermissionResponse, error) {
+func (s *Server) GrantUserPermission(ctx context.Context, req *permissionpb.GrantUserPermissionRequest) (*permissionpb.GrantUserPermissionResponse, error) {
 	if req.UserPermission == nil {
 		return nil, status.Error(codes.InvalidArgument, "用户权限关系不能为空")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -1066,7 +1025,7 @@ func (s *RBACServer) GrantUserPermission(ctx context.Context, req *permissionpb.
 	}, nil
 }
 
-func (s *RBACServer) toUserPermissionDomain(up *permissionpb.UserPermission) domain.UserPermission {
+func (s *Server) toUserPermissionDomain(up *permissionpb.UserPermission) domain.UserPermission {
 	var effect domain.Effect
 	if up.Effect == "deny" {
 		effect = domain.EffectDeny
@@ -1102,7 +1061,7 @@ func (s *RBACServer) toUserPermissionDomain(up *permissionpb.UserPermission) dom
 	}
 }
 
-func (s *RBACServer) toUserPermissionProto(up domain.UserPermission) *permissionpb.UserPermission {
+func (s *Server) toUserPermissionProto(up domain.UserPermission) *permissionpb.UserPermission {
 	return &permissionpb.UserPermission{
 		Id:               up.ID,
 		BizId:            up.BizID,
@@ -1119,12 +1078,12 @@ func (s *RBACServer) toUserPermissionProto(up domain.UserPermission) *permission
 }
 
 // RevokeUserPermission 撤销用户权限
-func (s *RBACServer) RevokeUserPermission(ctx context.Context, req *permissionpb.RevokeUserPermissionRequest) (*permissionpb.RevokeUserPermissionResponse, error) {
+func (s *Server) RevokeUserPermission(ctx context.Context, req *permissionpb.RevokeUserPermissionRequest) (*permissionpb.RevokeUserPermissionResponse, error) {
 	if req.Id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "用户权限关系ID必须大于0")
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -1141,7 +1100,7 @@ func (s *RBACServer) RevokeUserPermission(ctx context.Context, req *permissionpb
 }
 
 // ListUserPermissions 获取用户权限列表
-func (s *RBACServer) ListUserPermissions(ctx context.Context, req *permissionpb.ListUserPermissionsRequest) (*permissionpb.ListUserPermissionsResponse, error) {
+func (s *Server) ListUserPermissions(ctx context.Context, req *permissionpb.ListUserPermissionsRequest) (*permissionpb.ListUserPermissionsResponse, error) {
 	if req.BizId <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "业务ID必须大于0")
 	}
@@ -1152,7 +1111,7 @@ func (s *RBACServer) ListUserPermissions(ctx context.Context, req *permissionpb.
 		limit = 10 // 默认每页10条
 	}
 
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package grpc
+package abac
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 type ABACPolicyServer struct {
 	permissionpb.UnsafePolicyServiceServer
+	baseServer
 	svc abacSvc.PolicySvc
 }
 
@@ -20,7 +21,7 @@ func NewABACPolicyServer(svc abacSvc.PolicySvc) *ABACPolicyServer {
 }
 
 func (s *ABACPolicyServer) Save(ctx context.Context, req *permissionpb.PolicyServiceSaveRequest) (*permissionpb.PolicyServiceSaveResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +37,7 @@ func (s *ABACPolicyServer) Save(ctx context.Context, req *permissionpb.PolicySer
 }
 
 func (s *ABACPolicyServer) Delete(ctx context.Context, req *permissionpb.PolicyServiceDeleteRequest) (*permissionpb.PolicyServiceDeleteResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +49,7 @@ func (s *ABACPolicyServer) Delete(ctx context.Context, req *permissionpb.PolicyS
 }
 
 func (s *ABACPolicyServer) First(ctx context.Context, req *permissionpb.PolicyServiceFirstRequest) (*permissionpb.PolicyServiceFirstResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +63,7 @@ func (s *ABACPolicyServer) First(ctx context.Context, req *permissionpb.PolicySe
 }
 
 func (s *ABACPolicyServer) SaveRule(ctx context.Context, req *permissionpb.PolicyServiceSaveRuleRequest) (*permissionpb.PolicyServiceSaveRuleResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +81,7 @@ func (s *ABACPolicyServer) SaveRule(ctx context.Context, req *permissionpb.Polic
 }
 
 func (s *ABACPolicyServer) DeleteRule(ctx context.Context, req *permissionpb.PolicyServiceDeleteRuleRequest) (*permissionpb.PolicyServiceDeleteRuleResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +93,7 @@ func (s *ABACPolicyServer) DeleteRule(ctx context.Context, req *permissionpb.Pol
 }
 
 func (s *ABACPolicyServer) SavePermissionPolicy(ctx context.Context, req *permissionpb.PolicyServiceSavePermissionPolicyRequest) (*permissionpb.PolicyServiceSavePermissionPolicyResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +105,7 @@ func (s *ABACPolicyServer) SavePermissionPolicy(ctx context.Context, req *permis
 }
 
 func (s *ABACPolicyServer) FindPolicies(ctx context.Context, req *permissionpb.PolicyServiceFindPoliciesRequest) (*permissionpb.PolicyServiceFindPoliciesResponse, error) {
-	bizID, err := getBizIDFromContext(ctx)
+	bizID, err := s.getBizIDFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
