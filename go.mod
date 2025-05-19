@@ -5,16 +5,16 @@ go 1.24.1
 require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.10.0
 	github.com/ecodeclub/ecache v0.0.0-20240111145855-75679834beca
-	github.com/ecodeclub/ekit v0.0.9
+	github.com/ecodeclub/ekit v0.0.10
 	github.com/ecodeclub/ginx v0.0.1
 	github.com/ego-component/eetcd v1.0.0
 	github.com/ego-component/egorm v1.1.4
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/wire v0.6.0
 	github.com/gotomicro/ego v1.2.3
-	github.com/meoying/dlock-go v0.0.0-20250327141213-0dffbb87db24
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.8.0
@@ -56,7 +56,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
-	github.com/go-redis/redismock/v9 v9.2.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect

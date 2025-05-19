@@ -50,7 +50,7 @@ func (s *PermissionSuite) TestPermission() {
 		name       string
 		before     func(t *testing.T)
 		permission domain.Permission
-		attrs      domain.PermissionRequest
+		attrs      domain.Attributes
 		uid        int64
 		wantVal    bool
 	}{
@@ -64,8 +64,8 @@ func (s *PermissionSuite) TestPermission() {
 				},
 				Action: "read",
 			},
-			attrs: domain.PermissionRequest{
-				EnvironmentAttrs: map[string]string{
+			attrs: domain.Attributes{
+				Environment: map[string]string{
 					"time": fmt.Sprintf("%d", time.Now().UnixMilli()),
 				},
 			},
@@ -225,8 +225,8 @@ func (s *PermissionSuite) TestPermission() {
 				},
 				Action: "read",
 			},
-			attrs: domain.PermissionRequest{
-				EnvironmentAttrs: map[string]string{
+			attrs: domain.Attributes{
+				Environment: map[string]string{
 					"time": fmt.Sprintf("%d", time.Now().UnixMilli()),
 				},
 			},

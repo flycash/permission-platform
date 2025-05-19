@@ -10,7 +10,7 @@ import (
 )
 
 type PermissionSvc interface {
-	Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.PermissionRequest) (bool, error)
+	Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error)
 }
 
 type permissionSvc struct {
@@ -39,7 +39,7 @@ func NewPermissionSvc(permissionRepo repository.PermissionRepository,
 	}
 }
 
-func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.PermissionRequest) (bool, error) {
+func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error) {
 	permissions, res, err := p.getPermissionAndRes(ctx, bizID, resource, actions)
 	if err != nil {
 		return false, err
@@ -132,24 +132,24 @@ func (p *permissionSvc) buildAttributeValReq(bizDefinition domain.BizDefinition,
 	subObj *domain.SubjectObject,
 	resObj *domain.ResourceObject,
 	envObj *domain.EnvironmentObject,
-	attrs domain.PermissionRequest,
+	attrs domain.Attributes,
 ) AttributeValReq {
 	p.setObjDefinition(bizDefinition, subObj, resObj, envObj)
-	for name, value := range attrs.EnvironmentAttrs {
+	for name, value := range attrs.Environment {
 		definition, ok := bizDefinition.EnvironmentAttrs.GetDefinitionWithName(name)
 		if !ok {
 			continue
 		}
 		envObj.SetAttributeVal(value, definition)
 	}
-	for name, value := range attrs.SubjectAttrs {
+	for name, value := range attrs.Subject {
 		definition, ok := bizDefinition.SubjectAttrs.GetDefinitionWithName(name)
 		if !ok {
 			continue
 		}
 		subObj.SetAttributeVal(value, definition)
 	}
-	for name, value := range attrs.ResourceAttrs {
+	for name, value := range attrs.Resource {
 		definition, ok := bizDefinition.ResourceAttrs.GetDefinitionWithName(name)
 		if !ok {
 			continue

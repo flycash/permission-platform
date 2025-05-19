@@ -7,9 +7,9 @@ import (
 // 业务的定义
 type BizDefinition struct {
 	BizID            int64
-	SubjectAttrs     Attrs // 主体的属性定义
-	ResourceAttrs    Attrs // 资源的属性定义
-	EnvironmentAttrs Attrs // 环境的属性定义
+	SubjectAttrs     AttributeDefinitions // 主体的属性定义
+	ResourceAttrs    AttributeDefinitions // 资源的属性定义
+	EnvironmentAttrs AttributeDefinitions // 环境的属性定义
 }
 
 type (
@@ -27,9 +27,9 @@ func (t AttributeType) String() string {
 	return string(t)
 }
 
-type Attrs []AttributeDefinition
+type AttributeDefinitions []AttributeDefinition
 
-func (a Attrs) Map() map[int64]AttributeDefinition {
+func (a AttributeDefinitions) Map() map[int64]AttributeDefinition {
 	res := make(map[int64]AttributeDefinition, len(a))
 	for idx := range a {
 		val := a[idx]
@@ -38,7 +38,7 @@ func (a Attrs) Map() map[int64]AttributeDefinition {
 	return res
 }
 
-func (a Attrs) GetDefinition(id int64) (AttributeDefinition, bool) {
+func (a AttributeDefinitions) GetDefinition(id int64) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].ID == id {
 			return a[idx], true
@@ -47,7 +47,7 @@ func (a Attrs) GetDefinition(id int64) (AttributeDefinition, bool) {
 	return AttributeDefinition{}, false
 }
 
-func (a Attrs) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
+func (a AttributeDefinitions) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].Name == name {
 			return a[idx], true
@@ -165,4 +165,10 @@ func (s *EnvironmentObject) SetAttributeVal(val string, definition AttributeDefi
 		Definition: definition,
 		Value:      val,
 	})
+}
+
+type Attributes struct {
+	Subject     map[string]string // 属性名 name => 属性值 value
+	Resource    map[string]string
+	Environment map[string]string
 }
