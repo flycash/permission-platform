@@ -1,6 +1,6 @@
 //go:build e2e
 
-package redis
+package demo
 
 import (
 	"context"
@@ -67,7 +67,7 @@ func TestAccessPlugin(t *testing.T) {
 					Uid: 1,
 					Permission: &permissionv1.Permission{
 						ResourceKey:  "test-key",
-						ResourceType: "redis_key",
+						ResourceType: "redis",
 						Actions:      []string{"read"},
 					},
 				}).Return(&permissionv1.CheckPermissionResponse{Allowed: true}, nil)
@@ -90,7 +90,7 @@ func TestAccessPlugin(t *testing.T) {
 					Uid: 1,
 					Permission: &permissionv1.Permission{
 						ResourceKey:  "test-key1",
-						ResourceType: "redis_key",
+						ResourceType: "redis",
 						Actions:      []string{"write"},
 					},
 				}).Return(&permissionv1.CheckPermissionResponse{Allowed: false}, nil)
@@ -112,42 +112,13 @@ func TestAccessPlugin(t *testing.T) {
 					Uid: 1,
 					Permission: &permissionv1.Permission{
 						ResourceKey:  "test-key2",
-						ResourceType: "redis_key",
+						ResourceType: "redis",
 						Actions:      []string{"delete"},
 					},
 				}).Return(&permissionv1.CheckPermissionResponse{Allowed: true}, nil)
 			},
 			operation: func(ctx context.Context) error {
 				return client.Del(ctx, "test-key2").Err()
-			},
-			expectedError: false,
-		},
-		{
-			name: "with custom resource",
-			setupContext: func(ctx context.Context) context.Context {
-				_, err := client2.Set(t.Context(), "custom-key", 1, 10*time.Second).Result()
-				require.NoError(t, err)
-				ctx = context.WithValue(ctx, bizIDKey, int64(1))
-				ctx = context.WithValue(ctx, uidKey, int64(1))
-				ctx = context.WithValue(ctx, resourceKey, &permissionv1.Resource{
-					Key:  "custom-key",
-					Type: "custom_type",
-				})
-				return ctx
-			},
-			setupMock: func() {
-				mockClient.On("CheckPermission", mock.Anything, &permissionv1.CheckPermissionRequest{
-					Uid: 1,
-					Permission: &permissionv1.Permission{
-						ResourceKey:  "custom-key",
-						ResourceType: "custom_type",
-						Actions:      []string{"read"},
-					},
-				}).Return(&permissionv1.CheckPermissionResponse{Allowed: true}, nil)
-			},
-			operation: func(ctx context.Context) error {
-				_, err := client.Get(ctx, "custom-key").Result()
-				return err
 			},
 			expectedError: false,
 		},

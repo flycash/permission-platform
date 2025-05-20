@@ -1,4 +1,4 @@
-package redis
+package demo
 
 import (
 	"context"
@@ -23,9 +23,10 @@ const (
 type RedisOperationType string
 
 const (
-	GET RedisOperationType = "get"
-	SET RedisOperationType = "set"
-	DEL RedisOperationType = "del"
+	GET            RedisOperationType = "get"
+	SET            RedisOperationType = "set"
+	DEL            RedisOperationType = "del"
+	defaultKeyType                    = "redis"
 )
 
 // AccessPlugin is a Redis plugin for permission checking
@@ -33,6 +34,7 @@ type AccessPlugin struct {
 	client       permissionv1.PermissionServiceClient
 	operationMap map[RedisOperationType]string
 	logger       *elog.Component
+	resourceFunc func(redisKey string) (typ, key string)
 }
 
 type AccessPluginOption func(*AccessPlugin)
@@ -43,8 +45,16 @@ func WithOperationMap(operationMap map[RedisOperationType]string) AccessPluginOp
 	}
 }
 
+func WithResourceFunc(resourceFunc func(redisKey string) (typ, key string)) AccessPluginOption {
+	return func(p *AccessPlugin) {
+		p.resourceFunc = resourceFunc
+	}
+}
+
 // NewAccessPlugin creates a new Redis access plugin
-func NewAccessPlugin(client permissionv1.PermissionServiceClient, opts ...AccessPluginOption) *AccessPlugin {
+func NewAccessPlugin(client permissionv1.PermissionServiceClient,
+	opts ...AccessPluginOption,
+) *AccessPlugin {
 	plugin := &AccessPlugin{
 		client: client,
 		operationMap: map[RedisOperationType]string{
@@ -53,6 +63,9 @@ func NewAccessPlugin(client permissionv1.PermissionServiceClient, opts ...Access
 			DEL: "delete",
 		},
 		logger: elog.DefaultLogger,
+		resourceFunc: func(redisKey string) (typ, key string) {
+			return defaultKeyType, redisKey
+		},
 	}
 	for idx := range opts {
 		opts[idx](plugin)
@@ -112,18 +125,12 @@ func (p *AccessPlugin) checkPermission(ctx context.Context, cmd redis.Cmder) err
 	// 获取资源信息
 	key := getKeyFromCmd(cmd)
 	var resourceType string
-	if val, err := getResource(ctx); err == nil {
-		key = val.Key
-		resourceType = val.Type
-	} else {
-		resourceType = "redis_key"
-	}
-
+	resTyp, resKey := p.resourceFunc(key)
 	resp, err := p.client.CheckPermission(ctx, &permissionv1.CheckPermissionRequest{
 		Uid: uid,
 		Permission: &permissionv1.Permission{
-			ResourceKey:  key,
-			ResourceType: resourceType,
+			ResourceKey:  resKey,
+			ResourceType: resTyp,
 			Actions:      []string{action},
 		},
 	})
@@ -197,16 +204,4 @@ func getUID(ctx context.Context) (int64, error) {
 	}
 
 	return uid, nil
-}
-
-func getResource(ctx context.Context) (*permissionv1.Resource, error) {
-	value := ctx.Value(resourceKey)
-	if value == nil {
-		return nil, fmt.Errorf("resource not found in context")
-	}
-	res, ok := value.(*permissionv1.Resource)
-	if !ok {
-		return nil, fmt.Errorf("invalid resource type, expected permissionv1.Resource")
-	}
-	return res, nil
 }

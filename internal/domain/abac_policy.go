@@ -53,4 +53,6 @@ const (
 	IN             RuleOperator = "IN"
 	NotIn          RuleOperator = "NOT IN"
 	NOT            RuleOperator = "NOT"
+	AllMatch       RuleOperator = "ALL MATCH"
+	AnyMatch       RuleOperator = "ANY MATCH"
 )
