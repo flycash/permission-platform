@@ -26,4 +26,6 @@ var (
 	ErrSupportedSignAlgorithm = errors.New("不支持的签名算法")
 	ErrDecodeJWTTokenFailed   = errors.New("JWT令牌解析失败")
 	ErrInvalidJWTToken        = errors.New("无效的令牌")
+
+	ErrKeyNotExist = errors.New("key 不存在")
 )
