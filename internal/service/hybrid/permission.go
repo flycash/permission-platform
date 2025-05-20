@@ -2,11 +2,15 @@ package hybrid
 
 import (
 	"context"
-	"strconv"
-
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/service/abac"
+	"gitee.com/flycash/permission-platform/internal/service/abac/converter"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
+	"github.com/ecodeclub/ekit/slice"
+)
+
+const (
+	defaultRoleName = "role"
 )
 
 type PermissionService interface {
@@ -38,11 +42,16 @@ func (p *permissionService) Check(ctx context.Context, bizID, userID int64, reso
 
 type roleAsAttributePermissionService struct {
 	rbacSvc           rbac.Service
+	converter         converter.Converter[[]string]
 	abacPermissionSvc abac.PermissionSvc
 }
 
 func NewRoleAsAttributePermissionService(rbacSvc rbac.Service, abacPermissionSvc abac.PermissionSvc) PermissionService {
-	return &roleAsAttributePermissionService{rbacSvc: rbacSvc, abacPermissionSvc: abacPermissionSvc}
+	return &roleAsAttributePermissionService{
+		rbacSvc:           rbacSvc,
+		abacPermissionSvc: abacPermissionSvc,
+		converter:         converter.NewArrayConverter(),
+	}
 }
 
 func (p *roleAsAttributePermissionService) Check(ctx context.Context, bizID, userID int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error) {
@@ -50,9 +59,10 @@ func (p *roleAsAttributePermissionService) Check(ctx context.Context, bizID, use
 	if err != nil {
 		return false, err
 	}
-	// 将用户角色作为普通主体属性
-	for i := range userRoles {
-		attrs.Subject[userRoles[i].Role.Name] = strconv.FormatInt(userRoles[i].Role.ID, 10)
-	}
+	nameList := slice.Map(userRoles, func(_ int, src domain.UserRole) string {
+		return src.Role.Name
+	})
+	val, _ := p.converter.Encode(nameList)
+	attrs.Subject[defaultRoleName] = val
 	return p.abacPermissionSvc.Check(ctx, bizID, userID, resource, actions, attrs)
 }
