@@ -28,7 +28,8 @@ func (c *AccessConsumer) CommitMessage(m *kafka.Message) ([]kafka.TopicPartition
 }
 
 func NewAccessConsumer(c Consumer, client permissionv1.PermissionServiceClient,
-	resourceFunc func(msg *kafka.Message) (string, string)) *AccessConsumer {
+	resourceFunc func(msg *kafka.Message) (string, string),
+) *AccessConsumer {
 	return &AccessConsumer{
 		consumer: c,
 		client:   client,
@@ -51,7 +52,6 @@ func (c *AccessConsumer) ReadMessage(ctx context.Context, timeout time.Duration)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("xxxxxxxxxx", msg)
 
 		bizID, err := getBizID(ctx)
 		if err != nil {
@@ -143,7 +143,7 @@ func (c *AccessConsumer) Subscribe(ctx context.Context, topic string, rebalanceC
 		Permission: &permissionv1.Permission{
 			ResourceType: "kafka",
 			ResourceKey:  topic,
-			Actions:      []string{consume},
+			Actions:      []string{subscribe},
 		},
 	}
 

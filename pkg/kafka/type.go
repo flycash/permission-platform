@@ -2,8 +2,9 @@ package kafka
 
 import (
 	"context"
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"time"
+
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 type Producer interface {
@@ -16,5 +17,3 @@ type Consumer interface {
 	ReadMessage(ctx context.Context, timeout time.Duration) (*kafka.Message, error)
 	CommitMessage(m *kafka.Message) ([]kafka.TopicPartition, error)
 }
-
-

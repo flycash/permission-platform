@@ -15,7 +15,7 @@ import (
 var (
 	baseSet = wire.NewSet(
 		ioc.InitDB,
-		ioc.InitDistributedLock,
+		//ioc.InitDistributedLock,
 		ioc.InitEtcdClient,
 		ioc.InitIDGenerator,
 		ioc.InitRedisClient,

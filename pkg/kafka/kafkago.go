@@ -2,8 +2,9 @@ package kafka
 
 import (
 	"context"
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"time"
+
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 type GoProducer struct {
@@ -21,6 +22,7 @@ func NewGoProducer(producer *kafka.Producer) *GoProducer {
 type GoConsumer struct {
 	*kafka.Consumer
 }
+
 func NewGoConsumer(c *kafka.Consumer) *GoConsumer {
 	return &GoConsumer{c}
 }

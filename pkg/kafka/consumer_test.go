@@ -172,8 +172,8 @@ func initKafkaTopic(t *testing.T, bootstrapServers string, topic string) {
 }
 
 func TestAccessConsumer_ReadMessage(t *testing.T) {
-	t.Skip("还在修改")
-	bootstrapServers := "localhost:9092"
+	t.Skip("Skipping integration test")
+	bootstrapServers := "127.0.0.1:9092"
 	testTopic := "test-read"
 
 	// 初始化 topic
@@ -253,13 +253,12 @@ func TestAccessConsumer_ReadMessage(t *testing.T) {
 		},
 	)
 
-	time.Sleep(10 * time.Second)
 	// 订阅测试主题
 	err = accessConsumer.Subscribe(newTestContext(1, 100), testTopic, nil)
 	require.NoError(t, err)
-
+	time.Sleep(10 * time.Second)
 	// 读取第一条消息（应该有权限，因为 key 不包含 "deny"）
-	msg1, err := accessConsumer.ReadMessage(newTestContext(1, 100), 5*time.Second)
+	msg1, err := accessConsumer.ReadMessage(newTestContext(1, 100), 100000*time.Second)
 	require.NoError(t, err)
 	assert.Equal(t, testTopic, *msg1.TopicPartition.Topic)
 	assert.Equal(t, "key1", string(msg1.Key))

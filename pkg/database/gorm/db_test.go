@@ -86,11 +86,11 @@ func TestGormAccessPlugin(t *testing.T) {
 		expectedError bool
 	}{
 		{
-			name: "read operation - allowed",
+			name: "read operation-allowed",
 			setupContext: func(ctx context.Context) context.Context {
 				ctx = context.WithValue(ctx, bizIDKey, int64(1))
 				ctx = context.WithValue(ctx, uidKey, int64(1))
-				db.Create(&User{
+				db.WithContext(ctx).Create(&User{
 					ID:   1,
 					Name: "test",
 				})
@@ -119,7 +119,7 @@ func TestGormAccessPlugin(t *testing.T) {
 			setupContext: func(ctx context.Context) context.Context {
 				ctx = context.WithValue(ctx, bizIDKey, int64(2))
 				ctx = context.WithValue(ctx, uidKey, int64(1))
-				db.Create(&User{
+				db.WithContext(ctx).Create(&User{
 					ID:   2,
 					Name: "test",
 				})

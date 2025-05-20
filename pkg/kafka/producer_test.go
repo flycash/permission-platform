@@ -1,9 +1,13 @@
+//go:build e2e
+
 package kafka
 
 import (
 	"context"
 	"testing"
 	"time"
+
+	"github.com/pkg/errors"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -18,9 +22,13 @@ type TestPermissionServiceClient struct {
 	mock.Mock
 }
 
-func (m *TestPermissionServiceClient) CheckPermission(ctx context.Context, req *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
+func (m *TestPermissionServiceClient) CheckPermission(ctx context.Context, req *permissionv1.CheckPermissionRequest, _ ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	args := m.Called(ctx, req)
-	return args.Get(0).(*permissionv1.CheckPermissionResponse), args.Error(1)
+	val, ok := args.Get(0).(*permissionv1.CheckPermissionResponse)
+	if !ok {
+		return nil, errors.New("CheckPermission fail")
+	}
+	return val, args.Error(1)
 }
 
 func TestAccessProducer_Produce(t *testing.T) {
@@ -83,7 +91,6 @@ func TestAccessProducer_Produce(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
 			// 创建 TestPermissionServiceClient
 			testPermissionClient := new(TestPermissionServiceClient)
 			tt.setupMocks(testPermissionClient)

@@ -18,22 +18,22 @@ import (
 // Injectors from wire.go:
 
 func InitApp() *ioc.App {
-	db := ioc.InitDB()
-	businessConfigDAO := dao.NewBusinessConfigDAO(db)
+	v := ioc.InitDB()
+	businessConfigDAO := dao.NewBusinessConfigDAO(v)
 	businessConfigRepository := repository.NewBusinessConfigRepository(businessConfigDAO)
-	resourceDAO := dao.NewResourceDAO(db)
+	resourceDAO := dao.NewResourceDAO(v)
 	resourceRepository := repository.NewResourceRepository(resourceDAO)
-	permissionDAO := dao.NewPermissionDAO(db)
+	permissionDAO := dao.NewPermissionDAO(v)
 	permissionRepository := repository.NewPermissionRepository(permissionDAO)
-	roleDAO := dao.NewRoleDAO(db)
+	roleDAO := dao.NewRoleDAO(v)
 	roleRepository := repository.NewRoleRepository(roleDAO)
-	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
+	roleInclusionDAO := dao.NewRoleInclusionDAO(v)
 	roleInclusionRepository := repository.NewRoleInclusionRepository(roleInclusionDAO)
-	rolePermissionDAO := dao.NewRolePermissionDAO(db)
+	rolePermissionDAO := dao.NewRolePermissionDAO(v)
 	rolePermissionRepository := repository.NewRolePermissionRepository(rolePermissionDAO)
-	userRoleDAO := dao.NewUserRoleDAO(db)
+	userRoleDAO := dao.NewUserRoleDAO(v)
 	userRoleRepository := repository.NewUserRoleRepository(userRoleDAO)
-	userPermissionDAO := dao.NewUserPermissionDAO(db)
+	userPermissionDAO := dao.NewUserPermissionDAO(v)
 	userPermissionRepository := repository.NewUserPermissionRepository(userPermissionDAO)
 	rbacRepository := repository.NewRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
 	token := ioc.InitJWTToken()
@@ -41,9 +41,9 @@ func InitApp() *ioc.App {
 	server := rbac2.NewServer(service)
 	permissionService := rbac.NewPermissionService(rbacRepository)
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
-	v := ioc.InitGRPC(server, permissionServiceServer, token)
+	v2 := ioc.InitGRPC(server, permissionServiceServer, token)
 	app := &ioc.App{
-		GrpcServers: v,
+		GrpcServers: v2,
 	}
 	return app
 }
@@ -51,6 +51,6 @@ func InitApp() *ioc.App {
 // wire.go:
 
 var (
-	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitDistributedLock, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitGoCache, ioc.InitRedisCmd, ioc.InitJWTToken)
+	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitGoCache, ioc.InitRedisCmd, ioc.InitJWTToken)
 	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewRBACRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository)
 )

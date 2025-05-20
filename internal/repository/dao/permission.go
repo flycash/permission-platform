@@ -54,7 +54,7 @@ func NewPermissionDAO(db *egorm.Component) PermissionDAO {
 	}
 }
 
-func (p *permissionDAO)	FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey string, actions []string) ([]Permission, error){
+func (p *permissionDAO) FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey string, actions []string) ([]Permission, error) {
 	var permissions []Permission
 	err := p.db.WithContext(ctx).
 		Where("biz_id = ? AND resource_key = ? AND resource_type = ? AND action in ?", bizID, resourceKey, resourceType, actions).Find(&permissions).Error
