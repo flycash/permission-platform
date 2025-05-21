@@ -64,7 +64,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	})
 	eg.Go(func() error {
 		var eerr error
-		resObj, eerr = p.valRepo.FindResourceValue(ctx, bizID, permission.Resource.ID)
+		resObj, eerr = p.valRepo.FindResourceValue(ctx, bizID, resource.ID)
 		return eerr
 	})
 	eg.Go(func() error {
@@ -91,9 +91,9 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	}
 
 	// 将预存属性和实时属性合并在一起，实时属性的优先级更加高
-	subObj.MergeRealTimeAttrs(bizDefinition.SubjectAttrDefs, attrs.SubjectAttrValues)
-	resObj.MergeRealTimeAttrs(bizDefinition.ResourceAttrDefs, attrs.ResourceAttrValues)
-	envObj.MergeRealTimeAttrs(bizDefinition.EnvironmentAttrDefs, attrs.EnvironmentAttrValues)
+	subObj.MergeRealTimeAttrs(bizDefinition.SubjectAttrDefs, attrs.Subject)
+	resObj.MergeRealTimeAttrs(bizDefinition.ResourceAttrDefs, attrs.Resource)
+	envObj.MergeRealTimeAttrs(bizDefinition.EnvironmentAttrDefs, attrs.Environment)
 
 	var hasPermit bool
 	var hasDeny bool
@@ -102,7 +102,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	}
 	for idx := range policies {
 		policy := policies[idx]
-		if p.parser.Check(policy.Rules, subObj, resObj, envObj) {
+		if p.parser.Check(policy, subObj, resObj, envObj) {
 			if policy.Effect == domain.EffectAllow {
 				hasPermit = true
 			}

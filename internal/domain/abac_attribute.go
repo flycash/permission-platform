@@ -63,12 +63,6 @@ func (a AttrDefs) GetDefinitionWithName(name string) (AttributeDefinition, bool)
 	return AttributeDefinition{}, false
 }
 
-func (s *ABACObject) ValuesMap() map[int64]string {
-	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, string) {
-		return element.ID, element.Value
-	})
-}
-
 type AttributeValue struct {
 	ID         int64
 	Definition AttributeDefinition // 对应的属性定义
@@ -77,11 +71,17 @@ type AttributeValue struct {
 	Utime      int64
 }
 
-// 资源对象
+// ABACObject ABAC 的对象
 type ABACObject struct {
 	BizID           int64
 	ID              int64
 	AttributeValues []AttributeValue
+}
+
+func (s *ABACObject) ValuesMap() map[int64]string {
+	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, string) {
+		return element.ID, element.Value
+	})
 }
 
 func (s *ABACObject) MergeRealTimeAttrs(attrs AttrDefs, values map[string]string) {

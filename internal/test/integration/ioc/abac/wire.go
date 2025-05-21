@@ -36,7 +36,7 @@ func Init(db *egorm.Component) *Service {
 		repository.NewAttributeDefinitionRepository,
 		repository.NewAttributeValueRepository,
 		evaluator.NewSelector,
-		abacsvc.NewRuleParser,
+		abacsvc.NewPolicyExecutor,
 		abacsvc.NewPermissionSvc,
 		wire.Struct(new(Service), "*"),
 	)
