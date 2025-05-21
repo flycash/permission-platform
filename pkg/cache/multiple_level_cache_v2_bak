@@ -2,12 +2,13 @@ package cache
 
 import (
 	"context"
-	"gitee.com/flycash/permission-platform/pkg/bitring"
-	"github.com/ecodeclub/ecache"
-	"github.com/redis/go-redis/v9"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"gitee.com/flycash/permission-platform/pkg/bitring"
+	"github.com/ecodeclub/ecache"
+	"github.com/redis/go-redis/v9"
 )
 
 type MultiLevelCacheV2 struct {
@@ -39,7 +40,7 @@ func (m *MultiLevelCacheV2) redisHealthCheck(rd redis.Cmdable) {
 			ctx, cancel := context.WithTimeout(context.Background(), m.redisPingTimeout)
 			// 尝试Ping Redis
 			if err := rd.Ping(ctx); err == nil {
-				m.handleRedisRecoveryEvent(context.Background())
+				m.handleRedisRecoveryEvent()
 			}
 			cancel()
 		}
@@ -47,7 +48,7 @@ func (m *MultiLevelCacheV2) redisHealthCheck(rd redis.Cmdable) {
 }
 
 // handleRedisRecoveryEvent 处理Redis恢复事件
-func (m *MultiLevelCacheV2) handleRedisRecoveryEvent(ctx context.Context) {
+func (m *MultiLevelCacheV2) handleRedisRecoveryEvent() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -72,13 +73,13 @@ func (m *MultiLevelCacheV2) Set(ctx context.Context, key string, val any, expira
 	m.redisCrashDetector.Add(err != nil)
 	if err != nil && m.redisCrashDetector.IsConditionMet() {
 		// Redis检测到崩溃，启动降级流程
-		m.handleRedisCrashEvent(ctx)
+		m.handleRedisCrashEvent()
 	}
 	return err
 }
 
 // handleRedisCrashEvent 处理Redis崩溃事件
-func (m *MultiLevelCacheV2) handleRedisCrashEvent(ctx context.Context) {
+func (m *MultiLevelCacheV2) handleRedisCrashEvent() {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	// 已经处于不可用状态，避免重复处理
@@ -87,7 +88,6 @@ func (m *MultiLevelCacheV2) handleRedisCrashEvent(ctx context.Context) {
 	}
 	// 标记Redis不可用
 	m.isRedisAvailable.Store(false)
-
 }
 
 func (m *MultiLevelCacheV2) Get(ctx context.Context, key string) Value {
@@ -102,7 +102,7 @@ func (m *MultiLevelCacheV2) Get(ctx context.Context, key string) Value {
 		m.redisCrashDetector.Add(true)
 		if m.redisCrashDetector.IsConditionMet() {
 			// Redis崩溃，切换到使用本地缓存
-			m.handleRedisCrashEvent(ctx)
+			m.handleRedisCrashEvent()
 		}
 	} else {
 		// Redis正常响应

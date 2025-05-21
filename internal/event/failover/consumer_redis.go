@@ -2,6 +2,7 @@ package failover
 
 import (
 	"context"
+
 	"gitee.com/flycash/permission-platform/internal/pkg/database/monitor"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gotomicro/ego/core/elog"

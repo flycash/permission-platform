@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"gitee.com/flycash/permission-platform/internal/errs"
 
 	"gitee.com/flycash/permission-platform/internal/event/failover"

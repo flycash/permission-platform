@@ -4,6 +4,9 @@ package integration
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/event/failover"
 	monMocks "gitee.com/flycash/permission-platform/internal/pkg/database/monitor/mocks"
 	"gitee.com/flycash/permission-platform/internal/test/ioc"
@@ -13,8 +16,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
-	"testing"
-	"time"
 )
 
 type User0 struct {
@@ -111,7 +112,6 @@ func (s *ConsumerRedisSuite) TestConsumerBehaviorWithMonitor() {
 		err := s.client.Get(t.Context(), fmt.Sprintf("user%d", i)).Err()
 		require.NoError(t, err)
 	}
-
 }
 
 func TestConsumerRedisSuite(t *testing.T) {

@@ -96,7 +96,6 @@ func (s *ABACObject) MergeRealTimeAttrs(attrs AttrDefs, values map[string]string
 		def, _ := attrs.GetDefinition(val.Definition.ID)
 		s.AttributeValues[idx].Definition = def
 	}
-
 }
 
 func (s *ABACObject) AttributeVal(attributeID int64) (AttributeValue, error) {

@@ -27,8 +27,8 @@ var (
 	ErrDecodeJWTTokenFailed   = errors.New("JWT令牌解析失败")
 	ErrInvalidJWTToken        = errors.New("无效的令牌")
 
-	ErrDatabaseError               = errors.New("数据库错误")
-	ErrKeyNotExist = errors.New("key 不存在")
+	ErrDatabaseError = errors.New("数据库错误")
+	ErrKeyNotExist   = errors.New("key 不存在")
 
-	ErrToAsync     = errors.New("服务崩溃已转异步")
+	ErrToAsync = errors.New("服务崩溃已转异步")
 )

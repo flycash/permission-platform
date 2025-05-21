@@ -3,15 +3,10 @@ package ioc
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"gitee.com/flycash/permission-platform/internal/event/failover"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
-)
-
-var (
-	mqInitOnce sync.Once
 )
 
 const (

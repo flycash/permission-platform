@@ -2,6 +2,7 @@ package abac
 
 import (
 	"fmt"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/ecodeclub/ekit/mapx"
@@ -33,7 +34,7 @@ func (r *logicOperatorExecutor) Check(policy domain.Policy, subject, resource, e
 	smap := subject.ValuesMap()
 	rmap := resource.ValuesMap()
 	env := environment.ValuesMap()
-	//values := mapx.Merge(subject.ValuesMap(), resource.ValuesMap(), environment.ValuesMap())
+	// values := mapx.Merge(subject.ValuesMap(), resource.ValuesMap(), environment.ValuesMap())
 	values := mapx.Merge(smap, rmap, env)
 
 	res := true
