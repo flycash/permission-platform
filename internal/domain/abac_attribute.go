@@ -45,7 +45,7 @@ func (a AttrDefs) Map() map[int64]AttributeDefinition {
 	return res
 }
 
-func (a AttrDefs) GetDefinition(id int64) (AttributeDefinition, bool) {
+func (a AttrDefs) GetByID(id int64) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].ID == id {
 			return a[idx], true
@@ -54,7 +54,7 @@ func (a AttrDefs) GetDefinition(id int64) (AttributeDefinition, bool) {
 	return AttributeDefinition{}, false
 }
 
-func (a AttrDefs) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
+func (a AttrDefs) GetByName(name string) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].Name == name {
 			return a[idx], true
@@ -78,23 +78,31 @@ type ABACObject struct {
 	AttributeValues []AttributeValue
 }
 
-func (s *ABACObject) ValuesMap() map[int64]string {
-	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, string) {
-		return element.Definition.ID, element.Value
+func (s *ABACObject) ValuesMap() map[int64]AttributeValue {
+	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, AttributeValue) {
+		return element.Definition.ID, element
 	})
 }
 
 func (s *ABACObject) MergeRealTimeAttrs(attrs AttrDefs, values map[string]string) {
+	// 这里是用实时计算的覆盖了存储的
 	for key, val := range values {
-		def, ok := attrs.GetDefinitionWithName(key)
+		def, ok := attrs.GetByName(key)
 		if ok {
 			s.SetAttributeVal(val, def)
 		}
+		// 如果不 OK，就是业务方传了一个属性，但是这个属性都不是我们内部的属性
 	}
+}
+
+func (s *ABACObject) FillDefinitions(attrs AttrDefs) {
+	// 这是预存的属性
 	for idx := range s.AttributeValues {
 		val := s.AttributeValues[idx]
-		def, _ := attrs.GetDefinition(val.Definition.ID)
-		s.AttributeValues[idx].Definition = def
+		def, ok := attrs.GetByID(val.Definition.ID)
+		if ok {
+			s.AttributeValues[idx].Definition = def
+		}
 	}
 }
 

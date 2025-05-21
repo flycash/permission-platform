@@ -15,12 +15,12 @@ func TestGenDomainPolicyRules(t *testing.T) {
 	tests := []struct {
 		name     string
 		rules    []dao.PolicyRule
-		expected []*domain.PolicyRule
+		expected []domain.PolicyRule
 	}{
 		{
 			name:     "empty rules",
 			rules:    []dao.PolicyRule{},
-			expected: []*domain.PolicyRule{},
+			expected: []domain.PolicyRule{},
 		},
 		{
 			name: "single rule",
@@ -36,7 +36,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:     now,
 				},
 			},
-			expected: []*domain.PolicyRule{
+			expected: []domain.PolicyRule{
 				{
 					ID: 1,
 					AttrDef: domain.AttributeDefinition{
@@ -83,7 +83,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:     now,
 				},
 			},
-			expected: []*domain.PolicyRule{
+			expected: []domain.PolicyRule{
 				{
 					ID: 1,
 					AttrDef: domain.AttributeDefinition{
@@ -140,7 +140,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:     now,
 				},
 			},
-			expected: []*domain.PolicyRule{
+			expected: []domain.PolicyRule{
 				{
 					ID: 1,
 					AttrDef: domain.AttributeDefinition{
@@ -237,7 +237,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:     now,
 				},
 			},
-			expected: []*domain.PolicyRule{
+			expected: []domain.PolicyRule{
 				{
 					ID: 1,
 					AttrDef: domain.AttributeDefinition{

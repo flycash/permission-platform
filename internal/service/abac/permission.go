@@ -40,7 +40,7 @@ func NewPermissionSvc(permissionRepo repository.PermissionRepository,
 }
 
 func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error) {
-	permissions, res, err := p.getPermissionAndRes(ctx, bizID, resource, actions)
+	permissions, res, bizDefinition, err := p.getPermissionAndRes(ctx, bizID, resource, actions)
 	if err != nil {
 		return false, err
 	}
@@ -48,40 +48,39 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 		return src.ID
 	})
 	resource.ID = res.ID
+
 	var eg errgroup.Group
 	var (
-		subObj        domain.ABACObject
-		resObj        domain.ABACObject
-		envObj        domain.ABACObject
-		policies      []domain.Policy
-		bizDefinition domain.BizAttrDefinition
+		subObj   domain.ABACObject
+		resObj   domain.ABACObject
+		envObj   domain.ABACObject
+		policies []domain.Policy
 	)
 
 	eg.Go(func() error {
 		var eerr error
 		subObj, eerr = p.valRepo.FindSubjectValue(ctx, bizID, uid)
+		// 填充对应的 attribute_definition 定义
+		// 理论上来说，使用 JOIN 之类的查询，或者缓存做得好，可以直接在上面调用里面搞好的
+		subObj.FillDefinitions(bizDefinition.SubjectAttrDefs)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
 		resObj, eerr = p.valRepo.FindResourceValue(ctx, bizID, resource.ID)
+		resObj.FillDefinitions(bizDefinition.ResourceAttrDefs)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
 		envObj, eerr = p.valRepo.FindEnvironmentValue(ctx, bizID)
+		envObj.FillDefinitions(bizDefinition.EnvironmentAttrDefs)
 		return eerr
 	})
 
 	eg.Go(func() error {
 		var eerr error
 		policies, eerr = p.policyRepo.FindPoliciesByPermissionIDs(ctx, bizID, permissionIds)
-		return eerr
-	})
-
-	eg.Go(func() error {
-		var eerr error
-		bizDefinition, eerr = p.definitionRepo.Find(ctx, bizID)
 		return eerr
 	})
 
@@ -97,11 +96,11 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	var hasPermit bool
 	var hasDeny bool
 	if len(policies) == 0 {
+		// 你也可以采用保守措施，返回  false
 		return true, nil
 	}
 	for idx := range policies {
 		policy := policies[idx]
-		p.setPolicyDefinition(bizDefinition, policy.Rules)
 		if p.parser.Check(policy, subObj, resObj, envObj) {
 			if policy.Effect == domain.EffectAllow {
 				hasPermit = true
@@ -122,11 +121,12 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	return false, nil
 }
 
-func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, resource domain.Resource, actions []string) ([]domain.Permission, domain.Resource, error) {
+func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, resource domain.Resource, actions []string) ([]domain.Permission, domain.Resource, domain.BizAttrDefinition, error) {
 	var (
-		eg          errgroup.Group
-		permissions []domain.Permission
-		res         domain.Resource
+		eg            errgroup.Group
+		permissions   []domain.Permission
+		res           domain.Resource
+		bizDefinition domain.BizAttrDefinition
 	)
 	eg.Go(func() error {
 		var eerr error
@@ -138,31 +138,12 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, re
 		res, eerr = p.resourceRepo.FindByBizIDAndTypeAndKey(ctx, bizID, resource.Type, resource.Key)
 		return eerr
 	})
+
+	eg.Go(func() error {
+		var eerr error
+		bizDefinition, eerr = p.definitionRepo.Find(ctx, bizID)
+		return eerr
+	})
 	err := eg.Wait()
-	return permissions, res, err
-}
-
-func (p *permissionSvc) setPolicyDefinition(
-	bizDefinition domain.BizAttrDefinition,
-	rules []domain.PolicyRule,
-) {
-	for idx := range rules {
-		rule := rules[idx]
-		p.setPolicyRuleDefinition(bizDefinition, &rule)
-	}
-}
-
-func (p *permissionSvc) setPolicyRuleDefinition(
-	bizDefinition domain.BizAttrDefinition,
-	rule *domain.PolicyRule,
-) {
-	if rule.LeftRule != nil {
-		p.setPolicyRuleDefinition(bizDefinition, rule.LeftRule)
-	}
-	if rule.RightRule != nil {
-		p.setPolicyRuleDefinition(bizDefinition, rule.RightRule)
-	}
-	if def, ok := bizDefinition.AllDefs[rule.AttrDef.ID]; ok {
-		rule.AttrDef = def
-	}
+	return permissions, res, bizDefinition, err
 }

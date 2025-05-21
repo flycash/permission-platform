@@ -1,8 +1,6 @@
 package abac
 
 import (
-	"fmt"
-
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/ecodeclub/ekit/mapx"
@@ -46,22 +44,17 @@ func (r *logicOperatorExecutor) Check(policy domain.Policy, subject, resource, e
 	return res
 }
 
-func (r *logicOperatorExecutor) checkOneRule(rule domain.PolicyRule, values map[int64]string) bool {
+func (r *logicOperatorExecutor) checkOneRule(rule domain.PolicyRule, values map[int64]domain.AttributeValue) bool {
 	if rule.LeftRule == nil && rule.RightRule == nil {
-		attrID := rule.AttrDef.ID
-		actualVal := values[attrID]
-		checker, err := r.selector.Select(rule.AttrDef.DataType)
+		val := values[rule.AttrDef.ID]
+		actualVal := val.Value
+		checker, err := r.selector.Select(val.Definition.DataType)
 		if err != nil {
-			fmt.Println("1111111111", rule.ID, err)
 			return false
 		}
 		ok, err := checker.Evaluate(rule.Value, actualVal, rule.Operator)
 		if err != nil {
-			fmt.Println("222222222", rule.ID, err)
 			return false
-		}
-		if !ok {
-			fmt.Println("xxxxxxxxxx", rule.ID)
 		}
 		return ok
 	}

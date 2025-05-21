@@ -99,7 +99,6 @@ func (a *attributeValueRepository) FindSubjectValue(ctx context.Context, bizID, 
 			})
 		}),
 	}
-
 	return result, nil
 }
 
