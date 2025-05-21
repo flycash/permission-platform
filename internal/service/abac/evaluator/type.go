@@ -5,21 +5,21 @@ import (
 	"gitee.com/flycash/permission-platform/internal/errs"
 )
 
-type PolicyConditionEvaluator interface {
+type PolicyRuleEvaluator interface {
 	Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error)
 }
 
 type Selector interface {
-	Select(dataType domain.DataType) (PolicyConditionEvaluator, error)
+	Select(dataType domain.DataType) (PolicyRuleEvaluator, error)
 }
 
 type selector struct {
-	checkerMap map[domain.DataType]PolicyConditionEvaluator
+	checkerMap map[domain.DataType]PolicyRuleEvaluator
 }
 
 func NewSelector() Selector {
 	return &selector{
-		checkerMap: map[domain.DataType]PolicyConditionEvaluator{
+		checkerMap: map[domain.DataType]PolicyRuleEvaluator{
 			domain.DataTypeString:   StringEvaluator{},
 			domain.DataTypeBoolean:  NewBoolEvaluator(),
 			domain.DataTypeFloat:    NewFloatEvaluator(),
@@ -29,7 +29,7 @@ func NewSelector() Selector {
 	}
 }
 
-func (c *selector) Select(dataType domain.DataType) (PolicyConditionEvaluator, error) {
+func (c *selector) Select(dataType domain.DataType) (PolicyRuleEvaluator, error) {
 	evaluator, ok := c.checkerMap[dataType]
 	if !ok {
 		return nil, errs.ErrUnknownDataType
