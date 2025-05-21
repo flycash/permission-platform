@@ -11,12 +11,12 @@ import (
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"gitee.com/flycash/permission-platform/internal/service/abac"
 	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
-	"github.com/ego-component/egorm"
+	"gorm.io/gorm"
 )
 
 // Injectors from wire.go:
 
-func Init(db *egorm.Component) *Service {
+func Init(db *gorm.DB) *Service {
 	permissionDAO := dao.NewPermissionDAO(db)
 	permissionRepository := repository.NewPermissionRepository(permissionDAO)
 	resourceDAO := dao.NewResourceDAO(db)
@@ -30,7 +30,7 @@ func Init(db *egorm.Component) *Service {
 	attributeValueRepository := repository.NewAttributeValueRepository(environmentAttributeDAO, resourceAttributeValueDAO, subjectAttributeValueDAO, attributeDefinitionDAO)
 	attributeDefinitionRepository := repository.NewAttributeDefinitionRepository(attributeDefinitionDAO)
 	selector := evaluator.NewSelector()
-	policyExecutor := abac.NewRuleParser(selector)
+	policyExecutor := abac.NewPolicyExecutor(selector)
 	permissionSvc := abac.NewPermissionSvc(permissionRepository, resourceRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, policyExecutor)
 	service := &Service{
 		PermissionSvc:  permissionSvc,
