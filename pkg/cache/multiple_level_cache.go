@@ -86,7 +86,7 @@ func (m *MultiLevelCache) redisHealthCheck(rd redis.Cmdable) {
 			// Redis不可用状态下，检查Redis是否恢复
 			ctx, cancel := context.WithTimeout(context.Background(), m.redisPingTimeout)
 			// 尝试Ping Redis
-			if err := rd.Ping(ctx); err == nil {
+			if err := rd.Ping(ctx).Err(); err == nil {
 				m.handleRedisRecoveryEvent(context.Background())
 			}
 			cancel()
@@ -195,7 +195,7 @@ func (m *MultiLevelCache) refreshLocalCache(ctx context.Context) {
 func (m *MultiLevelCache) Get(ctx context.Context, key string) Value {
 	if !m.isRedisAvailable.Load() {
 		// Redis不可用，查本地缓存
-		return Value(m.local.Get(ctx, key))
+		return m.local.Get(ctx, key)
 	}
 	// Redis可用，从Redis获取
 	val := m.redis.Get(ctx, key)
@@ -210,5 +210,5 @@ func (m *MultiLevelCache) Get(ctx context.Context, key string) Value {
 		// Redis正常响应
 		m.redisCrashDetector.Add(false)
 	}
-	return Value(val)
+	return val
 }
