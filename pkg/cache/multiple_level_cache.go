@@ -86,7 +86,7 @@ func (m *MultiLevelCache) redisHealthCheck(rd redis.Cmdable) {
 			// Redis不可用状态下，检查Redis是否恢复
 			ctx, cancel := context.WithTimeout(context.Background(), m.redisPingTimeout)
 			// 尝试Ping Redis
-			if err := rd.Ping(ctx); err == nil {
+			if err := rd.Ping(ctx).Err(); err == nil {
 				m.handleRedisRecoveryEvent(context.Background())
 			}
 			cancel()
