@@ -80,17 +80,23 @@ type ABACObject struct {
 
 func (s *ABACObject) ValuesMap() map[int64]string {
 	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, string) {
-		return element.ID, element.Value
+		return element.Definition.ID, element.Value
 	})
 }
 
 func (s *ABACObject) MergeRealTimeAttrs(attrs AttrDefs, values map[string]string) {
+	for key, val := range values {
+		def, ok := attrs.GetDefinitionWithName(key)
+		if ok {
+			s.SetAttributeVal(val, def)
+		}
+	}
 	for idx := range s.AttributeValues {
 		val := s.AttributeValues[idx]
 		def, _ := attrs.GetDefinition(val.Definition.ID)
 		s.AttributeValues[idx].Definition = def
-		s.AttributeValues[idx].Value = values[def.Name]
 	}
+
 }
 
 func (s *ABACObject) AttributeVal(attributeID int64) (AttributeValue, error) {

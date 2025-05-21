@@ -53,7 +53,7 @@ func (r *resourceAttributeValueDAO) Save(ctx context.Context, value ResourceAttr
 	value.Utime = now
 	err := r.db.WithContext(ctx).
 		Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "resource_id"}, {Name: "attribute_id"}},
+			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "resource_id"}, {Name: "attr_def_id"}},
 			DoUpdates: clause.AssignmentColumns([]string{"value", "utime"}),
 		}).Create(&value).Error
 	return value.ID, err
@@ -84,7 +84,7 @@ func (r *resourceAttributeValueDAO) FindByResource(ctx context.Context, bizID, r
 func (r *resourceAttributeValueDAO) FindByAttribute(ctx context.Context, bizID, attributeID int64) ([]ResourceAttributeValue, error) {
 	var values []ResourceAttributeValue
 	err := r.db.WithContext(ctx).
-		Where("biz_id = ? AND attribute_id = ?", bizID, attributeID).
+		Where("biz_id = ? AND attr_def_id = ?", bizID, attributeID).
 		Find(&values).Error
 	return values, err
 }

@@ -51,7 +51,7 @@ func (s *abacSubjectAttributeValueDAO) Save(ctx context.Context, value SubjectAt
 	value.Utime = now
 	err := s.db.WithContext(ctx).
 		Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "subject_id"}, {Name: "attribute_id"}},
+			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "subject_id"}, {Name: "attr_def_id"}},
 			DoUpdates: clause.AssignmentColumns([]string{"value", "utime"}),
 		}).Create(&value).Error
 	return value.ID, err

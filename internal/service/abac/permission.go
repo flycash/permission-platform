@@ -2,7 +2,6 @@ package abac
 
 import (
 	"context"
-
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"github.com/ecodeclub/ekit/slice"
@@ -94,7 +93,6 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	subObj.MergeRealTimeAttrs(bizDefinition.SubjectAttrDefs, attrs.Subject)
 	resObj.MergeRealTimeAttrs(bizDefinition.ResourceAttrDefs, attrs.Resource)
 	envObj.MergeRealTimeAttrs(bizDefinition.EnvironmentAttrDefs, attrs.Environment)
-
 	var hasPermit bool
 	var hasDeny bool
 	if len(policies) == 0 {
@@ -102,6 +100,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	}
 	for idx := range policies {
 		policy := policies[idx]
+		p.setPolicyDefinition(bizDefinition, policy.Rules)
 		if p.parser.Check(policy, subObj, resObj, envObj) {
 			if policy.Effect == domain.EffectAllow {
 				hasPermit = true
@@ -140,4 +139,29 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, re
 	})
 	err := eg.Wait()
 	return permissions, res, err
+}
+
+func (p *permissionSvc) setPolicyDefinition(
+	bizDefinition domain.BizAttrDefinition,
+	rules []domain.PolicyRule,
+) {
+	for idx := range rules {
+		rule := rules[idx]
+		p.setPolicyRuleDefinition(bizDefinition, &rule)
+	}
+}
+
+func (p *permissionSvc) setPolicyRuleDefinition(
+	bizDefinition domain.BizAttrDefinition,
+	rule *domain.PolicyRule,
+) {
+	if rule.LeftRule != nil {
+		p.setPolicyRuleDefinition(bizDefinition, rule.LeftRule)
+	}
+	if rule.RightRule != nil {
+		p.setPolicyRuleDefinition(bizDefinition, rule.RightRule)
+	}
+	if def, ok := bizDefinition.AllDefs[rule.AttrDef.ID]; ok {
+		rule.AttrDef = def
+	}
 }

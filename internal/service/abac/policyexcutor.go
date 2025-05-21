@@ -1,6 +1,7 @@
 package abac
 
 import (
+	"fmt"
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
 	"github.com/ecodeclub/ekit/mapx"
@@ -29,7 +30,11 @@ func NewPolicyExecutor(checkBuilder evaluator.Selector) PolicyExecutor {
 func (r *logicOperatorExecutor) Check(policy domain.Policy, subject, resource, environment domain.ABACObject) bool {
 	// 因为 Rule 是按照 attr_id 来设计的，所以我们可以合并一下所有的对象的属性取值
 	// 它们的 attr_id 都是不同的，所以不会有问题
-	values := mapx.Merge(subject.ValuesMap(), resource.ValuesMap(), environment.ValuesMap())
+	smap := subject.ValuesMap()
+	rmap := resource.ValuesMap()
+	env := environment.ValuesMap()
+	//values := mapx.Merge(subject.ValuesMap(), resource.ValuesMap(), environment.ValuesMap())
+	values := mapx.Merge(smap, rmap, env)
 
 	res := true
 	for idx := range policy.Rules {
@@ -46,11 +51,16 @@ func (r *logicOperatorExecutor) checkOneRule(rule domain.PolicyRule, values map[
 		actualVal := values[attrID]
 		checker, err := r.selector.Select(rule.AttrDef.DataType)
 		if err != nil {
+			fmt.Println("1111111111", rule.ID, err)
 			return false
 		}
 		ok, err := checker.Evaluate(rule.Value, actualVal, rule.Operator)
 		if err != nil {
+			fmt.Println("222222222", rule.ID, err)
 			return false
+		}
+		if !ok {
+			fmt.Println("xxxxxxxxxx", rule.ID)
 		}
 		return ok
 	}

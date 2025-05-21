@@ -52,7 +52,7 @@ func (e *environmentAttributeDAO) Save(ctx context.Context, attr EnvironmentAttr
 	attr.Utime = now
 	err := e.db.WithContext(ctx).
 		Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "attribute_id"}},
+			Columns:   []clause.Column{{Name: "biz_id"}, {Name: "attr_def_id"}},
 			DoUpdates: clause.AssignmentColumns([]string{"value", "utime"}),
 		}).Create(&attr).Error
 	return attr.ID, err
@@ -69,7 +69,7 @@ func (e *environmentAttributeDAO) First(ctx context.Context, id int64) (Environm
 func (e *environmentAttributeDAO) FirstByAttribute(ctx context.Context, bizID, attributeID int64) (EnvironmentAttributeValue, error) {
 	var attr EnvironmentAttributeValue
 	err := e.db.WithContext(ctx).
-		Where("biz_id = ? AND attribute_id = ?", bizID, attributeID).
+		Where("biz_id = ? AND attr_def_id = ?", bizID, attributeID).
 		First(&attr).Error
 	return attr, err
 }
