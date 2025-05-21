@@ -10,8 +10,7 @@ import (
 )
 
 type PermissionSvc interface {
-	Check(ctx context.Context, bizID, uid int64,
-		permission domain.Permission, attrs domain.PermissionRequest) (bool, error)
+	Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error)
 }
 
 type permissionSvc struct {
@@ -20,7 +19,7 @@ type permissionSvc struct {
 	policyRepo     repository.PolicyRepo
 	valRepo        repository.AttributeValueRepository
 	definitionRepo repository.AttributeDefinitionRepository
-	parser         RuleParser
+	parser         PolicyExecutor
 }
 
 func NewPermissionSvc(permissionRepo repository.PermissionRepository,
@@ -28,7 +27,7 @@ func NewPermissionSvc(permissionRepo repository.PermissionRepository,
 	policyRepo repository.PolicyRepo,
 	valRepo repository.AttributeValueRepository,
 	definitionRepo repository.AttributeDefinitionRepository,
-	parser RuleParser,
+	parser PolicyExecutor,
 ) PermissionSvc {
 	return &permissionSvc{
 		permissionRepo: permissionRepo,
@@ -40,17 +39,15 @@ func NewPermissionSvc(permissionRepo repository.PermissionRepository,
 	}
 }
 
-func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
-	permission domain.Permission, attrs domain.PermissionRequest,
-) (bool, error) {
-	permissions, res, err := p.getPermissionAndRes(ctx, bizID, permission)
+func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource domain.Resource, actions []string, attrs domain.Attributes) (bool, error) {
+	permissions, res, err := p.getPermissionAndRes(ctx, bizID, resource, actions)
 	if err != nil {
 		return false, err
 	}
 	permissionIds := slice.Map(permissions, func(_ int, src domain.Permission) int64 {
 		return src.ID
 	})
-	permission.Resource.ID = res.ID
+	resource.ID = res.ID
 	var eg errgroup.Group
 	var (
 		subObj        domain.ABACObject
@@ -125,7 +122,7 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64,
 	return false, nil
 }
 
-func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, permission domain.Permission) ([]domain.Permission, domain.Resource, error) {
+func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, resource domain.Resource, actions []string) ([]domain.Permission, domain.Resource, error) {
 	var (
 		eg          errgroup.Group
 		permissions []domain.Permission
@@ -133,12 +130,12 @@ func (p *permissionSvc) getPermissionAndRes(ctx context.Context, bizID int64, pe
 	)
 	eg.Go(func() error {
 		var eerr error
-		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, permission.Resource.Type, permission.Resource.Key, permission.Action)
+		permissions, eerr = p.permissionRepo.FindPermissions(ctx, bizID, resource.Type, resource.Key, actions)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
-		res, eerr = p.resourceRepo.FindByBizIDAndTypeAndKey(ctx, bizID, permission.Resource.Type, permission.Resource.Key)
+		res, eerr = p.resourceRepo.FindByBizIDAndTypeAndKey(ctx, bizID, resource.Type, resource.Key)
 		return eerr
 	})
 	err := eg.Wait()

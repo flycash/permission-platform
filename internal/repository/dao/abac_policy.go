@@ -22,6 +22,7 @@ type Policy struct {
 	Name        string `gorm:"column:name;type:varchar(100);not null;uniqueIndex:idx_biz_name;comment:策略名称" json:"name"`
 	Description string `gorm:"column:description;type:text;comment:策略描述" json:"description"`
 	Status      string `gorm:"column:status;type:enum('active','inactive');not null;default:active;index:idx_status;comment:策略状态" json:"status"`
+	ExecuteType string `gorm:"column:execute_type;type:varchar(255);default:logic"`
 	Ctime       int64  `gorm:"column:ctime;comment:创建时间"`
 	Utime       int64  `gorm:"column:utime;comment:更新时间"`
 }

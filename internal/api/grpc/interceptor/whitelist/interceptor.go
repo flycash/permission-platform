@@ -5,7 +5,7 @@ import (
 	"strings"
 	"sync"
 
-	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/jwt"
+	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 	"github.com/ecodeclub/ekit/slice"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -28,7 +28,7 @@ func (i *InterceptorBuilder) Build() grpc.UnaryServerInterceptor {
 		i.mutex.RLock()
 		defer i.mutex.RUnlock()
 		if strings.Contains(info.FullMethod, "BusinessConfig") {
-			bizID, err := jwt.GetBizIDFromContext(ctx)
+			bizID, err := auth.GetBizIDFromContext(ctx)
 			if err != nil {
 				return nil, status.Errorf(codes.PermissionDenied, "没有权限，原因: %s", err.Error())
 			}

@@ -95,11 +95,12 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 	ctx := db.Statement.Context
 	bizID, err := getBizID(ctx)
 	if err != nil {
-		// 没找到就不做权限校验了
+		_ = db.AddError(fmt.Errorf("获取bizId失败 %w", err))
 		return
 	}
 	uid, err := getUID(ctx)
 	if err != nil {
+		_ = db.AddError(fmt.Errorf("获取uid失败 %w", err))
 		return
 	}
 	action, ok := p.statementMap[stmtType]
@@ -107,9 +108,16 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 		return
 	}
 	// AuthRequired 实现了这个接口就用这个接口resourceKey进行权限判断
+	var key, resourceType string
 	if val, ok := db.Statement.Model.(AuthRequired); ok {
-		key := val.ResourceKey(ctx)
-		resourceType := val.ResourceType(ctx)
+		key = val.ResourceKey(ctx)
+		resourceType = val.ResourceType(ctx)
+	}
+
+	if val, rerr := getResource(ctx); rerr == nil {
+		key, resourceType = val.Key, val.Type
+	}
+	if key != "" {
 		resp, perr := p.client.CheckPermission(ctx, &permissionv1.CheckPermissionRequest{
 			Uid: uid,
 			Permission: &permissionv1.Permission{
@@ -127,33 +135,6 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 				elog.String("action", action),
 				elog.String("resourceKey", key),
 				elog.String("resourceType", resourceType),
-			)
-			return
-		}
-		if !resp.Allowed {
-			_ = db.AddError(fmt.Errorf("权限校验失败 %w", err))
-		}
-		return
-	}
-
-	if val, rerr := getResource(ctx); rerr == nil {
-		resp, perr := p.client.CheckPermission(ctx, &permissionv1.CheckPermissionRequest{
-			Uid: uid,
-			Permission: &permissionv1.Permission{
-				ResourceKey:  val.Key,
-				ResourceType: val.Type,
-				Actions:      []string{action},
-			},
-		})
-		if perr != nil {
-			_ = db.AddError(fmt.Errorf("权限校验失败 %w", err))
-			elog.Error("权限校验失败",
-				elog.FieldErr(err),
-				elog.Int64("bizID", bizID),
-				elog.Int64("uid", uid),
-				elog.String("action", action),
-				elog.String("resourceKey", val.Key),
-				elog.String("resourceType", val.Type),
 			)
 			return
 		}

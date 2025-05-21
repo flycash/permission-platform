@@ -50,7 +50,7 @@ func (s *PermissionSuite) TestPermission() {
 		name       string
 		before     func(t *testing.T)
 		permission domain.Permission
-		attrs      domain.PermissionRequest
+		attrs      domain.Attributes
 		uid        int64
 		wantVal    bool
 	}{
@@ -412,7 +412,7 @@ func (s *PermissionSuite) TestPermission() {
 		s.T().Run(tc.name, func(t *testing.T) {
 			defer s.clearBizVal(bizId)
 			tc.before(t)
-			pass, err := s.permissionSvc.Check(t.Context(), bizId, tc.uid, tc.permission, tc.attrs)
+			pass, err := s.permissionSvc.Check(t.Context(), bizId, tc.uid, tc.permission.Resource, []string{tc.permission.Action}, tc.attrs)
 			require.NoError(t, err)
 			assert.Equal(t, tc.wantVal, pass)
 		})

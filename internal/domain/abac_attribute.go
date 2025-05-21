@@ -114,3 +114,9 @@ func (s *ABACObject) SetAttributeVal(val string, definition AttributeDefinition)
 		Value:      val,
 	})
 }
+
+type Attributes struct {
+	Subject     map[string]string // 属性名 name => 属性值 value
+	Resource    map[string]string
+	Environment map[string]string
+}

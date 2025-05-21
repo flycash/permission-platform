@@ -11,7 +11,7 @@ import (
 // PermissionRepository 权限仓储接口
 type PermissionRepository interface {
 	Create(ctx context.Context, permission domain.Permission) (domain.Permission, error)
-	FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error)
+	FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey string, action []string) ([]domain.Permission, error)
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]domain.Permission, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.Permission, error)
 
@@ -25,8 +25,8 @@ type permissionRepository struct {
 	permissionDAO dao.PermissionDAO
 }
 
-func (r *permissionRepository) FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey, action string) ([]domain.Permission, error) {
-	permissions, err := r.permissionDAO.FindPermissions(ctx, bizID, resourceType, resourceKey, action)
+func (r *permissionRepository) FindPermissions(ctx context.Context, bizID int64, resourceType, resourceKey string, actions []string) ([]domain.Permission, error) {
+	permissions, err := r.permissionDAO.FindPermissions(ctx, bizID, resourceType, resourceKey, actions)
 	if err != nil {
 		return nil, err
 	}

@@ -27,7 +27,7 @@ const (
 	oneHundredYears = 100
 )
 
-type rbacRepository struct {
+type DefaultRBACRepository struct {
 	businessConfigRepo BusinessConfigRepository
 	resourceRepo       ResourceRepository
 	permissionRepo     PermissionRepository
@@ -38,8 +38,8 @@ type rbacRepository struct {
 	userPermissionRepo UserPermissionRepository
 }
 
-// NewRBACRepository 聚合根
-func NewRBACRepository(
+// NewDefaultRBACRepository 聚合根
+func NewDefaultRBACRepository(
 	businessConfigRepo BusinessConfigRepository,
 	resourceRepo ResourceRepository,
 	permissionRepo PermissionRepository,
@@ -48,8 +48,8 @@ func NewRBACRepository(
 	rolePermissionRepo RolePermissionRepository,
 	userRoleRepo UserRoleRepository,
 	userPermissionRepo UserPermissionRepository,
-) RBACRepository {
-	return &rbacRepository{
+) *DefaultRBACRepository {
+	return &DefaultRBACRepository{
 		businessConfigRepo: businessConfigRepo,
 		resourceRepo:       resourceRepo,
 		permissionRepo:     permissionRepo,
@@ -61,39 +61,39 @@ func NewRBACRepository(
 	}
 }
 
-func (r *rbacRepository) BusinessConfig() BusinessConfigRepository {
+func (r *DefaultRBACRepository) BusinessConfig() BusinessConfigRepository {
 	return r.businessConfigRepo
 }
 
-func (r *rbacRepository) Resource() ResourceRepository {
+func (r *DefaultRBACRepository) Resource() ResourceRepository {
 	return r.resourceRepo
 }
 
-func (r *rbacRepository) Permission() PermissionRepository {
+func (r *DefaultRBACRepository) Permission() PermissionRepository {
 	return r.permissionRepo
 }
 
-func (r *rbacRepository) Role() RoleRepository {
+func (r *DefaultRBACRepository) Role() RoleRepository {
 	return r.roleRepo
 }
 
-func (r *rbacRepository) RoleInclusion() RoleInclusionRepository {
+func (r *DefaultRBACRepository) RoleInclusion() RoleInclusionRepository {
 	return r.roleInclusionRepo
 }
 
-func (r *rbacRepository) RolePermission() RolePermissionRepository {
+func (r *DefaultRBACRepository) RolePermission() RolePermissionRepository {
 	return r.rolePermissionRepo
 }
 
-func (r *rbacRepository) UserRole() UserRoleRepository {
+func (r *DefaultRBACRepository) UserRole() UserRoleRepository {
 	return r.userRoleRepo
 }
 
-func (r *rbacRepository) UserPermission() UserPermissionRepository {
+func (r *DefaultRBACRepository) UserPermission() UserPermissionRepository {
 	return r.userPermissionRepo
 }
 
-func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+func (r *DefaultRBACRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	perms, err := r.userPermissionRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
@@ -113,7 +113,7 @@ func (r *rbacRepository) GetAllUserPermissions(ctx context.Context, bizID, userI
 }
 
 // getAllRoleIDs 获取用户所有角色ID，包括继承的角色
-func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
+func (r *DefaultRBACRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64) ([]int64, error) {
 	// 1. 先找到直接关联的角色
 	directRoles, err := r.userRoleRepo.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
@@ -149,7 +149,7 @@ func (r *rbacRepository) getAllRoleIDs(ctx context.Context, bizID, userID int64)
 }
 
 // getRolePermissions 获取指定角色ID列表对应的所有权限
-func (r *rbacRepository) getRolePermissions(ctx context.Context, bizID, userID int64, roleIDs []int64) ([]domain.UserPermission, error) {
+func (r *DefaultRBACRepository) getRolePermissions(ctx context.Context, bizID, userID int64, roleIDs []int64) ([]domain.UserPermission, error) {
 	if len(roleIDs) == 0 {
 		return []domain.UserPermission{}, nil
 	}
