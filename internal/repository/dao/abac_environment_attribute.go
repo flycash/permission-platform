@@ -10,12 +10,12 @@ import (
 
 // EnvironmentAttributeValue 环境属性表模型
 type EnvironmentAttributeValue struct {
-	ID          int64  `gorm:"column:id;primaryKey;autoIncrement;"`
-	BizID       int64  `gorm:"column:biz_id;uniqueIndex:idx_biz_attribute;comment:业务ID"`
-	AttributeID int64  `gorm:"column:attribute_id;not null;uniqueIndex:idx_biz_attribute;comment:属性定义ID"`
-	Value       string `gorm:"column:value;type:text;comment:属性值，取决于 data_type"`
-	Ctime       int64  `gorm:"column:ctime;comment:创建时间"`
-	Utime       int64  `gorm:"column:utime;comment:更新时间"`
+	ID        int64  `gorm:"column:id;primaryKey;autoIncrement;"`
+	BizID     int64  `gorm:"column:biz_id;uniqueIndex:idx_biz_attribute;comment:业务ID"`
+	AttrDefID int64  `gorm:"column:attr_def_id;not null;uniqueIndex:idx_biz_attribute;comment:属性定义ID"`
+	Value     string `gorm:"column:value;type:text;comment:属性值，取决于 data_type"`
+	Ctime     int64  `gorm:"column:ctime;comment:创建时间"`
+	Utime     int64  `gorm:"column:utime;comment:更新时间"`
 }
 
 // TableName 指定表名

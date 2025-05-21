@@ -70,11 +70,11 @@ func (a *ABACAttributeDefinitionServer) Find(ctx context.Context, request *permi
 	}, nil
 }
 
-func convertToProtoBizDefinition(d domain.BizDefinition) *permissionpb.BizDefinition {
+func convertToProtoBizDefinition(d domain.BizAttrDefinition) *permissionpb.BizDefinition {
 	return &permissionpb.BizDefinition{
-		SubjectAttrs:     convertToProtoAttributeDefinitions(d.SubjectAttrs),
-		ResourceAttrs:    convertToProtoAttributeDefinitions(d.ResourceAttrs),
-		EnvironmentAttrs: convertToProtoAttributeDefinitions(d.EnvironmentAttrs),
+		SubjectAttrs:     convertToProtoAttributeDefinitions(d.SubjectAttrDefs),
+		ResourceAttrs:    convertToProtoAttributeDefinitions(d.ResourceAttrDefs),
+		EnvironmentAttrs: convertToProtoAttributeDefinitions(d.EnvironmentAttrDefs),
 	}
 }
 

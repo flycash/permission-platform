@@ -254,30 +254,30 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Find() {
 	bizDef, err := s.definitionRepo.Find(ctx, bizID)
 	s.NoError(err)
 	s.Equal(bizID, bizDef.BizID)
-	s.Len(bizDef.SubjectAttrs, 1)
-	s.Len(bizDef.ResourceAttrs, 1)
-	s.Len(bizDef.EnvironmentAttrs, 1)
+	s.Len(bizDef.SubjectAttrDefs, 1)
+	s.Len(bizDef.ResourceAttrDefs, 1)
+	s.Len(bizDef.EnvironmentAttrDefs, 1)
 
 	// 验证主体属性
-	s.Equal(subjectDef.Name, bizDef.SubjectAttrs[0].Name)
-	s.Equal(subjectDef.Description, bizDef.SubjectAttrs[0].Description)
-	s.Equal(subjectDef.DataType, bizDef.SubjectAttrs[0].DataType)
-	s.Equal(subjectDef.EntityType, bizDef.SubjectAttrs[0].EntityType)
-	s.Equal(subjectDef.ValidationRule, bizDef.SubjectAttrs[0].ValidationRule)
+	s.Equal(subjectDef.Name, bizDef.SubjectAttrDefs[0].Name)
+	s.Equal(subjectDef.Description, bizDef.SubjectAttrDefs[0].Description)
+	s.Equal(subjectDef.DataType, bizDef.SubjectAttrDefs[0].DataType)
+	s.Equal(subjectDef.EntityType, bizDef.SubjectAttrDefs[0].EntityType)
+	s.Equal(subjectDef.ValidationRule, bizDef.SubjectAttrDefs[0].ValidationRule)
 
 	// 验证资源属性
-	s.Equal(resourceDef.Name, bizDef.ResourceAttrs[0].Name)
-	s.Equal(resourceDef.Description, bizDef.ResourceAttrs[0].Description)
-	s.Equal(resourceDef.DataType, bizDef.ResourceAttrs[0].DataType)
-	s.Equal(resourceDef.EntityType, bizDef.ResourceAttrs[0].EntityType)
-	s.Equal(resourceDef.ValidationRule, bizDef.ResourceAttrs[0].ValidationRule)
+	s.Equal(resourceDef.Name, bizDef.ResourceAttrDefs[0].Name)
+	s.Equal(resourceDef.Description, bizDef.ResourceAttrDefs[0].Description)
+	s.Equal(resourceDef.DataType, bizDef.ResourceAttrDefs[0].DataType)
+	s.Equal(resourceDef.EntityType, bizDef.ResourceAttrDefs[0].EntityType)
+	s.Equal(resourceDef.ValidationRule, bizDef.ResourceAttrDefs[0].ValidationRule)
 
 	// 验证环境属性
-	s.Equal(envDef.Name, bizDef.EnvironmentAttrs[0].Name)
-	s.Equal(envDef.Description, bizDef.EnvironmentAttrs[0].Description)
-	s.Equal(envDef.DataType, bizDef.EnvironmentAttrs[0].DataType)
-	s.Equal(envDef.EntityType, bizDef.EnvironmentAttrs[0].EntityType)
-	s.Equal(envDef.ValidationRule, bizDef.EnvironmentAttrs[0].ValidationRule)
+	s.Equal(envDef.Name, bizDef.EnvironmentAttrDefs[0].Name)
+	s.Equal(envDef.Description, bizDef.EnvironmentAttrDefs[0].Description)
+	s.Equal(envDef.DataType, bizDef.EnvironmentAttrDefs[0].DataType)
+	s.Equal(envDef.EntityType, bizDef.EnvironmentAttrDefs[0].EntityType)
+	s.Equal(envDef.ValidationRule, bizDef.EnvironmentAttrDefs[0].ValidationRule)
 
 	// 测试查询不存在的业务ID
 	_, err = s.definitionRepo.Find(ctx, 999999)
@@ -291,7 +291,7 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 	defer s.clearBizVal(bizID)
 
 	// 定义保存方法
-	save := func(val domain.SubjectAttributeValue) (int64, error) {
+	save := func(val domain.AttributeValue) (int64, error) {
 		return s.valRepo.SaveSubjectValue(ctx, bizID, subjectID, val)
 	}
 
@@ -312,24 +312,24 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 
 	tests := []struct {
 		name    string
-		before  func() (domain.SubjectAttributeValue, int64)
-		after   func(val domain.SubjectAttributeValue) domain.SubjectAttributeValue
+		before  func() (domain.AttributeValue, int64)
+		after   func(val domain.AttributeValue) domain.AttributeValue
 		wantErr bool
-		check   func(t *testing.T, val domain.SubjectAttributeValue, id int64)
+		check   func(t *testing.T, val domain.AttributeValue, id int64)
 	}{
 		{
 			name: "新增主体属性值",
-			before: func() (domain.SubjectAttributeValue, int64) {
-				return domain.SubjectAttributeValue{}, 0
+			before: func() (domain.AttributeValue, int64) {
+				return domain.AttributeValue{}, 0
 			},
-			after: func(val domain.SubjectAttributeValue) domain.SubjectAttributeValue {
-				return domain.SubjectAttributeValue{
+			after: func(val domain.AttributeValue) domain.AttributeValue {
+				return domain.AttributeValue{
 					Definition: def,
 					Value:      "25",
 				}
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.SubjectAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				s.Greater(id, int64(0))
 				// 验证保存的属性值
 				subjectObj, err := s.valRepo.FindSubjectValue(ctx, bizID, subjectID)
@@ -343,8 +343,8 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 		},
 		{
 			name: "更新主体属性值",
-			before: func() (domain.SubjectAttributeValue, int64) {
-				val := domain.SubjectAttributeValue{
+			before: func() (domain.AttributeValue, int64) {
+				val := domain.AttributeValue{
 					Definition: def,
 					Value:      "25",
 				}
@@ -353,12 +353,12 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 				s.Greater(id, int64(0))
 				return val, id
 			},
-			after: func(val domain.SubjectAttributeValue) domain.SubjectAttributeValue {
+			after: func(val domain.AttributeValue) domain.AttributeValue {
 				val.Value = "30"
 				return val
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.SubjectAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				// 验证更新后的属性值
 				subjectObj, err := s.valRepo.FindSubjectValue(ctx, bizID, subjectID)
 				s.NoError(err)
@@ -371,8 +371,8 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 		},
 		{
 			name: "保存无效的属性值",
-			before: func() (domain.SubjectAttributeValue, int64) {
-				val := domain.SubjectAttributeValue{
+			before: func() (domain.AttributeValue, int64) {
+				val := domain.AttributeValue{
 					Definition: def,
 					Value:      "25",
 				}
@@ -381,12 +381,12 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 				s.Greater(id, int64(0))
 				return val, id
 			},
-			after: func(val domain.SubjectAttributeValue) domain.SubjectAttributeValue {
+			after: func(val domain.AttributeValue) domain.AttributeValue {
 				val.Value = "abc" // 不符合数字类型的验证规则
 				return val
 			},
 			wantErr: true,
-			check: func(t *testing.T, val domain.SubjectAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				// 验证属性值没有被更新
 				subjectObj, err := s.valRepo.FindSubjectValue(ctx, bizID, subjectID)
 				s.NoError(err)
@@ -440,7 +440,7 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Delete() {
 	def.ID = defID
 
 	// 保存一个属性值
-	val := domain.SubjectAttributeValue{
+	val := domain.AttributeValue{
 		Definition: def,
 		Value:      "25",
 	}
@@ -500,14 +500,14 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_FindWithDefinition() {
 	nameDef.ID = nameDefID
 
 	// 保存多个属性值
-	ageVal := domain.SubjectAttributeValue{
+	ageVal := domain.AttributeValue{
 		Definition: ageDef,
 		Value:      "25",
 	}
 	_, err = s.valRepo.SaveSubjectValue(ctx, bizID, subjectID, ageVal)
 	s.NoError(err)
 
-	nameVal := domain.SubjectAttributeValue{
+	nameVal := domain.AttributeValue{
 		Definition: nameDef,
 		Value:      "张三",
 	}
@@ -548,7 +548,7 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 	defer s.clearBizVal(bizID)
 
 	// 定义保存方法
-	save := func(val domain.ResourceAttributeValue) (int64, error) {
+	save := func(val domain.AttributeValue) (int64, error) {
 		return s.valRepo.SaveResourceValue(ctx, bizID, resourceID, val)
 	}
 
@@ -567,24 +567,24 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 
 	tests := []struct {
 		name    string
-		before  func() (domain.ResourceAttributeValue, int64)
-		after   func(val domain.ResourceAttributeValue) domain.ResourceAttributeValue
+		before  func() (domain.AttributeValue, int64)
+		after   func(val domain.AttributeValue) domain.AttributeValue
 		wantErr bool
-		check   func(t *testing.T, val domain.ResourceAttributeValue, id int64)
+		check   func(t *testing.T, val domain.AttributeValue, id int64)
 	}{
 		{
 			name: "新增资源属性值",
-			before: func() (domain.ResourceAttributeValue, int64) {
-				return domain.ResourceAttributeValue{}, 0
+			before: func() (domain.AttributeValue, int64) {
+				return domain.AttributeValue{}, 0
 			},
-			after: func(val domain.ResourceAttributeValue) domain.ResourceAttributeValue {
-				return domain.ResourceAttributeValue{
+			after: func(val domain.AttributeValue) domain.AttributeValue {
+				return domain.AttributeValue{
 					Definition: def,
 					Value:      "1024",
 				}
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.ResourceAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				s.Greater(id, int64(0))
 				resourceObj, err := s.valRepo.FindResourceValue(ctx, bizID, resourceID)
 				s.NoError(err)
@@ -597,8 +597,8 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 		},
 		{
 			name: "更新资源属性值",
-			before: func() (domain.ResourceAttributeValue, int64) {
-				val := domain.ResourceAttributeValue{
+			before: func() (domain.AttributeValue, int64) {
+				val := domain.AttributeValue{
 					Definition: def,
 					Value:      "1024",
 				}
@@ -607,12 +607,12 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 				s.Greater(id, int64(0))
 				return val, id
 			},
-			after: func(val domain.ResourceAttributeValue) domain.ResourceAttributeValue {
+			after: func(val domain.AttributeValue) domain.AttributeValue {
 				val.Value = "2048"
 				return val
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.ResourceAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				resourceObj, err := s.valRepo.FindResourceValue(ctx, bizID, resourceID)
 				s.NoError(err)
 				s.Equal(resourceID, resourceObj.ID)
@@ -624,8 +624,8 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 		},
 		{
 			name: "保存无效的资源属性值",
-			before: func() (domain.ResourceAttributeValue, int64) {
-				val := domain.ResourceAttributeValue{
+			before: func() (domain.AttributeValue, int64) {
+				val := domain.AttributeValue{
 					Definition: def,
 					Value:      "1024",
 				}
@@ -634,12 +634,12 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 				s.Greater(id, int64(0))
 				return val, id
 			},
-			after: func(val domain.ResourceAttributeValue) domain.ResourceAttributeValue {
+			after: func(val domain.AttributeValue) domain.AttributeValue {
 				val.Value = "abc" // 不符合数字类型的验证规则
 				return val
 			},
 			wantErr: true,
-			check: func(t *testing.T, val domain.ResourceAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				resourceObj, err := s.valRepo.FindResourceValue(ctx, bizID, resourceID)
 				s.NoError(err)
 				s.Equal(resourceID, resourceObj.ID)
@@ -690,7 +690,7 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Delete() {
 	def.ID = defID
 
 	// 保存一个属性值
-	val := domain.ResourceAttributeValue{
+	val := domain.AttributeValue{
 		Definition: def,
 		Value:      "1024",
 	}
@@ -744,14 +744,14 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_FindWithDefinition() {
 	typeDef.ID = typeDefID
 
 	// 保存多个属性值
-	sizeVal := domain.ResourceAttributeValue{
+	sizeVal := domain.AttributeValue{
 		Definition: sizeDef,
 		Value:      "1024",
 	}
 	_, err = s.valRepo.SaveResourceValue(ctx, bizID, resourceID, sizeVal)
 	s.NoError(err)
 
-	typeVal := domain.ResourceAttributeValue{
+	typeVal := domain.AttributeValue{
 		Definition: typeDef,
 		Value:      "pdf",
 	}
@@ -806,7 +806,7 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Delete() {
 	def.ID = defID
 
 	// 保存一个属性值
-	val := domain.EnvironmentAttributeValue{
+	val := domain.AttributeValue{
 		Definition: def,
 		Value:      "2024-01-01",
 	}
@@ -859,14 +859,14 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_FindWithDefinition() {
 	ipDef.ID = ipDefID
 
 	// 保存多个属性值
-	timeVal := domain.EnvironmentAttributeValue{
+	timeVal := domain.AttributeValue{
 		Definition: timeDef,
 		Value:      "2024-01-01",
 	}
 	_, err = s.valRepo.SaveEnvironmentValue(ctx, bizID, timeVal)
 	s.NoError(err)
 
-	ipVal := domain.EnvironmentAttributeValue{
+	ipVal := domain.AttributeValue{
 		Definition: ipDef,
 		Value:      "192.168.1.1",
 	}
@@ -902,7 +902,7 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 	defer s.clearBizVal(bizID)
 
 	// 定义保存方法
-	save := func(val domain.EnvironmentAttributeValue) (int64, error) {
+	save := func(val domain.AttributeValue) (int64, error) {
 		return s.valRepo.SaveEnvironmentValue(ctx, bizID, val)
 	}
 
@@ -920,24 +920,24 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 	def.ID = defID
 	tests := []struct {
 		name    string
-		before  func() (domain.EnvironmentAttributeValue, int64)
-		after   func(val domain.EnvironmentAttributeValue) domain.EnvironmentAttributeValue
+		before  func() (domain.AttributeValue, int64)
+		after   func(val domain.AttributeValue) domain.AttributeValue
 		wantErr bool
-		check   func(t *testing.T, val domain.EnvironmentAttributeValue, id int64)
+		check   func(t *testing.T, val domain.AttributeValue, id int64)
 	}{
 		{
 			name: "新增环境属性值",
-			before: func() (domain.EnvironmentAttributeValue, int64) {
-				return domain.EnvironmentAttributeValue{}, 0
+			before: func() (domain.AttributeValue, int64) {
+				return domain.AttributeValue{}, 0
 			},
-			after: func(val domain.EnvironmentAttributeValue) domain.EnvironmentAttributeValue {
-				return domain.EnvironmentAttributeValue{
+			after: func(val domain.AttributeValue) domain.AttributeValue {
+				return domain.AttributeValue{
 					Definition: def,
 					Value:      "2024-01-01",
 				}
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.EnvironmentAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				s.Greater(id, int64(0))
 				envObj, err := s.valRepo.FindEnvironmentValue(ctx, bizID)
 				s.NoError(err)
@@ -949,8 +949,8 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 		},
 		{
 			name: "更新环境属性值",
-			before: func() (domain.EnvironmentAttributeValue, int64) {
-				val := domain.EnvironmentAttributeValue{
+			before: func() (domain.AttributeValue, int64) {
+				val := domain.AttributeValue{
 					Definition: def,
 					Value:      "2024-01-01",
 				}
@@ -959,12 +959,12 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 				s.Greater(id, int64(0))
 				return val, id
 			},
-			after: func(val domain.EnvironmentAttributeValue) domain.EnvironmentAttributeValue {
+			after: func(val domain.AttributeValue) domain.AttributeValue {
 				val.Value = "2024-01-02"
 				return val
 			},
 			wantErr: false,
-			check: func(t *testing.T, val domain.EnvironmentAttributeValue, id int64) {
+			check: func(t *testing.T, val domain.AttributeValue, id int64) {
 				envObj, err := s.valRepo.FindEnvironmentValue(ctx, bizID)
 				s.NoError(err)
 				s.Equal(bizID, envObj.BizID)
@@ -1092,7 +1092,7 @@ func (s *AbacServiceSuite) TestPolicy_Delete() {
 
 	// 添加策略规则
 	rule := domain.PolicyRule{
-		AttributeDefinition: domain.AttributeDefinition{
+		AttrDef: domain.AttributeDefinition{
 			ID: 1,
 		},
 		Operator: ">",
@@ -1236,7 +1236,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 
 	// 添加策略规则
 	rule := domain.PolicyRule{
-		AttributeDefinition: domain.AttributeDefinition{
+		AttrDef: domain.AttributeDefinition{
 			ID: 1,
 		},
 		Operator: ">",
@@ -1260,7 +1260,7 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 	// 验证策略规则
 	s.Len(foundPolicy.Rules, 1)
 	s.Equal(ruleID, foundPolicy.Rules[0].ID)
-	s.Equal(int64(1), foundPolicy.Rules[0].AttributeDefinition.ID)
+	s.Equal(int64(1), foundPolicy.Rules[0].AttrDef.ID)
 	s.Equal(domain.RuleOperator(">"), foundPolicy.Rules[0].Operator)
 	s.Equal("18", foundPolicy.Rules[0].Value)
 

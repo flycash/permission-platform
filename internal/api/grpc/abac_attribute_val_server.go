@@ -23,7 +23,7 @@ func (a *ABACAttributeValServer) SaveSubjectValue(ctx context.Context, request *
 		return nil, err
 	}
 
-	val := domain.SubjectAttributeValue{
+	val := domain.AttributeValue{
 		Definition: convertToDomainAttributeDefinition(request.Value.Definition),
 		Value:      request.Value.Value,
 	}
@@ -68,7 +68,7 @@ func (a *ABACAttributeValServer) SaveResourceValue(ctx context.Context, request 
 		return nil, err
 	}
 
-	val := domain.ResourceAttributeValue{
+	val := domain.AttributeValue{
 		Definition: convertToDomainAttributeDefinition(request.Value.Definition),
 		Value:      request.Value.Value,
 	}
@@ -113,7 +113,7 @@ func (a *ABACAttributeValServer) SaveEnvironmentValue(ctx context.Context, reque
 		return nil, err
 	}
 
-	val := domain.EnvironmentAttributeValue{
+	val := domain.AttributeValue{
 		Definition: convertToDomainAttributeDefinition(request.Value.Definition),
 		Value:      request.Value.Value,
 	}
@@ -151,7 +151,7 @@ func (a *ABACAttributeValServer) FindEnvironmentValueWithDefinition(ctx context.
 	}, nil
 }
 
-func convertToSubjectAttributeValues(values []domain.SubjectAttributeValue) []*permissionpb.SubjectAttributeValue {
+func convertToSubjectAttributeValues(values []domain.AttributeValue) []*permissionpb.SubjectAttributeValue {
 	result := make([]*permissionpb.SubjectAttributeValue, 0, len(values))
 	for _, v := range values {
 		result = append(result, &permissionpb.SubjectAttributeValue{
@@ -165,7 +165,7 @@ func convertToSubjectAttributeValues(values []domain.SubjectAttributeValue) []*p
 	return result
 }
 
-func convertToResourceAttributeValues(values []domain.ResourceAttributeValue) []*permissionpb.ResourceAttributeValue {
+func convertToResourceAttributeValues(values []domain.AttributeValue) []*permissionpb.ResourceAttributeValue {
 	result := make([]*permissionpb.ResourceAttributeValue, 0, len(values))
 	for _, v := range values {
 		result = append(result, &permissionpb.ResourceAttributeValue{
@@ -179,7 +179,7 @@ func convertToResourceAttributeValues(values []domain.ResourceAttributeValue) []
 	return result
 }
 
-func convertToEnvironmentAttributeValues(values []domain.EnvironmentAttributeValue) []*permissionpb.EnvironmentAttributeValue {
+func convertToEnvironmentAttributeValues(values []domain.AttributeValue) []*permissionpb.EnvironmentAttributeValue {
 	result := make([]*permissionpb.EnvironmentAttributeValue, 0, len(values))
 	for _, v := range values {
 		result = append(result, &permissionpb.EnvironmentAttributeValue{

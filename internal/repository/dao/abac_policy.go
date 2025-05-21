@@ -33,16 +33,16 @@ func (p Policy) TableName() string {
 
 // PolicyRule 策略规则表模型
 type PolicyRule struct {
-	ID          int64  `gorm:"column:id;primaryKey;autoIncrement;"`
-	BizID       int64  `gorm:"column:biz_id;index:idx_biz_id;comment:业务ID"`
-	PolicyID    int64  `gorm:"column:policy_id;not null;index:idx_policy_id;comment:策略ID"`
-	AttributeID int64  `gorm:"column:attribute_id;not null;index:idx_attribute_id;comment:属性定义ID"`
-	Value       string `gorm:"column:value;type:text;comment:比较值，取决于类型"`
-	Left        int64  `gorm:"column:left;comment:左规则ID"`
-	Right       int64  `gorm:"column:right;comment:右规则ID"`
-	Operator    string `gorm:"column:operator;type:varchar(255);not null;comment:操作符"`
-	Ctime       int64  `gorm:"column:ctime;comment:创建时间"`
-	Utime       int64  `gorm:"column:utime;comment:更新时间"`
+	ID        int64  `gorm:"column:id;primaryKey;autoIncrement;"`
+	BizID     int64  `gorm:"column:biz_id;index:idx_biz_id;comment:业务ID"`
+	PolicyID  int64  `gorm:"column:policy_id;not null;index:idx_policy_id;comment:策略ID"`
+	AttrDefID int64  `gorm:"column:attr_def_id;not null;index:idx_attribute_id;comment:属性定义ID"`
+	Value     string `gorm:"column:value;type:text;comment:比较值，取决于类型"`
+	Left      int64  `gorm:"column:left;comment:左规则ID"`
+	Right     int64  `gorm:"column:right;comment:右规则ID"`
+	Operator  string `gorm:"column:operator;type:varchar(255);not null;comment:操作符"`
+	Ctime     int64  `gorm:"column:ctime;comment:创建时间"`
+	Utime     int64  `gorm:"column:utime;comment:更新时间"`
 }
 
 // TableName 指定表名

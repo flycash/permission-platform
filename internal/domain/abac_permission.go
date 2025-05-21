@@ -1,7 +1,7 @@
 package domain
 
 type PermissionRequest struct {
-	SubjectAttrs     map[string]string
-	ResourceAttrs    map[string]string
-	EnvironmentAttrs map[string]string
+	SubjectAttrValues     map[string]string
+	ResourceAttrValues    map[string]string
+	EnvironmentAttrValues map[string]string
 }

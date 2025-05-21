@@ -2,14 +2,21 @@ package domain
 
 import (
 	"gitee.com/flycash/permission-platform/internal/errs"
+	"github.com/ecodeclub/ekit/slice"
 )
 
 // 业务的定义
-type BizDefinition struct {
-	BizID            int64
-	SubjectAttrs     Attrs // 主体的属性定义
-	ResourceAttrs    Attrs // 资源的属性定义
-	EnvironmentAttrs Attrs // 环境的属性定义
+type BizAttrDefinition struct {
+	BizID               int64
+	SubjectAttrDefs     AttrDefs // 主体的属性定义
+	ResourceAttrDefs    AttrDefs // 资源的属性定义
+	EnvironmentAttrDefs AttrDefs // 环境的属性定义
+	AllDefs             map[int64]AttributeDefinition
+}
+
+func (biz BizAttrDefinition) GetByDefID(id int64) (AttributeDefinition, bool) {
+	def, ok := biz.AllDefs[id]
+	return def, ok
 }
 
 type (
@@ -27,9 +34,9 @@ func (t AttributeType) String() string {
 	return string(t)
 }
 
-type Attrs []AttributeDefinition
+type AttrDefs []AttributeDefinition
 
-func (a Attrs) Map() map[int64]AttributeDefinition {
+func (a AttrDefs) Map() map[int64]AttributeDefinition {
 	res := make(map[int64]AttributeDefinition, len(a))
 	for idx := range a {
 		val := a[idx]
@@ -38,7 +45,7 @@ func (a Attrs) Map() map[int64]AttributeDefinition {
 	return res
 }
 
-func (a Attrs) GetDefinition(id int64) (AttributeDefinition, bool) {
+func (a AttrDefs) GetDefinition(id int64) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].ID == id {
 			return a[idx], true
@@ -47,7 +54,7 @@ func (a Attrs) GetDefinition(id int64) (AttributeDefinition, bool) {
 	return AttributeDefinition{}, false
 }
 
-func (a Attrs) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
+func (a AttrDefs) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
 	for idx := range a {
 		if a[idx].Name == name {
 			return a[idx], true
@@ -56,37 +63,13 @@ func (a Attrs) GetDefinitionWithName(name string) (AttributeDefinition, bool) {
 	return AttributeDefinition{}, false
 }
 
-// 具体属性的定义
-// 主体对象
-type SubjectObject struct {
-	BizID           int64
-	ID              int64
-	AttributeValues []SubjectAttributeValue // 主体对应的属性
-}
-
-func (s *SubjectObject) AttributeVal(attributeID int64) (SubjectAttributeValue, error) {
-	for idx := range s.AttributeValues {
-		if s.AttributeValues[idx].Definition.ID == attributeID {
-			return s.AttributeValues[idx], nil
-		}
-	}
-	return SubjectAttributeValue{}, errs.ErrAttributeNotFound
-}
-
-func (s *SubjectObject) SetAttributeVal(val string, definition AttributeDefinition) {
-	for idx := range s.AttributeValues {
-		if s.AttributeValues[idx].Definition.ID == definition.ID {
-			s.AttributeValues[idx].Value = val
-			return
-		}
-	}
-	s.AttributeValues = append(s.AttributeValues, SubjectAttributeValue{
-		Definition: definition,
-		Value:      val,
+func (s *ABACObject) ValuesMap() map[int64]string {
+	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, string) {
+		return element.ID, element.Value
 	})
 }
 
-type SubjectAttributeValue struct {
+type AttributeValue struct {
 	ID         int64
 	Definition AttributeDefinition // 对应的属性定义
 	Value      string              // 对应的属性值
@@ -95,73 +78,38 @@ type SubjectAttributeValue struct {
 }
 
 // 资源对象
-type ResourceObject struct {
+type ABACObject struct {
 	BizID           int64
 	ID              int64
-	AttributeValues []ResourceAttributeValue
+	AttributeValues []AttributeValue
 }
 
-type ResourceAttributeValue struct {
-	ID         int64
-	Definition AttributeDefinition
-	Value      string
-	Ctime      int64
-	Utime      int64
+func (s *ABACObject) MergeRealTimeAttrs(attrs AttrDefs, values map[string]string) {
+	for idx := range s.AttributeValues {
+		val := s.AttributeValues[idx]
+		def, _ := attrs.GetDefinition(val.Definition.ID)
+		s.AttributeValues[idx].Definition = def
+		s.AttributeValues[idx].Value = values[def.Name]
+	}
 }
 
-func (s *ResourceObject) AttributeVal(attributeID int64) (ResourceAttributeValue, error) {
+func (s *ABACObject) AttributeVal(attributeID int64) (AttributeValue, error) {
 	for idx := range s.AttributeValues {
 		if s.AttributeValues[idx].Definition.ID == attributeID {
 			return s.AttributeValues[idx], nil
 		}
 	}
-	return ResourceAttributeValue{}, errs.ErrAttributeNotFound
+	return AttributeValue{}, errs.ErrAttributeNotFound
 }
 
-func (s *ResourceObject) SetAttributeVal(val string, definition AttributeDefinition) {
+func (s *ABACObject) SetAttributeVal(val string, definition AttributeDefinition) {
 	for idx := range s.AttributeValues {
 		if s.AttributeValues[idx].Definition.ID == definition.ID {
 			s.AttributeValues[idx].Value = val
 			return
 		}
 	}
-	s.AttributeValues = append(s.AttributeValues, ResourceAttributeValue{
-		Definition: definition,
-		Value:      val,
-	})
-}
-
-// 环境对象
-type EnvironmentObject struct {
-	BizID           int64
-	AttributeValues []EnvironmentAttributeValue
-}
-
-type EnvironmentAttributeValue struct {
-	ID         int64
-	Definition AttributeDefinition
-	Value      string
-	Ctime      int64
-	Utime      int64
-}
-
-func (s *EnvironmentObject) AttributeVal(attributeID int64) (EnvironmentAttributeValue, error) {
-	for idx := range s.AttributeValues {
-		if s.AttributeValues[idx].Definition.ID == attributeID {
-			return s.AttributeValues[idx], nil
-		}
-	}
-	return EnvironmentAttributeValue{}, errs.ErrAttributeNotFound
-}
-
-func (s *EnvironmentObject) SetAttributeVal(val string, definition AttributeDefinition) {
-	for idx := range s.AttributeValues {
-		if s.AttributeValues[idx].Definition.ID == definition.ID {
-			s.AttributeValues[idx].Value = val
-			return
-		}
-	}
-	s.AttributeValues = append(s.AttributeValues, EnvironmentAttributeValue{
+	s.AttributeValues = append(s.AttributeValues, AttributeValue{
 		Definition: definition,
 		Value:      val,
 	})

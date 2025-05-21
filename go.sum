@@ -40,8 +40,8 @@ github.com/dnaeon/go-vcr v1.1.0/go.mod h1:M7tiix8f0r6mKKJ3Yq/kqU1OYf3MnfmBWVbPx/
 github.com/dnaeon/go-vcr v1.2.0/go.mod h1:R4UdLID7HZT3taECzJs4YgbbH6PIGXB6W/sc5OLb6RQ=
 github.com/ecodeclub/ecache v0.0.0-20240111145855-75679834beca h1:qksXJxULYYX+3Z3g5kxwbAiWgMozO9FvLBrxdHp5uCg=
 github.com/ecodeclub/ecache v0.0.0-20240111145855-75679834beca/go.mod h1:faDaVWB0J1EfgyY6e7Z40EWv65Asu4FrtlWVDAOBRiM=
-github.com/ecodeclub/ekit v0.0.9 h1:R6wECVMmELNEqTAR9ESH9SSCyRmyvZ+Whwy+runnCWQ=
-github.com/ecodeclub/ekit v0.0.9/go.mod h1:rEGubThvxoIQT/qnbVBkZgSvYwgKrY/dtwEWKRTmgeY=
+github.com/ecodeclub/ekit v0.0.10 h1:1At1FGjxJekawb2Q/euglAkorvDKhVkUx/D4p0pJQAU=
+github.com/ecodeclub/ekit v0.0.10/go.mod h1:uomRVSWotNUhEZ5uOwFOQvJuf28MQxlL4jYG+EfArY8=
 github.com/ego-component/egorm v1.1.4 h1:y0lS0kism6mtzyDOhWBbiD9C0lLx7puFzfEX0I8goI4=
 github.com/ego-component/egorm v1.1.4/go.mod h1:BqF8f0GsWpV2DFAKL/vFiSfrocX+t3KCYzz3GnoJnrY=
 github.com/felixge/fgprof v0.9.2 h1:tAMHtWMyl6E0BimjVbFt7fieU6FpjttsZN7j0wT5blc=

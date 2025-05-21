@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/ecodeclub/ecache v0.0.0-20240111145855-75679834beca
-	github.com/ecodeclub/ekit v0.0.9
+	github.com/ecodeclub/ekit v0.0.10
 	github.com/ego-component/egorm v1.1.4
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/golang-jwt/jwt/v4 v4.5.0

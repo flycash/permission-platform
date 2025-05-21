@@ -3,21 +3,14 @@ package abac
 import (
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/pkg/checker"
+	"github.com/ecodeclub/ekit/mapx"
 	"github.com/gotomicro/ego/core/elog"
 )
 
 // 规则解析器
 type RuleParser interface {
-	Check(req AttributeValReq, rules []*domain.PolicyRule) bool
-}
-
-type AttributeValReq struct {
-	// 主体对象
-	subject *domain.SubjectObject
-	// 资源对象
-	resource *domain.ResourceObject
-	// 环境
-	environment *domain.EnvironmentObject
+	// Check values 是 attr_id 到值的映射
+	Check(rules []domain.PolicyRule, subject domain.ABACObject, resource domain.ABACObject, environment domain.ABACObject) bool
 }
 
 type ruleParser struct {
@@ -32,42 +25,24 @@ func NewRuleParser(checkBuilder checker.AttributeCheckerSelector) RuleParser {
 	}
 }
 
-func (r *ruleParser) Check(attributes AttributeValReq, rules []*domain.PolicyRule) bool {
+func (r *ruleParser) Check(rules []domain.PolicyRule, subject domain.ABACObject, resource domain.ABACObject, environment domain.ABACObject) bool {
+	// 因为 Rule 是按照 attr_id 来设计的，所以我们可以合并一下所有的对象的属性取值
+	// 它们的 attr_id 都是不同的，所以不会有问题
+	values := mapx.Merge(subject.ValuesMap(), resource.ValuesMap(), environment.ValuesMap())
+
 	res := true
 	for idx := range rules {
 		// 各个独立的规则之间是且的关系
-		res = res && r.checkOneRule(attributes, rules[idx])
+		res = res && r.checkOneRule(rules[idx], values)
 	}
 	return res
 }
 
-//nolint:funlen // 忽略
-func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.PolicyRule) bool {
+func (r *ruleParser) checkOneRule(rule domain.PolicyRule, values map[int64]string) bool {
 	if rule.LeftRule == nil && rule.RightRule == nil {
-		var actualVal string
-		switch rule.AttributeDefinition.EntityType {
-		case domain.EntityTypeSubject:
-			wantVal, err := attributes.subject.AttributeVal(rule.AttributeDefinition.ID)
-			if err != nil {
-				return false
-			}
-			actualVal = wantVal.Value
-		case domain.EntityTypeResource:
-			wantVal, err := attributes.resource.AttributeVal(rule.AttributeDefinition.ID)
-			if err != nil {
-				return false
-			}
-			actualVal = wantVal.Value
-		case domain.EntityTypeEnvironment:
-			wantVal, err := attributes.environment.AttributeVal(rule.AttributeDefinition.ID)
-			if err != nil {
-				return false
-			}
-			actualVal = wantVal.Value
-		default:
-			return false
-		}
-		checkor, err := r.checkSelector.Select(rule.AttributeDefinition.DataType)
+		attrID := rule.AttrDef.ID
+		actualVal := values[attrID]
+		checkor, err := r.checkSelector.Select(rule.AttrDef.DataType)
 		if err != nil {
 			return false
 		}
@@ -79,10 +54,10 @@ func (r *ruleParser) checkOneRule(attributes AttributeValReq, rule *domain.Polic
 	}
 	left, right := true, true
 	if rule.LeftRule != nil {
-		left = r.checkOneRule(attributes, rule.LeftRule)
+		left = r.checkOneRule(*rule.LeftRule, values)
 	}
 	if rule.RightRule != nil {
-		right = r.checkOneRule(attributes, rule.RightRule)
+		right = r.checkOneRule(*rule.RightRule, values)
 	}
 	switch rule.Operator {
 	case domain.AND:
