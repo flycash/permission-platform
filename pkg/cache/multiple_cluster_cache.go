@@ -41,9 +41,8 @@ func NewMultipleClusterCache(clusters []*Cluster) *MultipleClusterCache {
 
 func (m *MultipleClusterCache) Set(ctx context.Context, key string, val any, expiration time.Duration) error {
 	var err error
-	var mu sync.Mutex // 将互斥锁定义在goroutine外部
+	var mu sync.Mutex
 	var wg sync.WaitGroup
-
 	for i := range m.clusters {
 		c := m.clusters[i]
 		wg.Add(1)
@@ -67,7 +66,7 @@ func (m *MultipleClusterCache) Get(ctx context.Context, key string) Value {
 	var needReturn atomic.Bool
 	var valuePtr atomic.Pointer[ecache.Value]
 
-	// 提取共用的集群查询函数
+	// 集群查询函数
 	queryCluster := func(idx int) {
 		val := m.clusters[idx].instance.Get(ctx, key)
 		if val.Err == nil || val.KeyNotFound() {
@@ -80,6 +79,7 @@ func (m *MultipleClusterCache) Get(ctx context.Context, key string) Value {
 			mu.Unlock()
 		}
 	}
+	// 遍历集群
 	const step = 2
 	for i, j := 0, 1; i < len(m.clusters); i, j = i+step, j+step {
 		// 一次读取两个
@@ -105,7 +105,6 @@ func (m *MultipleClusterCache) Get(ctx context.Context, key string) Value {
 
 		// 等待当前批次查找结束
 		wg.Wait()
-		// 找到后立即返回
 		if needReturn.Load() {
 			return *valuePtr.Load()
 		}
