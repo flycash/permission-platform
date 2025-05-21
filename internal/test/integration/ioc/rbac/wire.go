@@ -24,7 +24,8 @@ func Init() *Service {
 		rbacsvc.NewPermissionService,
 
 		rbacsvc.NewService,
-		repository.NewRBACRepository,
+		repository.NewDefaultRBACRepository,
+		convertRepository,
 
 		dao.NewBusinessConfigDAO,
 		repository.NewBusinessConfigRepository,
@@ -46,4 +47,8 @@ func Init() *Service {
 		wire.Struct(new(Service), "*"),
 	)
 	return nil
+}
+
+func convertRepository(repo *repository.DefaultRBACRepository) repository.RBACRepository {
+	return repo
 }

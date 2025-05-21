@@ -1,0 +1,112 @@
+package cache
+
+import (
+	"context"
+	"gitee.com/flycash/permission-platform/pkg/bitring"
+	"github.com/ecodeclub/ecache"
+	"github.com/redis/go-redis/v9"
+	"sync"
+	"sync/atomic"
+	"time"
+)
+
+type MultiLevelCacheV2 struct {
+	redis                  ecache.Cache // Redis缓存
+	local                  ecache.Cache // 本地缓存，仅Redis崩溃时使用
+	isRedisAvailable       atomic.Bool  // Redis是否可用
+	redisHealthCheckPeriod time.Duration
+	redisPingTimeout       time.Duration
+	redisCrashDetector     *bitring.BitRing // 错误检测器
+
+	mu sync.Mutex // 用于保护内部状态更新
+}
+
+func NewMultiLevelCacheV2(local, redis ecache.Cache) *MultiLevelCacheV2 {
+	return &MultiLevelCacheV2{
+		redis: redis,
+		local: local,
+	}
+}
+
+// redisHealthCheck 定期检查Redis健康状态
+func (m *MultiLevelCacheV2) redisHealthCheck(rd redis.Cmdable) {
+	ticker := time.NewTicker(m.redisHealthCheckPeriod)
+
+	defer ticker.Stop()
+	for range ticker.C {
+		if !m.isRedisAvailable.Load() {
+			// Redis不可用状态下，检查Redis是否恢复
+			ctx, cancel := context.WithTimeout(context.Background(), m.redisPingTimeout)
+			// 尝试Ping Redis
+			if err := rd.Ping(ctx); err == nil {
+				m.handleRedisRecoveryEvent(context.Background())
+			}
+			cancel()
+		}
+	}
+}
+
+// handleRedisRecoveryEvent 处理Redis恢复事件
+func (m *MultiLevelCacheV2) handleRedisRecoveryEvent(ctx context.Context) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	// 已经恢复，避免重复处理
+	if m.isRedisAvailable.Load() {
+		return
+	}
+	// 标记Redis已恢复
+	m.isRedisAvailable.Store(true)
+}
+
+func (m *MultiLevelCacheV2) Set(ctx context.Context, key string, val any, expiration time.Duration) error {
+	err := m.local.Set(ctx, key, val, expiration)
+	if err != nil {
+		return err
+	}
+	// redis不可用就返回
+	if !m.isRedisAvailable.Load() {
+		return nil
+	}
+	err = m.redis.Set(ctx, key, val, expiration)
+	m.redisCrashDetector.Add(err != nil)
+	if err != nil && m.redisCrashDetector.IsConditionMet() {
+		// Redis检测到崩溃，启动降级流程
+		m.handleRedisCrashEvent(ctx)
+	}
+	return err
+}
+
+// handleRedisCrashEvent 处理Redis崩溃事件
+func (m *MultiLevelCacheV2) handleRedisCrashEvent(ctx context.Context) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	// 已经处于不可用状态，避免重复处理
+	if !m.isRedisAvailable.Load() {
+		return
+	}
+	// 标记Redis不可用
+	m.isRedisAvailable.Store(false)
+
+}
+
+func (m *MultiLevelCacheV2) Get(ctx context.Context, key string) Value {
+	if !m.isRedisAvailable.Load() {
+		// Redis不可用，查本地缓存
+		return Value(m.local.Get(ctx, key))
+	}
+	// Redis可用，从Redis获取
+	val := m.redis.Get(ctx, key)
+	// 检查Redis是否出错（排除KeyNotFound）
+	if val.Err != nil && !val.KeyNotFound() {
+		m.redisCrashDetector.Add(true)
+		if m.redisCrashDetector.IsConditionMet() {
+			// Redis崩溃，切换到使用本地缓存
+			m.handleRedisCrashEvent(ctx)
+		}
+	} else {
+		// Redis正常响应
+		m.redisCrashDetector.Add(false)
+	}
+	return Value(val)
+}

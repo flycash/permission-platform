@@ -33,7 +33,8 @@ func Init() *Service {
 	userRoleRepository := repository.NewUserRoleRepository(userRoleDAO)
 	userPermissionDAO := dao.NewUserPermissionDAO(db)
 	userPermissionRepository := repository.NewUserPermissionRepository(userPermissionDAO)
-	rbacRepository := repository.NewRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
+	defaultRBACRepository := repository.NewDefaultRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
+	rbacRepository := convertRepository(defaultRBACRepository)
 	token := ioc.InitJWTToken()
 	service := rbac.NewService(rbacRepository, token)
 	permissionService := rbac.NewPermissionService(rbacRepository)
@@ -51,4 +52,8 @@ type Service struct {
 	Svc           rbac.Service
 	PermissionSvc rbac.PermissionService
 	Repo          repository.RBACRepository
+}
+
+func convertRepository(repo *repository.DefaultRBACRepository) repository.RBACRepository {
+	return repo
 }

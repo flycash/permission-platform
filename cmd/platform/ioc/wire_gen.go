@@ -18,24 +18,31 @@ import (
 // Injectors from wire.go:
 
 func InitApp() *ioc.App {
-	v := ioc.InitDB()
-	businessConfigDAO := dao.NewBusinessConfigDAO(v)
+	db := ioc.InitDB()
+	businessConfigDAO := dao.NewBusinessConfigDAO(db)
 	businessConfigRepository := repository.NewBusinessConfigRepository(businessConfigDAO)
-	resourceDAO := dao.NewResourceDAO(v)
+	resourceDAO := dao.NewResourceDAO(db)
 	resourceRepository := repository.NewResourceRepository(resourceDAO)
-	permissionDAO := dao.NewPermissionDAO(v)
+	permissionDAO := dao.NewPermissionDAO(db)
 	permissionRepository := repository.NewPermissionRepository(permissionDAO)
-	roleDAO := dao.NewRoleDAO(v)
+	roleDAO := dao.NewRoleDAO(db)
 	roleRepository := repository.NewRoleRepository(roleDAO)
-	roleInclusionDAO := dao.NewRoleInclusionDAO(v)
+	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
 	roleInclusionRepository := repository.NewRoleInclusionRepository(roleInclusionDAO)
-	rolePermissionDAO := dao.NewRolePermissionDAO(v)
+	rolePermissionDAO := dao.NewRolePermissionDAO(db)
 	rolePermissionRepository := repository.NewRolePermissionRepository(rolePermissionDAO)
-	userRoleDAO := dao.NewUserRoleDAO(v)
+	userRoleDAO := dao.NewUserRoleDAO(db)
 	userRoleRepository := repository.NewUserRoleRepository(userRoleDAO)
-	userPermissionDAO := dao.NewUserPermissionDAO(v)
+	userPermissionDAO := dao.NewUserPermissionDAO(db)
 	userPermissionRepository := repository.NewUserPermissionRepository(userPermissionDAO)
-	rbacRepository := repository.NewRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
+	defaultRBACRepository := repository.NewDefaultRBACRepository(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository)
+	cmdable := ioc.InitRedisCmd()
+	cache := ioc.InitLocalCache()
+	component := ioc.InitEtcdClient()
+	v := ioc.InitCacheKeyFunc()
+	cacheCache := ioc.InitMultipleLevelCache(cmdable, cache, defaultRBACRepository, component, v)
+	cachedRBACRepository := repository.NewCachedRBACRepository(defaultRBACRepository, cacheCache, v)
+	rbacRepository := convertRepository(cachedRBACRepository)
 	token := ioc.InitJWTToken()
 	service := rbac.NewService(rbacRepository, token)
 	server := rbac2.NewServer(service)
@@ -51,6 +58,10 @@ func InitApp() *ioc.App {
 // wire.go:
 
 var (
-	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitGoCache, ioc.InitRedisCmd, ioc.InitJWTToken)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewRBACRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository)
+	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository)
 )
+
+func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
+	return repo
+}

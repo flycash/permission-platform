@@ -1,22 +1,22 @@
 package ioc
 
 import (
-	"time"
-
+	"github.com/ecodeclub/ecache"
+	"github.com/ecodeclub/ecache/memory/lru"
 	"github.com/gotomicro/ego/core/econf"
-	"github.com/patrickmn/go-cache"
 )
 
-func InitGoCache() *cache.Cache {
+func InitLocalCache() ecache.Cache {
 	type Config struct {
-		DefaultExpiration time.Duration `yaml:"defaultExpiration"`
-		CleanupInterval   time.Duration `yaml:"cleanupInterval"`
+		Capacity int `yaml:"capacity"`
 	}
 	var cfg Config
-	err := econf.UnmarshalKey("cache", &cfg)
+	err := econf.UnmarshalKey("cache.local", &cfg)
 	if err != nil {
 		panic(err)
 	}
-	c := cache.New(cfg.DefaultExpiration, cfg.CleanupInterval)
-	return c
+	return &ecache.NamespaceCache{
+		C:         lru.NewCache(cfg.Capacity),
+		Namespace: "permission-platform",
+	}
 }
