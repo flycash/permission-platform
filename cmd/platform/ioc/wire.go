@@ -15,20 +15,24 @@ import (
 var (
 	baseSet = wire.NewSet(
 		ioc.InitDB,
-		//ioc.InitDistributedLock,
+		// ioc.InitDistributedLock,
 		ioc.InitEtcdClient,
 		ioc.InitIDGenerator,
 		ioc.InitRedisClient,
-		ioc.InitGoCache,
+		ioc.InitLocalCache,
 		ioc.InitRedisCmd,
 		ioc.InitJWTToken,
+		ioc.InitMultipleLevelCache,
+		ioc.InitCacheKeyFunc,
 		// local.NewLocalCache,
 		// redis.NewCache,
 	)
 	rbacSvcSet = wire.NewSet(
 		rbacsvc.NewService,
 		rbacsvc.NewPermissionService,
-		repository.NewRBACRepository,
+		repository.NewDefaultRBACRepository,
+		repository.NewCachedRBACRepository,
+		convertRepository,
 
 		dao.NewBusinessConfigDAO,
 		repository.NewBusinessConfigRepository,
@@ -55,6 +59,10 @@ var (
 		repository.NewUserPermissionRepository,
 	)
 )
+
+func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
+	return repo
+}
 
 func InitApp() *ioc.App {
 	wire.Build(

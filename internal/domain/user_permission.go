@@ -21,13 +21,13 @@ func (e Effect) IsDeny() bool {
 
 // UserPermission 用户权限关联
 type UserPermission struct {
-	ID         int64
-	BizID      int64
-	UserID     int64
-	Permission Permission
-	StartTime  int64 // 权限生效时间
-	EndTime    int64 // 权限失效时间
-	Effect     Effect
-	Ctime      int64
-	Utime      int64
+	ID         int64      `json:"id,omitzero"`
+	BizID      int64      `json:"bizId,omitzero"`
+	UserID     int64      `json:"userId,omitzero"`
+	Permission Permission `json:"permission,omitzero"`
+	StartTime  int64      `json:"startTime,omitzero"` // 权限生效时间
+	EndTime    int64      `json:"endTime,omitzero"`   // 权限失效时间
+	Effect     Effect     `json:"effect,omitzero"`
+	Ctime      int64      `json:"cTime,omitzero"`
+	Utime      int64      `json:"uTime,omitzero"`
 }

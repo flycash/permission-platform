@@ -11,17 +11,11 @@ import (
 
 type Cache interface {
 	// Set 设置一个键值对，并且设置过期时间.
-	// 当过期时间为0时,表示永不过期
 	Set(ctx context.Context, key string, val any, expiration time.Duration) error
-	// SetNX 设置一个键值对如果key不存在则写入反之失败，并且设置过期时间.
-	// 当过期时间为0时,表示永不过期
-	SetNX(ctx context.Context, key string, val any, expiration time.Duration) (bool, error)
 	// Get 返回一个 Value
 	// 如果你需要检测 Err，可以使用 Value.Err
 	// 如果你需要知道 Key 是否存在，可以使用 Value.KeyNotFound
 	Get(ctx context.Context, key string) Value
-	// Delete 设置一个或多个键值对,当key不存在时,不计入删除数也不返回错误
-	Delete(ctx context.Context, key ...string) (int64, error)
 }
 
 type Value struct {
