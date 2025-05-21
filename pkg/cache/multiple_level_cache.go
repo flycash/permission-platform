@@ -38,6 +38,8 @@ type MultiLevelCache struct {
 	stopRefreshCtx           context.Context
 	stopRefreshCtxCancelFunc context.CancelFunc
 	localCacheRefreshPeriod  time.Duration
+	maxLoadRetries           int           // 加载数据的最大重试次数
+	retryInterval            time.Duration // 重试间隔
 
 	logger *elog.Component
 }
@@ -63,6 +65,8 @@ func NewMultiLevelCache(
 		localCacheRefreshPeriod: localCacheRefreshPeriod,
 		redisPingTimeout:        redisPingTimeout,
 		redisHealthCheckPeriod:  redisHealthCheckPeriod,
+		maxLoadRetries:          3,
+		retryInterval:           time.Second,
 		logger:                  elog.DefaultLogger,
 	}
 
@@ -81,15 +85,29 @@ func NewMultiLevelCache(
 func (m *MultiLevelCache) redisHealthCheck(rd redis.Cmdable) {
 	ticker := time.NewTicker(m.redisHealthCheckPeriod)
 	defer ticker.Stop()
-	for range ticker.C {
-		if !m.isRedisAvailable.Load() {
-			// Redis不可用状态下，检查Redis是否恢复
+	for {
+		select {
+		case <-ticker.C:
 			ctx, cancel := context.WithTimeout(context.Background(), m.redisPingTimeout)
-			// 尝试Ping Redis
-			if err := rd.Ping(ctx); err == nil {
-				m.handleRedisRecoveryEvent(context.Background())
-			}
+			err := rd.Ping(ctx).Err()
 			cancel()
+
+			if !m.isRedisAvailable.Load() && err == nil {
+				// Redis恢复了
+				m.handleRedisRecoveryEvent(context.Background())
+			} else if m.isRedisAvailable.Load() && err != nil {
+				// Redis可能崩溃了，记录错误
+				m.redisCrashDetector.Add(true)
+				if m.redisCrashDetector.IsConditionMet() {
+					// 确认Redis崩溃
+					m.handleRedisCrashEvent(context.Background())
+				}
+			} else if m.isRedisAvailable.Load() {
+				// Redis正常，重置错误计数
+				m.redisCrashDetector.Add(false)
+			}
+		case <-m.stopRefreshCtx.Done():
+			return
 		}
 	}
 }
@@ -109,12 +127,13 @@ func (m *MultiLevelCache) handleRedisRecoveryEvent(ctx context.Context) {
 
 	// 停止刷新本地缓存
 	m.stopRefreshCtxCancelFunc()
+	m.stopRefreshCtx, m.stopRefreshCtxCancelFunc = context.WithCancel(context.Background())
 
 	// 重置错误检测器
 	m.redisCrashDetector.Reset()
 
 	// 立即从数据库加载数据到Redis缓存
-	if err := m.loadFromDBToCache(ctx, m.redis); err != nil {
+	if err := m.loadFromDBToCacheWithRetry(ctx, m.redis); err != nil {
 		m.logger.Error("从数据库加载数据到Redis失败", elog.FieldErr(err))
 	}
 }
@@ -126,14 +145,41 @@ func (m *MultiLevelCache) loadFromDBToCache(ctx context.Context, c ecache.Cache)
 	if err != nil {
 		return err
 	}
+
 	// 保存到缓存
+	var firstErr error
 	for i := range entries {
 		err = c.Set(ctx, entries[i].Key, entries[i].Val, entries[i].Expiration)
-		if err != nil {
-			return err
+		if err != nil && firstErr == nil {
+			firstErr = err
 		}
 	}
-	return nil
+	return firstErr
+}
+
+// loadFromDBToCacheWithRetry 带重试的从数据库加载数据到缓存
+func (m *MultiLevelCache) loadFromDBToCacheWithRetry(ctx context.Context, c ecache.Cache) error {
+	var err error
+	for i := 0; i < m.maxLoadRetries; i++ {
+		err = m.loadFromDBToCache(ctx, c)
+		if err == nil {
+			return nil
+		}
+
+		// 最后一次尝试失败则直接返回错误
+		if i == m.maxLoadRetries-1 {
+			return err
+		}
+
+		// 等待一段时间后重试
+		select {
+		case <-time.After(m.retryInterval):
+			// 继续下一次重试
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+	return err
 }
 
 func (m *MultiLevelCache) Set(ctx context.Context, key string, val any, expiration time.Duration) error {
@@ -165,28 +211,30 @@ func (m *MultiLevelCache) handleRedisCrashEvent(ctx context.Context) {
 	m.isRedisAvailable.Store(false)
 
 	// 立即从数据库加载数据到本地缓存
-	if err := m.loadFromDBToCache(ctx, m.local); err != nil {
+	if err := m.loadFromDBToCacheWithRetry(ctx, m.local); err != nil {
 		m.logger.Error("从数据库加载数据到本地缓存失败", elog.FieldErr(err))
 	}
 
+	// 创建新的上下文用于刷新任务
+	m.stopRefreshCtxCancelFunc()
 	m.stopRefreshCtx, m.stopRefreshCtxCancelFunc = context.WithCancel(context.Background())
 
 	// 启动定时从数据库刷新本地缓存的任务
-	//nolint:contextcheck // 忽略
 	go m.refreshLocalCache(m.stopRefreshCtx)
 }
 
 // refreshLocalCache 定期从数据库刷新本地缓存中的数据
 func (m *MultiLevelCache) refreshLocalCache(ctx context.Context) {
 	m.refreshTicker = time.NewTicker(m.localCacheRefreshPeriod)
+	defer m.refreshTicker.Stop()
+
 	for {
 		select {
 		case <-m.refreshTicker.C:
-			if err := m.loadFromDBToCache(ctx, m.local); err != nil {
+			if err := m.loadFromDBToCacheWithRetry(ctx, m.local); err != nil {
 				m.logger.Error("从数据库加载数据到本地缓存失败", elog.FieldErr(err))
 			}
 		case <-ctx.Done():
-			m.refreshTicker.Stop()
 			return
 		}
 	}
@@ -205,6 +253,8 @@ func (m *MultiLevelCache) Get(ctx context.Context, key string) Value {
 		if m.redisCrashDetector.IsConditionMet() {
 			// Redis崩溃，切换到使用本地缓存
 			m.handleRedisCrashEvent(ctx)
+			// 从本地缓存获取
+			return Value(m.local.Get(ctx, key))
 		}
 	} else {
 		// Redis正常响应

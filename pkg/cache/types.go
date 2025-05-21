@@ -2,11 +2,9 @@ package cache
 
 import (
 	"context"
-	"errors"
 	"time"
 
-	"gitee.com/flycash/permission-platform/internal/errs"
-	"github.com/ecodeclub/ekit"
+	"github.com/ecodeclub/ecache"
 )
 
 type Cache interface {
@@ -18,10 +16,4 @@ type Cache interface {
 	Get(ctx context.Context, key string) Value
 }
 
-type Value struct {
-	ekit.AnyValue
-}
-
-func (v Value) KeyNotFound() bool {
-	return errors.Is(v.Err, errs.ErrKeyNotExist)
-}
+type Value = ecache.Value
