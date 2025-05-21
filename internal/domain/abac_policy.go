@@ -8,7 +8,7 @@ type Policy struct {
 	ExecuteType ExecuteType
 	Status      PolicyStatus
 	Effect      Effect
-	Rules       []*PolicyRule
+	Rules       []PolicyRule
 	Ctime       int64
 	Utime       int64
 }
@@ -25,14 +25,28 @@ const (
 )
 
 type PolicyRule struct {
-	ID                  int64
-	AttributeDefinition AttributeDefinition
-	Value               string
-	LeftRule            *PolicyRule
-	RightRule           *PolicyRule
-	Operator            RuleOperator
-	Ctime               int64
-	Utime               int64
+	ID        int64
+	AttrDef   AttributeDefinition
+	Value     string
+	LeftRule  *PolicyRule
+	RightRule *PolicyRule
+	Operator  RuleOperator
+	Ctime     int64
+	Utime     int64
+}
+
+func (p PolicyRule) SafeLeft() PolicyRule {
+	if p.LeftRule == nil {
+		return PolicyRule{}
+	}
+	return *p.LeftRule
+}
+
+func (p PolicyRule) SafeRight() PolicyRule {
+	if p.RightRule == nil {
+		return PolicyRule{}
+	}
+	return *p.RightRule
 }
 
 type RuleOperator string

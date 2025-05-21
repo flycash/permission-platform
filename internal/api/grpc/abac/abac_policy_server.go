@@ -68,10 +68,7 @@ func (s *ABACPolicyServer) SaveRule(ctx context.Context, req *permissionpb.Polic
 		return nil, err
 	}
 	rule := convertToDomainPolicyRule(req.Rule)
-	if rule == nil {
-		return nil, nil
-	}
-	id, err := s.svc.SaveRule(ctx, bizID, req.PolicyId, *rule) // Dereference the pointer
+	id, err := s.svc.SaveRule(ctx, bizID, req.PolicyId, rule) // Dereference the pointer
 	if err != nil {
 		return nil, err
 	}
@@ -149,18 +146,18 @@ func convertToProtoPolicy(p domain.Policy) *permissionpb.Policy {
 	}
 }
 
-func convertToDomainPolicyRules(rules []*permissionpb.PolicyRule) []*domain.PolicyRule {
+func convertToDomainPolicyRules(rules []*permissionpb.PolicyRule) []domain.PolicyRule {
 	if rules == nil {
 		return nil
 	}
-	result := make([]*domain.PolicyRule, 0, len(rules))
+	result := make([]domain.PolicyRule, 0, len(rules))
 	for _, rule := range rules {
 		result = append(result, convertToDomainPolicyRule(rule))
 	}
 	return result
 }
 
-func convertToProtoPolicyRules(rules []*domain.PolicyRule) []*permissionpb.PolicyRule {
+func convertToProtoPolicyRules(rules []domain.PolicyRule) []*permissionpb.PolicyRule {
 	if rules == nil {
 		return nil
 	}
@@ -171,31 +168,30 @@ func convertToProtoPolicyRules(rules []*domain.PolicyRule) []*permissionpb.Polic
 	return result
 }
 
-func convertToDomainPolicyRule(r *permissionpb.PolicyRule) *domain.PolicyRule {
+func convertToDomainPolicyRule(r *permissionpb.PolicyRule) domain.PolicyRule {
 	if r == nil {
-		return nil
+		return domain.PolicyRule{}
 	}
-	return &domain.PolicyRule{
-		ID:                  r.Id,
-		AttributeDefinition: convertToDomainAttributeDefinition(r.AttributeDefinition),
-		Value:               r.Value,
-		Operator:            convertToDomainOperator(r.Operator),
-		LeftRule:            convertToDomainPolicyRule(r.LeftRule),
-		RightRule:           convertToDomainPolicyRule(r.RightRule),
+	left := convertToDomainPolicyRule(r.LeftRule)
+	right := convertToDomainPolicyRule(r.RightRule)
+	return domain.PolicyRule{
+		ID:        r.Id,
+		AttrDef:   convertToDomainAttributeDefinition(r.AttributeDefinition),
+		Value:     r.Value,
+		Operator:  convertToDomainOperator(r.Operator),
+		LeftRule:  &left,
+		RightRule: &right,
 	}
 }
 
-func convertToProtoPolicyRule(r *domain.PolicyRule) *permissionpb.PolicyRule {
-	if r == nil {
-		return nil
-	}
+func convertToProtoPolicyRule(r domain.PolicyRule) *permissionpb.PolicyRule {
 	return &permissionpb.PolicyRule{
 		Id:                  r.ID,
-		AttributeDefinition: convertToProtoAttributeDefinition(r.AttributeDefinition),
+		AttributeDefinition: convertToProtoAttributeDefinition(r.AttrDef),
 		Value:               r.Value,
 		Operator:            convertToProtoOperator(r.Operator),
-		LeftRule:            convertToProtoPolicyRule(r.LeftRule),
-		RightRule:           convertToProtoPolicyRule(r.RightRule),
+		LeftRule:            convertToProtoPolicyRule(r.SafeLeft()),
+		RightRule:           convertToProtoPolicyRule(r.SafeRight()),
 	}
 }
 

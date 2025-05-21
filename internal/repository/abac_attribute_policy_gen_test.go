@@ -26,20 +26,20 @@ func TestGenDomainPolicyRules(t *testing.T) {
 			name: "single rule",
 			rules: []dao.PolicyRule{
 				{
-					ID:          1,
-					AttributeID: 100,
-					Value:       "test",
-					Operator:    "eq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        1,
+					AttrDefID: 100,
+					Value:     "test",
+					Operator:  "eq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 			},
 			expected: []*domain.PolicyRule{
 				{
 					ID: 1,
-					AttributeDefinition: domain.AttributeDefinition{
+					AttrDef: domain.AttributeDefinition{
 						ID: 100,
 					},
 					Value:    "test",
@@ -53,40 +53,40 @@ func TestGenDomainPolicyRules(t *testing.T) {
 			name: "nested rules",
 			rules: []dao.PolicyRule{
 				{
-					ID:          1,
-					AttributeID: 100,
-					Value:       "root",
-					Operator:    "and",
-					Left:        2,
-					Right:       3,
-					Ctime:       now,
-					Utime:       now,
+					ID:        1,
+					AttrDefID: 100,
+					Value:     "root",
+					Operator:  "and",
+					Left:      2,
+					Right:     3,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          2,
-					AttributeID: 101,
-					Value:       "left",
-					Operator:    "neq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        2,
+					AttrDefID: 101,
+					Value:     "left",
+					Operator:  "neq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          3,
-					AttributeID: 102,
-					Value:       "right",
-					Operator:    "gt",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        3,
+					AttrDefID: 102,
+					Value:     "right",
+					Operator:  "gt",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 			},
 			expected: []*domain.PolicyRule{
 				{
 					ID: 1,
-					AttributeDefinition: domain.AttributeDefinition{
+					AttrDef: domain.AttributeDefinition{
 						ID: 100,
 					},
 					Value:    "root",
@@ -95,7 +95,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:    now,
 					LeftRule: &domain.PolicyRule{
 						ID: 2,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 101,
 						},
 						Value:    "left",
@@ -105,7 +105,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					},
 					RightRule: &domain.PolicyRule{
 						ID: 3,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 102,
 						},
 						Value:    "right",
@@ -120,30 +120,30 @@ func TestGenDomainPolicyRules(t *testing.T) {
 			name: "multiple root rules",
 			rules: []dao.PolicyRule{
 				{
-					ID:          1,
-					AttributeID: 100,
-					Value:       "root1",
-					Operator:    "eq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        1,
+					AttrDefID: 100,
+					Value:     "root1",
+					Operator:  "eq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          2,
-					AttributeID: 101,
-					Value:       "root2",
-					Operator:    "neq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        2,
+					AttrDefID: 101,
+					Value:     "root2",
+					Operator:  "neq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 			},
 			expected: []*domain.PolicyRule{
 				{
 					ID: 1,
-					AttributeDefinition: domain.AttributeDefinition{
+					AttrDef: domain.AttributeDefinition{
 						ID: 100,
 					},
 					Value:    "root1",
@@ -153,7 +153,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 				},
 				{
 					ID: 2,
-					AttributeDefinition: domain.AttributeDefinition{
+					AttrDef: domain.AttributeDefinition{
 						ID: 101,
 					},
 					Value:    "root2",
@@ -167,80 +167,80 @@ func TestGenDomainPolicyRules(t *testing.T) {
 			name: "complex nested rules with multiple levels",
 			rules: []dao.PolicyRule{
 				{
-					ID:          1,
-					AttributeID: 100,
-					Value:       "root",
-					Operator:    "and",
-					Left:        2,
-					Right:       3,
-					Ctime:       now,
-					Utime:       now,
+					ID:        1,
+					AttrDefID: 100,
+					Value:     "root",
+					Operator:  "and",
+					Left:      2,
+					Right:     3,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          2,
-					AttributeID: 101,
-					Value:       "left",
-					Operator:    "or",
-					Left:        4,
-					Right:       5,
-					Ctime:       now,
-					Utime:       now,
+					ID:        2,
+					AttrDefID: 101,
+					Value:     "left",
+					Operator:  "or",
+					Left:      4,
+					Right:     5,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          3,
-					AttributeID: 102,
-					Value:       "right",
-					Operator:    "and",
-					Left:        6,
-					Right:       7,
-					Ctime:       now,
-					Utime:       now,
+					ID:        3,
+					AttrDefID: 102,
+					Value:     "right",
+					Operator:  "and",
+					Left:      6,
+					Right:     7,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          4,
-					AttributeID: 103,
-					Value:       "left-left",
-					Operator:    "eq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        4,
+					AttrDefID: 103,
+					Value:     "left-left",
+					Operator:  "eq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          5,
-					AttributeID: 104,
-					Value:       "left-right",
-					Operator:    "neq",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        5,
+					AttrDefID: 104,
+					Value:     "left-right",
+					Operator:  "neq",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          6,
-					AttributeID: 105,
-					Value:       "right-left",
-					Operator:    "gt",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        6,
+					AttrDefID: 105,
+					Value:     "right-left",
+					Operator:  "gt",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 				{
-					ID:          7,
-					AttributeID: 106,
-					Value:       "right-right",
-					Operator:    "lt",
-					Left:        0,
-					Right:       0,
-					Ctime:       now,
-					Utime:       now,
+					ID:        7,
+					AttrDefID: 106,
+					Value:     "right-right",
+					Operator:  "lt",
+					Left:      0,
+					Right:     0,
+					Ctime:     now,
+					Utime:     now,
 				},
 			},
 			expected: []*domain.PolicyRule{
 				{
 					ID: 1,
-					AttributeDefinition: domain.AttributeDefinition{
+					AttrDef: domain.AttributeDefinition{
 						ID: 100,
 					},
 					Value:    "root",
@@ -249,7 +249,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					Utime:    now,
 					LeftRule: &domain.PolicyRule{
 						ID: 2,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 101,
 						},
 						Value:    "left",
@@ -258,7 +258,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 						Utime:    now,
 						LeftRule: &domain.PolicyRule{
 							ID: 4,
-							AttributeDefinition: domain.AttributeDefinition{
+							AttrDef: domain.AttributeDefinition{
 								ID: 103,
 							},
 							Value:    "left-left",
@@ -268,7 +268,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 						},
 						RightRule: &domain.PolicyRule{
 							ID: 5,
-							AttributeDefinition: domain.AttributeDefinition{
+							AttrDef: domain.AttributeDefinition{
 								ID: 104,
 							},
 							Value:    "left-right",
@@ -279,7 +279,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 					},
 					RightRule: &domain.PolicyRule{
 						ID: 3,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 102,
 						},
 						Value:    "right",
@@ -288,7 +288,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 						Utime:    now,
 						LeftRule: &domain.PolicyRule{
 							ID: 6,
-							AttributeDefinition: domain.AttributeDefinition{
+							AttrDef: domain.AttributeDefinition{
 								ID: 105,
 							},
 							Value:    "right-left",
@@ -298,7 +298,7 @@ func TestGenDomainPolicyRules(t *testing.T) {
 						},
 						RightRule: &domain.PolicyRule{
 							ID: 7,
-							AttributeDefinition: domain.AttributeDefinition{
+							AttrDef: domain.AttributeDefinition{
 								ID: 106,
 							},
 							Value:    "right-right",

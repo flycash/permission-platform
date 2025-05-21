@@ -64,15 +64,15 @@ func (s *PermissionSuite) TestPermission() {
 				},
 				Action: "read",
 			},
-			attrs: domain.Attributes{
-				Environment: map[string]string{
+			attrs: domain.PermissionRequest{
+				EnvironmentAttrValues: map[string]string{
 					"time": fmt.Sprintf("%d", time.Now().UnixMilli()),
 				},
 			},
 			before: func(t *testing.T) {
 				s.setupDefinition()
 				// 创建主体属性值
-				vals := []domain.SubjectAttributeValue{
+				vals := []domain.AttributeValue{
 					{
 						Value: "22",
 						Definition: domain.AttributeDefinition{
@@ -97,7 +97,7 @@ func (s *PermissionSuite) TestPermission() {
 					require.NoError(s.T(), err)
 				}
 				// 创建资源属性值
-				_, err := s.valRepo.SaveResourceValue(t.Context(), bizId, 33, domain.ResourceAttributeValue{
+				_, err := s.valRepo.SaveResourceValue(t.Context(), bizId, 33, domain.AttributeValue{
 					Definition: domain.AttributeDefinition{
 						ID: 10004,
 					},
@@ -144,7 +144,7 @@ func (s *PermissionSuite) TestPermission() {
 				rules := []domain.PolicyRule{
 					{
 						ID: 10010,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001,
 						},
 						Operator: domain.GreaterOrEqual,
@@ -152,7 +152,7 @@ func (s *PermissionSuite) TestPermission() {
 					},
 					{
 						ID: 10011,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001,
 						},
 						Operator: domain.LessOrEqual,
@@ -171,7 +171,7 @@ func (s *PermissionSuite) TestPermission() {
 					{
 						ID:       10013,
 						Operator: domain.IN,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10003,
 						},
 						Value: "[\"admin\",\"manager\"]",
@@ -189,7 +189,7 @@ func (s *PermissionSuite) TestPermission() {
 					{
 						ID:       10015,
 						Operator: domain.GreaterOrEqual,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10005,
 						},
 						Value: "@time(1)",
@@ -225,15 +225,15 @@ func (s *PermissionSuite) TestPermission() {
 				},
 				Action: "read",
 			},
-			attrs: domain.Attributes{
-				Environment: map[string]string{
+			attrs: domain.PermissionRequest{
+				EnvironmentAttrValues: map[string]string{
 					"time": fmt.Sprintf("%d", time.Now().UnixMilli()),
 				},
 			},
 			before: func(t *testing.T) {
 				s.setupDefinition()
 				// 创建主体属性值，满足两个policy
-				vals := []domain.SubjectAttributeValue{
+				vals := []domain.AttributeValue{
 					{
 						Value: "25",
 						Definition: domain.AttributeDefinition{
@@ -258,7 +258,7 @@ func (s *PermissionSuite) TestPermission() {
 					require.NoError(s.T(), err)
 				}
 				// 创建资源属性值
-				_, err := s.valRepo.SaveResourceValue(t.Context(), bizId, 33, domain.ResourceAttributeValue{
+				_, err := s.valRepo.SaveResourceValue(t.Context(), bizId, 33, domain.AttributeValue{
 					Definition: domain.AttributeDefinition{
 						ID: 10004,
 					},
@@ -306,7 +306,7 @@ func (s *PermissionSuite) TestPermission() {
 				permitRules := []domain.PolicyRule{
 					{
 						ID: 20010,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001, // age
 						},
 						Operator: domain.GreaterOrEqual,
@@ -314,7 +314,7 @@ func (s *PermissionSuite) TestPermission() {
 					},
 					{
 						ID: 20011,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001,
 						},
 						Operator: domain.LessOrEqual,
@@ -329,7 +329,7 @@ func (s *PermissionSuite) TestPermission() {
 					{
 						ID:       20013,
 						Operator: domain.IN,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10003, // position
 						},
 						Value: "[\"admin\",\"manager\"]",
@@ -361,7 +361,7 @@ func (s *PermissionSuite) TestPermission() {
 				denyRules := []domain.PolicyRule{
 					{
 						ID: 30010,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001, // age
 						},
 						Operator: domain.GreaterOrEqual,
@@ -369,7 +369,7 @@ func (s *PermissionSuite) TestPermission() {
 					},
 					{
 						ID: 30011,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10001,
 						},
 						Operator: domain.LessOrEqual,
@@ -384,7 +384,7 @@ func (s *PermissionSuite) TestPermission() {
 					{
 						ID:       30013,
 						Operator: domain.IN,
-						AttributeDefinition: domain.AttributeDefinition{
+						AttrDef: domain.AttributeDefinition{
 							ID: 10003, // position
 						},
 						Value: "[\"admin\",\"manager\"]",

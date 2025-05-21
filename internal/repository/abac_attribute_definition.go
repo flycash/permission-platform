@@ -13,7 +13,7 @@ type AttributeDefinitionRepository interface {
 	First(ctx context.Context, bizID int64, id int64) (domain.AttributeDefinition, error)
 	Del(ctx context.Context, bizID int64, id int64) error
 	// 返回一个bizID所有的属性定义
-	Find(ctx context.Context, bizID int64) (domain.BizDefinition, error)
+	Find(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error)
 }
 
 type attributeDefinitionRepository struct {
@@ -72,24 +72,26 @@ func (a *attributeDefinitionRepository) Del(ctx context.Context, bizID, id int64
 	return a.definitionDao.Del(ctx, bizID, id)
 }
 
-func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (domain.BizDefinition, error) {
+func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error) {
 	daos, err := a.definitionDao.Find(ctx, bizID)
 	if err != nil {
-		return domain.BizDefinition{}, err
+		return domain.BizAttrDefinition{}, err
 	}
-	bizDef := domain.BizDefinition{
-		BizID: bizID,
+	bizDef := domain.BizAttrDefinition{
+		BizID:   bizID,
+		AllDefs: make(map[int64]domain.AttributeDefinition, len(daos)),
 	}
 	for _, daoDef := range daos {
 		def := toDomainDefinition(daoDef)
 		switch daoDef.EntityType {
 		case domain.SubjectType.String():
-			bizDef.SubjectAttrs = append(bizDef.SubjectAttrs, def)
+			bizDef.SubjectAttrDefs = append(bizDef.SubjectAttrDefs, def)
 		case domain.ResourceType.String():
-			bizDef.ResourceAttrs = append(bizDef.ResourceAttrs, def)
+			bizDef.ResourceAttrDefs = append(bizDef.ResourceAttrDefs, def)
 		case domain.EnvironmentType.String():
-			bizDef.EnvironmentAttrs = append(bizDef.EnvironmentAttrs, def)
+			bizDef.EnvironmentAttrDefs = append(bizDef.EnvironmentAttrDefs, def)
 		}
+		bizDef.AllDefs[def.ID] = def
 	}
 	return bizDef, nil
 }

@@ -10,13 +10,13 @@ import (
 
 // ResourceAttributeValue 资源属性值表模型
 type ResourceAttributeValue struct {
-	ID          int64  `gorm:"column:id;primaryKey;autoIncrement;"`
-	BizID       int64  `gorm:"column:biz_id;uniqueIndex:idx_biz_resource_attr;comment:biz_id + resource_key + attr_id 唯一索引"`
-	ResourceID  int64  `gorm:"column:resource_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_resource_id;comment:资源ID"`
-	AttributeID int64  `gorm:"column:attribute_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_attribute_id;comment:属性定义ID"`
-	Value       string `gorm:"column:value;type:text;not null;comment:属性值，取决于 data_type"`
-	Ctime       int64  `gorm:"column:ctime;"`
-	Utime       int64  `gorm:"column:utime;"`
+	ID         int64  `gorm:"column:id;primaryKey;autoIncrement;"`
+	BizID      int64  `gorm:"column:biz_id;uniqueIndex:idx_biz_resource_attr;comment:biz_id + resource_key + attr_id 唯一索引"`
+	ResourceID int64  `gorm:"column:resource_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_resource_id;comment:资源ID"`
+	AttrDefID  int64  `gorm:"column:attr_def_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_attribute_id;comment:属性定义ID"`
+	Value      string `gorm:"column:value;type:text;not null;comment:属性值，取决于 data_type"`
+	Ctime      int64  `gorm:"column:ctime;"`
+	Utime      int64  `gorm:"column:utime;"`
 }
 
 // TableName 指定表名

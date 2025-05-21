@@ -111,12 +111,12 @@ func (p *policyRepo) First(ctx context.Context, bizID, id int64) (domain.Policy,
 func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule domain.PolicyRule) (int64, error) {
 	// 转换为 DAO 层的规则对象
 	ruleDAO := dao.PolicyRule{
-		ID:          rule.ID,
-		BizID:       bizID,
-		PolicyID:    policyID,
-		AttributeID: rule.AttributeDefinition.ID,
-		Value:       rule.Value,
-		Operator:    string(rule.Operator),
+		ID:        rule.ID,
+		BizID:     bizID,
+		PolicyID:  policyID,
+		AttrDefID: rule.AttrDef.ID,
+		Value:     rule.Value,
+		Operator:  string(rule.Operator),
 	}
 	if rule.LeftRule != nil {
 		ruleDAO.Left = rule.LeftRule.ID

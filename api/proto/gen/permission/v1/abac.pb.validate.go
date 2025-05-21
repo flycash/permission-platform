@@ -210,7 +210,7 @@ func (m *PolicyRule) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, PolicyRuleValidationError{
-					field:  "AttributeDefinition",
+					field:  "AttrDef",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -218,7 +218,7 @@ func (m *PolicyRule) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, PolicyRuleValidationError{
-					field:  "AttributeDefinition",
+					field:  "AttrDef",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -227,7 +227,7 @@ func (m *PolicyRule) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetAttributeDefinition()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return PolicyRuleValidationError{
-				field:  "AttributeDefinition",
+				field:  "AttrDef",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1350,7 +1350,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+						field:  fmt.Sprintf("SubjectAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1358,7 +1358,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+						field:  fmt.Sprintf("SubjectAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1367,7 +1367,7 @@ func (m *BizDefinition) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return BizDefinitionValidationError{
-					field:  fmt.Sprintf("SubjectAttrs[%v]", idx),
+					field:  fmt.Sprintf("SubjectAttrDefs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1384,7 +1384,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+						field:  fmt.Sprintf("ResourceAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1392,7 +1392,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+						field:  fmt.Sprintf("ResourceAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1401,7 +1401,7 @@ func (m *BizDefinition) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return BizDefinitionValidationError{
-					field:  fmt.Sprintf("ResourceAttrs[%v]", idx),
+					field:  fmt.Sprintf("ResourceAttrDefs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1418,7 +1418,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+						field:  fmt.Sprintf("EnvironmentAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1426,7 +1426,7 @@ func (m *BizDefinition) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, BizDefinitionValidationError{
-						field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+						field:  fmt.Sprintf("EnvironmentAttrDefs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1435,7 +1435,7 @@ func (m *BizDefinition) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return BizDefinitionValidationError{
-					field:  fmt.Sprintf("EnvironmentAttrs[%v]", idx),
+					field:  fmt.Sprintf("EnvironmentAttrDefs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
