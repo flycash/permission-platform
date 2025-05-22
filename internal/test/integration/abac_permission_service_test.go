@@ -237,8 +237,6 @@ func (s *ABACPermissionSuite) TestPermission() {
 	}
 }
 
-
-
 func (s *ABACPermissionSuite) setupDefinitionV1() {
 	// 初始化属性定义
 	subjectAttrDef1 := domain.AttributeDefinition{

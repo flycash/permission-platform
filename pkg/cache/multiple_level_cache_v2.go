@@ -6,6 +6,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	eredis "github.com/ecodeclub/ecache/redis"
+
 	"gitee.com/flycash/permission-platform/pkg/bitring"
 	"github.com/ecodeclub/ecache"
 	"github.com/redis/go-redis/v9"
@@ -21,19 +23,23 @@ type MultiLevelCacheV2 struct {
 	mu                     sync.Mutex       // 用于保护内部状态更新
 }
 
-func NewMultiLevelCacheV2(local, redis ecache.Cache,
+func NewMultiLevelCacheV2(local ecache.Cache,
 	redisHealthCheckPeriod time.Duration,
 	redisPingTimeout time.Duration,
 	redisCrashDetector *bitring.BitRing,
 	redisClient redis.Cmdable,
 ) *MultiLevelCacheV2 {
 	cachev2 := &MultiLevelCacheV2{
-		redis:                  redis,
+		redis: &ecache.NamespaceCache{
+			C:         eredis.NewCache(redisClient),
+			Namespace: "permission-platform:multiclusterv2:",
+		},
 		redisHealthCheckPeriod: redisHealthCheckPeriod,
 		redisPingTimeout:       redisPingTimeout,
 		redisCrashDetector:     redisCrashDetector,
 		local:                  local,
 	}
+	cachev2.isRedisAvailable.Store(true)
 	go cachev2.redisHealthCheck(redisClient)
 	return cachev2
 }
@@ -102,7 +108,7 @@ func (m *MultiLevelCacheV2) handleRedisCrashEvent() {
 func (m *MultiLevelCacheV2) Get(ctx context.Context, key string) Value {
 	if !m.isRedisAvailable.Load() {
 		// Redis不可用，查本地缓存
-		return Value(m.local.Get(ctx, key))
+		return m.local.Get(ctx, key)
 	}
 	// Redis可用，从Redis获取
 	val := m.redis.Get(ctx, key)
@@ -117,5 +123,5 @@ func (m *MultiLevelCacheV2) Get(ctx context.Context, key string) Value {
 		// Redis正常响应
 		m.redisCrashDetector.Add(false)
 	}
-	return Value(val)
+	return val
 }

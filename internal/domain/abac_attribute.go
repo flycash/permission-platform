@@ -136,12 +136,12 @@ type Attributes struct {
 
 type SubAttrs map[string]string
 
-func (s SubAttrs) SetKv(k, v string) SubAttrs{
+func (s SubAttrs) SetKv(k, v string) SubAttrs {
 	if s == nil {
 		s = map[string]string{
 			k: v,
 		}
-	}else {
+	} else {
 		s[k] = v
 	}
 	return s

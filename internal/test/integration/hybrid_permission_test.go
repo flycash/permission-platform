@@ -1,7 +1,12 @@
+//go:build e2e
+
 package integration
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
@@ -15,8 +20,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"testing"
-	"time"
 )
 
 type HybridPermissionSuite struct {
@@ -46,6 +49,7 @@ func (s *HybridPermissionSuite) SetupSuite() {
 	s.resourceRepo = svc.ResourceRepo
 	s.hybridSvc = hybrid.NewRoleAsAttributePermissionService(s.rbacSvc, s.abacPermissionSvc)
 }
+
 func (s *HybridPermissionSuite) setupDefinitionV1(bizId int64) {
 	// 初始化属性定义
 	subjectAttrDef1 := domain.AttributeDefinition{
@@ -318,7 +322,6 @@ func (s *HybridPermissionSuite) TestCheck() {
 			assert.Equal(t, tc.wantVal, pass)
 		})
 	}
-
 }
 
 func (s *HybridPermissionSuite) clearBizVal(bizId int64) {

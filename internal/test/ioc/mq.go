@@ -27,7 +27,7 @@ func InitTopic() {
 func InitProducer(id string) *kafka.Producer {
 	// 初始化生产者
 	config := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers": "127.0.0.1:9092",
 		"client.id":         id,
 	}
 
@@ -41,7 +41,7 @@ func InitProducer(id string) *kafka.Producer {
 
 func initTopic(topics ...kafka.TopicSpecification) {
 	// 创建 AdminClient
-	const kafkaAddr = "localhost:9092"
+	const kafkaAddr = "127.0.0.1:9092"
 	const serverName = "bootstrap.servers"
 	adminClient, err := kafka.NewAdminClient(&kafka.ConfigMap{
 		serverName: kafkaAddr,
