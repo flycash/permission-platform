@@ -3,6 +3,7 @@
 package ioc
 
 import (
+	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	rbacsvc "gitee.com/flycash/permission-platform/internal/service/rbac"
 
 	rbacgrpc "gitee.com/flycash/permission-platform/internal/api/grpc/rbac"
@@ -57,6 +58,8 @@ var (
 
 		dao.NewUserPermissionDAO,
 		repository.NewUserPermissionRepository,
+
+		auditdao.NewOperationLogDAO,
 	)
 )
 

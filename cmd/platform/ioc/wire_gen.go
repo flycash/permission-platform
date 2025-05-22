@@ -11,6 +11,7 @@ import (
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
+	"gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
 	"github.com/google/wire"
 )
@@ -48,7 +49,8 @@ func InitApp() *ioc.App {
 	server := rbac2.NewServer(service)
 	permissionService := rbac.NewPermissionService(rbacRepository)
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
-	v2 := ioc.InitGRPC(server, permissionServiceServer, token)
+	operationLogDAO := audit.NewOperationLogDAO(db)
+	v2 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
 	app := &ioc.App{
 		GrpcServers: v2,
 	}
@@ -59,7 +61,7 @@ func InitApp() *ioc.App {
 
 var (
 	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository, audit.NewOperationLogDAO)
 )
 
 func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
