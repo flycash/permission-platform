@@ -15,11 +15,11 @@ func NewStringEvaluator() *StringEvaluator {
 
 func (s StringEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
 	if isSlice(op) {
-		list, convActualVal, err := s.getSliceData(wantVal, actualVal)
+		list, err := s.getSliceData(wantVal)
 		if err != nil {
 			return false, err
 		}
-		return sliceEvaluator[string](list, convActualVal, op)
+		return sliceEvaluator[string](list, actualVal, op)
 	}
 	switch op {
 	case domain.Equals:
@@ -31,10 +31,10 @@ func (s StringEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOpera
 	}
 }
 
-func (StringEvaluator) getSliceData(wantVal, actualVal string) (res []string, ans string, err error) {
+func (StringEvaluator) getSliceData(wantVal string) (res []string, err error) {
 	err = json.Unmarshal([]byte(wantVal), &res)
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
-	return res, actualVal, err
+	return res, err
 }
