@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type PermissionSuite struct {
+type ABACPermissionSuite struct {
 	suite.Suite
 	permissionSvc  abacsvc.PermissionSvc
 	valRepo        repository.AttributeValueRepository
@@ -31,7 +31,7 @@ type PermissionSuite struct {
 	db             *egorm.Component
 }
 
-func (s *PermissionSuite) SetupSuite() {
+func (s *ABACPermissionSuite) SetupSuite() {
 	db := testioc.InitDBAndTables()
 	svc := abac.Init(db)
 	s.definitionRepo = svc.DefinitionRepo
@@ -43,7 +43,7 @@ func (s *PermissionSuite) SetupSuite() {
 	s.db = db
 }
 
-func (s *PermissionSuite) TestPermission() {
+func (s *ABACPermissionSuite) TestPermission() {
 	bizId := int64(10000)
 
 	testcase := []struct {
@@ -237,57 +237,9 @@ func (s *PermissionSuite) TestPermission() {
 	}
 }
 
-func (s *PermissionSuite) setupDefinition() {
-	// 初始化属性定义
-	subjectAttrDef1 := domain.AttributeDefinition{
-		ID:          10001,
-		Name:        "age",
-		DataType:    domain.DataTypeNumber,
-		Description: "年龄",
-		EntityType:  domain.EntityTypeSubject,
-	}
-	subjectAttrDef2 := domain.AttributeDefinition{
-		ID:          10002,
-		Name:        "gender",
-		DataType:    domain.DataTypeString,
-		Description: "性别",
-		EntityType:  domain.EntityTypeSubject,
-	}
-	subjectAttrDef3 := domain.AttributeDefinition{
-		ID:          10003,
-		Name:        "position",
-		DataType:    domain.DataTypeString,
-		Description: "职位",
-		EntityType:  domain.EntityTypeSubject,
-	}
-	resourceDef := domain.AttributeDefinition{
-		ID:          10004,
-		Name:        "table",
-		DataType:    domain.DataTypeString,
-		Description: "表",
-		EntityType:  domain.EntityTypeResource,
-	}
-	envDef := domain.AttributeDefinition{
-		ID:          10005,
-		Name:        "time",
-		DataType:    domain.DataTypeDatetime,
-		Description: "访问时间",
-		EntityType:  domain.EntityTypeEnvironment,
-	}
-	defs := []domain.AttributeDefinition{
-		subjectAttrDef1,
-		subjectAttrDef2,
-		subjectAttrDef3,
-		resourceDef,
-		envDef,
-	}
-	for idx := range defs {
-		_, err := s.definitionRepo.Save(s.T().Context(), 10000, defs[idx])
-		require.NoError(s.T(), err)
-	}
-}
 
-func (s *PermissionSuite) setupDefinitionV1() {
+
+func (s *ABACPermissionSuite) setupDefinitionV1() {
 	// 初始化属性定义
 	subjectAttrDef1 := domain.AttributeDefinition{
 		ID:          10006,
@@ -329,7 +281,7 @@ func (s *PermissionSuite) setupDefinitionV1() {
 	}
 }
 
-func (s *PermissionSuite) clearBizVal(bizId int64) {
+func (s *ABACPermissionSuite) clearBizVal(bizId int64) {
 	t := s.T()
 	t.Helper()
 	s.db.WithContext(s.T().Context()).Where("biz_id = ?", bizId).Delete(&dao.Policy{})
@@ -344,5 +296,5 @@ func (s *PermissionSuite) clearBizVal(bizId int64) {
 }
 
 func TestABACPermissionSuite(t *testing.T) {
-	suite.Run(t, new(PermissionSuite))
+	suite.Run(t, new(ABACPermissionSuite))
 }

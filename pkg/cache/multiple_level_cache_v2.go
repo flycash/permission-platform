@@ -18,15 +18,24 @@ type MultiLevelCacheV2 struct {
 	redisHealthCheckPeriod time.Duration
 	redisPingTimeout       time.Duration
 	redisCrashDetector     *bitring.BitRing // 错误检测器
-
-	mu sync.Mutex // 用于保护内部状态更新
+	mu                     sync.Mutex       // 用于保护内部状态更新
 }
 
-func NewMultiLevelCacheV2(local, redis ecache.Cache) *MultiLevelCacheV2 {
-	return &MultiLevelCacheV2{
-		redis: redis,
-		local: local,
+func NewMultiLevelCacheV2(local, redis ecache.Cache,
+	redisHealthCheckPeriod time.Duration,
+	redisPingTimeout time.Duration,
+	redisCrashDetector *bitring.BitRing,
+	redisClient redis.Cmdable,
+) *MultiLevelCacheV2 {
+	cachev2 := &MultiLevelCacheV2{
+		redis:                  redis,
+		redisHealthCheckPeriod: redisHealthCheckPeriod,
+		redisPingTimeout:       redisPingTimeout,
+		redisCrashDetector:     redisCrashDetector,
+		local:                  local,
 	}
+	go cachev2.redisHealthCheck(redisClient)
+	return cachev2
 }
 
 // redisHealthCheck 定期检查Redis健康状态

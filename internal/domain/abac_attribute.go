@@ -129,7 +129,20 @@ func (s *ABACObject) SetAttributeVal(val string, definition AttributeDefinition)
 }
 
 type Attributes struct {
-	Subject     map[string]string // 属性名 name => 属性值 value
-	Resource    map[string]string
-	Environment map[string]string
+	Subject     SubAttrs // 属性名 name => 属性值 value
+	Resource    SubAttrs
+	Environment SubAttrs
+}
+
+type SubAttrs map[string]string
+
+func (s SubAttrs) SetKv(k, v string) SubAttrs{
+	if s == nil {
+		s = map[string]string{
+			k: v,
+		}
+	}else {
+		s[k] = v
+	}
+	return s
 }

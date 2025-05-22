@@ -9,6 +9,10 @@ import (
 
 type StringEvaluator struct{}
 
+func NewStringEvaluator() *StringEvaluator {
+	return &StringEvaluator{}
+}
+
 func (s StringEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
 	if isSlice(op) {
 		list, convActualVal, err := s.getSliceData(wantVal, actualVal)

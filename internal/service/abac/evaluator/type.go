@@ -20,11 +20,12 @@ type selector struct {
 func NewSelector() Selector {
 	return &selector{
 		checkerMap: map[domain.DataType]PolicyConditionEvaluator{
-			domain.DataTypeString:   StringEvaluator{},
+			domain.DataTypeString:   NewStringEvaluator(),
 			domain.DataTypeBoolean:  NewBoolEvaluator(),
 			domain.DataTypeFloat:    NewFloatEvaluator(),
 			domain.DataTypeNumber:   NewNumberEvaluator(),
 			domain.DataTypeDatetime: NewTimeEvaluator(),
+			domain.DataTypeArray:    NewArrayEvaluator(),
 		},
 	}
 }

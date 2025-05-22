@@ -64,6 +64,6 @@ func (p *roleAsAttributePermissionService) Check(ctx context.Context, bizID, use
 		return src.Role.Name
 	})
 	val, _ := p.converter.Encode(nameList)
-	attrs.Subject[defaultRoleName] = val
+	attrs.Subject = attrs.Subject.SetKv(defaultRoleName, val)
 	return p.abacPermissionSvc.Check(ctx, bizID, userID, resource, actions, attrs)
 }

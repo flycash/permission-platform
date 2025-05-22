@@ -19,6 +19,7 @@ const (
 	DataTypeBoolean           = "boolean"
 	DataTypeFloat             = "float"
 	DataTypeDatetime          = "datetime"
+	DataTypeArray         = "array"
 )
 
 func (d DataType) String() string {

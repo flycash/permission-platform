@@ -10,6 +10,12 @@ type ArrayEvaluator struct {
 	converter converter.Converter[[]string]
 }
 
+func NewArrayEvaluator() *ArrayEvaluator {
+	return &ArrayEvaluator{
+		converter: converter.NewArrayConverter(),
+	}
+}
+
 func (a ArrayEvaluator) Evaluate(wantVal, actualVal string, op domain.RuleOperator) (bool, error) {
 	wantValArray, err := a.converter.Decode(wantVal)
 	if err != nil {
