@@ -36,3 +36,29 @@ cron:
     # 你产生的读 QPS  = N(节点数量) * 频率（比如说 1秒钟一次）
     spec: "* * * * *" # 每分钟执行一次，你可以调小，甚至于到 1 秒钟一次
 
+canal:
+  host: "canal-server"
+  prot: 11111
+  username: "canal"
+  password: "canal_pass"
+  destination: "permission"
+  schema: "permission"
+  table: "user_roles"
+  # 5 秒
+  idleTimeout: 5000000000
+  batchSize: &canal_batch_size 1000
+
+kafka:
+  addr: "localhost:9092"
+
+userRoleBinlogEvent:
+  topic: "user_roles_binlog"
+  producer:
+    # 2 秒
+    minLoopDuration: 2000000
+    batchSize: *canal_batch_size
+    timeout: 5 # 5 秒
+    # 0-毫秒，1-秒，2-分钟，3-小时
+    units: 1
+  consumer:
+    groupId: "user_roles_binlog_consumer_group"

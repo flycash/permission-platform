@@ -21,6 +21,7 @@ require (
 	github.com/redis/go-redis/v9 v9.8.0
 	github.com/sony/sonyflake v1.2.1
 	github.com/stretchr/testify v1.10.0
+	github.com/withlin/canal-go v1.1.2
 	go.etcd.io/etcd/client/v3 v3.6.0
 	go.opentelemetry.io/otel v1.36.0
 	go.opentelemetry.io/otel/exporters/zipkin v1.36.0
@@ -59,6 +60,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.14.0 // indirect
+	github.com/go-zookeeper/zk v1.0.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect

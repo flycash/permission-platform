@@ -28,7 +28,7 @@ func main() {
 		}
 	}(tp, ctx)
 	app := ioc.InitApp()
-
+	app.StartTasks(ctx)
 	// 启动服务
 	servers := make([]server.Server, 0, len(app.GrpcServers)+1)
 	servers = append(servers, egovernor.Load("server.governor").Build())

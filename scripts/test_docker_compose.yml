@@ -77,7 +77,6 @@ services:
       - '9411:9411'
 
   elasticsearch:
-    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
     environment:
       - discovery.type=single-node
@@ -117,6 +116,23 @@ services:
       - elasticsearch
     networks:
       default:
+
+  canal:
+    image: canal/canal-server:v1.1.8
+    depends_on:
+      mysql:
+        condition: service_healthy
+        restart: true
+    ports:
+      - "11111:11111"
+    environment:
+      CANAL_USER: canal
+      CANAL_PASSWORD: canal_pass
+      CANAL_DESTINATION: permission
+    volumes:
+      - ./canal/instance.properties:/opt/canal-server/conf/permission/instance.properties
+    networks:
+      - default
 
 volumes:
   esdata:
