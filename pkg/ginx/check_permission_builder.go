@@ -1,4 +1,4 @@
-package middleware
+package ginx
 
 import (
 	"encoding/json"
