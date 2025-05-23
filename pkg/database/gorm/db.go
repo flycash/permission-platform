@@ -19,9 +19,10 @@ const (
 
 // gorm校验插件
 type GormAccessPlugin struct {
-	client       permissionv1.PermissionServiceClient
-	statementMap map[StatementType]string
-	logger       *elog.Component
+	client          permissionv1.PermissionServiceClient
+	statementMap    map[StatementType]string
+	logger          *elog.Component
+	permissionToken string
 }
 type GormAccessPluginOption func(*GormAccessPlugin)
 
@@ -31,7 +32,7 @@ func WithStatementMap(statementMap map[StatementType]string) GormAccessPluginOpt
 	}
 }
 
-func NewGormAccessPlugin(client permissionv1.PermissionServiceClient, opts ...GormAccessPluginOption) *GormAccessPlugin {
+func NewGormAccessPlugin(client permissionv1.PermissionServiceClient, permissionToken string, opts ...GormAccessPluginOption) *GormAccessPlugin {
 	plugin := &GormAccessPlugin{
 		client: client,
 		statementMap: map[StatementType]string{
@@ -40,7 +41,8 @@ func NewGormAccessPlugin(client permissionv1.PermissionServiceClient, opts ...Go
 			DELETE: "delete",
 			CREATE: "create",
 		},
-		logger: elog.DefaultLogger,
+		logger:          elog.DefaultLogger,
+		permissionToken: permissionToken,
 	}
 	for idx := range opts {
 		opts[idx](plugin)
@@ -93,11 +95,6 @@ func (p *GormAccessPlugin) delete(db *gorm.DB) {
 
 func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 	ctx := db.Statement.Context
-	bizID, err := getBizID(ctx)
-	if err != nil {
-		_ = db.AddError(fmt.Errorf("获取bizId失败 %w", err))
-		return
-	}
 	uid, err := getUID(ctx)
 	if err != nil {
 		_ = db.AddError(fmt.Errorf("获取uid失败 %w", err))
@@ -118,6 +115,7 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 		key, resourceType = val.Key, val.Type
 	}
 	if key != "" {
+		ctx = context.WithValue(ctx, "Authorization", p.permissionToken)
 		resp, perr := p.client.CheckPermission(ctx, &permissionv1.CheckPermissionRequest{
 			Uid: uid,
 			Permission: &permissionv1.Permission{
@@ -130,7 +128,6 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 			_ = db.AddError(fmt.Errorf("权限校验失败 %w", err))
 			elog.Error("权限校验失败",
 				elog.FieldErr(err),
-				elog.Int64("bizID", bizID),
 				elog.Int64("uid", uid),
 				elog.String("action", action),
 				elog.String("resourceKey", key),
