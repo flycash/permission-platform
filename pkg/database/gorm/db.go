@@ -141,21 +141,6 @@ func (p *GormAccessPlugin) accessCheck(stmtType StatementType, db *gorm.DB) {
 	}
 }
 
-func getBizID(ctx context.Context) (int64, error) {
-	value := ctx.Value(bizIDKey)
-	if value == nil {
-		return 0, fmt.Errorf("biz-id not found in context")
-	}
-
-	// 类型断言校验
-	bizID, ok := value.(int64)
-	if !ok {
-		return 0, fmt.Errorf("invalid biz-id type, expected int64 got %T", value)
-	}
-
-	return bizID, nil
-}
-
 func getUID(ctx context.Context) (int64, error) {
 	value := ctx.Value(uidKey)
 	if value == nil {
@@ -171,14 +156,19 @@ func getUID(ctx context.Context) (int64, error) {
 	return uid, nil
 }
 
-func getResource(ctx context.Context) (*permissionv1.Resource, error) {
+func getResource(ctx context.Context) (Resource, error) {
 	value := ctx.Value(resourceKey)
 	if value == nil {
-		return nil, fmt.Errorf("resource not found in context")
+		return Resource{}, fmt.Errorf("resource not found in context")
 	}
-	res, ok := value.(*permissionv1.Resource)
+	res, ok := value.(Resource)
 	if !ok {
-		return nil, fmt.Errorf("invalid resource type, expected permissionv1.Resource")
+		return Resource{}, fmt.Errorf("invalid resource type, expected permissionv1.Resource")
 	}
 	return res, nil
+}
+
+type Resource struct {
+	Key  string
+	Type string
 }
