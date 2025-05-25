@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/gotomicro/ego/core/elog"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
@@ -21,19 +22,37 @@ type UserRoleRepository interface {
 // userRoleRepository 用户角色关系仓储实现
 type userRoleRepository struct {
 	userRoleDAO dao.UserRoleDAO
+	logger      *elog.Component
 }
 
 // NewUserRoleRepository 创建用户角色关系仓储实例
 func NewUserRoleRepository(userRoleDAO dao.UserRoleDAO) UserRoleRepository {
 	return &userRoleRepository{
 		userRoleDAO: userRoleDAO,
+		logger:      elog.DefaultLogger,
 	}
 }
 
 func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error) {
+
 	created, err := r.userRoleDAO.Create(ctx, r.toEntity(userRole))
 	if err != nil {
+		r.logger.Error("授予角色权限失败",
+			elog.Int64("bizId", userRole.BizID),
+			elog.Int64("userId", userRole.UserID),
+			elog.Int64("roleId", userRole.Role.ID),
+			elog.String("roleName", userRole.Role.Name),
+			elog.FieldErr(err),
+		)
 		return domain.UserRole{}, err
+	}else {
+		r.logger.Info("授予角色权限",
+			elog.Int64("bizId", userRole.BizID),
+			elog.Int64("userId", userRole.UserID),
+			elog.Int64("roleId", userRole.Role.ID),
+			elog.String("roleName", userRole.Role.Name),
+			elog.Any("userRole", created),
+		)
 	}
 	return r.toDomain(created), nil
 }
@@ -50,7 +69,20 @@ func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, us
 }
 
 func (r *userRoleRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
-	return r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
+	err := r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
+	if err != nil {
+		r.logger.Error("撤销角色权限失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", bizID),
+			elog.Int64("userRoleId", id),
+		)
+	} else {
+		r.logger.Info("撤销角色权限",
+			elog.Int64("bizId", bizID),
+			elog.Int64("userRoleId", id),
+		)
+	}
+	return err
 }
 
 func (r *userRoleRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {

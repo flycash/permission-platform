@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/gotomicro/ego/core/elog"
 
 	"github.com/ecodeclub/ekit/slice"
 	"golang.org/x/sync/errgroup"
@@ -23,6 +24,7 @@ type PolicyRepo interface {
 
 type policyRepo struct {
 	policyDAO dao.PolicyDAO
+	logger    *elog.Component
 }
 
 func (p *policyRepo) FindPolicies(ctx context.Context, bizID int64, offset, limit int) (int64, []domain.Policy, error) {
@@ -51,12 +53,28 @@ func (p *policyRepo) FindPolicies(ctx context.Context, bizID int64, offset, limi
 }
 
 func (p *policyRepo) SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.Effect) error {
-	return p.policyDAO.SavePermissionPolicy(ctx, dao.PermissionPolicy{
+
+	err := p.policyDAO.SavePermissionPolicy(ctx, dao.PermissionPolicy{
 		BizID:        bizID,
 		PolicyID:     policyID,
 		Effect:       string(effect),
 		PermissionID: permissionID,
 	})
+	if err != nil {
+		p.logger.Error("添加权限策略关联失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", bizID),
+			elog.Any("policyID", policyID),
+			elog.Any("permissionID", permissionID),
+			elog.Any("effect", effect))
+	} else {
+		p.logger.Info("添加权限策略关联",
+			elog.Int64("bizId", bizID),
+			elog.Any("policyID", policyID),
+			elog.Any("permissionID", permissionID),
+			elog.Any("effect", effect))
+	}
+	return err
 }
 
 func NewPolicyRepository(policyDAO dao.PolicyDAO) PolicyRepo {
@@ -75,14 +93,35 @@ func (p *policyRepo) Save(ctx context.Context, policy domain.Policy) (int64, err
 		Description: policy.Description,
 		Status:      string(policy.Status),
 	}
-
 	// 保存策略
-	return p.policyDAO.SavePolicy(ctx, policyDAO)
+	id, err := p.policyDAO.SavePolicy(ctx, policyDAO)
+	if err != nil {
+		p.logger.Error("添加策略失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", policy.BizID),
+			elog.Any("policy", policy))
+	} else {
+		p.logger.Info("添加策略",
+			elog.Int64("bizId", policy.BizID),
+			elog.Any("policy", policy))
+	}
+	return id, err
 }
 
 func (p *policyRepo) Delete(ctx context.Context, bizID, id int64) error {
 	// 删除策略及其关联数据
-	return p.policyDAO.DeletePolicy(ctx, bizID, id)
+	err := p.policyDAO.DeletePolicy(ctx, bizID, id)
+	if err != nil {
+		p.logger.Error("删除策略失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", bizID),
+			elog.Int64("policyId", id))
+	} else {
+		p.logger.Info("删除策略",
+			elog.Int64("bizId", bizID),
+			elog.Int64("policyId", id))
+	}
+	return err
 }
 
 func (p *policyRepo) First(ctx context.Context, bizID, id int64) (domain.Policy, error) {
@@ -124,11 +163,40 @@ func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule d
 	if rule.RightRule != nil {
 		ruleDAO.Right = rule.RightRule.ID
 	}
-	return p.policyDAO.SavePolicyRule(ctx, ruleDAO)
+	id, err := p.policyDAO.SavePolicyRule(ctx, ruleDAO)
+	if err != nil {
+		p.logger.Error("保存策略规则失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", bizID),
+			elog.Int64("policyId", policyID),
+			elog.Any("rule", rule),
+		)
+	} else {
+		p.logger.Info("保存策略规则",
+			elog.Int64("bizId", bizID),
+			elog.Int64("policyId", policyID),
+			elog.Any("rule", rule),
+		)
+	}
+	return id, err
 }
 
 func (p *policyRepo) DeleteRule(ctx context.Context, bizID, ruleID int64) error {
-	return p.policyDAO.DeletePolicyRule(ctx, bizID, ruleID)
+
+	err := p.policyDAO.DeletePolicyRule(ctx, bizID, ruleID)
+	if err != nil {
+		p.logger.Error("删除策略规则失败",
+			elog.FieldErr(err),
+			elog.Int64("bizId", bizID),
+			elog.Any("ruleID", ruleID),
+		)
+	} else {
+		p.logger.Info("删除策略规则",
+			elog.Int64("bizId", bizID),
+			elog.Any("ruleID", ruleID),
+		)
+	}
+	return err
 }
 
 func (p *policyRepo) FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionID []int64) ([]domain.Policy, error) {

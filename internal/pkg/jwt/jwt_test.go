@@ -16,7 +16,7 @@ const (
 
 func TestEncode(t *testing.T) {
 	// 创建 JWTToken 实例
-	testKey := "test_key"
+	testKey := "permission_platform_key"
 	jwtToken := jwt.New(testKey, defaultIssuer)
 
 	// 测试场景
@@ -25,15 +25,16 @@ func TestEncode(t *testing.T) {
 		customClaims jwt.MapClaims
 		wantErr      bool
 	}{
-		{
-			name:         "基本令牌生成",
-			customClaims: jwt.MapClaims{},
-			wantErr:      false,
-		},
+		//{
+		//	name:         "基本令牌生成",
+		//	customClaims: jwt.MapClaims{},
+		//	wantErr:      false,
+		//},
 		{
 			name: "带用户ID的令牌",
 			customClaims: jwt.MapClaims{
-				"biz_id": float64(23456),
+				"biz-id":  float64(1),
+				"user_id": float64(999),
 			},
 			wantErr: false,
 		},

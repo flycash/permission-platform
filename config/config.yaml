@@ -3,6 +3,21 @@ mysql:
 
 redis:
   addr: "localhost:6379"
+cache:
+  local:
+    capacity: 100000
+  multilevel:
+    etcdKey: "xxx"
+    capacity: 1000000
+    localCacheRefreshPeriod: 1000000
+    redisPingTimeout: 1000000
+    redisHealthCheckPeriod: 1000000
+    errorEvents:
+      bitRingSize: 1024
+      rateThreshold: 0.3
+      consecutiveCount: 10
+
+
 
 etcd:
   addrs:

@@ -50,7 +50,9 @@ func (h *Heartbeat) Health() bool {
 	return h.health.Load()
 }
 
-func (*Heartbeat) Report(error) {}
+func (*Heartbeat) Report(error) {
+
+}
 
 func (h *Heartbeat) healthCheck(ctx context.Context) {
 	ticker := time.NewTicker(1 * time.Second)

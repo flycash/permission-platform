@@ -3,7 +3,6 @@ package auth
 import (
 	"context"
 	"errors"
-
 	"gitee.com/flycash/permission-platform/internal/errs"
 	"gitee.com/flycash/permission-platform/internal/pkg/jwt"
 	"google.golang.org/grpc"

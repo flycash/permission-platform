@@ -3,6 +3,9 @@ package ioc
 import (
 	"context"
 	"database/sql"
+	"gitee.com/flycash/permission-platform/internal/pkg/database/log"
+	"gitee.com/flycash/permission-platform/internal/pkg/database/metrics"
+	"gitee.com/flycash/permission-platform/internal/pkg/database/trace"
 	"time"
 
 	"github.com/gotomicro/ego/core/econf"
@@ -20,17 +23,21 @@ func InitDB() *egorm.Component {
 	if err != nil {
 		panic(err)
 	}
-	// 这个是自己手搓的
-	// tracePlugin := tracing.NewGormTracingPlugin()
-	// metricsPlugin := metrics.NewGormMetricsPlugin()
-	// err = db.Use(tracePlugin)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// err = db.Use(metricsPlugin)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	tracePlugin := trace.NewGormTracingPlugin()
+	metricsPlugin := metrics.NewGormMetricsPlugin()
+	logPlugin := log.NewGormLogPlugin()
+	err = db.Use(tracePlugin)
+	if err != nil {
+		panic(err)
+	}
+	err = db.Use(metricsPlugin)
+	if err != nil {
+		panic(err)
+	}
+	err = db.Use(logPlugin)
+	if err != nil {
+		panic(err)
+	}
 	return db
 }
 
@@ -57,6 +64,7 @@ func WaitForDBSetup(dsn string) {
 		next, ok := strategy.Next()
 		if !ok {
 			panic("WaitForDBSetup 重试失败......")
+
 		}
 		time.Sleep(next)
 	}
