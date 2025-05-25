@@ -34,6 +34,7 @@ type UserPermissionDAO interface {
 
 	FindByBizID(ctx context.Context, bizID int64, offset, limit int) ([]UserPermission, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]UserPermission, error)
+	FindByBizIDANDID(ctx context.Context, bizID, id int64) (UserPermission, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 	DeleteByBizIDAndUserIDAndPermissionID(ctx context.Context, bizID, userID, permissionID int64) error
@@ -72,6 +73,12 @@ func (u *userPermissionDAO) FindByBizIDAndUserID(ctx context.Context, bizID, use
 		Where("biz_id = ? AND user_id = ? AND start_time <= ? AND end_time >= ?", bizID, userID, now, now).
 		Find(&userPermissions).Error
 	return userPermissions, err
+}
+
+func (u *userPermissionDAO) FindByBizIDANDID(ctx context.Context, bizID, id int64) (UserPermission, error) {
+	var res UserPermission
+	err := u.db.WithContext(ctx).Where("biz_id = ? AND id = ?", bizID, id).First(&res).Error
+	return res, err
 }
 
 func (u *userPermissionDAO) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {

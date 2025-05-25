@@ -12,9 +12,14 @@ import (
 )
 
 type Service struct {
-	Svc           rbacsvc.Service
-	PermissionSvc rbacsvc.PermissionService
-	Repo          repository.RBACRepository
+	Svc                rbacsvc.Service
+	PermissionSvc      rbacsvc.PermissionService
+	BusinessConfigRepo repository.BusinessConfigRepository
+	ResourceRepo       repository.ResourceRepository
+	PermissionRepo     repository.PermissionRepository
+	RoleRepo           repository.RoleRepository
+	RolePermissionRepo repository.RolePermissionRepository
+	UserRoleRepo       repository.UserRoleRepository
 }
 
 func Init() *Service {
@@ -24,11 +29,10 @@ func Init() *Service {
 		rbacsvc.NewPermissionService,
 
 		rbacsvc.NewService,
-		repository.NewDefaultRBACRepository,
-		convertRepository,
 
 		dao.NewBusinessConfigDAO,
 		repository.NewBusinessConfigRepository,
+
 		dao.NewResourceDAO,
 		repository.NewResourceRepository,
 		dao.NewPermissionDAO,
@@ -36,19 +40,20 @@ func Init() *Service {
 		dao.NewRoleDAO,
 		repository.NewRoleRepository,
 		dao.NewRoleInclusionDAO,
-		repository.NewRoleInclusionRepository,
+		repository.NewRoleInclusionDefaultRepository,
 		dao.NewRolePermissionDAO,
-		repository.NewRolePermissionRepository,
+		repository.NewRolePermissionDefaultRepository,
 		dao.NewUserRoleDAO,
-		repository.NewUserRoleRepository,
+		repository.NewUserRoleDefaultRepository,
 		dao.NewUserPermissionDAO,
-		repository.NewUserPermissionRepository,
+		repository.NewUserPermissionDefaultRepository,
+		convertRepository,
 
 		wire.Struct(new(Service), "*"),
 	)
 	return nil
 }
 
-func convertRepository(repo *repository.DefaultRBACRepository) repository.RBACRepository {
+func convertRepository(repo *repository.UserPermissionDefaultRepository) repository.UserPermissionRepository {
 	return repo
 }

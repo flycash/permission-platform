@@ -7,6 +7,7 @@ import (
 	auditevt "gitee.com/flycash/permission-platform/internal/event/audit"
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
+	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	rbacsvc "gitee.com/flycash/permission-platform/internal/service/rbac"
@@ -32,9 +33,6 @@ var (
 	rbacSvcSet = wire.NewSet(
 		rbacsvc.NewService,
 		rbacsvc.NewPermissionService,
-		repository.NewDefaultRBACRepository,
-		repository.NewCachedRBACRepository,
-		convertRepository,
 
 		dao.NewBusinessConfigDAO,
 		repository.NewBusinessConfigRepository,
@@ -49,16 +47,20 @@ var (
 		repository.NewRoleRepository,
 
 		dao.NewRoleInclusionDAO,
-		repository.NewRoleInclusionRepository,
+		repository.NewRoleInclusionDefaultRepository,
 
 		dao.NewRolePermissionDAO,
-		repository.NewRolePermissionRepository,
+		repository.NewRolePermissionDefaultRepository,
 
 		dao.NewUserRoleDAO,
-		repository.NewUserRoleRepository,
+		repository.NewUserRoleDefaultRepository,
 
 		dao.NewUserPermissionDAO,
-		repository.NewUserPermissionRepository,
+		repository.NewUserPermissionDefaultRepository,
+
+		cache.NewUserPermissionCache,
+		repository.NewUserPermissionCachedRepository,
+		convertRepository,
 
 		auditdao.NewUserRoleLogDAO,
 		auditdao.NewOperationLogDAO,
@@ -67,7 +69,7 @@ var (
 	)
 )
 
-func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
+func convertRepository(repo *repository.UserPermissionCachedRepository) repository.UserPermissionRepository {
 	return repo
 }
 

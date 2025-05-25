@@ -2,6 +2,7 @@ package rbac
 
 import (
 	"context"
+
 	"github.com/ecodeclub/ekit/slice"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
@@ -15,11 +16,11 @@ type PermissionService interface {
 }
 
 type permissionService struct {
-	repo repository.RBACRepository
+	repo repository.UserPermissionRepository
 }
 
 // NewPermissionService 创建RBAC权限服务实例
-func NewPermissionService(repo repository.RBACRepository) PermissionService {
+func NewPermissionService(repo repository.UserPermissionRepository) PermissionService {
 	return &permissionService{
 		repo: repo,
 	}

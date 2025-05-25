@@ -7,6 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/pkg/bitring"
 	"gitee.com/flycash/permission-platform/pkg/cache"
@@ -26,7 +27,7 @@ func InitCacheKeyFunc() func(bizID, userID int64) string {
 func InitMultipleLevelCache(
 	r redis.Cmdable,
 	local ecache.Cache,
-	repo *repository.DefaultRBACRepository,
+	repo *repository.UserPermissionDefaultRepository,
 	etcdClient *eetcd.Component,
 	cacheKeyFunc func(bizID, userID int64) string,
 ) cache.Cache {
@@ -51,8 +52,8 @@ func InitMultipleLevelCache(
 	}
 
 	// 函数式写法
-	// var hotUsersPtr atomic.Pointer[[]HotUser]
-	// hotUsersPtr.Store(&[]HotUser{})
+	// var hotUsersPtr atomic.Pointer[[]domain.User]
+	// hotUsersPtr.Store(&[]domain.User{})
 	//
 	// // 处理热点用户变更事件
 	// go func() {
@@ -61,7 +62,7 @@ func InitMultipleLevelCache(
 	// 		for _, event := range watchResp.Events {
 	// 			if event.Type == clientv3.EventTypePut {
 	// 				// 更新热点用户
-	// 				var vals []HotUser
+	// 				var vals []domain.User
 	// 				if err1 := json.Unmarshal(event.Kv.Value, &vals); err1 == nil {
 	// 					hotUsersPtr.Store(&vals)
 	// 				}
@@ -93,7 +94,7 @@ func InitMultipleLevelCache(
 	// })
 
 	// 结构体封装写法
-	hotUserLoader := NewHotUserLoader([]HotUser{}, repo, cacheKeyFunc)
+	hotUserLoader := NewHotUserLoader([]domain.User{}, repo, cacheKeyFunc)
 
 	// 处理热点用户变更事件
 	go func() {
@@ -122,18 +123,13 @@ func InitMultipleLevelCache(
 		))
 }
 
-type HotUser struct {
-	ID    int64 `json:"id"`
-	BizID int64 `json:"bizId"`
-}
-
 type HotUserLoader struct {
-	hotUsersPtr  atomic.Pointer[[]HotUser]
-	repo         *repository.DefaultRBACRepository
+	hotUsersPtr  atomic.Pointer[[]domain.User]
+	repo         *repository.UserPermissionDefaultRepository
 	cacheKeyFunc func(bizID, userID int64) string
 }
 
-func NewHotUserLoader(hotUsers []HotUser, repo *repository.DefaultRBACRepository, cacheKeyFunc func(bizID, userID int64) string) *HotUserLoader {
+func NewHotUserLoader(hotUsers []domain.User, repo *repository.UserPermissionDefaultRepository, cacheKeyFunc func(bizID, userID int64) string) *HotUserLoader {
 	h := &HotUserLoader{
 		repo:         repo,
 		cacheKeyFunc: cacheKeyFunc,
@@ -165,7 +161,7 @@ func (h *HotUserLoader) LoadUserPermissionsFromDB(ctx context.Context) ([]*cache
 }
 
 func (h *HotUserLoader) UpdateUsers(value []byte) error {
-	var users []HotUser
+	var users []domain.User
 	err := json.Unmarshal(value, &users)
 	if err == nil {
 		// 更新热点用户

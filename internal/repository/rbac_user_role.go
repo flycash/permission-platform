@@ -3,12 +3,13 @@ package repository
 import (
 	"context"
 
-	"github.com/gotomicro/ego/core/elog"
-
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"github.com/ecodeclub/ekit/slice"
+	"github.com/gotomicro/ego/core/elog"
 )
+
+var _ UserRoleRepository = (*UserRoleDefaultRepository)(nil)
 
 // UserRoleRepository 用户角色关系仓储接口
 type UserRoleRepository interface {
@@ -20,21 +21,21 @@ type UserRoleRepository interface {
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
-// userRoleRepository 用户角色关系仓储实现
-type userRoleRepository struct {
+// UserRoleDefaultRepository 用户角色关系仓储实现
+type UserRoleDefaultRepository struct {
 	userRoleDAO dao.UserRoleDAO
 	logger      *elog.Component
 }
 
-// NewUserRoleRepository 创建用户角色关系仓储实例
-func NewUserRoleRepository(userRoleDAO dao.UserRoleDAO) UserRoleRepository {
-	return &userRoleRepository{
+// NewUserRoleDefaultRepository 创建用户角色关系仓储实例
+func NewUserRoleDefaultRepository(userRoleDAO dao.UserRoleDAO) *UserRoleDefaultRepository {
+	return &UserRoleDefaultRepository{
 		userRoleDAO: userRoleDAO,
 		logger:      elog.DefaultLogger,
 	}
 }
 
-func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error) {
+func (r *UserRoleDefaultRepository) Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error) {
 	created, err := r.userRoleDAO.Create(ctx, r.toEntity(userRole))
 	if err != nil {
 		r.logger.Error("授予角色权限失败",
@@ -57,7 +58,7 @@ func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRol
 	return r.toDomain(created), nil
 }
 
-func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
+func (r *UserRoleDefaultRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
 	userRoles, err := r.userRoleDAO.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err
@@ -68,7 +69,15 @@ func (r *userRoleRepository) FindByBizIDAndUserID(ctx context.Context, bizID, us
 	}), nil
 }
 
-func (r *userRoleRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
+func (r *UserRoleDefaultRepository) FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.UserRole, error) {
+	ur, err := r.userRoleDAO.FindByBizIDAndID(ctx, bizID, id)
+	if err != nil {
+		return domain.UserRole{}, err
+	}
+	return r.toDomain(ur), nil
+}
+
+func (r *UserRoleDefaultRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	err := r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
 	if err != nil {
 		r.logger.Error("撤销角色权限失败",
@@ -85,7 +94,7 @@ func (r *userRoleRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id i
 	return err
 }
 
-func (r *userRoleRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
+func (r *UserRoleDefaultRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
 	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID)
 	if err != nil {
 		return nil, err
@@ -96,7 +105,7 @@ func (r *userRoleRepository) FindByBizID(ctx context.Context, bizID int64) ([]do
 	}), nil
 }
 
-func (r *userRoleRepository) toEntity(ur domain.UserRole) dao.UserRole {
+func (r *UserRoleDefaultRepository) toEntity(ur domain.UserRole) dao.UserRole {
 	return dao.UserRole{
 		ID:        ur.ID,
 		BizID:     ur.BizID,
@@ -111,7 +120,7 @@ func (r *userRoleRepository) toEntity(ur domain.UserRole) dao.UserRole {
 	}
 }
 
-func (r *userRoleRepository) toDomain(ur dao.UserRole) domain.UserRole {
+func (r *UserRoleDefaultRepository) toDomain(ur dao.UserRole) domain.UserRole {
 	return domain.UserRole{
 		ID:     ur.ID,
 		BizID:  ur.BizID,

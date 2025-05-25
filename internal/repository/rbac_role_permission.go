@@ -3,12 +3,13 @@ package repository
 import (
 	"context"
 
-	"github.com/gotomicro/ego/core/elog"
-
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"github.com/ecodeclub/ekit/slice"
+	"github.com/gotomicro/ego/core/elog"
 )
+
+var _ RolePermissionRepository = (*RolePermissionDefaultRepository)(nil)
 
 // RolePermissionRepository 角色权限关系仓储接口
 type RolePermissionRepository interface {
@@ -20,21 +21,21 @@ type RolePermissionRepository interface {
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
 
-// rolePermissionRepository 角色权限关系仓储实现
-type rolePermissionRepository struct {
+// RolePermissionDefaultRepository 角色权限关系仓储实现
+type RolePermissionDefaultRepository struct {
 	rolePermissionDAO dao.RolePermissionDAO
 	logger            *elog.Component
 }
 
-// NewRolePermissionRepository 创建角色权限关系仓储实例
-func NewRolePermissionRepository(rolePermissionDAO dao.RolePermissionDAO) RolePermissionRepository {
-	return &rolePermissionRepository{
+// NewRolePermissionDefaultRepository 创建角色权限关系仓储实例
+func NewRolePermissionDefaultRepository(rolePermissionDAO dao.RolePermissionDAO) *RolePermissionDefaultRepository {
+	return &RolePermissionDefaultRepository{
 		rolePermissionDAO: rolePermissionDAO,
 		logger:            elog.DefaultLogger,
 	}
 }
 
-func (r *rolePermissionRepository) Create(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error) {
+func (r *RolePermissionDefaultRepository) Create(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error) {
 	created, err := r.rolePermissionDAO.Create(ctx, r.toEntity(rolePermission))
 	if err != nil {
 		elog.Info("为角色添加权限失败",
@@ -56,7 +57,7 @@ func (r *rolePermissionRepository) Create(ctx context.Context, rolePermission do
 	return r.toDomain(created), nil
 }
 
-func (r *rolePermissionRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.RolePermission, error) {
+func (r *RolePermissionDefaultRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.RolePermission, error) {
 	rolePermissions, err := r.rolePermissionDAO.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs)
 	if err != nil {
 		return nil, err
@@ -67,7 +68,15 @@ func (r *rolePermissionRepository) FindByBizIDAndRoleIDs(ctx context.Context, bi
 	}), nil
 }
 
-func (r *rolePermissionRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
+func (r *RolePermissionDefaultRepository) FindByBizIDAndID(ctx context.Context, bizID, id int64) (domain.RolePermission, error) {
+	rp, err := r.rolePermissionDAO.FindByBizIDAndID(ctx, bizID, id)
+	if err != nil {
+		return domain.RolePermission{}, err
+	}
+	return r.toDomain(rp), nil
+}
+
+func (r *RolePermissionDefaultRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	err := r.rolePermissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 	if err != nil {
 		elog.Error("为角色删除权限失败",
@@ -83,7 +92,7 @@ func (r *rolePermissionRepository) DeleteByBizIDAndID(ctx context.Context, bizID
 	return err
 }
 
-func (r *rolePermissionRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.RolePermission, error) {
+func (r *RolePermissionDefaultRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.RolePermission, error) {
 	rolePermissions, err := r.rolePermissionDAO.FindByBizID(ctx, bizID)
 	if err != nil {
 		return nil, err
@@ -94,7 +103,7 @@ func (r *rolePermissionRepository) FindByBizID(ctx context.Context, bizID int64)
 	}), nil
 }
 
-func (r *rolePermissionRepository) toEntity(rp domain.RolePermission) dao.RolePermission {
+func (r *RolePermissionDefaultRepository) toEntity(rp domain.RolePermission) dao.RolePermission {
 	return dao.RolePermission{
 		ID:               rp.ID,
 		BizID:            rp.BizID,
@@ -110,7 +119,7 @@ func (r *rolePermissionRepository) toEntity(rp domain.RolePermission) dao.RolePe
 	}
 }
 
-func (r *rolePermissionRepository) toDomain(rp dao.RolePermission) domain.RolePermission {
+func (r *RolePermissionDefaultRepository) toDomain(rp dao.RolePermission) domain.RolePermission {
 	return domain.RolePermission{
 		ID:    rp.ID,
 		BizID: rp.BizID,

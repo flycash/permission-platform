@@ -76,7 +76,7 @@ func TestGormAccessPlugin(t *testing.T) {
 	require.NoError(t, err)
 	// Create and initialize the plugin with mock client
 	mockClient := newMockPermissionServiceClient()
-	plugin := NewGormAccessPlugin(mockClient,testToken)
+	plugin := NewGormAccessPlugin(mockClient, testToken)
 	err = plugin.Initialize(db)
 
 	// Create test cases

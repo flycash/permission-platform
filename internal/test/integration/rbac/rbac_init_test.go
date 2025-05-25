@@ -49,7 +49,7 @@ func TestRBACInit(t *testing.T) {
 	// 3. 注释掉t.Skip()，手动执行当前测试
 	// 4. 观察 scripts/mysql/init.sql 变化
 	// 5. 开启 t.Skip()
-	repo := rbacioc.Init().Repo
+	iocSvc := rbacioc.Init()
 
 	dir, jwtAuthKey, jwtIssuer, err := getJWTConfig()
 	require.NoError(t, err)
@@ -57,14 +57,21 @@ func TestRBACInit(t *testing.T) {
 
 	jwtToken := jwt.New(jwtAuthKey, jwtIssuer)
 	bizID := int64(1)
-	svc := rbac.NewInitService(bizID, 999, 3000, jwtToken, repo)
+	svc := rbac.NewInitService(bizID, 999, 3000, jwtToken,
+		iocSvc.BusinessConfigRepo,
+		iocSvc.ResourceRepo,
+		iocSvc.PermissionRepo,
+		iocSvc.RoleRepo,
+		iocSvc.RolePermissionRepo,
+		iocSvc.UserRoleRepo,
+	)
 
 	// 执行
 	err = svc.Init(t.Context())
 	assert.NoError(t, err)
 
 	// 验证
-	bizConfig, err := repo.BusinessConfig().FindByID(t.Context(), bizID)
+	bizConfig, err := iocSvc.BusinessConfigRepo.FindByID(t.Context(), bizID)
 	assert.NoError(t, err)
 
 	mapClaims, err := jwtToken.Decode(bizConfig.Token)

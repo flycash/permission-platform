@@ -68,20 +68,37 @@ func (a PermissionActionType) String() string {
 const DefaultAccountRoleType = "admin_account"
 
 type InitService struct {
-	bizID     int64
-	userID    int64
-	rateLimit int
-	jwtToken  *jwt.Token
-	repo      repository.RBACRepository
+	bizID              int64
+	userID             int64
+	rateLimit          int
+	jwtToken           *jwt.Token
+	businessConfigRepo repository.BusinessConfigRepository
+	resourceRepo       repository.ResourceRepository
+	permissionRepo     repository.PermissionRepository
+	roleRepo           repository.RoleRepository
+	rolePermissionRepo repository.RolePermissionRepository
+	userRoleRepo       repository.UserRoleRepository
 }
 
-func NewInitService(bizID, userID int64, rateLimit int, jwtToken *jwt.Token, repo repository.RBACRepository) *InitService {
+func NewInitService(bizID, userID int64, rateLimit int, jwtToken *jwt.Token,
+	businessConfigRepo repository.BusinessConfigRepository,
+	resourceRepo repository.ResourceRepository,
+	permissionRepo repository.PermissionRepository,
+	roleRepo repository.RoleRepository,
+	rolePermissionRepo repository.RolePermissionRepository,
+	userRoleRepo repository.UserRoleRepository,
+) *InitService {
 	return &InitService{
-		bizID:     bizID,
-		userID:    userID,
-		rateLimit: rateLimit,
-		jwtToken:  jwtToken,
-		repo:      repo,
+		bizID:              bizID,
+		userID:             userID,
+		rateLimit:          rateLimit,
+		jwtToken:           jwtToken,
+		businessConfigRepo: businessConfigRepo,
+		resourceRepo:       resourceRepo,
+		permissionRepo:     permissionRepo,
+		roleRepo:           roleRepo,
+		rolePermissionRepo: rolePermissionRepo,
+		userRoleRepo:       userRoleRepo,
 	}
 }
 
@@ -124,7 +141,7 @@ func (s *InitService) createSystemBusinessConfig(ctx context.Context) error {
 		return fmt.Errorf("生成Token失败: %w", err)
 	}
 	// 创建业务配置
-	bizConfig, err := s.repo.BusinessConfig().Create(ctx, domain.BusinessConfig{
+	bizConfig, err := s.businessConfigRepo.Create(ctx, domain.BusinessConfig{
 		ID:        s.bizID,
 		OwnerID:   s.userID,
 		OwnerType: "organization",
@@ -155,7 +172,7 @@ func (s *InitService) createSystemResources(ctx context.Context) ([]domain.Resou
 	}
 	resources := make([]domain.Resource, 0, len(systemResources)+1)
 	for i := range systemResources {
-		res, err := s.repo.Resource().Create(ctx, domain.Resource{
+		res, err := s.resourceRepo.Create(ctx, domain.Resource{
 			BizID: s.bizID,
 			Type:  systemResources[i].Type(),
 			Key:   systemResources[i].Key(),
@@ -168,7 +185,7 @@ func (s *InitService) createSystemResources(ctx context.Context) ([]domain.Resou
 	}
 
 	// ”账号管理“资源也作为业务内部资源初始化，但使用预定义的Type、Key和Name
-	res, err := s.repo.Resource().Create(ctx, domain.Resource{
+	res, err := s.resourceRepo.Create(ctx, domain.Resource{
 		BizID: s.bizID,
 		Type:  ManagerAccountResource.Type(),
 		Key:   ManagerAccountResource.Key(),
@@ -191,7 +208,7 @@ func (s *InitService) createPermissionsForSystemResources(ctx context.Context, r
 	for i := range resources {
 		// 为每个资源赋予预定义的权限
 		for j := range systemResourcePermissions {
-			res, err := s.repo.Permission().Create(ctx, domain.Permission{
+			res, err := s.permissionRepo.Create(ctx, domain.Permission{
 				BizID:       s.bizID,
 				Name:        fmt.Sprintf("%s-%s", resources[i].Name, systemResourcePermissions[j].String()),
 				Description: fmt.Sprintf("%s-%s", resources[i].Name, systemResourcePermissions[j].String()),
@@ -208,7 +225,7 @@ func (s *InitService) createPermissionsForSystemResources(ctx context.Context, r
 }
 
 func (s *InitService) createSystemAdminRole(ctx context.Context) (domain.Role, error) {
-	return s.repo.Role().Create(ctx, domain.Role{
+	return s.roleRepo.Create(ctx, domain.Role{
 		BizID:       s.bizID,
 		Type:        DefaultAccountRoleType,
 		Name:        "权限平台管理后台系统管理员",
@@ -218,7 +235,7 @@ func (s *InitService) createSystemAdminRole(ctx context.Context) (domain.Role, e
 
 func (s *InitService) grantRolePermissions(ctx context.Context, role domain.Role, permissions []domain.Permission) error {
 	for i := range permissions {
-		_, err := s.repo.RolePermission().Create(ctx, domain.RolePermission{
+		_, err := s.rolePermissionRepo.Create(ctx, domain.RolePermission{
 			BizID:      s.bizID,
 			Role:       role,
 			Permission: permissions[i],
@@ -232,7 +249,7 @@ func (s *InitService) grantRolePermissions(ctx context.Context, role domain.Role
 
 func (s *InitService) grantUserRole(ctx context.Context, role domain.Role) error {
 	const years = 100
-	_, err := s.repo.UserRole().Create(ctx, domain.UserRole{
+	_, err := s.userRoleRepo.Create(ctx, domain.UserRole{
 		BizID:     s.bizID,
 		UserID:    s.userID,
 		Role:      role,
