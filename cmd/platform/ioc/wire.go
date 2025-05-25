@@ -3,13 +3,15 @@
 package ioc
 
 import (
-	rbacsvc "gitee.com/flycash/permission-platform/internal/service/rbac"
-
 	rbacgrpc "gitee.com/flycash/permission-platform/internal/api/grpc/rbac"
+	auditevt "gitee.com/flycash/permission-platform/internal/event/audit"
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
+	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
+	rbacsvc "gitee.com/flycash/permission-platform/internal/service/rbac"
 	"github.com/google/wire"
+	"github.com/gotomicro/ego/core/econf"
 )
 
 var (
@@ -57,11 +59,39 @@ var (
 
 		dao.NewUserPermissionDAO,
 		repository.NewUserPermissionRepository,
+
+		auditdao.NewUserRoleLogDAO,
+		auditdao.NewOperationLogDAO,
+
+		initUserRoleBinlogEventConsumer,
 	)
 )
 
 func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
 	return repo
+}
+
+func initUserRoleBinlogEventConsumer(dao auditdao.UserRoleLogDAO) *auditevt.UserRoleBinlogEventConsumer {
+	type Consumer struct {
+		GroupID string `yaml:"groupId"`
+	}
+	type Config struct {
+		Topic    string   `yaml:"topic"`
+		Consumer Consumer `yaml:"consumer"`
+	}
+	var cfg Config
+	err := econf.UnmarshalKey("userRoleBinlogEvent", &cfg)
+	if err != nil {
+		panic(err)
+	}
+	eventConsumer, err := auditevt.NewUserRoleBinlogEventConsumer(
+		ioc.InitKafkaConsumer(cfg.Consumer.GroupID),
+		dao,
+		cfg.Topic)
+	if err != nil {
+		panic(err)
+	}
+	return eventConsumer
 }
 
 func InitApp() *ioc.App {
@@ -76,6 +106,7 @@ func InitApp() *ioc.App {
 		rbacgrpc.NewServer,
 		rbacgrpc.NewPermissionServiceServer,
 		ioc.InitGRPC,
+		ioc.InitTasks,
 		wire.Struct(new(ioc.App), "*"),
 	)
 

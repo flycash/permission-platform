@@ -3,6 +3,7 @@ package dao
 import (
 	"errors"
 
+	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	"github.com/ego-component/egorm"
 	"github.com/go-sql-driver/mysql"
 )
@@ -24,6 +25,8 @@ func InitTables(db *egorm.Component) error {
 		&Policy{},
 		&PolicyRule{},
 		&PermissionPolicy{},
+		&auditdao.OperationLog{},
+		&auditdao.UserRoleLog{},
 	)
 }
 

@@ -8,11 +8,14 @@ package ioc
 
 import (
 	rbac2 "gitee.com/flycash/permission-platform/internal/api/grpc/rbac"
+	audit2 "gitee.com/flycash/permission-platform/internal/event/audit"
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
+	"gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
 	"github.com/google/wire"
+	"github.com/gotomicro/ego/core/econf"
 )
 
 // Injectors from wire.go:
@@ -48,9 +51,14 @@ func InitApp() *ioc.App {
 	server := rbac2.NewServer(service)
 	permissionService := rbac.NewPermissionService(rbacRepository)
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
-	v2 := ioc.InitGRPC(server, permissionServiceServer, token)
+	operationLogDAO := audit.NewOperationLogDAO(db)
+	v2 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
+	userRoleLogDAO := audit.NewUserRoleLogDAO(db)
+	userRoleBinlogEventConsumer := initUserRoleBinlogEventConsumer(userRoleLogDAO)
+	v3 := ioc.InitTasks(userRoleBinlogEventConsumer)
 	app := &ioc.App{
 		GrpcServers: v2,
+		Tasks:       v3,
 	}
 	return app
 }
@@ -59,9 +67,29 @@ func InitApp() *ioc.App {
 
 var (
 	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository, audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer)
 )
 
 func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
 	return repo
+}
+
+func initUserRoleBinlogEventConsumer(dao2 audit.UserRoleLogDAO) *audit2.UserRoleBinlogEventConsumer {
+	type Consumer struct {
+		GroupID string `yaml:"groupId"`
+	}
+	type Config struct {
+		Topic    string   `yaml:"topic"`
+		Consumer Consumer `yaml:"consumer"`
+	}
+	var cfg Config
+	err := econf.UnmarshalKey("userRoleBinlogEvent", &cfg)
+	if err != nil {
+		panic(err)
+	}
+	eventConsumer, err := audit2.NewUserRoleBinlogEventConsumer(ioc.InitKafkaConsumer(cfg.Consumer.GroupID), dao2, cfg.Topic)
+	if err != nil {
+		panic(err)
+	}
+	return eventConsumer
 }

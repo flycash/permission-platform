@@ -16,6 +16,10 @@ SELECT,
 INSERT
 ON `permission`.* TO 'permission'@'%';
 
+-- 准备 canal 用户
+CREATE USER 'canal'@'%' IDENTIFIED BY 'canal';
+GRANT ALL PRIVILEGES ON *.* TO 'canal'@'%' WITH GRANT OPTION;
+
 FLUSH
 PRIVILEGES;
 -- MySQL dump 10.13  Distrib 8.0.29, for Linux (x86_64)

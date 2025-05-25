@@ -51,3 +51,35 @@ cron:
     # 你产生的读 QPS  = N(节点数量) * 频率（比如说 1秒钟一次）
     spec: "* * * * *" # 每分钟执行一次，你可以调小，甚至于到 1 秒钟一次
 
+canal:
+  host: "canal-server"
+  prot: 11111
+  username: "canal"
+  password: "canal_pass"
+  destination: "permission"
+  schema: "permission"
+  table: "user_roles"
+  # 5 秒
+  idleTimeout: 5000000000
+  batchSize: &canal_batch_size 1000
+
+kafka:
+  addr: "localhost:9092"
+
+userRoleBinlogEvent:
+  topic: "user_roles_binlog"
+  consumer:
+    groupId: "user_roles_binlog_consumer_group"
+
+cache:
+  local:
+    capacity: 1000000
+  multilevel:
+    etcdKey: "hot_users"
+    localCacheRefreshPeriod: 5000000000
+    redisPingTimeout: 3000000000
+    redisHealthCheckPeriod: 1000000000
+    errorEvents:
+      bitRingSize: 128
+      rateThreshold: 0.8
+      consecutiveCount: 3
