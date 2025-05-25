@@ -68,6 +68,7 @@ func (m *mockPermissionServiceClient) CheckPermission(_ context.Context, req *pe
 
 func TestGormAccessPlugin(t *testing.T) {
 	dsn := "root:root@tcp(localhost:13316)/permission?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=True&loc=Local&timeout=1s&readTimeout=3s&writeTimeout=3s&multiStatements=true"
+	testToken := "test_token"
 	ioc.WaitForDBSetup(dsn)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	require.NoError(t, err)
@@ -75,7 +76,7 @@ func TestGormAccessPlugin(t *testing.T) {
 	require.NoError(t, err)
 	// Create and initialize the plugin with mock client
 	mockClient := newMockPermissionServiceClient()
-	plugin := NewGormAccessPlugin(mockClient)
+	plugin := NewGormAccessPlugin(mockClient,testToken)
 	err = plugin.Initialize(db)
 
 	// Create test cases

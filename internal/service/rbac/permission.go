@@ -2,7 +2,6 @@ package rbac
 
 import (
 	"context"
-
 	"github.com/ecodeclub/ekit/slice"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
