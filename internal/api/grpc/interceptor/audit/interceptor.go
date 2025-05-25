@@ -3,7 +3,6 @@ package audit
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 	"gitee.com/flycash/permission-platform/internal/repository/dao/audit"
@@ -46,19 +45,11 @@ func (b *InterceptorBuilder) Build() grpc.UnaryServerInterceptor {
 
 		// 3. 填充要调用的接口名称及参数
 		operationLog.Method = info.FullMethod
-		data, err := json.Marshal(req)
-		if err != nil {
-			b.logger.Error("JSON序列化请求失败",
-				elog.FieldErr(err),
-				elog.FieldKey("req"),
-				elog.FieldValueAny(req))
-			operationLog.Request = fmt.Sprintf("%#v", req)
-		} else {
-			operationLog.Request = string(data)
-		}
+		data, _ := json.Marshal(req)
+		operationLog.Request = string(data)
 
 		// 4. 持久化操作日志
-		_, err = b.dao.Create(ctx, operationLog)
+		_, err := b.dao.Create(ctx, operationLog)
 		if err != nil {
 			b.logger.Error("存储操作日志失败",
 				elog.FieldErr(err),

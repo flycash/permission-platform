@@ -8,17 +8,19 @@ import (
 )
 
 // UserRole 用户角色关联关系表
+//
+//nolint:tagliatelle // 忽略
 type UserRole struct {
-	ID        int64  `gorm:"primaryKey;autoIncrement;comment:用户角色关联关系主键'"`
-	BizID     int64  `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:1;index:idx_biz_user,priority:1;index:idx_biz_role,priority:1;index:idx_biz_user_role_validity,priority:1;comment:'业务ID'"`
-	UserID    int64  `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:2;index:idx_biz_user,priority:2;index:idx_biz_user_role_validity,priority:2;comment:'用户ID'"`
-	RoleID    int64  `gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:3;index:idx_biz_role,priority:2;comment:'角色ID'"`
-	RoleName  string `gorm:"type:VARCHAR(255);NOT NULL;comment:'角色名称（冗余字段，加速查询）'"`
-	RoleType  string `gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_user_role_validity,priority:3;comment:'角色类型（冗余字段，加速查询）'"`
-	StartTime int64  `gorm:"NOT NULL;index:idx_biz_user_role_validity,priority:4;comment:'授予角色生效时间'"`
-	EndTime   int64  `gorm:"NOT NULL;index:idx_biz_user_role_validity,priority:5;comment:'授予角色失效时间'"`
-	Ctime     int64
-	Utime     int64
+	ID        int64  `json:"id,string" gorm:"primaryKey;autoIncrement;comment:用户角色关联关系主键'"`
+	BizID     int64  `json:"biz_id,string" gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:1;index:idx_biz_user,priority:1;index:idx_biz_role,priority:1;index:idx_biz_user_role_validity,priority:1;comment:'业务ID'"`
+	UserID    int64  `json:"user_id,string" gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:2;index:idx_biz_user,priority:2;index:idx_biz_user_role_validity,priority:2;comment:'用户ID'"`
+	RoleID    int64  `json:"role_id,string" gorm:"type:BIGINT;NOT NULL;uniqueIndex:uk_biz_user_role,priority:3;index:idx_biz_role,priority:2;comment:'角色ID'"`
+	RoleName  string `json:"role_name" gorm:"type:VARCHAR(255);NOT NULL;comment:'角色名称（冗余字段，加速查询）'"`
+	RoleType  string `json:"role_type" gorm:"type:VARCHAR(255);NOT NULL;index:idx_biz_user_role_validity,priority:3;comment:'角色类型（冗余字段，加速查询）'"`
+	StartTime int64  `json:"start_time,string" gorm:"NOT NULL;index:idx_biz_user_role_validity,priority:4;comment:'授予角色生效时间'"`
+	EndTime   int64  `json:"end_time,string" gorm:"NOT NULL;index:idx_biz_user_role_validity,priority:5;comment:'授予角色失效时间'"`
+	Ctime     int64  `json:"ctime,string"`
+	Utime     int64  `json:"utime,string"`
 }
 
 func (UserRole) TableName() string {

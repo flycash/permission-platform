@@ -38,7 +38,6 @@ func InitMultipleLevelCache(
 
 	type Config struct {
 		EtcdKey                 string           `yaml:"etcdKey"`
-		Capacity                int              `yaml:"capacity"`
 		LocalCacheRefreshPeriod time.Duration    `yaml:"localCacheRefreshPeriod"`
 		RedisPingTimeout        time.Duration    `yaml:"redisPingTimeout"`
 		RedisHealthCheckPeriod  time.Duration    `yaml:"redisHealthCheckPeriod"`

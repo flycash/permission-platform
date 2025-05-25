@@ -53,12 +53,18 @@ kafka:
 
 userRoleBinlogEvent:
   topic: "user_roles_binlog"
-  producer:
-    # 2 秒
-    minLoopDuration: 2000000
-    batchSize: *canal_batch_size
-    timeout: 5 # 5 秒
-    # 0-毫秒，1-秒，2-分钟，3-小时
-    units: 1
   consumer:
     groupId: "user_roles_binlog_consumer_group"
+
+cache:
+  local:
+    capacity: 1000000
+  multilevel:
+    etcdKey: "hot_users"
+    localCacheRefreshPeriod: 5000000000
+    redisPingTimeout: 3000000000
+    redisHealthCheckPeriod: 1000000000
+    errorEvents:
+      bitRingSize: 128
+      rateThreshold: 0.8
+      consecutiveCount: 3

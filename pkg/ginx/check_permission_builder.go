@@ -2,8 +2,9 @@ package ginx
 
 import (
 	"context"
-	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"net/http"
+
+	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 
 	"github.com/ecodeclub/ginx"
 	"github.com/ecodeclub/ginx/session"

@@ -1,4 +1,3 @@
-//nolint:dupl // DAO结构相似但业务逻辑不同，暂时保持独立
 package audit
 
 import (

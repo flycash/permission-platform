@@ -1,4 +1,3 @@
-//nolint:dupl // DAO结构相似但业务逻辑不同，暂时保持独立
 package audit
 
 import (
@@ -24,7 +23,7 @@ func (u UserRoleLog) TableName() string {
 }
 
 type UserRoleLogDAO interface {
-	Create(ctx context.Context, userRoleLog UserRoleLog) (int64, error)
+	BatchCreate(ctx context.Context, userRoleLogs []UserRoleLog) error
 }
 
 type userRoleLogDAO struct {
@@ -35,9 +34,14 @@ func NewUserRoleLogDAO(db *egorm.Component) UserRoleLogDAO {
 	return &userRoleLogDAO{db: db}
 }
 
-func (u *userRoleLogDAO) Create(ctx context.Context, userRoleLog UserRoleLog) (int64, error) {
+func (u *userRoleLogDAO) BatchCreate(ctx context.Context, userRoleLogs []UserRoleLog) error {
+	if len(userRoleLogs) == 0 {
+		return nil
+	}
+	const batchSize = 100
 	now := time.Now().UnixMilli()
-	userRoleLog.Ctime, userRoleLog.Utime = now, now
-	err := u.db.WithContext(ctx).Create(&userRoleLog).Error
-	return userRoleLog.ID, err
+	for i := range userRoleLogs {
+		userRoleLogs[i].Ctime, userRoleLogs[i].Utime = now, now
+	}
+	return u.db.WithContext(ctx).CreateInBatches(userRoleLogs, batchSize).Error
 }

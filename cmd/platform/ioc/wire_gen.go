@@ -14,11 +14,8 @@ import (
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/wire"
 	"github.com/gotomicro/ego/core/econf"
-	"github.com/withlin/canal-go/client"
-	"time"
 )
 
 // Injectors from wire.go:
@@ -56,12 +53,9 @@ func InitApp() *ioc.App {
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
 	operationLogDAO := audit.NewOperationLogDAO(db)
 	v2 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
-	canalConnector := ioc.InitCanalConnector()
-	producer := ioc.InitKafkaProducer()
-	canalUserRoleBinlogEventProducer := initUserRoleBinlogEventProducer(canalConnector, producer)
 	userRoleLogDAO := audit.NewUserRoleLogDAO(db)
 	userRoleBinlogEventConsumer := initUserRoleBinlogEventConsumer(userRoleLogDAO)
-	v3 := ioc.InitTasks(canalUserRoleBinlogEventProducer, userRoleBinlogEventConsumer)
+	v3 := ioc.InitTasks(userRoleBinlogEventConsumer)
 	app := &ioc.App{
 		GrpcServers: v2,
 		Tasks:       v3,
@@ -72,50 +66,12 @@ func InitApp() *ioc.App {
 // wire.go:
 
 var (
-	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc, ioc.InitCanalConnector, ioc.InitKafkaProducer)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository, audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventProducer,
-		initUserRoleBinlogEventConsumer,
-	)
+	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, repository.NewDefaultRBACRepository, repository.NewCachedRBACRepository, convertRepository, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionRepository, dao.NewUserRoleDAO, repository.NewUserRoleRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionRepository, audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer)
 )
 
 func convertRepository(repo *repository.CachedRBACRepository) repository.RBACRepository {
 	return repo
-}
-
-func initUserRoleBinlogEventProducer(
-	canalConn client.CanalConnector,
-	kafkaProducer *kafka.Producer,
-) *audit2.CanalUserRoleBinlogEventProducer {
-
-	type Producer struct {
-		MinLoopDuration time.Duration `yaml:"minLoopDuration"`
-		BatchSize       int32         `yaml:"batchSize"`
-		Timeout         int64         `yaml:"timeout"`
-		Units           int32         `yaml:"units"`
-	}
-
-	type Config struct {
-		Topic    string   `yaml:"topic"`
-		Producer Producer `yaml:"producer"`
-	}
-	var cfg Config
-	err := econf.UnmarshalKey("userRoleBinlogEvent", &cfg)
-	if err != nil {
-		panic(err)
-	}
-	producer, err := audit2.NewUserRoleBinlogEventProducer(kafkaProducer, cfg.Topic)
-	if err != nil {
-		panic(err)
-	}
-	eventProducer := audit2.NewCanalUserRoleBinlogEventProducer(
-		canalConn,
-		producer,
-		cfg.Producer.MinLoopDuration,
-		cfg.Producer.BatchSize,
-		cfg.Producer.Timeout,
-		cfg.Producer.Units,
-	)
-	return eventProducer
 }
 
 func initUserRoleBinlogEventConsumer(dao2 audit.UserRoleLogDAO) *audit2.UserRoleBinlogEventConsumer {
