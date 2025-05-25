@@ -3,11 +3,12 @@ package observability
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/gotomicro/ego/core/elog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"time"
 )
 
 type LogInterceptorBuilder struct {

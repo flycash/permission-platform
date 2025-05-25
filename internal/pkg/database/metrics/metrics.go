@@ -1,10 +1,11 @@
 package metrics
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"gorm.io/gorm"
-	"time"
 )
 
 const (

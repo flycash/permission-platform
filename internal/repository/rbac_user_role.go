@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/gotomicro/ego/core/elog"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
@@ -34,7 +35,6 @@ func NewUserRoleRepository(userRoleDAO dao.UserRoleDAO) UserRoleRepository {
 }
 
 func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRole) (domain.UserRole, error) {
-
 	created, err := r.userRoleDAO.Create(ctx, r.toEntity(userRole))
 	if err != nil {
 		r.logger.Error("授予角色权限失败",
@@ -45,7 +45,7 @@ func (r *userRoleRepository) Create(ctx context.Context, userRole domain.UserRol
 			elog.FieldErr(err),
 		)
 		return domain.UserRole{}, err
-	}else {
+	} else {
 		r.logger.Info("授予角色权限",
 			elog.Int64("bizId", userRole.BizID),
 			elog.Int64("userId", userRole.UserID),

@@ -2,6 +2,9 @@ package trace
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/pkg/errors"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -9,8 +12,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/net/context"
 	"gorm.io/gorm"
-	"reflect"
-	"strings"
 )
 
 const (

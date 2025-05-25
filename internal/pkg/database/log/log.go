@@ -85,5 +85,4 @@ func (p *LogPlugin) record(typ string, db *gorm.DB) {
 			elog.String("sql", completeSQL),
 		)
 	}
-
 }

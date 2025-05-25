@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/gotomicro/ego/core/elog"
 
 	"github.com/ecodeclub/ekit/slice"
@@ -53,7 +54,6 @@ func (p *policyRepo) FindPolicies(ctx context.Context, bizID int64, offset, limi
 }
 
 func (p *policyRepo) SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.Effect) error {
-
 	err := p.policyDAO.SavePermissionPolicy(ctx, dao.PermissionPolicy{
 		BizID:        bizID,
 		PolicyID:     policyID,
@@ -182,7 +182,6 @@ func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule d
 }
 
 func (p *policyRepo) DeleteRule(ctx context.Context, bizID, ruleID int64) error {
-
 	err := p.policyDAO.DeletePolicyRule(ctx, bizID, ruleID)
 	if err != nil {
 		p.logger.Error("删除策略规则失败",

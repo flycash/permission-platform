@@ -2,6 +2,7 @@ package rbac
 
 import (
 	"context"
+
 	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 )
 

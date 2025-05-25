@@ -3,10 +3,11 @@ package ioc
 import (
 	"context"
 	"database/sql"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/pkg/database/log"
 	"gitee.com/flycash/permission-platform/internal/pkg/database/metrics"
 	"gitee.com/flycash/permission-platform/internal/pkg/database/trace"
-	"time"
 
 	"github.com/gotomicro/ego/core/econf"
 
@@ -64,7 +65,6 @@ func WaitForDBSetup(dsn string) {
 		next, ok := strategy.Next()
 		if !ok {
 			panic("WaitForDBSetup 重试失败......")
-
 		}
 		time.Sleep(next)
 	}

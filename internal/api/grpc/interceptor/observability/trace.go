@@ -3,6 +3,8 @@ package observability
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
@@ -10,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"strings"
 )
 
 const (

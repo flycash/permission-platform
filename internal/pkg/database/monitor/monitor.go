@@ -51,7 +51,6 @@ func (h *Heartbeat) Health() bool {
 }
 
 func (*Heartbeat) Report(error) {
-
 }
 
 func (h *Heartbeat) healthCheck(ctx context.Context) {
