@@ -32,25 +32,27 @@ func InitApp() *ioc.App {
 	roleDAO := dao.NewRoleDAO(db)
 	roleRepository := repository.NewRoleRepository(roleDAO)
 	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
-	roleInclusionRepository := repository.NewRoleInclusionDefaultRepository(roleInclusionDAO)
-	rolePermissionDAO := dao.NewRolePermissionDAO(db)
-	rolePermissionRepository := repository.NewRolePermissionDefaultRepository(rolePermissionDAO)
+	roleInclusionDefaultRepository := repository.NewRoleInclusionDefaultRepository(roleInclusionDAO)
 	userRoleDAO := dao.NewUserRoleDAO(db)
-	userRoleRepository := repository.NewUserRoleDefaultRepository(userRoleDAO)
+	userRoleDefaultRepository := repository.NewUserRoleDefaultRepository(userRoleDAO)
+	rolePermissionDAO := dao.NewRolePermissionDAO(db)
 	userPermissionDAO := dao.NewUserPermissionDAO(db)
-	defaultUserPermissionRepository := repository.NewUserPermissionDefaultRepository(roleInclusionDAO, rolePermissionDAO, userRoleDAO, userPermissionDAO)
+	userPermissionDefaultRepository := repository.NewUserPermissionDefaultRepository(roleInclusionDAO, rolePermissionDAO, userRoleDAO, userPermissionDAO)
 	cmdable := ioc.InitRedisCmd()
 	ecacheCache := ioc.InitLocalCache()
 	component := ioc.InitEtcdClient()
 	v := ioc.InitCacheKeyFunc()
-	cacheCache := ioc.InitMultipleLevelCache(cmdable, ecacheCache, defaultUserPermissionRepository, component, v)
+	cacheCache := ioc.InitMultipleLevelCache(cmdable, ecacheCache, userPermissionDefaultRepository, component, v)
 	userPermissionCache := cache.NewUserPermissionCache(cacheCache, v)
-	cachedUserPermissionRepository := repository.NewUserPermissionCachedRepository(defaultUserPermissionRepository, userPermissionCache)
-	userPermissionRepository := convertRepository(cachedUserPermissionRepository)
+	userPermissionCachedRepository := repository.NewUserPermissionCachedRepository(userPermissionDefaultRepository, userPermissionCache)
+	roleInclusionReloadCacheRepository := repository.NewRoleInclusionReloadCacheRepository(roleInclusionDefaultRepository, userRoleDefaultRepository, userPermissionCachedRepository)
+	rolePermissionDefaultRepository := repository.NewRolePermissionDefaultRepository(rolePermissionDAO)
+	rolePermissionReloadCacheRepository := repository.NewRolePermissionReloadCacheRepository(rolePermissionDefaultRepository, roleInclusionDAO, userRoleDAO, userPermissionCachedRepository)
+	userRoleReloadCacheRepository := repository.NewUserRoleReloadCacheRepository(userRoleDefaultRepository, userPermissionCachedRepository)
 	token := ioc.InitJWTToken()
-	service := rbac.NewService(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository, token)
+	service := rbac.NewService(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionReloadCacheRepository, rolePermissionReloadCacheRepository, userRoleReloadCacheRepository, userPermissionCachedRepository, token)
 	server := rbac2.NewServer(service)
-	permissionService := rbac.NewPermissionService(userPermissionRepository)
+	permissionService := rbac.NewPermissionService(userPermissionCachedRepository)
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
 	operationLogDAO := audit.NewOperationLogDAO(db)
 	v2 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
@@ -68,12 +70,8 @@ func InitApp() *ioc.App {
 
 var (
 	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionDefaultRepository, dao.NewRolePermissionDAO, repository.NewRolePermissionDefaultRepository, dao.NewUserRoleDAO, repository.NewUserRoleDefaultRepository, dao.NewUserPermissionDAO, repository.NewUserPermissionDefaultRepository, cache.NewUserPermissionCache, repository.NewUserPermissionCachedRepository, convertRepository, audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionDefaultRepository, repository.NewRoleInclusionReloadCacheRepository, wire.Bind(new(repository.RoleInclusionRepository), new(*repository.RoleInclusionReloadCacheRepository)), dao.NewRolePermissionDAO, repository.NewRolePermissionDefaultRepository, repository.NewRolePermissionReloadCacheRepository, wire.Bind(new(repository.RolePermissionRepository), new(*repository.RolePermissionReloadCacheRepository)), dao.NewUserRoleDAO, repository.NewUserRoleDefaultRepository, repository.NewUserRoleReloadCacheRepository, wire.Bind(new(repository.UserRoleRepository), new(*repository.UserRoleReloadCacheRepository)), dao.NewUserPermissionDAO, repository.NewUserPermissionDefaultRepository, cache.NewUserPermissionCache, repository.NewUserPermissionCachedRepository, wire.Bind(new(repository.UserPermissionRepository), new(*repository.UserPermissionCachedRepository)), wire.Bind(new(repository.UserPermissionCacheReloader), new(*repository.UserPermissionCachedRepository)), audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer)
 )
-
-func convertRepository(repo *repository.UserPermissionCachedRepository) repository.UserPermissionRepository {
-	return repo
-}
 
 func initUserRoleBinlogEventConsumer(dao2 audit.UserRoleLogDAO) *audit2.UserRoleBinlogEventConsumer {
 	type Consumer struct {

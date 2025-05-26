@@ -26,17 +26,16 @@ func Init() *Service {
 	roleDAO := dao.NewRoleDAO(db)
 	roleRepository := repository.NewRoleRepository(roleDAO)
 	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
-	roleInclusionRepository := repository.NewRoleInclusionDefaultRepository(roleInclusionDAO)
+	roleInclusionDefaultRepository := repository.NewRoleInclusionDefaultRepository(roleInclusionDAO)
 	rolePermissionDAO := dao.NewRolePermissionDAO(db)
-	rolePermissionRepository := repository.NewRolePermissionDefaultRepository(rolePermissionDAO)
+	rolePermissionDefaultRepository := repository.NewRolePermissionDefaultRepository(rolePermissionDAO)
 	userRoleDAO := dao.NewUserRoleDAO(db)
-	userRoleRepository := repository.NewUserRoleDefaultRepository(userRoleDAO)
+	userRoleDefaultRepository := repository.NewUserRoleDefaultRepository(userRoleDAO)
 	userPermissionDAO := dao.NewUserPermissionDAO(db)
-	defaultUserPermissionRepository := repository.NewUserPermissionDefaultRepository(roleInclusionDAO, rolePermissionDAO, userRoleDAO, userPermissionDAO)
-	userPermissionRepository := convertRepository(defaultUserPermissionRepository)
+	userPermissionDefaultRepository := repository.NewUserPermissionDefaultRepository(roleInclusionDAO, rolePermissionDAO, userRoleDAO, userPermissionDAO)
 	token := ioc.InitJWTToken()
-	service := rbac.NewService(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionRepository, rolePermissionRepository, userRoleRepository, userPermissionRepository, token)
-	permissionService := rbac.NewPermissionService(userPermissionRepository)
+	service := rbac.NewService(businessConfigRepository, resourceRepository, permissionRepository, roleRepository, roleInclusionDefaultRepository, rolePermissionDefaultRepository, userRoleDefaultRepository, userPermissionDefaultRepository, token)
+	permissionService := rbac.NewPermissionService(userPermissionDefaultRepository)
 	rbacService := &Service{
 		Svc:                service,
 		PermissionSvc:      permissionService,
@@ -44,8 +43,8 @@ func Init() *Service {
 		ResourceRepo:       resourceRepository,
 		PermissionRepo:     permissionRepository,
 		RoleRepo:           roleRepository,
-		RolePermissionRepo: rolePermissionRepository,
-		UserRoleRepo:       userRoleRepository,
+		RolePermissionRepo: rolePermissionDefaultRepository,
+		UserRoleRepo:       userRoleDefaultRepository,
 	}
 	return rbacService
 }
@@ -61,8 +60,4 @@ type Service struct {
 	RoleRepo           repository.RoleRepository
 	RolePermissionRepo repository.RolePermissionRepository
 	UserRoleRepo       repository.UserRoleRepository
-}
-
-func convertRepository(repo *repository.UserPermissionDefaultRepository) repository.UserPermissionRepository {
-	return repo
 }

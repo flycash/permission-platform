@@ -48,19 +48,26 @@ var (
 
 		dao.NewRoleInclusionDAO,
 		repository.NewRoleInclusionDefaultRepository,
+		repository.NewRoleInclusionReloadCacheRepository,
+		wire.Bind(new(repository.RoleInclusionRepository), new(*repository.RoleInclusionReloadCacheRepository)),
 
 		dao.NewRolePermissionDAO,
 		repository.NewRolePermissionDefaultRepository,
+		repository.NewRolePermissionReloadCacheRepository,
+		wire.Bind(new(repository.RolePermissionRepository), new(*repository.RolePermissionReloadCacheRepository)),
 
 		dao.NewUserRoleDAO,
 		repository.NewUserRoleDefaultRepository,
+		repository.NewUserRoleReloadCacheRepository,
+		wire.Bind(new(repository.UserRoleRepository), new(*repository.UserRoleReloadCacheRepository)),
 
 		dao.NewUserPermissionDAO,
 		repository.NewUserPermissionDefaultRepository,
 
 		cache.NewUserPermissionCache,
 		repository.NewUserPermissionCachedRepository,
-		convertRepository,
+		wire.Bind(new(repository.UserPermissionRepository), new(*repository.UserPermissionCachedRepository)),
+		wire.Bind(new(repository.UserPermissionCacheReloader), new(*repository.UserPermissionCachedRepository)),
 
 		auditdao.NewUserRoleLogDAO,
 		auditdao.NewOperationLogDAO,
@@ -68,10 +75,6 @@ var (
 		initUserRoleBinlogEventConsumer,
 	)
 )
-
-func convertRepository(repo *repository.UserPermissionCachedRepository) repository.UserPermissionRepository {
-	return repo
-}
 
 func initUserRoleBinlogEventConsumer(dao auditdao.UserRoleLogDAO) *auditevt.UserRoleBinlogEventConsumer {
 	type Consumer struct {

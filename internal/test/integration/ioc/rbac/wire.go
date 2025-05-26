@@ -41,19 +41,18 @@ func Init() *Service {
 		repository.NewRoleRepository,
 		dao.NewRoleInclusionDAO,
 		repository.NewRoleInclusionDefaultRepository,
+		wire.Bind(new(repository.RoleInclusionRepository), new(*repository.RoleInclusionDefaultRepository)),
 		dao.NewRolePermissionDAO,
 		repository.NewRolePermissionDefaultRepository,
+		wire.Bind(new(repository.RolePermissionRepository), new(*repository.RolePermissionDefaultRepository)),
 		dao.NewUserRoleDAO,
 		repository.NewUserRoleDefaultRepository,
+		wire.Bind(new(repository.UserRoleRepository), new(*repository.UserRoleDefaultRepository)),
 		dao.NewUserPermissionDAO,
 		repository.NewUserPermissionDefaultRepository,
-		convertRepository,
+		wire.Bind(new(repository.UserPermissionRepository), new(*repository.UserPermissionDefaultRepository)),
 
 		wire.Struct(new(Service), "*"),
 	)
 	return nil
-}
-
-func convertRepository(repo *repository.UserPermissionDefaultRepository) repository.UserPermissionRepository {
-	return repo
 }
