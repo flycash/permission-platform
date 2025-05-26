@@ -923,7 +923,7 @@ func (x *AttributeDefinition) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AttrDef.ProtoReflect.Descriptor instead.
+// Deprecated: Use AttributeDefinition.ProtoReflect.Descriptor instead.
 func (*AttributeDefinition) Descriptor() ([]byte, []int) {
 	return file_permission_v1_abac_proto_rawDescGZIP(), []int{8}
 }
@@ -3396,7 +3396,7 @@ var (
 		(*SubjectObject)(nil),                                                   // 10: permission.v1.SubjectObject
 		(*ResourceObject)(nil),                                                  // 11: permission.v1.ResourceObject
 		(*EnvironmentObject)(nil),                                               // 12: permission.v1.EnvironmentObject
-		(*AttributeDefinition)(nil),                                             // 13: permission.v1.AttrDef
+		(*AttributeDefinition)(nil),                                             // 13: permission.v1.AttributeDefinition
 		(*BizDefinition)(nil),                                                   // 14: permission.v1.BizDefinition
 		(*PolicyServiceSaveRequest)(nil),                                        // 15: permission.v1.PolicyServiceSaveRequest
 		(*PolicyServiceSaveResponse)(nil),                                       // 16: permission.v1.PolicyServiceSaveResponse
@@ -3448,26 +3448,25 @@ var (
 		(*AttributeDefinitionServiceFindResponse)(nil),                          // 62: permission.v1.AttributeDefinitionServiceFindResponse
 	}
 )
-
 var file_permission_v1_abac_proto_depIdxs = []int32{
 	0,  // 0: permission.v1.Policy.status:type_name -> permission.v1.PolicyStatus
 	2,  // 1: permission.v1.Policy.effect:type_name -> permission.v1.Effect
 	6,  // 2: permission.v1.Policy.rules:type_name -> permission.v1.PolicyRule
-	13, // 3: permission.v1.PolicyRule.attribute_definition:type_name -> permission.v1.AttrDef
+	13, // 3: permission.v1.PolicyRule.attribute_definition:type_name -> permission.v1.AttributeDefinition
 	6,  // 4: permission.v1.PolicyRule.left_rule:type_name -> permission.v1.PolicyRule
 	6,  // 5: permission.v1.PolicyRule.right_rule:type_name -> permission.v1.PolicyRule
 	1,  // 6: permission.v1.PolicyRule.operator:type_name -> permission.v1.RuleOperator
-	13, // 7: permission.v1.SubjectAttributeValue.definition:type_name -> permission.v1.AttrDef
-	13, // 8: permission.v1.ResourceAttributeValue.definition:type_name -> permission.v1.AttrDef
-	13, // 9: permission.v1.EnvironmentAttributeValue.definition:type_name -> permission.v1.AttrDef
+	13, // 7: permission.v1.SubjectAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 8: permission.v1.ResourceAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 9: permission.v1.EnvironmentAttributeValue.definition:type_name -> permission.v1.AttributeDefinition
 	7,  // 10: permission.v1.SubjectObject.attribute_values:type_name -> permission.v1.SubjectAttributeValue
 	8,  // 11: permission.v1.ResourceObject.attribute_values:type_name -> permission.v1.ResourceAttributeValue
 	9,  // 12: permission.v1.EnvironmentObject.attribute_values:type_name -> permission.v1.EnvironmentAttributeValue
-	3,  // 13: permission.v1.AttrDef.data_type:type_name -> permission.v1.DataType
-	4,  // 14: permission.v1.AttrDef.entity_type:type_name -> permission.v1.EntityType
-	13, // 15: permission.v1.BizDefinition.subject_attrs:type_name -> permission.v1.AttrDef
-	13, // 16: permission.v1.BizDefinition.resource_attrs:type_name -> permission.v1.AttrDef
-	13, // 17: permission.v1.BizDefinition.environment_attrs:type_name -> permission.v1.AttrDef
+	3,  // 13: permission.v1.AttributeDefinition.data_type:type_name -> permission.v1.DataType
+	4,  // 14: permission.v1.AttributeDefinition.entity_type:type_name -> permission.v1.EntityType
+	13, // 15: permission.v1.BizDefinition.subject_attrs:type_name -> permission.v1.AttributeDefinition
+	13, // 16: permission.v1.BizDefinition.resource_attrs:type_name -> permission.v1.AttributeDefinition
+	13, // 17: permission.v1.BizDefinition.environment_attrs:type_name -> permission.v1.AttributeDefinition
 	5,  // 18: permission.v1.PolicyServiceSaveRequest.policy:type_name -> permission.v1.Policy
 	5,  // 19: permission.v1.PolicyServiceFirstResponse.policy:type_name -> permission.v1.Policy
 	6,  // 20: permission.v1.PolicyServiceSaveRuleRequest.rule:type_name -> permission.v1.PolicyRule
@@ -3483,8 +3482,8 @@ var file_permission_v1_abac_proto_depIdxs = []int32{
 	9,  // 30: permission.v1.AttributeValueServiceSaveEnvironmentValueRequest.value:type_name -> permission.v1.EnvironmentAttributeValue
 	12, // 31: permission.v1.AttributeValueServiceFindEnvironmentValueResponse.environment:type_name -> permission.v1.EnvironmentObject
 	12, // 32: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse.environment:type_name -> permission.v1.EnvironmentObject
-	13, // 33: permission.v1.AttributeDefinitionServiceSaveRequest.definition:type_name -> permission.v1.AttrDef
-	13, // 34: permission.v1.AttributeDefinitionServiceFirstResponse.definition:type_name -> permission.v1.AttrDef
+	13, // 33: permission.v1.AttributeDefinitionServiceSaveRequest.definition:type_name -> permission.v1.AttributeDefinition
+	13, // 34: permission.v1.AttributeDefinitionServiceFirstResponse.definition:type_name -> permission.v1.AttributeDefinition
 	14, // 35: permission.v1.AttributeDefinitionServiceFindResponse.biz_definition:type_name -> permission.v1.BizDefinition
 	15, // 36: permission.v1.PolicyService.Save:input_type -> permission.v1.PolicyServiceSaveRequest
 	17, // 37: permission.v1.PolicyService.Delete:input_type -> permission.v1.PolicyServiceDeleteRequest

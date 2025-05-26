@@ -35,6 +35,248 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on GetAllPermissionsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAllPermissionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAllPermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAllPermissionsRequestMultiError, or nil if none found.
+func (m *GetAllPermissionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAllPermissionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for BizId
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return GetAllPermissionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAllPermissionsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetAllPermissionsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetAllPermissionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAllPermissionsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAllPermissionsRequestMultiError) AllErrors() []error { return m }
+
+// GetAllPermissionsRequestValidationError is the validation error returned by
+// GetAllPermissionsRequest.Validate if the designated constraints aren't met.
+type GetAllPermissionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAllPermissionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAllPermissionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAllPermissionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAllPermissionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAllPermissionsRequestValidationError) ErrorName() string {
+	return "GetAllPermissionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAllPermissionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAllPermissionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAllPermissionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAllPermissionsRequestValidationError{}
+
+// Validate checks the field values on GetAllPermissionsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetAllPermissionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetAllPermissionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetAllPermissionsResponseMultiError, or nil if none found.
+func (m *GetAllPermissionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetAllPermissionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetUserPermissions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetAllPermissionsResponseValidationError{
+						field:  fmt.Sprintf("UserPermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetAllPermissionsResponseValidationError{
+						field:  fmt.Sprintf("UserPermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetAllPermissionsResponseValidationError{
+					field:  fmt.Sprintf("UserPermissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetAllPermissionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetAllPermissionsResponseMultiError is an error wrapping multiple validation
+// errors returned by GetAllPermissionsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type GetAllPermissionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetAllPermissionsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetAllPermissionsResponseMultiError) AllErrors() []error { return m }
+
+// GetAllPermissionsResponseValidationError is the validation error returned by
+// GetAllPermissionsResponse.Validate if the designated constraints aren't met.
+type GetAllPermissionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetAllPermissionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetAllPermissionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetAllPermissionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetAllPermissionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetAllPermissionsResponseValidationError) ErrorName() string {
+	return "GetAllPermissionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetAllPermissionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetAllPermissionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetAllPermissionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetAllPermissionsResponseValidationError{}
+
 // Validate checks the field values on BusinessConfig with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

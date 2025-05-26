@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"gitee.com/flycash/permission-platform/internal/domain"
+
 	"gitee.com/flycash/permission-platform/internal/event/permission"
 	"gitee.com/flycash/permission-platform/internal/event/session"
 	"gitee.com/flycash/permission-platform/internal/test/ioc"
@@ -60,36 +62,32 @@ func (s *SessionConsumerSuite) TestConsumePermissionEvent() {
 	t := s.T()
 
 	event := permission.UserPermissionEvent{
-		Permissions: map[int64][]permission.UserPermission{
+		Permissions: map[int64]permission.UserPermission{
 			1: {
-				{
-					UserID: 1,
-					BizID:  1,
-					Permissions: []permission.Permission{
-						{
-							Resource: permission.Resource{
-								Key:  "test-resource",
-								Type: "test-type",
-							},
-							Action: "read",
-							Effect: "allow",
+				UserID: 1,
+				BizID:  1,
+				Permissions: []permission.PermissionV1{
+					{
+						Resource: permission.Resource{
+							Key:  "test-resource",
+							Type: "test-type",
 						},
+						Action: "read",
+						Effect: "allow",
 					},
 				},
 			},
 			2: {
-				{
-					UserID: 2,
-					BizID:  1,
-					Permissions: []permission.Permission{
-						{
-							Resource: permission.Resource{
-								Key:  "test-resource",
-								Type: "test-type",
-							},
-							Action: "write",
-							Effect: "allow",
+				UserID: 2,
+				BizID:  1,
+				Permissions: []permission.PermissionV1{
+					{
+						Resource: permission.Resource{
+							Key:  "test-resource",
+							Type: "test-type",
 						},
+						Action: "write",
+						Effect: "allow",
 					},
 				},
 			},
@@ -125,13 +123,31 @@ func (s *SessionConsumerSuite) TestConsumePermissionEvent() {
 		val, err := s.redisClient.Get(ctx, key).Result()
 		require.NoError(t, err)
 
-		var actualPerms []permission.UserPermission
+		var actualPerms []domain.UserPermission
 		err = json.Unmarshal([]byte(val), &actualPerms)
 		require.NoError(t, err)
-		require.Equal(t, expectedPerms, actualPerms)
+		for idx := range expectedPerms.Permissions {
+			require.Equal(t, s.newExpectedPermission(expectedPerms.Permissions[idx], expectedPerms), actualPerms[idx])
+		}
+
 	}
 }
 
 func TestSessionConsumerSuite(t *testing.T) {
 	suite.Run(t, new(SessionConsumerSuite))
+}
+
+func (s *SessionConsumerSuite) newExpectedPermission(perm permission.PermissionV1, userPermission permission.UserPermission) domain.UserPermission {
+	return domain.UserPermission{
+		BizID:  userPermission.BizID,
+		UserID: userPermission.UserID,
+		Permission: domain.Permission{
+			Resource: domain.Resource{
+				Type: perm.Resource.Type,
+				Key:  perm.Resource.Key,
+			},
+			Action: perm.Action,
+		},
+		Effect: domain.Effect(perm.Effect),
+	}
 }

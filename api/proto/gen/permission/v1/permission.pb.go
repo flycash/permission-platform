@@ -421,7 +421,6 @@ var (
 		nil,                             // 6: permission.v1.CheckPermissionRequest.EnvironmentAttributesEntry
 	}
 )
-
 var file_permission_v1_permission_proto_depIdxs = []int32{
 	0, // 0: permission.v1.CheckPermissionRequest.permission:type_name -> permission.v1.Permission
 	4, // 1: permission.v1.CheckPermissionRequest.subject_attributes:type_name -> permission.v1.CheckPermissionRequest.SubjectAttributesEntry

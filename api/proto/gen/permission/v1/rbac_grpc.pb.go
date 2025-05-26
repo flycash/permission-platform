@@ -53,6 +53,7 @@ const (
 	RBACService_GrantUserPermission_FullMethodName  = "/permission.v1.RBACService/GrantUserPermission"
 	RBACService_RevokeUserPermission_FullMethodName = "/permission.v1.RBACService/RevokeUserPermission"
 	RBACService_ListUserPermissions_FullMethodName  = "/permission.v1.RBACService/ListUserPermissions"
+	RBACService_GetAllPermissions_FullMethodName    = "/permission.v1.RBACService/GetAllPermissions"
 )
 
 // RBACServiceClient is the client API for RBACService service.
@@ -100,6 +101,8 @@ type RBACServiceClient interface {
 	GrantUserPermission(ctx context.Context, in *GrantUserPermissionRequest, opts ...grpc.CallOption) (*GrantUserPermissionResponse, error)
 	RevokeUserPermission(ctx context.Context, in *RevokeUserPermissionRequest, opts ...grpc.CallOption) (*RevokeUserPermissionResponse, error)
 	ListUserPermissions(ctx context.Context, in *ListUserPermissionsRequest, opts ...grpc.CallOption) (*ListUserPermissionsResponse, error)
+	// 获取用户所有权限
+	GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error)
 }
 
 type rBACServiceClient struct {
@@ -440,6 +443,16 @@ func (c *rBACServiceClient) ListUserPermissions(ctx context.Context, in *ListUse
 	return out, nil
 }
 
+func (c *rBACServiceClient) GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAllPermissionsResponse)
+	err := c.cc.Invoke(ctx, RBACService_GetAllPermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RBACServiceServer is the server API for RBACService service.
 // All implementations should embed UnimplementedRBACServiceServer
 // for forward compatibility.
@@ -485,6 +498,8 @@ type RBACServiceServer interface {
 	GrantUserPermission(context.Context, *GrantUserPermissionRequest) (*GrantUserPermissionResponse, error)
 	RevokeUserPermission(context.Context, *RevokeUserPermissionRequest) (*RevokeUserPermissionResponse, error)
 	ListUserPermissions(context.Context, *ListUserPermissionsRequest) (*ListUserPermissionsResponse, error)
+	// 获取用户所有权限
+	GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error)
 }
 
 // UnimplementedRBACServiceServer should be embedded to have
@@ -624,6 +639,10 @@ func (UnimplementedRBACServiceServer) RevokeUserPermission(context.Context, *Rev
 
 func (UnimplementedRBACServiceServer) ListUserPermissions(context.Context, *ListUserPermissionsRequest) (*ListUserPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserPermissions not implemented")
+}
+
+func (UnimplementedRBACServiceServer) GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPermissions not implemented")
 }
 func (UnimplementedRBACServiceServer) testEmbeddedByValue() {}
 
@@ -1239,6 +1258,24 @@ func _RBACService_ListUserPermissions_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RBACService_GetAllPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RBACServiceServer).GetAllPermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RBACService_GetAllPermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RBACServiceServer).GetAllPermissions(ctx, req.(*GetAllPermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RBACService_ServiceDesc is the grpc.ServiceDesc for RBACService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1377,6 +1414,10 @@ var RBACService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserPermissions",
 			Handler:    _RBACService_ListUserPermissions_Handler,
+		},
+		{
+			MethodName: "GetAllPermissions",
+			Handler:    _RBACService_GetAllPermissions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

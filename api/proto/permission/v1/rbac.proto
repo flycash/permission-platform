@@ -55,6 +55,16 @@ service RBACService {
   rpc GrantUserPermission(GrantUserPermissionRequest) returns (GrantUserPermissionResponse);
   rpc RevokeUserPermission(RevokeUserPermissionRequest) returns (RevokeUserPermissionResponse);
   rpc ListUserPermissions(ListUserPermissionsRequest) returns (ListUserPermissionsResponse);
+  // 获取用户所有权限
+  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
+}
+
+message GetAllPermissionsRequest {
+  int64 biz_id = 1;
+  int64 user_id = 2;
+}
+message GetAllPermissionsResponse {
+  repeated UserPermission user_permissions = 1;
 }
 
 // ==== 业务配置相关消息定义 ====
