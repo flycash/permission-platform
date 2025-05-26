@@ -76,7 +76,7 @@ func InitMultipleLevelCache(
 	// 	const day = 24 * time.Hour
 	// 	const defaultExpiration = 36500 * day
 	// 	// 遍历热点用户信息
-	// 	hotUsers := *hotUsersPtr.Load()
+	// 	hotUsers := *hotUsersPtr.Reload()
 	// 	for i := range hotUsers {
 	// 		// 直接从数据库中加载数据
 	// 		perms, err2 := repo.GetAllUserPermissions(ctx, hotUsers[i].BizID, hotUsers[i].ID)

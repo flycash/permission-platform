@@ -12,11 +12,11 @@ var _ RolePermissionRepository = (*RolePermissionReloadCacheRepository)(nil)
 
 // RolePermissionReloadCacheRepository 角色权限关系仓储实现
 type RolePermissionReloadCacheRepository struct {
-	repo               *RolePermissionDefaultRepository
-	roleInclusionDAO   dao.RoleInclusionDAO
-	userRoleDAO        dao.UserRoleDAO
-	userPermissionRepo *UserPermissionCachedRepository
-	logger             *elog.Component
+	repo             *RolePermissionDefaultRepository
+	roleInclusionDAO dao.RoleInclusionDAO
+	userRoleDAO      dao.UserRoleDAO
+	cacheReloader    UserPermissionCacheReloader
+	logger           *elog.Component
 }
 
 // NewRolePermissionReloadCacheRepository 创建可以重载缓存的角色权限关系仓储实例
@@ -24,14 +24,14 @@ func NewRolePermissionReloadCacheRepository(
 	repo *RolePermissionDefaultRepository,
 	roleInclusionDAO dao.RoleInclusionDAO,
 	userRoleRepoDAO dao.UserRoleDAO,
-	userPermissionRepo *UserPermissionCachedRepository,
+	cacheReloader UserPermissionCacheReloader,
 ) *RolePermissionReloadCacheRepository {
 	return &RolePermissionReloadCacheRepository{
-		repo:               repo,
-		roleInclusionDAO:   roleInclusionDAO,
-		userRoleDAO:        userRoleRepoDAO,
-		userPermissionRepo: userPermissionRepo,
-		logger:             elog.DefaultLogger.With(elog.FieldName("RolePermissionReloadCacheRepository")),
+		repo:             repo,
+		roleInclusionDAO: roleInclusionDAO,
+		userRoleDAO:      userRoleRepoDAO,
+		cacheReloader:    cacheReloader,
+		logger:           elog.DefaultLogger.With(elog.FieldName("RolePermissionReloadCacheRepository")),
 	}
 }
 
@@ -40,7 +40,7 @@ func (r *RolePermissionReloadCacheRepository) Create(ctx context.Context, rolePe
 	if err != nil {
 		return domain.RolePermission{}, err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, r.getAffectedUsers(ctx, created.BizID, created.Role.ID)); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, r.getAffectedUsers(ctx, created.BizID, created.Role.ID)); err1 != nil {
 		r.logger.Warn("创建角色权限关联关系成功后，重新加载所有受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", created.BizID),
@@ -73,7 +73,7 @@ func (r *RolePermissionReloadCacheRepository) DeleteByBizIDAndID(ctx context.Con
 	if err != nil {
 		return err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, r.getAffectedUsers(ctx, deleted.BizID, deleted.Role.ID)); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, r.getAffectedUsers(ctx, deleted.BizID, deleted.Role.ID)); err1 != nil {
 		r.logger.Warn("删除角色权限关联关系成功后，重新加载所有受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", deleted.BizID),

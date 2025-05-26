@@ -11,20 +11,20 @@ var _ UserRoleRepository = (*UserRoleReloadCacheRepository)(nil)
 
 // UserRoleReloadCacheRepository 用户角色关系仓储实现
 type UserRoleReloadCacheRepository struct {
-	repo               *UserRoleDefaultRepository
-	userPermissionRepo *UserPermissionCachedRepository
-	logger             *elog.Component
+	repo          *UserRoleDefaultRepository
+	cacheReloader UserPermissionCacheReloader
+	logger        *elog.Component
 }
 
 // NewUserRoleReloadCacheRepository 创建可以重载缓存的用户角色关系仓储实例
 func NewUserRoleReloadCacheRepository(
 	repo *UserRoleDefaultRepository,
-	userPermissionRepo *UserPermissionCachedRepository,
+	cacheReloader UserPermissionCacheReloader,
 ) *UserRoleReloadCacheRepository {
 	return &UserRoleReloadCacheRepository{
-		repo:               repo,
-		userPermissionRepo: userPermissionRepo,
-		logger:             elog.DefaultLogger.With(elog.FieldName("UserRoleReloadCacheRepository")),
+		repo:          repo,
+		cacheReloader: cacheReloader,
+		logger:        elog.DefaultLogger.With(elog.FieldName("UserRoleReloadCacheRepository")),
 	}
 }
 
@@ -33,7 +33,7 @@ func (r *UserRoleReloadCacheRepository) Create(ctx context.Context, userRole dom
 	if err != nil {
 		return domain.UserRole{}, err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, []domain.User{{ID: userRole.UserID, BizID: userRole.BizID}}); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, []domain.User{{ID: userRole.UserID, BizID: userRole.BizID}}); err1 != nil {
 		r.logger.Warn("创建用户角色成功后，重新加载受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", created.BizID),
@@ -56,7 +56,7 @@ func (r *UserRoleReloadCacheRepository) DeleteByBizIDAndID(ctx context.Context, 
 	if err != nil {
 		return err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, []domain.User{{ID: deleted.UserID, BizID: deleted.BizID}}); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, []domain.User{{ID: deleted.UserID, BizID: deleted.BizID}}); err1 != nil {
 		r.logger.Warn("删除用户角色成功后，重新加载受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", bizID),

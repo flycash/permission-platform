@@ -11,23 +11,23 @@ var _ RoleInclusionRepository = (*RoleInclusionReloadCacheRepository)(nil)
 
 // RoleInclusionReloadCacheRepository 角色包含关系仓储实现
 type RoleInclusionReloadCacheRepository struct {
-	repo               *RoleInclusionDefaultRepository
-	userRoleRepo       *UserRoleDefaultRepository
-	userPermissionRepo *UserPermissionCachedRepository
-	logger             *elog.Component
+	repo          *RoleInclusionDefaultRepository
+	userRoleRepo  *UserRoleDefaultRepository
+	cacheReloader UserPermissionCacheReloader
+	logger        *elog.Component
 }
 
 // NewRoleInclusionReloadCacheRepository 创建可以重载缓存的角色包含关系仓储实例
 func NewRoleInclusionReloadCacheRepository(
 	repo *RoleInclusionDefaultRepository,
 	userRoleRepo *UserRoleDefaultRepository,
-	userPermissionRepo *UserPermissionCachedRepository,
+	cacheReloader UserPermissionCacheReloader,
 ) *RoleInclusionReloadCacheRepository {
 	return &RoleInclusionReloadCacheRepository{
-		repo:               repo,
-		userRoleRepo:       userRoleRepo,
-		userPermissionRepo: userPermissionRepo,
-		logger:             elog.DefaultLogger.With(elog.FieldName("RoleInclusionReloadCacheRepository")),
+		repo:          repo,
+		userRoleRepo:  userRoleRepo,
+		cacheReloader: cacheReloader,
+		logger:        elog.DefaultLogger.With(elog.FieldName("RoleInclusionReloadCacheRepository")),
 	}
 }
 
@@ -36,7 +36,7 @@ func (r *RoleInclusionReloadCacheRepository) Create(ctx context.Context, roleInc
 	if err != nil {
 		return domain.RoleInclusion{}, err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, r.getAffectedUsers(ctx, created.BizID, created.IncludingRole.ID)); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, r.getAffectedUsers(ctx, created.BizID, created.IncludingRole.ID)); err1 != nil {
 		r.logger.Warn("创建角色包含关系成功后，重新加载所有受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", created.BizID),
@@ -77,7 +77,7 @@ func (r *RoleInclusionReloadCacheRepository) DeleteByBizIDAndID(ctx context.Cont
 	if err != nil {
 		return err
 	}
-	if err1 := r.userPermissionRepo.ReloadCache(ctx, r.getAffectedUsers(ctx, deleted.BizID, deleted.IncludingRole.ID)); err1 != nil {
+	if err1 := r.cacheReloader.Reload(ctx, r.getAffectedUsers(ctx, deleted.BizID, deleted.IncludingRole.ID)); err1 != nil {
 		r.logger.Warn("删除角色包含关系成功后，重新加载所有受影响用户的缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", deleted.BizID),

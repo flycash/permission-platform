@@ -8,7 +8,14 @@ import (
 	"github.com/gotomicro/ego/core/elog"
 )
 
-var _ UserPermissionRepository = (*UserPermissionCachedRepository)(nil)
+var (
+	_ UserPermissionRepository    = (*UserPermissionCachedRepository)(nil)
+	_ UserPermissionCacheReloader = (*UserPermissionCachedRepository)(nil)
+)
+
+type UserPermissionCacheReloader interface {
+	Reload(ctx context.Context, users []domain.User) error
+}
 
 type UserPermissionCachedRepository struct {
 	repo   *UserPermissionDefaultRepository
@@ -33,7 +40,7 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 	if err != nil {
 		return domain.UserPermission{}, err
 	}
-	if err1 := r.ReloadCache(ctx, []domain.User{{ID: created.UserID, BizID: created.BizID}}); err1 != nil {
+	if err1 := r.Reload(ctx, []domain.User{{ID: created.UserID, BizID: created.BizID}}); err1 != nil {
 		r.logger.Warn("创建用户权限成功后重新加载缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", created.BizID),
@@ -43,7 +50,7 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 	return created, err
 }
 
-func (r *UserPermissionCachedRepository) ReloadCache(ctx context.Context, users []domain.User) error {
+func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []domain.User) error {
 	for i := range users {
 		perms, err := r.repo.GetAllUserPermissions(ctx, users[i].BizID, users[i].ID)
 		if err != nil {
@@ -93,7 +100,7 @@ func (r *UserPermissionCachedRepository) DeleteByBizIDAndID(ctx context.Context,
 	if err != nil {
 		return err
 	}
-	if err1 := r.ReloadCache(ctx, []domain.User{{ID: deleted.UserID, BizID: deleted.BizID}}); err1 != nil {
+	if err1 := r.Reload(ctx, []domain.User{{ID: deleted.UserID, BizID: deleted.BizID}}); err1 != nil {
 		r.logger.Warn("删除用户权限成功后重新加载缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", bizID),
