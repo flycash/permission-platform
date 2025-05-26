@@ -1,5 +1,20 @@
 package permission
 
+import (
+	"context"
+
+	"gitee.com/flycash/permission-platform/internal/pkg/mqx"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+)
+
+type UserPermissionEventProducer interface {
+	Produce(ctx context.Context, event UserPermissionEvent) error
+}
+
+func NewUserPermissionEventProducer(producer *kafka.Producer, topic string) (UserPermissionEventProducer, error) {
+	return mqx.NewGeneralProducer[UserPermissionEvent](producer, topic)
+}
+
 type UserPermissionEvent struct {
 	// uid => 全部权限
 	Permissions map[int64]UserPermission `json:"permissions"`

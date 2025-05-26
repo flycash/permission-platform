@@ -9,12 +9,14 @@ package ioc
 import (
 	rbac2 "gitee.com/flycash/permission-platform/internal/api/grpc/rbac"
 	audit2 "gitee.com/flycash/permission-platform/internal/event/audit"
+	"gitee.com/flycash/permission-platform/internal/event/permission"
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	"gitee.com/flycash/permission-platform/internal/service/rbac"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/wire"
 	"github.com/gotomicro/ego/core/econf"
 )
@@ -44,7 +46,9 @@ func InitApp() *ioc.App {
 	v := ioc.InitCacheKeyFunc()
 	cacheCache := ioc.InitMultipleLevelCache(cmdable, ecacheCache, userPermissionDefaultRepository, component, v)
 	userPermissionCache := cache.NewUserPermissionCache(cacheCache, v)
-	userPermissionCachedRepository := repository.NewUserPermissionCachedRepository(userPermissionDefaultRepository, userPermissionCache)
+	producer := ioc.InitKafkaProducer()
+	userPermissionEventProducer := initUserPermissionEventProducer(producer)
+	userPermissionCachedRepository := repository.NewUserPermissionCachedRepository(userPermissionDefaultRepository, userPermissionCache, userPermissionEventProducer)
 	roleInclusionReloadCacheRepository := repository.NewRoleInclusionReloadCacheRepository(roleInclusionDefaultRepository, userRoleDefaultRepository, userPermissionCachedRepository)
 	rolePermissionDefaultRepository := repository.NewRolePermissionDefaultRepository(rolePermissionDAO)
 	rolePermissionReloadCacheRepository := repository.NewRolePermissionReloadCacheRepository(rolePermissionDefaultRepository, roleInclusionDAO, userRoleDAO, userPermissionCachedRepository)
@@ -69,8 +73,10 @@ func InitApp() *ioc.App {
 // wire.go:
 
 var (
-	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc)
-	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionDefaultRepository, repository.NewRoleInclusionReloadCacheRepository, wire.Bind(new(repository.RoleInclusionRepository), new(*repository.RoleInclusionReloadCacheRepository)), dao.NewRolePermissionDAO, repository.NewRolePermissionDefaultRepository, repository.NewRolePermissionReloadCacheRepository, wire.Bind(new(repository.RolePermissionRepository), new(*repository.RolePermissionReloadCacheRepository)), dao.NewUserRoleDAO, repository.NewUserRoleDefaultRepository, repository.NewUserRoleReloadCacheRepository, wire.Bind(new(repository.UserRoleRepository), new(*repository.UserRoleReloadCacheRepository)), dao.NewUserPermissionDAO, repository.NewUserPermissionDefaultRepository, cache.NewUserPermissionCache, repository.NewUserPermissionCachedRepository, wire.Bind(new(repository.UserPermissionRepository), new(*repository.UserPermissionCachedRepository)), wire.Bind(new(repository.UserPermissionCacheReloader), new(*repository.UserPermissionCachedRepository)), audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer)
+	baseSet    = wire.NewSet(ioc.InitDB, ioc.InitEtcdClient, ioc.InitIDGenerator, ioc.InitRedisClient, ioc.InitLocalCache, ioc.InitRedisCmd, ioc.InitJWTToken, ioc.InitMultipleLevelCache, ioc.InitCacheKeyFunc, ioc.InitKafkaProducer)
+	rbacSvcSet = wire.NewSet(rbac.NewService, rbac.NewPermissionService, dao.NewBusinessConfigDAO, repository.NewBusinessConfigRepository, dao.NewResourceDAO, repository.NewResourceRepository, dao.NewPermissionDAO, repository.NewPermissionRepository, dao.NewRoleDAO, repository.NewRoleRepository, dao.NewRoleInclusionDAO, repository.NewRoleInclusionDefaultRepository, repository.NewRoleInclusionReloadCacheRepository, wire.Bind(new(repository.RoleInclusionRepository), new(*repository.RoleInclusionReloadCacheRepository)), dao.NewRolePermissionDAO, repository.NewRolePermissionDefaultRepository, repository.NewRolePermissionReloadCacheRepository, wire.Bind(new(repository.RolePermissionRepository), new(*repository.RolePermissionReloadCacheRepository)), dao.NewUserRoleDAO, repository.NewUserRoleDefaultRepository, repository.NewUserRoleReloadCacheRepository, wire.Bind(new(repository.UserRoleRepository), new(*repository.UserRoleReloadCacheRepository)), dao.NewUserPermissionDAO, repository.NewUserPermissionDefaultRepository, cache.NewUserPermissionCache, repository.NewUserPermissionCachedRepository, wire.Bind(new(repository.UserPermissionRepository), new(*repository.UserPermissionCachedRepository)), wire.Bind(new(repository.UserPermissionCacheReloader), new(*repository.UserPermissionCachedRepository)), audit.NewUserRoleLogDAO, audit.NewOperationLogDAO, initUserRoleBinlogEventConsumer,
+		initUserPermissionEventProducer,
+	)
 )
 
 func initUserRoleBinlogEventConsumer(dao2 audit.UserRoleLogDAO) *audit2.UserRoleBinlogEventConsumer {
@@ -91,4 +97,20 @@ func initUserRoleBinlogEventConsumer(dao2 audit.UserRoleLogDAO) *audit2.UserRole
 		panic(err)
 	}
 	return eventConsumer
+}
+
+func initUserPermissionEventProducer(producer *kafka.Producer) permission.UserPermissionEventProducer {
+	type Config struct {
+		Topic string `yaml:"topic"`
+	}
+	var cfg Config
+	err := econf.UnmarshalKey("userPermissionEvent", &cfg)
+	if err != nil {
+		panic(err)
+	}
+	p, err := permission.NewUserPermissionEventProducer(producer, cfg.Topic)
+	if err != nil {
+		panic(err)
+	}
+	return p
 }

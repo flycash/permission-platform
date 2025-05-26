@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
+	permissionevt "gitee.com/flycash/permission-platform/internal/event/permission"
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
+	"github.com/ecodeclub/ekit/slice"
 	"github.com/gotomicro/ego/core/elog"
 )
 
@@ -18,20 +20,23 @@ type UserPermissionCacheReloader interface {
 }
 
 type UserPermissionCachedRepository struct {
-	repo   *UserPermissionDefaultRepository
-	cache  cache.UserPermissionCache
-	logger *elog.Component
+	repo     *UserPermissionDefaultRepository
+	cache    cache.UserPermissionCache
+	producer permissionevt.UserPermissionEventProducer
+	logger   *elog.Component
 }
 
 // NewUserPermissionCachedRepository 添加了缓存的仓储
 func NewUserPermissionCachedRepository(
 	repo *UserPermissionDefaultRepository,
 	cache cache.UserPermissionCache,
+	producer permissionevt.UserPermissionEventProducer,
 ) *UserPermissionCachedRepository {
 	return &UserPermissionCachedRepository{
-		repo:   repo,
-		cache:  cache,
-		logger: elog.DefaultLogger.With(elog.FieldName("UserPermissionCachedRepository")),
+		repo:     repo,
+		cache:    cache,
+		producer: producer,
+		logger:   elog.DefaultLogger.With(elog.FieldName("UserPermissionCachedRepository")),
 	}
 }
 
@@ -51,6 +56,8 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 }
 
 func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []domain.User) error {
+	var evt permissionevt.UserPermissionEvent
+	evt.Permissions = make(map[int64]permissionevt.UserPermission)
 	for i := range users {
 		perms, err := r.repo.GetAll(ctx, users[i].BizID, users[i].ID)
 		if err != nil {
@@ -63,7 +70,29 @@ func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []dom
 				elog.Any("bizID", users[i].BizID),
 				elog.Any("userID", users[i].ID),
 			)
+		} else {
+			// 重载用户权限成功后，添加到”用户权限“事件
+			evt.Permissions[users[i].ID] = permissionevt.UserPermission{
+				UserID: users[i].ID,
+				BizID:  users[i].BizID,
+				Permissions: slice.Map(perms, func(_ int, src domain.UserPermission) permissionevt.Permission {
+					return permissionevt.Permission{
+						Resource: permissionevt.Resource{
+							Key:  src.Permission.Resource.Key,
+							Type: src.Permission.Resource.Type,
+						},
+						Action: src.Permission.Action,
+						Effect: src.Effect.String(),
+					}
+				}),
+			}
 		}
+	}
+	if err := r.producer.Produce(ctx, evt); err != nil {
+		r.logger.Warn("发送用户权限事件失败",
+			elog.FieldErr(err),
+			elog.Any("evt", evt),
+		)
 	}
 	return nil
 }
