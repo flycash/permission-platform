@@ -79,7 +79,7 @@ func InitMultipleLevelCache(
 	// 	hotUsers := *hotUsersPtr.Reload()
 	// 	for i := range hotUsers {
 	// 		// 直接从数据库中加载数据
-	// 		perms, err2 := repo.GetAllUserPermissions(ctx, hotUsers[i].BizID, hotUsers[i].ID)
+	// 		perms, err2 := repo.GetAll(ctx, hotUsers[i].BizID, hotUsers[i].ID)
 	// 		if err2 == nil {
 	// 			// 封装为entry
 	// 			val, _ := json.Marshal(perms)
@@ -146,7 +146,7 @@ func (h *HotUserLoader) LoadUserPermissionsFromDB(ctx context.Context) ([]*cache
 	entries := make([]*cache.Entry, 0, len(hotUsers))
 	for i := range hotUsers {
 		// 直接从数据库中加载数据
-		perms, err := h.repo.GetAllUserPermissions(ctx, hotUsers[i].BizID, hotUsers[i].ID)
+		perms, err := h.repo.GetAll(ctx, hotUsers[i].BizID, hotUsers[i].ID)
 		if err == nil {
 			// 封装为entry
 			val, _ := json.Marshal(perms)

@@ -30,7 +30,7 @@ func NewPermissionService(repo repository.UserPermissionRepository) PermissionSe
 func (s *permissionService) Check(ctx context.Context, bizID, userID int64, resource domain.Resource, actions []string) (bool, error) {
 	// 拿到用户的所有权限，看一下有没有我需要的权限
 	// allow or deny
-	permissions, err := s.repo.GetAllUserPermissions(ctx, bizID, userID)
+	permissions, err := s.repo.GetAll(ctx, bizID, userID)
 	if err != nil {
 		return false, err
 	}
