@@ -25,8 +25,8 @@ type UserPermissionRepository interface {
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 
-	// GetAllUserPermissions 获取用户的所有权限，包括个人权限、个人拥有的角色（及包含的角色）对应的权限
-	GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
+	// GetAll 获取用户的所有权限，包括个人权限、个人拥有的角色（及包含的角色）对应的权限
+	GetAll(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error)
 }
 
 // UserPermissionDefaultRepository 用户权限关系仓储实现
@@ -134,7 +134,7 @@ func (r *UserPermissionDefaultRepository) toDomain(up dao.UserPermission) domain
 	}
 }
 
-func (r *UserPermissionDefaultRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+func (r *UserPermissionDefaultRepository) GetAll(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	permissions, err := r.userPermissionDAO.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
 		return nil, err

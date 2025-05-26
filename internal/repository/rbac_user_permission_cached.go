@@ -52,7 +52,7 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 
 func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []domain.User) error {
 	for i := range users {
-		perms, err := r.repo.GetAllUserPermissions(ctx, users[i].BizID, users[i].ID)
+		perms, err := r.repo.GetAll(ctx, users[i].BizID, users[i].ID)
 		if err != nil {
 			return err
 		}
@@ -110,13 +110,13 @@ func (r *UserPermissionCachedRepository) DeleteByBizIDAndID(ctx context.Context,
 	return nil
 }
 
-func (r *UserPermissionCachedRepository) GetAllUserPermissions(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
+func (r *UserPermissionCachedRepository) GetAll(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	perms, err := r.cache.Get(ctx, bizID, userID)
 	if err == nil {
 		return perms, nil
 	}
 
-	perms, err = r.repo.GetAllUserPermissions(ctx, bizID, userID)
+	perms, err = r.repo.GetAll(ctx, bizID, userID)
 	if err != nil {
 		r.logger.Error("从数据库中查找用户全部权限失败",
 			elog.FieldErr(err),
