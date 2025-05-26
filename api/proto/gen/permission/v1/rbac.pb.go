@@ -4198,6 +4198,7 @@ var (
 		(*Permission)(nil),                   // 75: permission.v1.Permission
 	}
 )
+
 var file_permission_v1_rbac_proto_depIdxs = []int32{
 	67, // 0: permission.v1.GetAllPermissionsResponse.user_permissions:type_name -> permission.v1.UserPermission
 	2,  // 1: permission.v1.CreateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig

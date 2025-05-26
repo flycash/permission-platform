@@ -9,11 +9,11 @@ import (
 	"github.com/gotomicro/ego/core/elog"
 )
 
-type ctxKey string
+type CtxKey string
 
 const (
-	bizIDKey ctxKey = "biz-id"
-	uidKey   ctxKey = "uid"
+	bizIDKey CtxKey = "biz-id"
+	uidKey   CtxKey = "uid"
 	produce  string = "produce"
 )
 
@@ -112,6 +112,14 @@ func (p *AccessProducer) Produce(ctx context.Context, msg *kafka.Message, delive
 
 func (p *AccessProducer) action() string {
 	return p.actions[produce]
+}
+
+func WithBizID(ctx context.Context, bizID string) context.Context {
+	return context.WithValue(ctx, bizIDKey, bizID)
+}
+
+func WithUID(ctx context.Context, uid string) context.Context {
+	return context.WithValue(ctx, uidKey, uid)
 }
 
 func getBizID(ctx context.Context) (int64, error) {

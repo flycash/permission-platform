@@ -3448,6 +3448,7 @@ var (
 		(*AttributeDefinitionServiceFindResponse)(nil),                          // 62: permission.v1.AttributeDefinitionServiceFindResponse
 	}
 )
+
 var file_permission_v1_abac_proto_depIdxs = []int32{
 	0,  // 0: permission.v1.Policy.status:type_name -> permission.v1.PolicyStatus
 	2,  // 1: permission.v1.Policy.effect:type_name -> permission.v1.Effect

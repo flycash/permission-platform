@@ -18,6 +18,7 @@ import (
 const (
 	number36       = 36
 	defaultTimeout = 5 * time.Second
+	permissionName = "permission"
 )
 
 type Consumer struct {
@@ -58,8 +59,21 @@ func (c *Consumer) Consume(ctx context.Context) {
 		return
 	}
 	vals := make([]any, 0, number36)
+	sessionIDMap, err := c.getSessionIDMap(ctx, evt)
+	if err != nil {
+		c.logger.Error("获取sessioniID失败",
+			elog.FieldErr(err),
+			elog.Any("msg", msg))
+		return
+	}
+
+	pipeline := c.client.Pipeline()
 	for uid := range evt.Permissions {
-		key := c.key(uid)
+		sessionID, ok := sessionIDMap[fmt.Sprintf("%d", uid)]
+		if !ok {
+			continue
+		}
+		key := c.key(sessionID)
 		userPermission := evt.Permissions[uid]
 		domainPermissions := slice.Map(userPermission.Permissions, func(_ int, src permission.PermissionV1) domain.UserPermission {
 			return domain.UserPermission{
@@ -84,21 +98,35 @@ func (c *Consumer) Consume(ctx context.Context) {
 			return
 		}
 		vals = append(vals, key, string(permissionByte))
+		pipeline.HSet(ctx, c.key(sessionID), key, string(permissionByte))
 	}
-	err = c.client.MSet(ctx, vals...).Err()
+	_, err = pipeline.Exec(ctx)
 	if err != nil {
-		c.logger.Error("设置缓存消息失败",
-			elog.FieldErr(err), elog.Any("msg", msg))
-		return
-	}
-	_, err = c.consumer.CommitMessage(msg)
-	if err != nil {
-		c.logger.Error("提交信息失败",
-			elog.FieldErr(err), elog.Any("msg", msg))
-		return
+		c.logger.Error("保存到redis失败",
+			elog.FieldErr(err),
+			elog.Any("msg", msg))
 	}
 }
 
-func (c *Consumer) key(uid int64) string {
-	return fmt.Sprintf("permission:session:%d", uid)
+func (c *Consumer) getSessionIDMap(ctx context.Context, evt permission.UserPermissionEvent) (map[string]string, error) {
+	uids := make([]string, 0, len(evt.Permissions))
+	for uid := range evt.Permissions {
+		uids = append(uids, fmt.Sprintf("%d", uid))
+	}
+	sliceRes, err := c.client.MGet(ctx, uids...).Result()
+	if err != nil {
+		return nil, err
+	}
+	res := make(map[string]string, len(uids))
+	for idx := range uids {
+		v, ok := sliceRes[idx].(string)
+		if ok {
+			res[uids[idx]] = v
+		}
+	}
+	return res, nil
+}
+
+func (c *Consumer) key(sessionID string) string {
+	return fmt.Sprintf("session:%s", sessionID)
 }

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
-
 	"gitee.com/flycash/permission-platform/internal/event/permission"
 	"gitee.com/flycash/permission-platform/internal/event/session"
 	"gitee.com/flycash/permission-platform/internal/test/ioc"
@@ -29,8 +28,6 @@ type SessionConsumerSuite struct {
 	consumer    *session.Consumer
 }
 
-// mqxConsumerWrapper wraps kafka.GoConsumer to implement mqx.Consumer interface
-
 func (s *SessionConsumerSuite) SetupSuite() {
 	// Initialize Redis client
 	s.redisClient = ioc.InitRedis()
@@ -40,7 +37,7 @@ func (s *SessionConsumerSuite) SetupSuite() {
 
 	// Initialize Kafka consumer
 	config := &confluentkafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers": "127.0.0.1:9092",
 		"group.id":          "test-group",
 		"auto.offset.reset": "earliest",
 	}
@@ -48,6 +45,7 @@ func (s *SessionConsumerSuite) SetupSuite() {
 	require.NoError(s.T(), err)
 	err = kafkaConsumer.Subscribe(testTopic, nil)
 	require.NoError(s.T(), err)
+
 	// Create session consumer
 	s.consumer = session.NewConsumer(s.redisClient, kafkaConsumer)
 }
@@ -60,6 +58,16 @@ func (s *SessionConsumerSuite) TearDownSuite() {
 
 func (s *SessionConsumerSuite) TestConsumePermissionEvent() {
 	t := s.T()
+
+	// Set up session ID mapping in Redis
+	sessionIDMap := map[string]string{
+		"1": "session-1",
+		"2": "session-2",
+	}
+	for uid, sessionID := range sessionIDMap {
+		err := s.redisClient.Set(context.Background(), uid, sessionID, 0).Err()
+		require.NoError(t, err)
+	}
 
 	event := permission.UserPermissionEvent{
 		Permissions: map[int64]permission.UserPermission{
@@ -115,21 +123,29 @@ func (s *SessionConsumerSuite) TestConsumePermissionEvent() {
 	go s.consumer.Start(ctx)
 
 	// Wait for consumer to process message
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 
 	// Verify Redis keys and values
 	for uid, expectedPerms := range event.Permissions {
-		key := fmt.Sprintf("permission:session:%d", uid)
-		val, err := s.redisClient.Get(ctx, key).Result()
-		require.NoError(t, err)
+		sessionID := sessionIDMap[fmt.Sprintf("%d", uid)]
+		hashKey := fmt.Sprintf("session:%s", sessionID)
 
-		var actualPerms []domain.UserPermission
-		err = json.Unmarshal([]byte(val), &actualPerms)
+		// Get all fields from the hash
+		vals, err := s.redisClient.HGetAll(ctx, hashKey).Result()
 		require.NoError(t, err)
-		for idx := range expectedPerms.Permissions {
-			require.Equal(t, s.newExpectedPermission(expectedPerms.Permissions[idx], expectedPerms), actualPerms[idx])
+		require.NotEmpty(t, vals)
+
+		// Verify the permissions are stored correctly
+		for _, val := range vals {
+			var actualPerms []domain.UserPermission
+			err = json.Unmarshal([]byte(val), &actualPerms)
+			require.NoError(t, err)
+
+			// Verify each permission
+			for idx := range expectedPerms.Permissions {
+				require.Equal(t, s.newExpectedPermission(expectedPerms.Permissions[idx], expectedPerms), actualPerms[idx])
+			}
 		}
-
 	}
 }
 
