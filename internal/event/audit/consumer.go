@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"gitee.com/flycash/permission-platform/internal/pkg/canalx"
 	"gitee.com/flycash/permission-platform/internal/pkg/mqx"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
-	"gitee.com/flycash/permission-platform/pkg/canalx"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/ecodeclub/ekit/slice"
 	"github.com/gotomicro/ego/core/elog"

@@ -46,6 +46,9 @@ userRoleBinlogEvent:
   consumer:
     groupId: "user_roles_binlog_consumer_group"
 
+userPermissionEvent:
+  topic: "user_permission_events"
+
 cache:
   local:
     capacity: 1000000

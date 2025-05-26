@@ -5,12 +5,14 @@ package ioc
 import (
 	rbacgrpc "gitee.com/flycash/permission-platform/internal/api/grpc/rbac"
 	auditevt "gitee.com/flycash/permission-platform/internal/event/audit"
+	permissionevt "gitee.com/flycash/permission-platform/internal/event/permission"
 	"gitee.com/flycash/permission-platform/internal/ioc"
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	auditdao "gitee.com/flycash/permission-platform/internal/repository/dao/audit"
 	rbacsvc "gitee.com/flycash/permission-platform/internal/service/rbac"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/wire"
 	"github.com/gotomicro/ego/core/econf"
 )
@@ -27,6 +29,7 @@ var (
 		ioc.InitJWTToken,
 		ioc.InitMultipleLevelCache,
 		ioc.InitCacheKeyFunc,
+		ioc.InitKafkaProducer,
 		// local.NewLocalCache,
 		// redis.NewCache,
 	)
@@ -73,6 +76,7 @@ var (
 		auditdao.NewOperationLogDAO,
 
 		initUserRoleBinlogEventConsumer,
+		initUserPermissionEventProducer,
 	)
 )
 
@@ -97,6 +101,22 @@ func initUserRoleBinlogEventConsumer(dao auditdao.UserRoleLogDAO) *auditevt.User
 		panic(err)
 	}
 	return eventConsumer
+}
+
+func initUserPermissionEventProducer(producer *kafka.Producer) permissionevt.UserPermissionEventProducer {
+	type Config struct {
+		Topic string `yaml:"topic"`
+	}
+	var cfg Config
+	err := econf.UnmarshalKey("userPermissionEvent", &cfg)
+	if err != nil {
+		panic(err)
+	}
+	p, err := permissionevt.NewUserPermissionEventProducer(producer, cfg.Topic)
+	if err != nil {
+		panic(err)
+	}
+	return p
 }
 
 func InitApp() *ioc.App {
