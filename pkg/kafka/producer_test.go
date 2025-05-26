@@ -34,7 +34,7 @@ func (m *TestPermissionServiceClient) CheckPermission(ctx context.Context, req *
 func TestAccessProducer_Produce(t *testing.T) {
 	// 创建 Kafka 生产者配置
 	config := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9094",
+		"bootstrap.servers": "localhost:9092",
 		"client.id":         "test-producer",
 	}
 

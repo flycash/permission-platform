@@ -38,7 +38,7 @@ func NewRolePermissionDefaultRepository(rolePermissionDAO dao.RolePermissionDAO)
 func (r *RolePermissionDefaultRepository) Create(ctx context.Context, rolePermission domain.RolePermission) (domain.RolePermission, error) {
 	created, err := r.rolePermissionDAO.Create(ctx, r.toEntity(rolePermission))
 	if err != nil {
-		elog.Info("为角色添加权限失败",
+		r.logger.Info("为角色添加权限失败",
 			elog.FieldErr(err),
 			elog.Any("rolePermission", rolePermission),
 			elog.Int64("roleId", rolePermission.Role.ID),
@@ -47,7 +47,7 @@ func (r *RolePermissionDefaultRepository) Create(ctx context.Context, rolePermis
 		)
 		return domain.RolePermission{}, err
 	} else {
-		elog.Info("为角色添加权限",
+		r.logger.Info("为角色添加权限",
 			elog.Any("rolePermission", rolePermission),
 			elog.Int64("roleId", rolePermission.Role.ID),
 			elog.Int64("permissionId", rolePermission.Permission.ID),
@@ -79,12 +79,12 @@ func (r *RolePermissionDefaultRepository) FindByBizIDAndID(ctx context.Context, 
 func (r *RolePermissionDefaultRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	err := r.rolePermissionDAO.DeleteByBizIDAndID(ctx, bizID, id)
 	if err != nil {
-		elog.Error("为角色删除权限失败",
+		r.logger.Error("为角色删除权限失败",
 			elog.FieldErr(err),
 			elog.Int64("bizID", bizID),
 			elog.Any("角色,权限关联id", id))
 	} else {
-		elog.Info("为角色删除权限",
+		r.logger.Info("为角色删除权限",
 			elog.Int64("bizID", bizID),
 			elog.Any("角色,权限关联id", id),
 		)

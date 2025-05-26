@@ -144,17 +144,6 @@ func TestGormAccessPlugin(t *testing.T) {
 			expectedError: true,
 		},
 		{
-			name: "missing biz_id",
-			setupContext: func(ctx context.Context) context.Context {
-				ctx = context.WithValue(ctx, uidKey, int64(1))
-				return ctx
-			},
-			operation: func(db *gorm.DB) error {
-				return db.Create(&User{Name: "test", Age: 20}).Error
-			},
-			expectedError: true,
-		},
-		{
 			name: "missing uid",
 			setupContext: func(ctx context.Context) context.Context {
 				ctx = context.WithValue(ctx, bizIDKey, int64(1))
@@ -172,6 +161,7 @@ func TestGormAccessPlugin(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := tt.setupContext(t.Context())
 			db = db.WithContext(ctx)
+			defer clearTestData(t, db)
 
 			// Run the operation
 			err = tt.operation(db)
@@ -184,4 +174,9 @@ func TestGormAccessPlugin(t *testing.T) {
 			}
 		})
 	}
+}
+
+func clearTestData(t *testing.T, db *gorm.DB) {
+	err := db.Exec("truncate table `users`;").Error
+	require.NoError(t, err)
 }

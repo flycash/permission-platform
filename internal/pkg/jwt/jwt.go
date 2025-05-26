@@ -63,7 +63,6 @@ func (t *Token) Encode(customClaims MapClaims) (string, error) {
 	for k, v := range customClaims {
 		claims[k] = v
 	}
-
 	// 自动处理过期时间
 	const day = 24 * time.Hour
 	if _, ok := claims["exp"]; !ok {

@@ -80,6 +80,7 @@ func (p *policyRepo) SavePermissionPolicy(ctx context.Context, bizID, policyID, 
 func NewPolicyRepository(policyDAO dao.PolicyDAO) PolicyRepo {
 	return &policyRepo{
 		policyDAO: policyDAO,
+		logger:    elog.DefaultLogger,
 	}
 }
 
