@@ -2,6 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
+
+	"gitee.com/flycash/permission-platform/internal/repository/cache"
+	"github.com/gotomicro/ego/core/elog"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
@@ -18,11 +22,21 @@ type AttributeDefinitionRepository interface {
 
 type attributeDefinitionRepository struct {
 	definitionDao dao.AttributeDefinitionDAO
+	localCache    cache.ABACDefinitionCache
+	redisCache    cache.ABACDefinitionCache
+	logger        *elog.Component
 }
 
-func NewAttributeDefinitionRepository(definitionDao dao.AttributeDefinitionDAO) AttributeDefinitionRepository {
+func NewAttributeDefinitionRepository(
+	definitionDao dao.AttributeDefinitionDAO,
+	localCache cache.ABACDefinitionCache,
+	redisCache cache.ABACDefinitionCache,
+) AttributeDefinitionRepository {
 	return &attributeDefinitionRepository{
 		definitionDao: definitionDao,
+		localCache:    localCache,
+		redisCache:    redisCache,
+		logger:        elog.DefaultLogger,
 	}
 }
 
@@ -57,7 +71,18 @@ func toDomainDefinition(daoDef dao.AttributeDefinition) domain.AttributeDefiniti
 
 func (a *attributeDefinitionRepository) Save(ctx context.Context, bizID int64, definition domain.AttributeDefinition) (int64, error) {
 	daoDef := toDaoDefinition(bizID, definition)
-	return a.definitionDao.Save(ctx, daoDef)
+	id, err := a.definitionDao.Save(ctx, daoDef)
+	if err != nil {
+		return 0, err
+	}
+	err = a.setCache(ctx, bizID)
+	if err != nil {
+		a.logger.Error("保存到缓存失败",
+			elog.FieldErr(err),
+			elog.Int64("bizID", bizID),
+		)
+	}
+	return id, nil
 }
 
 func (a *attributeDefinitionRepository) First(ctx context.Context, bizID, id int64) (domain.AttributeDefinition, error) {
@@ -73,6 +98,52 @@ func (a *attributeDefinitionRepository) Del(ctx context.Context, bizID, id int64
 }
 
 func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error) {
+	// Try local cache first
+	defs, localCacheErr := a.localCache.GetDefinitions(ctx, bizID)
+	if localCacheErr == nil {
+		return defs, nil
+	}
+	if !errors.Is(localCacheErr, cache.ErrKeyNotFound) {
+		a.logger.Error("从本地缓存获取数据失败",
+			elog.FieldErr(localCacheErr), elog.Int64("bizID", bizID))
+	}
+
+	// Try Redis cache if local cache misses
+	defs, redisCacheErr := a.redisCache.GetDefinitions(ctx, bizID)
+	if redisCacheErr == nil {
+		// Update local cache with Redis data
+		if err := a.localCache.SetDefinitions(ctx, defs); err != nil {
+			a.logger.Error("更新本地缓存失败",
+				elog.FieldErr(err), elog.Int64("bizID", bizID))
+		}
+		return defs, nil
+	}
+	if !errors.Is(redisCacheErr, cache.ErrKeyNotFound) {
+		a.logger.Error("从redis获取数据失败",
+			elog.FieldErr(redisCacheErr), elog.Int64("bizID", bizID))
+	}
+
+	// Get from database if both caches miss
+	defs, err := a.findByDb(ctx, bizID)
+	if err != nil {
+		return domain.BizAttrDefinition{}, err
+	}
+
+	// Update both caches
+	if err := a.redisCache.SetDefinitions(ctx, defs); err != nil {
+		a.logger.Error("更新redis缓存失败",
+			elog.FieldErr(err), elog.Int64("bizID", bizID))
+	}
+	
+	if err := a.localCache.SetDefinitions(ctx, defs); err != nil {
+		a.logger.Error("更新本地缓存失败",
+			elog.FieldErr(err), elog.Int64("bizID", bizID))
+	}
+
+	return defs, nil
+}
+
+func (a *attributeDefinitionRepository) findByDb(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error) {
 	daos, err := a.definitionDao.Find(ctx, bizID)
 	if err != nil {
 		return domain.BizAttrDefinition{}, err
@@ -94,4 +165,12 @@ func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (
 		bizDef.AllDefs[def.ID] = def
 	}
 	return bizDef, nil
+}
+
+func (a *attributeDefinitionRepository) setCache(ctx context.Context, bizID int64) error {
+	bizAttrDef, err := a.findByDb(ctx, bizID)
+	if err != nil {
+		return err
+	}
+	return a.redisCache.SetDefinitions(ctx, bizAttrDef)
 }

@@ -8,15 +8,19 @@ package abac
 
 import (
 	"gitee.com/flycash/permission-platform/internal/repository"
+	"gitee.com/flycash/permission-platform/internal/repository/cache/local"
+	"gitee.com/flycash/permission-platform/internal/repository/cache/redisx"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"gitee.com/flycash/permission-platform/internal/service/abac"
 	"gitee.com/flycash/permission-platform/internal/service/abac/evaluator"
-	"gorm.io/gorm"
+	"github.com/ecodeclub/ecache/memory/lru"
+	"github.com/ego-component/egorm"
+	"github.com/redis/go-redis/v9"
 )
 
 // Injectors from wire.go:
 
-func Init(db *gorm.DB) *Service {
+func Init(db *egorm.Component, redisClient *redis.Client, lruCache *lru.Cache) *Service {
 	permissionDAO := dao.NewPermissionDAO(db)
 	permissionRepository := repository.NewPermissionRepository(permissionDAO)
 	resourceDAO := dao.NewResourceDAO(db)
@@ -28,7 +32,7 @@ func Init(db *gorm.DB) *Service {
 	subjectAttributeValueDAO := dao.NewSubjectAttributeValueDAO(db)
 	attributeDefinitionDAO := dao.NewAttributeDefinitionDAO(db)
 	attributeValueRepository := repository.NewAttributeValueRepository(environmentAttributeDAO, resourceAttributeValueDAO, subjectAttributeValueDAO, attributeDefinitionDAO)
-	attributeDefinitionRepository := repository.NewAttributeDefinitionRepository(attributeDefinitionDAO)
+	attributeDefinitionRepository := initAbacDefinitionLocalCache(attributeDefinitionDAO, redisClient, lruCache)
 	selector := evaluator.NewSelector()
 	policyExecutor := abac.NewPolicyExecutor(selector)
 	permissionSvc := abac.NewPermissionSvc(permissionRepository, resourceRepository, policyRepo, attributeValueRepository, attributeDefinitionRepository, policyExecutor)
@@ -52,4 +56,10 @@ type Service struct {
 	PermissionRepo repository.PermissionRepository
 	ResourceRepo   repository.ResourceRepository
 	PolicyRepo     repository.PolicyRepo
+}
+
+func initAbacDefinitionLocalCache(attrdao dao.AttributeDefinitionDAO, client *redis.Client, lruCache *lru.Cache) repository.AttributeDefinitionRepository {
+	localCache := local.NewAbacDefLocalCache(lruCache, client)
+	redisCache := redisx.NewAbacDefCache(client)
+	return repository.NewAttributeDefinitionRepository(attrdao, localCache, redisCache)
 }

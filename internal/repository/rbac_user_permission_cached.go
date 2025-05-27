@@ -75,8 +75,8 @@ func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []dom
 			evt.Permissions[users[i].ID] = permissionevt.UserPermission{
 				UserID: users[i].ID,
 				BizID:  users[i].BizID,
-				Permissions: slice.Map(perms, func(_ int, src domain.UserPermission) permissionevt.Permission {
-					return permissionevt.Permission{
+				Permissions: slice.Map(perms, func(_ int, src domain.UserPermission) permissionevt.PermissionV1 {
+					return permissionevt.PermissionV1{
 						Resource: permissionevt.Resource{
 							Key:  src.Permission.Resource.Key,
 							Type: src.Permission.Resource.Type,

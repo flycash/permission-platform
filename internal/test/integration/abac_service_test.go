@@ -6,6 +6,11 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
+
+	"github.com/redis/go-redis/v9"
+
+	"github.com/ecodeclub/ecache/memory/lru"
 
 	"github.com/stretchr/testify/require"
 
@@ -28,12 +33,18 @@ type AbacServiceSuite struct {
 	permissionRepo repository.PermissionRepository
 	resourceRepo   repository.ResourceRepository
 	policyRepo     repository.PolicyRepo
+	redisClient    redis.Cmdable
+	lruCache       *lru.Cache
 	db             *egorm.Component
 }
 
 func (s *AbacServiceSuite) SetupSuite() {
 	db := testioc.InitDBAndTables()
-	svc := abac.Init(db)
+	redisClient := testioc.InitRedisClient()
+	lruCache := lru.NewCache(10000)
+	s.lruCache = lruCache
+	s.redisClient = redisClient
+	svc := abac.Init(db, redisClient, lruCache)
 	s.definitionRepo = svc.DefinitionRepo
 	s.valRepo = svc.ValRepo
 	s.policyRepo = svc.PolicyRepo
@@ -96,6 +107,18 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
 				s.Equal(def.DataType, found.DataType)
 				s.Equal(def.EntityType, found.EntityType)
 				s.Equal(def.ValidationRule, found.ValidationRule)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:def:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:def:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -129,6 +152,18 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
 				s.Equal(domain.EntityTypeResource, found.EntityType)
 				s.Equal("^[a-zA-Z]+$", found.ValidationRule)
 				s.Equal(def.Name, found.Name) // 名称不应该改变
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:def:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:def:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 	}
@@ -138,6 +173,8 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
 			def, id := tt.before()
 			updatedDef := tt.after(def)
 			updatedID, err := save(updatedDef)
+			// 等待本地缓存同步数据
+			time.Sleep(1 * time.Second)
 			if tt.wantErr {
 				s.Error(err)
 				tt.check(t, def, id)
@@ -249,7 +286,15 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Find() {
 	s.NoError(err)
 	_, err = s.definitionRepo.Save(ctx, bizID, envDef)
 	s.NoError(err)
-
+	// 删除本地缓存中的数据
+	_, err = s.lruCache.Delete(ctx, fmt.Sprintf("abac:def:%d", bizID))
+	s.NoError(err)
+	// 删除redis中的数据
+	err = s.redisClient.Del(ctx, fmt.Sprintf("abac:def:%d", bizID)).Err()
+	s.NoError(err)
+	// 等待本地缓存同步数据
+	time.Sleep(1 * time.Second)
+	
 	// 测试查询所有属性定义
 	bizDef, err := s.definitionRepo.Find(ctx, bizID)
 	s.NoError(err)
@@ -257,6 +302,18 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Find() {
 	s.Len(bizDef.SubjectAttrDefs, 1)
 	s.Len(bizDef.ResourceAttrDefs, 1)
 	s.Len(bizDef.EnvironmentAttrDefs, 1)
+
+	// 验证本地缓存
+	localCacheKey := fmt.Sprintf("abac:def:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存
+	redisKey := fmt.Sprintf("abac:def:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
 
 	// 验证主体属性
 	s.Equal(subjectDef.Name, bizDef.SubjectAttrDefs[0].Name)
@@ -1052,7 +1109,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 				savedPolicy, err := s.policyRepo.First(ctx, bizID, id)
 				s.NoError(err)
 				s.Equal(bizID, savedPolicy.BizID)
-				s.Equal("测试策略1", savedPolicy.Name)             // 名称保持不变
+				s.Equal("测试策略1", savedPolicy.Name)                   // 名称保持不变
 				s.Equal("这是更新后的策略描述", savedPolicy.Description) // 描述已更新
 			},
 		},

@@ -4,6 +4,7 @@ package integration
 
 import (
 	"fmt"
+	"github.com/ecodeclub/ecache/memory/lru"
 	"testing"
 	"time"
 
@@ -40,7 +41,9 @@ func (s *HybridPermissionSuite) SetupSuite() {
 	s.db = testioc.InitDBAndTables()
 	s.svc = rbacioc.Init()
 	s.rbacSvc = s.svc.Svc
-	svc := abac.Init(s.db)
+	redisClient := testioc.InitRedisClient()
+	lruCache := lru.NewCache(10000)
+	svc := abac.Init(s.db,redisClient,lruCache)
 	s.definitionRepo = svc.DefinitionRepo
 	s.abacPermissionSvc = svc.PermissionSvc
 	s.valRepo = svc.ValRepo

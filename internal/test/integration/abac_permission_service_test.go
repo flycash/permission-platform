@@ -4,6 +4,7 @@ package integration
 
 import (
 	"fmt"
+	"github.com/ecodeclub/ecache/memory/lru"
 	"testing"
 	"time"
 
@@ -33,7 +34,8 @@ type ABACPermissionSuite struct {
 
 func (s *ABACPermissionSuite) SetupSuite() {
 	db := testioc.InitDBAndTables()
-	svc := abac.Init(db)
+	redisClient := testioc.InitRedisClient()
+	svc := abac.Init(db, redisClient, lru.NewCache(10000))
 	s.definitionRepo = svc.DefinitionRepo
 	s.permissionSvc = svc.PermissionSvc
 	s.valRepo = svc.ValRepo
