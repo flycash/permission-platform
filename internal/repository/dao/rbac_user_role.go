@@ -34,6 +34,7 @@ type UserRoleDAO interface {
 	FindByBizID(ctx context.Context, bizID int64) ([]UserRole, error)
 	FindByBizIDAndID(ctx context.Context, bizID, id int64) (UserRole, error)
 	FindByBizIDAndUserID(ctx context.Context, bizID int64, userID int64) ([]UserRole, error)
+	FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]UserRole, error)
 
 	DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error
 }
@@ -71,6 +72,16 @@ func (u *userRoleDAO) FindByBizIDAndUserID(ctx context.Context, bizID, userID in
 func (u *userRoleDAO) FindByBizID(ctx context.Context, bizID int64) ([]UserRole, error) {
 	var userRoles []UserRole
 	err := u.db.WithContext(ctx).Where("biz_id = ?", bizID).Find(&userRoles).Error
+	return userRoles, err
+}
+
+func (u *userRoleDAO) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]UserRole, error) {
+	var userRoles []UserRole
+	currentTime := time.Now().UnixMilli()
+	err := u.db.WithContext(ctx).
+		Where("biz_id = ? AND role_id IN (?) AND start_time <= ? AND end_time >= ?",
+			bizID, roleIDs, currentTime, currentTime).
+		Find(&userRoles).Error
 	return userRoles, err
 }
 

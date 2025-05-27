@@ -58,6 +58,17 @@ func (r *UserRoleDefaultRepository) Create(ctx context.Context, userRole domain.
 	return r.toDomain(created), nil
 }
 
+func (r *UserRoleDefaultRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
+	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID)
+	if err != nil {
+		return nil, err
+	}
+
+	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.UserRole {
+		return r.toDomain(src)
+	}), nil
+}
+
 func (r *UserRoleDefaultRepository) FindByBizIDAndUserID(ctx context.Context, bizID, userID int64) ([]domain.UserRole, error) {
 	userRoles, err := r.userRoleDAO.FindByBizIDAndUserID(ctx, bizID, userID)
 	if err != nil {
@@ -77,6 +88,16 @@ func (r *UserRoleDefaultRepository) FindByBizIDAndID(ctx context.Context, bizID,
 	return r.toDomain(ur), nil
 }
 
+func (r *UserRoleDefaultRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.UserRole, error) {
+	userRoles, err := r.userRoleDAO.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs)
+	if err != nil {
+		return nil, err
+	}
+	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.UserRole {
+		return r.toDomain(src)
+	}), nil
+}
+
 func (r *UserRoleDefaultRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
 	err := r.userRoleDAO.DeleteByBizIDAndID(ctx, bizID, id)
 	if err != nil {
@@ -92,17 +113,6 @@ func (r *UserRoleDefaultRepository) DeleteByBizIDAndID(ctx context.Context, bizI
 		)
 	}
 	return err
-}
-
-func (r *UserRoleDefaultRepository) FindByBizID(ctx context.Context, bizID int64) ([]domain.UserRole, error) {
-	userRoles, err := r.userRoleDAO.FindByBizID(ctx, bizID)
-	if err != nil {
-		return nil, err
-	}
-
-	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.UserRole {
-		return r.toDomain(src)
-	}), nil
 }
 
 func (r *UserRoleDefaultRepository) toEntity(ur domain.UserRole) dao.UserRole {
