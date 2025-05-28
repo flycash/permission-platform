@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"sync"
 	"sync/atomic"
 	"time"
 
@@ -20,7 +19,6 @@ type MultiLevelCacheV1 struct {
 	redisHealthCheckPeriod time.Duration
 	redisPingTimeout       time.Duration
 	redisCrashDetector     *bitring.BitRing // 错误检测器
-	mu                     sync.Mutex       // 用于保护内部状态更新
 }
 
 func NewMultiLevelCacheV2(local ecache.Cache,
@@ -64,15 +62,9 @@ func (m *MultiLevelCacheV1) redisHealthCheck(rd redis.Cmdable) {
 
 // handleRedisRecoveryEvent 处理Redis恢复事件
 func (m *MultiLevelCacheV1) handleRedisRecoveryEvent() {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	// 已经恢复，避免重复处理
-	if m.isRedisAvailable.Load() {
-		return
-	}
 	// 标记Redis已恢复
-	m.isRedisAvailable.Store(true)
+	m.isRedisAvailable.CompareAndSwap(false, true)
+	m.redisCrashDetector.Reset()
 }
 
 func (m *MultiLevelCacheV1) Set(ctx context.Context, key string, val any, expiration time.Duration) error {
@@ -95,14 +87,8 @@ func (m *MultiLevelCacheV1) Set(ctx context.Context, key string, val any, expira
 
 // handleRedisCrashEvent 处理Redis崩溃事件
 func (m *MultiLevelCacheV1) handleRedisCrashEvent() {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	// 已经处于不可用状态，避免重复处理
-	if !m.isRedisAvailable.Load() {
-		return
-	}
 	// 标记Redis不可用
-	m.isRedisAvailable.Store(false)
+	m.isRedisAvailable.CompareAndSwap(true, false)
 }
 
 func (m *MultiLevelCacheV1) Get(ctx context.Context, key string) Value {
