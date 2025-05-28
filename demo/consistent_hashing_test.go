@@ -1,4 +1,5 @@
 //go:build unit
+
 package demo
 
 import (
@@ -7,8 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
-
-
 
 func TestConsistentHash_AllReplace(t *testing.T) {
 	ch := NewConsistentHash(3)

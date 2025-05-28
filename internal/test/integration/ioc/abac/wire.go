@@ -24,7 +24,7 @@ type Service struct {
 	PolicyRepo     repository.PolicyRepo
 }
 
-func Init(db *egorm.Component,redisClient *redis.Client,lruCache *lru.Cache) *Service {
+func Init(db *egorm.Component, redisClient *redis.Client, lruCache *lru.Cache) *Service {
 	wire.Build(
 		dao.NewSubjectAttributeValueDAO,
 		dao.NewResourceAttributeValueDAO,
@@ -46,8 +46,8 @@ func Init(db *egorm.Component,redisClient *redis.Client,lruCache *lru.Cache) *Se
 	return nil
 }
 
-func initAbacDefinitionLocalCache(attrdao dao.AttributeDefinitionDAO, client *redis.Client,lruCache *lru.Cache)repository.AttributeDefinitionRepository {
-	localCache := local.NewAbacDefLocalCache(lruCache,client)
+func initAbacDefinitionLocalCache(attrdao dao.AttributeDefinitionDAO, client *redis.Client, lruCache *lru.Cache) repository.AttributeDefinitionRepository {
+	localCache := local.NewAbacDefLocalCache(lruCache, client)
 	redisCache := redisx.NewAbacDefCache(client)
 	return repository.NewAttributeDefinitionRepository(attrdao, localCache, redisCache)
 }

@@ -4,8 +4,9 @@ package demo
 
 import (
 	"context"
-	"google.golang.org/grpc/attributes"
 	"testing"
+
+	"google.golang.org/grpc/attributes"
 
 	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"github.com/stretchr/testify/assert"

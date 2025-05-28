@@ -124,7 +124,7 @@ func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (
 	}
 
 	// Get from database if both caches miss
-	defs, err := a.findByDb(ctx, bizID)
+	defs, err := a.findByDB(ctx, bizID)
 	if err != nil {
 		return domain.BizAttrDefinition{}, err
 	}
@@ -134,7 +134,7 @@ func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (
 		a.logger.Error("更新redis缓存失败",
 			elog.FieldErr(err), elog.Int64("bizID", bizID))
 	}
-	
+
 	if err := a.localCache.SetDefinitions(ctx, defs); err != nil {
 		a.logger.Error("更新本地缓存失败",
 			elog.FieldErr(err), elog.Int64("bizID", bizID))
@@ -143,7 +143,7 @@ func (a *attributeDefinitionRepository) Find(ctx context.Context, bizID int64) (
 	return defs, nil
 }
 
-func (a *attributeDefinitionRepository) findByDb(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error) {
+func (a *attributeDefinitionRepository) findByDB(ctx context.Context, bizID int64) (domain.BizAttrDefinition, error) {
 	daos, err := a.definitionDao.Find(ctx, bizID)
 	if err != nil {
 		return domain.BizAttrDefinition{}, err
@@ -168,7 +168,7 @@ func (a *attributeDefinitionRepository) findByDb(ctx context.Context, bizID int6
 }
 
 func (a *attributeDefinitionRepository) setCache(ctx context.Context, bizID int64) error {
-	bizAttrDef, err := a.findByDb(ctx, bizID)
+	bizAttrDef, err := a.findByDB(ctx, bizID)
 	if err != nil {
 		return err
 	}

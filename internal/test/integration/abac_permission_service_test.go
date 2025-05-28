@@ -4,9 +4,10 @@ package integration
 
 import (
 	"fmt"
-	"github.com/ecodeclub/ecache/memory/lru"
 	"testing"
 	"time"
+
+	"github.com/ecodeclub/ecache/memory/lru"
 
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"github.com/ego-component/egorm"

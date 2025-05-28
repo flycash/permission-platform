@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	repoCache "gitee.com/flycash/permission-platform/internal/repository/cache"
 	"gitee.com/flycash/permission-platform/pkg/cache"
 	"github.com/ecodeclub/ecache"
 	"github.com/ecodeclub/ecache/redis"
 	goredis "github.com/redis/go-redis/v9"
-	"time"
 )
 
 const defaultTimeout = 5 * time.Second

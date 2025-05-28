@@ -15,7 +15,7 @@ type Node struct {
 }
 
 type ConsistentHash struct {
-	sync.RWMutex
+	mu             *sync.RWMutex
 	hashFunc       func(data []byte) uint32
 	virtualNodes   int             // 每个物理节点的虚拟节点数
 	sortedHashKeys []uint32        // 排序后的虚拟节点哈希值
@@ -34,8 +34,8 @@ func NewConsistentHash(virtualNodes int) *ConsistentHash {
 
 // 添加物理节点
 func (c *ConsistentHash) Add(node Node) {
-	c.Lock()
-	defer c.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.add(node)
 }
 
@@ -61,8 +61,8 @@ func (c *ConsistentHash) add(node Node) {
 
 // 删除物理节点
 func (c *ConsistentHash) Remove(node Node) {
-	c.Lock()
-	defer c.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.remove(node)
 }
 
@@ -91,8 +91,8 @@ func (c *ConsistentHash) Get(key string) Node {
 	}
 
 	hash := c.hashFunc([]byte(key))
-	c.RLock()
-	defer c.RUnlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 
 	// 二分查找最近节点
 	idx := sort.Search(len(c.sortedHashKeys), func(i int) bool {
@@ -108,8 +108,8 @@ func (c *ConsistentHash) Get(key string) Node {
 
 // 全量替换
 func (c *ConsistentHash) AllReplace(nodes map[string]Node) {
-	c.Lock()
-	defer c.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	// 删除节点
 	for key := range c.physicalNodes {
 		physicalNode := c.physicalNodes[key]

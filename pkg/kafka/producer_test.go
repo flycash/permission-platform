@@ -4,9 +4,10 @@ package kafka
 
 import (
 	"context"
-	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"testing"
 	"time"
+
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 
 	"github.com/pkg/errors"
 
@@ -61,7 +62,7 @@ func TestAccessProducer_Produce(t *testing.T) {
 					Allowed: true,
 				}, nil)
 			},
-			ctx: context.WithValue(context.WithValue(context.Background(),ctxx.BizIDKey, int64(1)), ctxx.UidKey, int64(100)),
+			ctx: context.WithValue(context.WithValue(context.Background(), ctxx.BizIDKey, int64(1)), ctxx.UIDKey, int64(100)),
 			msg: &kafka.Message{
 				TopicPartition: kafka.TopicPartition{
 					Topic:     stringPtr("test-topic"),
@@ -78,7 +79,7 @@ func TestAccessProducer_Produce(t *testing.T) {
 					Allowed: false,
 				}, nil)
 			},
-			ctx: context.WithValue(context.WithValue(context.Background(), ctxx.BizIDKey, int64(1)), ctxx.UidKey, int64(100)),
+			ctx: context.WithValue(context.WithValue(context.Background(), ctxx.BizIDKey, int64(1)), ctxx.UIDKey, int64(100)),
 			msg: &kafka.Message{
 				TopicPartition: kafka.TopicPartition{
 					Topic:     stringPtr("test-topic"),

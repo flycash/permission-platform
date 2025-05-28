@@ -3,8 +3,9 @@ package kafka
 import (
 	"context"
 	"fmt"
-	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"time"
+
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"

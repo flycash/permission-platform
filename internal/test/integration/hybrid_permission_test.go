@@ -4,9 +4,10 @@ package integration
 
 import (
 	"fmt"
-	"github.com/ecodeclub/ecache/memory/lru"
 	"testing"
 	"time"
+
+	"github.com/ecodeclub/ecache/memory/lru"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository"
@@ -43,7 +44,7 @@ func (s *HybridPermissionSuite) SetupSuite() {
 	s.rbacSvc = s.svc.Svc
 	redisClient := testioc.InitRedisClient()
 	lruCache := lru.NewCache(10000)
-	svc := abac.Init(s.db,redisClient,lruCache)
+	svc := abac.Init(s.db, redisClient, lruCache)
 	s.definitionRepo = svc.DefinitionRepo
 	s.abacPermissionSvc = svc.PermissionSvc
 	s.valRepo = svc.ValRepo

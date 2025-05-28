@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+
 	"gitee.com/flycash/permission-platform/pkg/ctxx"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
@@ -10,9 +11,8 @@ import (
 	"github.com/gotomicro/ego/core/elog"
 )
 
-
 const (
-	produce  string = "produce"
+	produce string = "produce"
 )
 
 type AccessProducer struct {
@@ -61,7 +61,7 @@ func (p *AccessProducer) Produce(ctx context.Context, msg *kafka.Message, delive
 		return err
 	}
 
-	uid, err :=ctxx.GetUID(ctx)
+	uid, err := ctxx.GetUID(ctx)
 	if err != nil {
 		p.logger.Error("获取uid失败",
 			elog.FieldErr(err),
@@ -111,4 +111,3 @@ func (p *AccessProducer) Produce(ctx context.Context, msg *kafka.Message, delive
 func (p *AccessProducer) action() string {
 	return p.actions[produce]
 }
-

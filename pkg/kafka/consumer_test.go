@@ -4,10 +4,11 @@ package kafka
 
 import (
 	"context"
-	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"strings"
 	"testing"
 	"time"
+
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"

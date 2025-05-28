@@ -9,7 +9,7 @@ type Key string
 
 const (
 	BizIDKey Key = "biz-id"
-	UidKey   Key = "uid"
+	UIDKey   Key = "uid"
 )
 
 func WithBizID(ctx context.Context, bizID int64) context.Context {
@@ -17,7 +17,7 @@ func WithBizID(ctx context.Context, bizID int64) context.Context {
 }
 
 func WithUID(ctx context.Context, uid int64) context.Context {
-	return context.WithValue(ctx, UidKey, uid)
+	return context.WithValue(ctx, UIDKey, uid)
 }
 
 func GetBizID(ctx context.Context) (int64, error) {
@@ -34,7 +34,7 @@ func GetBizID(ctx context.Context) (int64, error) {
 }
 
 func GetUID(ctx context.Context) (int64, error) {
-	value := ctx.Value(UidKey)
+	value := ctx.Value(UIDKey)
 	if value == nil {
 		return 0, fmt.Errorf("uid not found in context")
 	}

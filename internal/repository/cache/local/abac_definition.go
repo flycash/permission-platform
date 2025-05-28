@@ -3,13 +3,14 @@ package local
 import (
 	"context"
 	"encoding/json"
+	"strings"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	repoCache "gitee.com/flycash/permission-platform/internal/repository/cache"
 	"gitee.com/flycash/permission-platform/pkg/cache"
 	"github.com/gotomicro/ego/core/elog"
 	"github.com/redis/go-redis/v9"
-	"strings"
-	"time"
 )
 
 const (
@@ -77,6 +78,7 @@ func (a *abacDefLocalCache) loop(ctx context.Context) {
 	}
 }
 
+//nolint:gocritic //忽略
 func (a *abacDefLocalCache) handleConfigChange(ctx context.Context, key, event string) {
 	// 自定义业务逻辑（如动态更新配置）
 	switch event {
