@@ -294,7 +294,7 @@ func (s *AbacServiceSuite) TestAttributeDefinition_Find() {
 	s.NoError(err)
 	// 等待本地缓存同步数据
 	time.Sleep(1 * time.Second)
-	
+
 	// 测试查询所有属性定义
 	bizDef, err := s.definitionRepo.Find(ctx, bizID)
 	s.NoError(err)
@@ -1109,7 +1109,7 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 				savedPolicy, err := s.policyRepo.First(ctx, bizID, id)
 				s.NoError(err)
 				s.Equal(bizID, savedPolicy.BizID)
-				s.Equal("测试策略1", savedPolicy.Name)                   // 名称保持不变
+				s.Equal("测试策略1", savedPolicy.Name)             // 名称保持不变
 				s.Equal("这是更新后的策略描述", savedPolicy.Description) // 描述已更新
 			},
 		},

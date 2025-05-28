@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"time"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
@@ -53,7 +54,7 @@ func (c *AccessConsumer) ReadMessage(ctx context.Context, timeout time.Duration)
 			return nil, err
 		}
 
-		bizID, err := getBizID(ctx)
+		bizID, err := ctxx.GetBizID(ctx)
 		if err != nil {
 			c.logger.Error("获取bizID失败",
 				elog.FieldErr(err),
@@ -62,7 +63,7 @@ func (c *AccessConsumer) ReadMessage(ctx context.Context, timeout time.Duration)
 			return nil, err
 		}
 
-		uid, err := getUID(ctx)
+		uid, err := ctxx.GetUID(ctx)
 		if err != nil {
 			c.logger.Error("获取uid失败",
 				elog.FieldErr(err),
@@ -129,11 +130,11 @@ func (c *AccessConsumer) ReadMessage(ctx context.Context, timeout time.Duration)
 // Subscribe 订阅主题，带权限控制
 func (c *AccessConsumer) Subscribe(ctx context.Context, topic string, rebalanceCb kafka.RebalanceCb) error {
 	// 从context中获取bizID和uid
-	bizID, err := getBizID(ctx)
+	bizID, err := ctxx.GetBizID(ctx)
 	if err != nil {
 		return fmt.Errorf("权限校验未通过: 未找到bizID")
 	}
-	uid, err := getUID(ctx)
+	uid, err := ctxx.GetUID(ctx)
 	if err != nil {
 		return fmt.Errorf("权限校验未通过: 未找到uid")
 	}

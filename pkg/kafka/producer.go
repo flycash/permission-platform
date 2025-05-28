@@ -3,17 +3,15 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gotomicro/ego/core/elog"
 )
 
-type CtxKey string
 
 const (
-	bizIDKey CtxKey = "biz-id"
-	uidKey   CtxKey = "uid"
 	produce  string = "produce"
 )
 
@@ -54,7 +52,7 @@ func NewProducer(p Producer,
 
 func (p *AccessProducer) Produce(ctx context.Context, msg *kafka.Message, deliveryChan chan kafka.Event) error {
 	// 从context中获取bizID和uid
-	bizID, err := getBizID(ctx)
+	bizID, err := ctxx.GetBizID(ctx)
 	if err != nil {
 		p.logger.Error("获取bizID失败",
 			elog.FieldErr(err),
@@ -63,7 +61,7 @@ func (p *AccessProducer) Produce(ctx context.Context, msg *kafka.Message, delive
 		return err
 	}
 
-	uid, err := getUID(ctx)
+	uid, err :=ctxx.GetUID(ctx)
 	if err != nil {
 		p.logger.Error("获取uid失败",
 			elog.FieldErr(err),
@@ -114,37 +112,3 @@ func (p *AccessProducer) action() string {
 	return p.actions[produce]
 }
 
-func WithBizID(ctx context.Context, bizID string) context.Context {
-	return context.WithValue(ctx, bizIDKey, bizID)
-}
-
-func WithUID(ctx context.Context, uid string) context.Context {
-	return context.WithValue(ctx, uidKey, uid)
-}
-
-func getBizID(ctx context.Context) (int64, error) {
-	value := ctx.Value(bizIDKey)
-	if value == nil {
-		return 0, fmt.Errorf("biz-id not found in context")
-	}
-	bizID, ok := value.(int64)
-	if !ok {
-		return 0, fmt.Errorf("invalid biz-id type, expected int64 got %T", value)
-	}
-
-	return bizID, nil
-}
-
-func getUID(ctx context.Context) (int64, error) {
-	value := ctx.Value(uidKey)
-	if value == nil {
-		return 0, fmt.Errorf("uid not found in context")
-	}
-
-	uid, ok := value.(int64)
-	if !ok {
-		return 0, fmt.Errorf("invalid uid type, expected int64 got %T", value)
-	}
-
-	return uid, nil
-}

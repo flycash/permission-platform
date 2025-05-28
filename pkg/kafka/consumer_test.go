@@ -4,6 +4,7 @@ package kafka
 
 import (
 	"context"
+	"gitee.com/flycash/permission-platform/pkg/ctxx"
 	"strings"
 	"testing"
 	"time"
@@ -20,10 +21,10 @@ import (
 func newTestContext(bizID, uid int64) context.Context {
 	ctx := context.Background()
 	if bizID != 0 {
-		ctx = context.WithValue(ctx, bizIDKey, bizID)
+		ctx = ctxx.WithBizID(ctx, bizID)
 	}
 	if uid != 0 {
-		ctx = context.WithValue(ctx, uidKey, uid)
+		ctx = ctxx.WithUID(ctx, uid)
 	}
 	return ctx
 }
