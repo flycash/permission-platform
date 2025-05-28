@@ -24,7 +24,7 @@ func InitDB() *egorm.Component {
 	if err != nil {
 		panic(err)
 	}
-	tracePlugin := trace.NewGormTracingPlugin()
+	tracePlugin := accessctrl.NewGormTracingPlugin()
 	metricsPlugin := metrics.NewGormMetricsPlugin()
 	logPlugin := log.NewGormLogPlugin()
 	err = db.Use(tracePlugin)
