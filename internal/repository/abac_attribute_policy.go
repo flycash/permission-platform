@@ -25,6 +25,7 @@ type PolicyRepo interface {
 
 type policyRepo struct {
 	policyDAO dao.PolicyDAO
+	local
 	logger    *elog.Component
 }
 
@@ -108,6 +109,8 @@ func (p *policyRepo) Save(ctx context.Context, policy domain.Policy) (int64, err
 	}
 	return id, err
 }
+
+
 
 func (p *policyRepo) Delete(ctx context.Context, bizID, id int64) error {
 	// 删除策略及其关联数据

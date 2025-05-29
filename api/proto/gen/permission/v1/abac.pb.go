@@ -7,12 +7,11 @@
 package permissionv1
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -3379,76 +3378,73 @@ func file_permission_v1_abac_proto_rawDescGZIP() []byte {
 	return file_permission_v1_abac_proto_rawDescData
 }
 
-var (
-	file_permission_v1_abac_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-	file_permission_v1_abac_proto_msgTypes  = make([]protoimpl.MessageInfo, 58)
-	file_permission_v1_abac_proto_goTypes   = []any{
-		(PolicyStatus)(0),                                                       // 0: permission.v1.PolicyStatus
-		(RuleOperator)(0),                                                       // 1: permission.v1.RuleOperator
-		(Effect)(0),                                                             // 2: permission.v1.Effect
-		(DataType)(0),                                                           // 3: permission.v1.DataType
-		(EntityType)(0),                                                         // 4: permission.v1.EntityType
-		(*Policy)(nil),                                                          // 5: permission.v1.Policy
-		(*PolicyRule)(nil),                                                      // 6: permission.v1.PolicyRule
-		(*SubjectAttributeValue)(nil),                                           // 7: permission.v1.SubjectAttributeValue
-		(*ResourceAttributeValue)(nil),                                          // 8: permission.v1.ResourceAttributeValue
-		(*EnvironmentAttributeValue)(nil),                                       // 9: permission.v1.EnvironmentAttributeValue
-		(*SubjectObject)(nil),                                                   // 10: permission.v1.SubjectObject
-		(*ResourceObject)(nil),                                                  // 11: permission.v1.ResourceObject
-		(*EnvironmentObject)(nil),                                               // 12: permission.v1.EnvironmentObject
-		(*AttributeDefinition)(nil),                                             // 13: permission.v1.AttributeDefinition
-		(*BizDefinition)(nil),                                                   // 14: permission.v1.BizDefinition
-		(*PolicyServiceSaveRequest)(nil),                                        // 15: permission.v1.PolicyServiceSaveRequest
-		(*PolicyServiceSaveResponse)(nil),                                       // 16: permission.v1.PolicyServiceSaveResponse
-		(*PolicyServiceDeleteRequest)(nil),                                      // 17: permission.v1.PolicyServiceDeleteRequest
-		(*PolicyServiceDeleteResponse)(nil),                                     // 18: permission.v1.PolicyServiceDeleteResponse
-		(*PolicyServiceFirstRequest)(nil),                                       // 19: permission.v1.PolicyServiceFirstRequest
-		(*PolicyServiceFirstResponse)(nil),                                      // 20: permission.v1.PolicyServiceFirstResponse
-		(*PolicyServiceSaveRuleRequest)(nil),                                    // 21: permission.v1.PolicyServiceSaveRuleRequest
-		(*PolicyServiceSaveRuleResponse)(nil),                                   // 22: permission.v1.PolicyServiceSaveRuleResponse
-		(*PolicyServiceDeleteRuleRequest)(nil),                                  // 23: permission.v1.PolicyServiceDeleteRuleRequest
-		(*PolicyServiceDeleteRuleResponse)(nil),                                 // 24: permission.v1.PolicyServiceDeleteRuleResponse
-		(*PolicyServiceFindPoliciesByPermissionIDsRequest)(nil),                 // 25: permission.v1.PolicyServiceFindPoliciesByPermissionIDsRequest
-		(*PolicyServiceFindPoliciesByPermissionIDsResponse)(nil),                // 26: permission.v1.PolicyServiceFindPoliciesByPermissionIDsResponse
-		(*PolicyServiceSavePermissionPolicyRequest)(nil),                        // 27: permission.v1.PolicyServiceSavePermissionPolicyRequest
-		(*PolicyServiceSavePermissionPolicyResponse)(nil),                       // 28: permission.v1.PolicyServiceSavePermissionPolicyResponse
-		(*PolicyServiceFindPoliciesRequest)(nil),                                // 29: permission.v1.PolicyServiceFindPoliciesRequest
-		(*PolicyServiceFindPoliciesResponse)(nil),                               // 30: permission.v1.PolicyServiceFindPoliciesResponse
-		(*AttributeValueServiceSaveSubjectValueRequest)(nil),                    // 31: permission.v1.AttributeValueServiceSaveSubjectValueRequest
-		(*AttributeValueServiceSaveSubjectValueResponse)(nil),                   // 32: permission.v1.AttributeValueServiceSaveSubjectValueResponse
-		(*AttributeValueServiceDeleteSubjectValueRequest)(nil),                  // 33: permission.v1.AttributeValueServiceDeleteSubjectValueRequest
-		(*AttributeValueServiceDeleteSubjectValueResponse)(nil),                 // 34: permission.v1.AttributeValueServiceDeleteSubjectValueResponse
-		(*AttributeValueServiceFindSubjectValueRequest)(nil),                    // 35: permission.v1.AttributeValueServiceFindSubjectValueRequest
-		(*AttributeValueServiceFindSubjectValueResponse)(nil),                   // 36: permission.v1.AttributeValueServiceFindSubjectValueResponse
-		(*AttributeValueServiceFindSubjectValueWithDefinitionRequest)(nil),      // 37: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionRequest
-		(*AttributeValueServiceFindSubjectValueWithDefinitionResponse)(nil),     // 38: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse
-		(*AttributeValueServiceSaveResourceValueRequest)(nil),                   // 39: permission.v1.AttributeValueServiceSaveResourceValueRequest
-		(*AttributeValueServiceSaveResourceValueResponse)(nil),                  // 40: permission.v1.AttributeValueServiceSaveResourceValueResponse
-		(*AttributeValueServiceDeleteResourceValueRequest)(nil),                 // 41: permission.v1.AttributeValueServiceDeleteResourceValueRequest
-		(*AttributeValueServiceDeleteResourceValueResponse)(nil),                // 42: permission.v1.AttributeValueServiceDeleteResourceValueResponse
-		(*AttributeValueServiceFindResourceValueRequest)(nil),                   // 43: permission.v1.AttributeValueServiceFindResourceValueRequest
-		(*AttributeValueServiceFindResourceValueResponse)(nil),                  // 44: permission.v1.AttributeValueServiceFindResourceValueResponse
-		(*AttributeValueServiceFindResourceValueWithDefinitionRequest)(nil),     // 45: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionRequest
-		(*AttributeValueServiceFindResourceValueWithDefinitionResponse)(nil),    // 46: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse
-		(*AttributeValueServiceSaveEnvironmentValueRequest)(nil),                // 47: permission.v1.AttributeValueServiceSaveEnvironmentValueRequest
-		(*AttributeValueServiceSaveEnvironmentValueResponse)(nil),               // 48: permission.v1.AttributeValueServiceSaveEnvironmentValueResponse
-		(*AttributeValueServiceDeleteEnvironmentValueRequest)(nil),              // 49: permission.v1.AttributeValueServiceDeleteEnvironmentValueRequest
-		(*AttributeValueServiceDeleteEnvironmentValueResponse)(nil),             // 50: permission.v1.AttributeValueServiceDeleteEnvironmentValueResponse
-		(*AttributeValueServiceFindEnvironmentValueRequest)(nil),                // 51: permission.v1.AttributeValueServiceFindEnvironmentValueRequest
-		(*AttributeValueServiceFindEnvironmentValueResponse)(nil),               // 52: permission.v1.AttributeValueServiceFindEnvironmentValueResponse
-		(*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest)(nil),  // 53: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest
-		(*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse)(nil), // 54: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse
-		(*AttributeDefinitionServiceSaveRequest)(nil),                           // 55: permission.v1.AttributeDefinitionServiceSaveRequest
-		(*AttributeDefinitionServiceSaveResponse)(nil),                          // 56: permission.v1.AttributeDefinitionServiceSaveResponse
-		(*AttributeDefinitionServiceFirstRequest)(nil),                          // 57: permission.v1.AttributeDefinitionServiceFirstRequest
-		(*AttributeDefinitionServiceFirstResponse)(nil),                         // 58: permission.v1.AttributeDefinitionServiceFirstResponse
-		(*AttributeDefinitionServiceDeleteRequest)(nil),                         // 59: permission.v1.AttributeDefinitionServiceDeleteRequest
-		(*AttributeDefinitionServiceDeleteResponse)(nil),                        // 60: permission.v1.AttributeDefinitionServiceDeleteResponse
-		(*AttributeDefinitionServiceFindRequest)(nil),                           // 61: permission.v1.AttributeDefinitionServiceFindRequest
-		(*AttributeDefinitionServiceFindResponse)(nil),                          // 62: permission.v1.AttributeDefinitionServiceFindResponse
-	}
-)
-
+var file_permission_v1_abac_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_permission_v1_abac_proto_msgTypes = make([]protoimpl.MessageInfo, 58)
+var file_permission_v1_abac_proto_goTypes = []any{
+	(PolicyStatus)(0),                                                       // 0: permission.v1.PolicyStatus
+	(RuleOperator)(0),                                                       // 1: permission.v1.RuleOperator
+	(Effect)(0),                                                             // 2: permission.v1.Effect
+	(DataType)(0),                                                           // 3: permission.v1.DataType
+	(EntityType)(0),                                                         // 4: permission.v1.EntityType
+	(*Policy)(nil),                                                          // 5: permission.v1.Policy
+	(*PolicyRule)(nil),                                                      // 6: permission.v1.PolicyRule
+	(*SubjectAttributeValue)(nil),                                           // 7: permission.v1.SubjectAttributeValue
+	(*ResourceAttributeValue)(nil),                                          // 8: permission.v1.ResourceAttributeValue
+	(*EnvironmentAttributeValue)(nil),                                       // 9: permission.v1.EnvironmentAttributeValue
+	(*SubjectObject)(nil),                                                   // 10: permission.v1.SubjectObject
+	(*ResourceObject)(nil),                                                  // 11: permission.v1.ResourceObject
+	(*EnvironmentObject)(nil),                                               // 12: permission.v1.EnvironmentObject
+	(*AttributeDefinition)(nil),                                             // 13: permission.v1.AttributeDefinition
+	(*BizDefinition)(nil),                                                   // 14: permission.v1.BizDefinition
+	(*PolicyServiceSaveRequest)(nil),                                        // 15: permission.v1.PolicyServiceSaveRequest
+	(*PolicyServiceSaveResponse)(nil),                                       // 16: permission.v1.PolicyServiceSaveResponse
+	(*PolicyServiceDeleteRequest)(nil),                                      // 17: permission.v1.PolicyServiceDeleteRequest
+	(*PolicyServiceDeleteResponse)(nil),                                     // 18: permission.v1.PolicyServiceDeleteResponse
+	(*PolicyServiceFirstRequest)(nil),                                       // 19: permission.v1.PolicyServiceFirstRequest
+	(*PolicyServiceFirstResponse)(nil),                                      // 20: permission.v1.PolicyServiceFirstResponse
+	(*PolicyServiceSaveRuleRequest)(nil),                                    // 21: permission.v1.PolicyServiceSaveRuleRequest
+	(*PolicyServiceSaveRuleResponse)(nil),                                   // 22: permission.v1.PolicyServiceSaveRuleResponse
+	(*PolicyServiceDeleteRuleRequest)(nil),                                  // 23: permission.v1.PolicyServiceDeleteRuleRequest
+	(*PolicyServiceDeleteRuleResponse)(nil),                                 // 24: permission.v1.PolicyServiceDeleteRuleResponse
+	(*PolicyServiceFindPoliciesByPermissionIDsRequest)(nil),                 // 25: permission.v1.PolicyServiceFindPoliciesByPermissionIDsRequest
+	(*PolicyServiceFindPoliciesByPermissionIDsResponse)(nil),                // 26: permission.v1.PolicyServiceFindPoliciesByPermissionIDsResponse
+	(*PolicyServiceSavePermissionPolicyRequest)(nil),                        // 27: permission.v1.PolicyServiceSavePermissionPolicyRequest
+	(*PolicyServiceSavePermissionPolicyResponse)(nil),                       // 28: permission.v1.PolicyServiceSavePermissionPolicyResponse
+	(*PolicyServiceFindPoliciesRequest)(nil),                                // 29: permission.v1.PolicyServiceFindPoliciesRequest
+	(*PolicyServiceFindPoliciesResponse)(nil),                               // 30: permission.v1.PolicyServiceFindPoliciesResponse
+	(*AttributeValueServiceSaveSubjectValueRequest)(nil),                    // 31: permission.v1.AttributeValueServiceSaveSubjectValueRequest
+	(*AttributeValueServiceSaveSubjectValueResponse)(nil),                   // 32: permission.v1.AttributeValueServiceSaveSubjectValueResponse
+	(*AttributeValueServiceDeleteSubjectValueRequest)(nil),                  // 33: permission.v1.AttributeValueServiceDeleteSubjectValueRequest
+	(*AttributeValueServiceDeleteSubjectValueResponse)(nil),                 // 34: permission.v1.AttributeValueServiceDeleteSubjectValueResponse
+	(*AttributeValueServiceFindSubjectValueRequest)(nil),                    // 35: permission.v1.AttributeValueServiceFindSubjectValueRequest
+	(*AttributeValueServiceFindSubjectValueResponse)(nil),                   // 36: permission.v1.AttributeValueServiceFindSubjectValueResponse
+	(*AttributeValueServiceFindSubjectValueWithDefinitionRequest)(nil),      // 37: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionRequest
+	(*AttributeValueServiceFindSubjectValueWithDefinitionResponse)(nil),     // 38: permission.v1.AttributeValueServiceFindSubjectValueWithDefinitionResponse
+	(*AttributeValueServiceSaveResourceValueRequest)(nil),                   // 39: permission.v1.AttributeValueServiceSaveResourceValueRequest
+	(*AttributeValueServiceSaveResourceValueResponse)(nil),                  // 40: permission.v1.AttributeValueServiceSaveResourceValueResponse
+	(*AttributeValueServiceDeleteResourceValueRequest)(nil),                 // 41: permission.v1.AttributeValueServiceDeleteResourceValueRequest
+	(*AttributeValueServiceDeleteResourceValueResponse)(nil),                // 42: permission.v1.AttributeValueServiceDeleteResourceValueResponse
+	(*AttributeValueServiceFindResourceValueRequest)(nil),                   // 43: permission.v1.AttributeValueServiceFindResourceValueRequest
+	(*AttributeValueServiceFindResourceValueResponse)(nil),                  // 44: permission.v1.AttributeValueServiceFindResourceValueResponse
+	(*AttributeValueServiceFindResourceValueWithDefinitionRequest)(nil),     // 45: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionRequest
+	(*AttributeValueServiceFindResourceValueWithDefinitionResponse)(nil),    // 46: permission.v1.AttributeValueServiceFindResourceValueWithDefinitionResponse
+	(*AttributeValueServiceSaveEnvironmentValueRequest)(nil),                // 47: permission.v1.AttributeValueServiceSaveEnvironmentValueRequest
+	(*AttributeValueServiceSaveEnvironmentValueResponse)(nil),               // 48: permission.v1.AttributeValueServiceSaveEnvironmentValueResponse
+	(*AttributeValueServiceDeleteEnvironmentValueRequest)(nil),              // 49: permission.v1.AttributeValueServiceDeleteEnvironmentValueRequest
+	(*AttributeValueServiceDeleteEnvironmentValueResponse)(nil),             // 50: permission.v1.AttributeValueServiceDeleteEnvironmentValueResponse
+	(*AttributeValueServiceFindEnvironmentValueRequest)(nil),                // 51: permission.v1.AttributeValueServiceFindEnvironmentValueRequest
+	(*AttributeValueServiceFindEnvironmentValueResponse)(nil),               // 52: permission.v1.AttributeValueServiceFindEnvironmentValueResponse
+	(*AttributeValueServiceFindEnvironmentValueWithDefinitionRequest)(nil),  // 53: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionRequest
+	(*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse)(nil), // 54: permission.v1.AttributeValueServiceFindEnvironmentValueWithDefinitionResponse
+	(*AttributeDefinitionServiceSaveRequest)(nil),                           // 55: permission.v1.AttributeDefinitionServiceSaveRequest
+	(*AttributeDefinitionServiceSaveResponse)(nil),                          // 56: permission.v1.AttributeDefinitionServiceSaveResponse
+	(*AttributeDefinitionServiceFirstRequest)(nil),                          // 57: permission.v1.AttributeDefinitionServiceFirstRequest
+	(*AttributeDefinitionServiceFirstResponse)(nil),                         // 58: permission.v1.AttributeDefinitionServiceFirstResponse
+	(*AttributeDefinitionServiceDeleteRequest)(nil),                         // 59: permission.v1.AttributeDefinitionServiceDeleteRequest
+	(*AttributeDefinitionServiceDeleteResponse)(nil),                        // 60: permission.v1.AttributeDefinitionServiceDeleteResponse
+	(*AttributeDefinitionServiceFindRequest)(nil),                           // 61: permission.v1.AttributeDefinitionServiceFindRequest
+	(*AttributeDefinitionServiceFindResponse)(nil),                          // 62: permission.v1.AttributeDefinitionServiceFindResponse
+}
 var file_permission_v1_abac_proto_depIdxs = []int32{
 	0,  // 0: permission.v1.Policy.status:type_name -> permission.v1.PolicyStatus
 	2,  // 1: permission.v1.Policy.effect:type_name -> permission.v1.Effect

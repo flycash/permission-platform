@@ -27,6 +27,12 @@ message CheckPermissionRequest {
   map<string, string> resource_attributes = 4;
   map<string, string> environment_attributes = 5;
 }
+message BatchCheckPermissionRequest {
+  repeated CheckPermissionRequest requests = 1;
+}
+message BatchCheckPermissionResponse {
+  repeated bool allowed = 1;
+}
 
 // 权限检查响应
 message CheckPermissionResponse {
@@ -37,6 +43,10 @@ message CheckPermissionResponse {
 service PermissionService {
   // 权限校验
   rpc CheckPermission(CheckPermissionRequest) returns (CheckPermissionResponse);
+}
+
+service BatchPermissionService {
+  rpc BatchCheckPermission(BatchCheckPermissionRequest) returns (BatchCheckPermissionResponse);
 }
 
 message Resource {

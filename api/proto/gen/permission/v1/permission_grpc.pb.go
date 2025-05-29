@@ -8,7 +8,6 @@ package permissionv1
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -119,6 +118,106 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPermission",
 			Handler:    _PermissionService_CheckPermission_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "permission/v1/permission.proto",
+}
+
+const (
+	BatchPermissionService_BatchCheckPermission_FullMethodName = "/permission.v1.BatchPermissionService/BatchCheckPermission"
+)
+
+// BatchPermissionServiceClient is the client API for BatchPermissionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type BatchPermissionServiceClient interface {
+	BatchCheckPermission(ctx context.Context, in *BatchCheckPermissionRequest, opts ...grpc.CallOption) (*BatchCheckPermissionResponse, error)
+}
+
+type batchPermissionServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewBatchPermissionServiceClient(cc grpc.ClientConnInterface) BatchPermissionServiceClient {
+	return &batchPermissionServiceClient{cc}
+}
+
+func (c *batchPermissionServiceClient) BatchCheckPermission(ctx context.Context, in *BatchCheckPermissionRequest, opts ...grpc.CallOption) (*BatchCheckPermissionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BatchCheckPermissionResponse)
+	err := c.cc.Invoke(ctx, BatchPermissionService_BatchCheckPermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// BatchPermissionServiceServer is the server API for BatchPermissionService service.
+// All implementations should embed UnimplementedBatchPermissionServiceServer
+// for forward compatibility.
+type BatchPermissionServiceServer interface {
+	BatchCheckPermission(context.Context, *BatchCheckPermissionRequest) (*BatchCheckPermissionResponse, error)
+}
+
+// UnimplementedBatchPermissionServiceServer should be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedBatchPermissionServiceServer struct{}
+
+func (UnimplementedBatchPermissionServiceServer) BatchCheckPermission(context.Context, *BatchCheckPermissionRequest) (*BatchCheckPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchCheckPermission not implemented")
+}
+func (UnimplementedBatchPermissionServiceServer) testEmbeddedByValue() {}
+
+// UnsafeBatchPermissionServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BatchPermissionServiceServer will
+// result in compilation errors.
+type UnsafeBatchPermissionServiceServer interface {
+	mustEmbedUnimplementedBatchPermissionServiceServer()
+}
+
+func RegisterBatchPermissionServiceServer(s grpc.ServiceRegistrar, srv BatchPermissionServiceServer) {
+	// If the following call pancis, it indicates UnimplementedBatchPermissionServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&BatchPermissionService_ServiceDesc, srv)
+}
+
+func _BatchPermissionService_BatchCheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchCheckPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BatchPermissionServiceServer).BatchCheckPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: BatchPermissionService_BatchCheckPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BatchPermissionServiceServer).BatchCheckPermission(ctx, req.(*BatchCheckPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// BatchPermissionService_ServiceDesc is the grpc.ServiceDesc for BatchPermissionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var BatchPermissionService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "permission.v1.BatchPermissionService",
+	HandlerType: (*BatchPermissionServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "BatchCheckPermission",
+			Handler:    _BatchPermissionService_BatchCheckPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
