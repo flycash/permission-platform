@@ -14,14 +14,6 @@ import (
 	"github.com/gotomicro/ego/core/elog"
 )
 
-type UserRoleBinlogEvent struct {
-	Operation    string `json:"operation"`    // 操作类型：INSERT/DELETE
-	BizID        int64  `json:"bizId"`        // 业务ID
-	UserID       int64  `json:"userId"`       // 用户ID
-	BeforeRoleID int64  `json:"beforeRoleId"` // 变更前角色ID，Operation=DELETE 时需要填写
-	AfterRoleID  int64  `json:"afterRoleId"`  // 变更后角色ID，Operation=INSERT 时需要填写
-}
-
 type UserRoleBinlogEventConsumer struct {
 	consumer mqx.Consumer
 	dao      auditdao.UserRoleLogDAO
