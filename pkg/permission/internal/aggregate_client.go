@@ -1,4 +1,4 @@
-package permission
+package internal
 
 import (
 	"context"
@@ -29,6 +29,10 @@ type AggregateRequest struct {
 	ErrCh  chan error
 }
 
+func (l *AggregatePermissionClient) Name() string {
+	return "AggregateClient"
+}
+
 func (l *AggregatePermissionClient) CheckPermission(ctx context.Context, in *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	req := &AggregateRequest{
 		Req:    in,
@@ -43,6 +47,7 @@ func (l *AggregatePermissionClient) CheckPermission(ctx context.Context, in *per
 		return nil, err
 	}
 }
+
 func (l *AggregatePermissionClient) StartBatch(ctx context.Context) {
 	for {
 		l.oneLoop(ctx)
@@ -97,5 +102,4 @@ func (l *AggregatePermissionClient) batchSend(ctx context.Context, reqs []*Aggre
 		}
 	}
 	return
-
 }

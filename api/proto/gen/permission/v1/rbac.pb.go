@@ -7,11 +7,12 @@
 package permissionv1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -4116,85 +4117,88 @@ func file_permission_v1_rbac_proto_rawDescGZIP() []byte {
 	return file_permission_v1_rbac_proto_rawDescData
 }
 
-var file_permission_v1_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
-var file_permission_v1_rbac_proto_goTypes = []any{
-	(*GetAllPermissionsRequest)(nil),     // 0: permission.v1.GetAllPermissionsRequest
-	(*GetAllPermissionsResponse)(nil),    // 1: permission.v1.GetAllPermissionsResponse
-	(*BusinessConfig)(nil),               // 2: permission.v1.BusinessConfig
-	(*CreateBusinessConfigRequest)(nil),  // 3: permission.v1.CreateBusinessConfigRequest
-	(*CreateBusinessConfigResponse)(nil), // 4: permission.v1.CreateBusinessConfigResponse
-	(*GetBusinessConfigRequest)(nil),     // 5: permission.v1.GetBusinessConfigRequest
-	(*GetBusinessConfigResponse)(nil),    // 6: permission.v1.GetBusinessConfigResponse
-	(*UpdateBusinessConfigRequest)(nil),  // 7: permission.v1.UpdateBusinessConfigRequest
-	(*UpdateBusinessConfigResponse)(nil), // 8: permission.v1.UpdateBusinessConfigResponse
-	(*DeleteBusinessConfigRequest)(nil),  // 9: permission.v1.DeleteBusinessConfigRequest
-	(*DeleteBusinessConfigResponse)(nil), // 10: permission.v1.DeleteBusinessConfigResponse
-	(*ListBusinessConfigsRequest)(nil),   // 11: permission.v1.ListBusinessConfigsRequest
-	(*ListBusinessConfigsResponse)(nil),  // 12: permission.v1.ListBusinessConfigsResponse
-	(*CreateResourceRequest)(nil),        // 13: permission.v1.CreateResourceRequest
-	(*CreateResourceResponse)(nil),       // 14: permission.v1.CreateResourceResponse
-	(*GetResourceRequest)(nil),           // 15: permission.v1.GetResourceRequest
-	(*GetResourceResponse)(nil),          // 16: permission.v1.GetResourceResponse
-	(*UpdateResourceRequest)(nil),        // 17: permission.v1.UpdateResourceRequest
-	(*UpdateResourceResponse)(nil),       // 18: permission.v1.UpdateResourceResponse
-	(*DeleteResourceRequest)(nil),        // 19: permission.v1.DeleteResourceRequest
-	(*DeleteResourceResponse)(nil),       // 20: permission.v1.DeleteResourceResponse
-	(*ListResourcesRequest)(nil),         // 21: permission.v1.ListResourcesRequest
-	(*ListResourcesResponse)(nil),        // 22: permission.v1.ListResourcesResponse
-	(*CreatePermissionRequest)(nil),      // 23: permission.v1.CreatePermissionRequest
-	(*CreatePermissionResponse)(nil),     // 24: permission.v1.CreatePermissionResponse
-	(*GetPermissionRequest)(nil),         // 25: permission.v1.GetPermissionRequest
-	(*GetPermissionResponse)(nil),        // 26: permission.v1.GetPermissionResponse
-	(*UpdatePermissionRequest)(nil),      // 27: permission.v1.UpdatePermissionRequest
-	(*UpdatePermissionResponse)(nil),     // 28: permission.v1.UpdatePermissionResponse
-	(*DeletePermissionRequest)(nil),      // 29: permission.v1.DeletePermissionRequest
-	(*DeletePermissionResponse)(nil),     // 30: permission.v1.DeletePermissionResponse
-	(*ListPermissionsRequest)(nil),       // 31: permission.v1.ListPermissionsRequest
-	(*ListPermissionsResponse)(nil),      // 32: permission.v1.ListPermissionsResponse
-	(*Role)(nil),                         // 33: permission.v1.Role
-	(*CreateRoleRequest)(nil),            // 34: permission.v1.CreateRoleRequest
-	(*CreateRoleResponse)(nil),           // 35: permission.v1.CreateRoleResponse
-	(*GetRoleRequest)(nil),               // 36: permission.v1.GetRoleRequest
-	(*GetRoleResponse)(nil),              // 37: permission.v1.GetRoleResponse
-	(*UpdateRoleRequest)(nil),            // 38: permission.v1.UpdateRoleRequest
-	(*UpdateRoleResponse)(nil),           // 39: permission.v1.UpdateRoleResponse
-	(*DeleteRoleRequest)(nil),            // 40: permission.v1.DeleteRoleRequest
-	(*DeleteRoleResponse)(nil),           // 41: permission.v1.DeleteRoleResponse
-	(*ListRolesRequest)(nil),             // 42: permission.v1.ListRolesRequest
-	(*ListRolesResponse)(nil),            // 43: permission.v1.ListRolesResponse
-	(*RoleInclusion)(nil),                // 44: permission.v1.RoleInclusion
-	(*CreateRoleInclusionRequest)(nil),   // 45: permission.v1.CreateRoleInclusionRequest
-	(*CreateRoleInclusionResponse)(nil),  // 46: permission.v1.CreateRoleInclusionResponse
-	(*GetRoleInclusionRequest)(nil),      // 47: permission.v1.GetRoleInclusionRequest
-	(*GetRoleInclusionResponse)(nil),     // 48: permission.v1.GetRoleInclusionResponse
-	(*DeleteRoleInclusionRequest)(nil),   // 49: permission.v1.DeleteRoleInclusionRequest
-	(*DeleteRoleInclusionResponse)(nil),  // 50: permission.v1.DeleteRoleInclusionResponse
-	(*ListRoleInclusionsRequest)(nil),    // 51: permission.v1.ListRoleInclusionsRequest
-	(*ListRoleInclusionsResponse)(nil),   // 52: permission.v1.ListRoleInclusionsResponse
-	(*RolePermission)(nil),               // 53: permission.v1.RolePermission
-	(*GrantRolePermissionRequest)(nil),   // 54: permission.v1.GrantRolePermissionRequest
-	(*GrantRolePermissionResponse)(nil),  // 55: permission.v1.GrantRolePermissionResponse
-	(*RevokeRolePermissionRequest)(nil),  // 56: permission.v1.RevokeRolePermissionRequest
-	(*RevokeRolePermissionResponse)(nil), // 57: permission.v1.RevokeRolePermissionResponse
-	(*ListRolePermissionsRequest)(nil),   // 58: permission.v1.ListRolePermissionsRequest
-	(*ListRolePermissionsResponse)(nil),  // 59: permission.v1.ListRolePermissionsResponse
-	(*UserRole)(nil),                     // 60: permission.v1.UserRole
-	(*GrantUserRoleRequest)(nil),         // 61: permission.v1.GrantUserRoleRequest
-	(*GrantUserRoleResponse)(nil),        // 62: permission.v1.GrantUserRoleResponse
-	(*RevokeUserRoleRequest)(nil),        // 63: permission.v1.RevokeUserRoleRequest
-	(*RevokeUserRoleResponse)(nil),       // 64: permission.v1.RevokeUserRoleResponse
-	(*ListUserRolesRequest)(nil),         // 65: permission.v1.ListUserRolesRequest
-	(*ListUserRolesResponse)(nil),        // 66: permission.v1.ListUserRolesResponse
-	(*UserPermission)(nil),               // 67: permission.v1.UserPermission
-	(*GrantUserPermissionRequest)(nil),   // 68: permission.v1.GrantUserPermissionRequest
-	(*GrantUserPermissionResponse)(nil),  // 69: permission.v1.GrantUserPermissionResponse
-	(*RevokeUserPermissionRequest)(nil),  // 70: permission.v1.RevokeUserPermissionRequest
-	(*RevokeUserPermissionResponse)(nil), // 71: permission.v1.RevokeUserPermissionResponse
-	(*ListUserPermissionsRequest)(nil),   // 72: permission.v1.ListUserPermissionsRequest
-	(*ListUserPermissionsResponse)(nil),  // 73: permission.v1.ListUserPermissionsResponse
-	(*Resource)(nil),                     // 74: permission.v1.Resource
-	(*Permission)(nil),                   // 75: permission.v1.Permission
-}
+var (
+	file_permission_v1_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
+	file_permission_v1_rbac_proto_goTypes  = []any{
+		(*GetAllPermissionsRequest)(nil),     // 0: permission.v1.GetAllPermissionsRequest
+		(*GetAllPermissionsResponse)(nil),    // 1: permission.v1.GetAllPermissionsResponse
+		(*BusinessConfig)(nil),               // 2: permission.v1.BusinessConfig
+		(*CreateBusinessConfigRequest)(nil),  // 3: permission.v1.CreateBusinessConfigRequest
+		(*CreateBusinessConfigResponse)(nil), // 4: permission.v1.CreateBusinessConfigResponse
+		(*GetBusinessConfigRequest)(nil),     // 5: permission.v1.GetBusinessConfigRequest
+		(*GetBusinessConfigResponse)(nil),    // 6: permission.v1.GetBusinessConfigResponse
+		(*UpdateBusinessConfigRequest)(nil),  // 7: permission.v1.UpdateBusinessConfigRequest
+		(*UpdateBusinessConfigResponse)(nil), // 8: permission.v1.UpdateBusinessConfigResponse
+		(*DeleteBusinessConfigRequest)(nil),  // 9: permission.v1.DeleteBusinessConfigRequest
+		(*DeleteBusinessConfigResponse)(nil), // 10: permission.v1.DeleteBusinessConfigResponse
+		(*ListBusinessConfigsRequest)(nil),   // 11: permission.v1.ListBusinessConfigsRequest
+		(*ListBusinessConfigsResponse)(nil),  // 12: permission.v1.ListBusinessConfigsResponse
+		(*CreateResourceRequest)(nil),        // 13: permission.v1.CreateResourceRequest
+		(*CreateResourceResponse)(nil),       // 14: permission.v1.CreateResourceResponse
+		(*GetResourceRequest)(nil),           // 15: permission.v1.GetResourceRequest
+		(*GetResourceResponse)(nil),          // 16: permission.v1.GetResourceResponse
+		(*UpdateResourceRequest)(nil),        // 17: permission.v1.UpdateResourceRequest
+		(*UpdateResourceResponse)(nil),       // 18: permission.v1.UpdateResourceResponse
+		(*DeleteResourceRequest)(nil),        // 19: permission.v1.DeleteResourceRequest
+		(*DeleteResourceResponse)(nil),       // 20: permission.v1.DeleteResourceResponse
+		(*ListResourcesRequest)(nil),         // 21: permission.v1.ListResourcesRequest
+		(*ListResourcesResponse)(nil),        // 22: permission.v1.ListResourcesResponse
+		(*CreatePermissionRequest)(nil),      // 23: permission.v1.CreatePermissionRequest
+		(*CreatePermissionResponse)(nil),     // 24: permission.v1.CreatePermissionResponse
+		(*GetPermissionRequest)(nil),         // 25: permission.v1.GetPermissionRequest
+		(*GetPermissionResponse)(nil),        // 26: permission.v1.GetPermissionResponse
+		(*UpdatePermissionRequest)(nil),      // 27: permission.v1.UpdatePermissionRequest
+		(*UpdatePermissionResponse)(nil),     // 28: permission.v1.UpdatePermissionResponse
+		(*DeletePermissionRequest)(nil),      // 29: permission.v1.DeletePermissionRequest
+		(*DeletePermissionResponse)(nil),     // 30: permission.v1.DeletePermissionResponse
+		(*ListPermissionsRequest)(nil),       // 31: permission.v1.ListPermissionsRequest
+		(*ListPermissionsResponse)(nil),      // 32: permission.v1.ListPermissionsResponse
+		(*Role)(nil),                         // 33: permission.v1.Role
+		(*CreateRoleRequest)(nil),            // 34: permission.v1.CreateRoleRequest
+		(*CreateRoleResponse)(nil),           // 35: permission.v1.CreateRoleResponse
+		(*GetRoleRequest)(nil),               // 36: permission.v1.GetRoleRequest
+		(*GetRoleResponse)(nil),              // 37: permission.v1.GetRoleResponse
+		(*UpdateRoleRequest)(nil),            // 38: permission.v1.UpdateRoleRequest
+		(*UpdateRoleResponse)(nil),           // 39: permission.v1.UpdateRoleResponse
+		(*DeleteRoleRequest)(nil),            // 40: permission.v1.DeleteRoleRequest
+		(*DeleteRoleResponse)(nil),           // 41: permission.v1.DeleteRoleResponse
+		(*ListRolesRequest)(nil),             // 42: permission.v1.ListRolesRequest
+		(*ListRolesResponse)(nil),            // 43: permission.v1.ListRolesResponse
+		(*RoleInclusion)(nil),                // 44: permission.v1.RoleInclusion
+		(*CreateRoleInclusionRequest)(nil),   // 45: permission.v1.CreateRoleInclusionRequest
+		(*CreateRoleInclusionResponse)(nil),  // 46: permission.v1.CreateRoleInclusionResponse
+		(*GetRoleInclusionRequest)(nil),      // 47: permission.v1.GetRoleInclusionRequest
+		(*GetRoleInclusionResponse)(nil),     // 48: permission.v1.GetRoleInclusionResponse
+		(*DeleteRoleInclusionRequest)(nil),   // 49: permission.v1.DeleteRoleInclusionRequest
+		(*DeleteRoleInclusionResponse)(nil),  // 50: permission.v1.DeleteRoleInclusionResponse
+		(*ListRoleInclusionsRequest)(nil),    // 51: permission.v1.ListRoleInclusionsRequest
+		(*ListRoleInclusionsResponse)(nil),   // 52: permission.v1.ListRoleInclusionsResponse
+		(*RolePermission)(nil),               // 53: permission.v1.RolePermission
+		(*GrantRolePermissionRequest)(nil),   // 54: permission.v1.GrantRolePermissionRequest
+		(*GrantRolePermissionResponse)(nil),  // 55: permission.v1.GrantRolePermissionResponse
+		(*RevokeRolePermissionRequest)(nil),  // 56: permission.v1.RevokeRolePermissionRequest
+		(*RevokeRolePermissionResponse)(nil), // 57: permission.v1.RevokeRolePermissionResponse
+		(*ListRolePermissionsRequest)(nil),   // 58: permission.v1.ListRolePermissionsRequest
+		(*ListRolePermissionsResponse)(nil),  // 59: permission.v1.ListRolePermissionsResponse
+		(*UserRole)(nil),                     // 60: permission.v1.UserRole
+		(*GrantUserRoleRequest)(nil),         // 61: permission.v1.GrantUserRoleRequest
+		(*GrantUserRoleResponse)(nil),        // 62: permission.v1.GrantUserRoleResponse
+		(*RevokeUserRoleRequest)(nil),        // 63: permission.v1.RevokeUserRoleRequest
+		(*RevokeUserRoleResponse)(nil),       // 64: permission.v1.RevokeUserRoleResponse
+		(*ListUserRolesRequest)(nil),         // 65: permission.v1.ListUserRolesRequest
+		(*ListUserRolesResponse)(nil),        // 66: permission.v1.ListUserRolesResponse
+		(*UserPermission)(nil),               // 67: permission.v1.UserPermission
+		(*GrantUserPermissionRequest)(nil),   // 68: permission.v1.GrantUserPermissionRequest
+		(*GrantUserPermissionResponse)(nil),  // 69: permission.v1.GrantUserPermissionResponse
+		(*RevokeUserPermissionRequest)(nil),  // 70: permission.v1.RevokeUserPermissionRequest
+		(*RevokeUserPermissionResponse)(nil), // 71: permission.v1.RevokeUserPermissionResponse
+		(*ListUserPermissionsRequest)(nil),   // 72: permission.v1.ListUserPermissionsRequest
+		(*ListUserPermissionsResponse)(nil),  // 73: permission.v1.ListUserPermissionsResponse
+		(*Resource)(nil),                     // 74: permission.v1.Resource
+		(*Permission)(nil),                   // 75: permission.v1.Permission
+	}
+)
+
 var file_permission_v1_rbac_proto_depIdxs = []int32{
 	67, // 0: permission.v1.GetAllPermissionsResponse.user_permissions:type_name -> permission.v1.UserPermission
 	2,  // 1: permission.v1.CreateBusinessConfigRequest.config:type_name -> permission.v1.BusinessConfig

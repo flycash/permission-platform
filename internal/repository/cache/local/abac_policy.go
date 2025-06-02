@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"github.com/ecodeclub/ecache"
-	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 )
@@ -16,11 +17,13 @@ var defaultTimeOut = 48 * time.Hour
 type abacPolicyLocalCache struct {
 	cache ecache.Cache
 }
+
 func NewAbacPolicy(ca ecache.Cache) cache.ABACPolicyCache {
 	return &abacPolicyLocalCache{
 		cache: ca,
 	}
 }
+
 func (a *abacPolicyLocalCache) GetPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error) {
 	key := a.tableKey(bizID)
 	val := a.cache.Get(ctx, key)

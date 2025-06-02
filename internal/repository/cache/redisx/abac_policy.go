@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"github.com/redis/go-redis/v9"
@@ -12,6 +13,7 @@ import (
 type abacPolicy struct {
 	redisClient redis.Cmdable
 }
+
 func NewAbacPolicy(redisClient redis.Cmdable) cache.ABACPolicyCache {
 	return &abacPolicy{
 		redisClient: redisClient,
@@ -23,7 +25,7 @@ func (a *abacPolicy) DelPolicy(ctx context.Context, bizID int64, policyID int64)
 }
 
 func (a *abacPolicy) GetPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error) {
-	v,err := a.redisClient.Get(ctx, a.tableKey(bizID)).Result()
+	v, err := a.redisClient.Get(ctx, a.tableKey(bizID)).Result()
 	if err != nil {
 		return nil, err
 	}

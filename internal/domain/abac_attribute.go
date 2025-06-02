@@ -78,8 +78,6 @@ type ABACObject struct {
 	AttributeValues []AttributeValue
 }
 
-
-
 func (s *ABACObject) ValuesMap() map[int64]AttributeValue {
 	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, AttributeValue) {
 		return element.Definition.ID, element

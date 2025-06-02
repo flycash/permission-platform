@@ -8,6 +8,7 @@ package permissionv1
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -146,21 +147,27 @@ type UnimplementedPolicyServiceServer struct{}
 func (UnimplementedPolicyServiceServer) Save(context.Context, *PolicyServiceSaveRequest) (*PolicyServiceSaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) Delete(context.Context, *PolicyServiceDeleteRequest) (*PolicyServiceDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) First(context.Context, *PolicyServiceFirstRequest) (*PolicyServiceFirstResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method First not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) SaveRule(context.Context, *PolicyServiceSaveRuleRequest) (*PolicyServiceSaveRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveRule not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) DeleteRule(context.Context, *PolicyServiceDeleteRuleRequest) (*PolicyServiceDeleteRuleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRule not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) SavePermissionPolicy(context.Context, *PolicyServiceSavePermissionPolicyRequest) (*PolicyServiceSavePermissionPolicyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SavePermissionPolicy not implemented")
 }
+
 func (UnimplementedPolicyServiceServer) FindPolicies(context.Context, *PolicyServiceFindPoliciesRequest) (*PolicyServiceFindPoliciesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindPolicies not implemented")
 }
@@ -504,27 +511,35 @@ type UnimplementedAttributeValueServiceServer struct{}
 func (UnimplementedAttributeValueServiceServer) SaveSubjectValue(context.Context, *AttributeValueServiceSaveSubjectValueRequest) (*AttributeValueServiceSaveSubjectValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveSubjectValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) DeleteSubjectValue(context.Context, *AttributeValueServiceDeleteSubjectValueRequest) (*AttributeValueServiceDeleteSubjectValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSubjectValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) FindSubjectValueWithDefinition(context.Context, *AttributeValueServiceFindSubjectValueWithDefinitionRequest) (*AttributeValueServiceFindSubjectValueWithDefinitionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindSubjectValueWithDefinition not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) SaveResourceValue(context.Context, *AttributeValueServiceSaveResourceValueRequest) (*AttributeValueServiceSaveResourceValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveResourceValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) DeleteResourceValue(context.Context, *AttributeValueServiceDeleteResourceValueRequest) (*AttributeValueServiceDeleteResourceValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteResourceValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) FindResourceValueWithDefinition(context.Context, *AttributeValueServiceFindResourceValueWithDefinitionRequest) (*AttributeValueServiceFindResourceValueWithDefinitionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindResourceValueWithDefinition not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) SaveEnvironmentValue(context.Context, *AttributeValueServiceSaveEnvironmentValueRequest) (*AttributeValueServiceSaveEnvironmentValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveEnvironmentValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) DeleteEnvironmentValue(context.Context, *AttributeValueServiceDeleteEnvironmentValueRequest) (*AttributeValueServiceDeleteEnvironmentValueResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEnvironmentValue not implemented")
 }
+
 func (UnimplementedAttributeValueServiceServer) FindEnvironmentValueWithDefinition(context.Context, *AttributeValueServiceFindEnvironmentValueWithDefinitionRequest) (*AttributeValueServiceFindEnvironmentValueWithDefinitionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindEnvironmentValueWithDefinition not implemented")
 }
@@ -847,12 +862,15 @@ type UnimplementedAttributeDefinitionServiceServer struct{}
 func (UnimplementedAttributeDefinitionServiceServer) Save(context.Context, *AttributeDefinitionServiceSaveRequest) (*AttributeDefinitionServiceSaveResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
 }
+
 func (UnimplementedAttributeDefinitionServiceServer) First(context.Context, *AttributeDefinitionServiceFirstRequest) (*AttributeDefinitionServiceFirstResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method First not implemented")
 }
+
 func (UnimplementedAttributeDefinitionServiceServer) Delete(context.Context, *AttributeDefinitionServiceDeleteRequest) (*AttributeDefinitionServiceDeleteResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
+
 func (UnimplementedAttributeDefinitionServiceServer) Find(context.Context, *AttributeDefinitionServiceFindRequest) (*AttributeDefinitionServiceFindResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Find not implemented")
 }

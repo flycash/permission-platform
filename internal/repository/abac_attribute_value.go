@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 	"fmt"
+	"regexp"
+
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"github.com/gotomicro/ego/core/elog"
-	"regexp"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
@@ -55,8 +56,6 @@ func NewAttributeValueRepository(envDao dao.EnvironmentAttributeDAO,
 		logger:        elog.DefaultLogger,
 	}
 }
-
-
 
 func (a *attributeValueRepository) checkVal(ctx context.Context, bizID int64, val string, definitionID int64) error {
 	definition, err := a.definitionDao.First(ctx, bizID, definitionID)
@@ -127,7 +126,6 @@ func (a *attributeValueRepository) FindSubjectValue(ctx context.Context, bizID, 
 		a.logger.Error("环境属性保存到redis失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
 	}
 	return obj, nil
-
 }
 
 func (a *attributeValueRepository) FindSubjectValueWithDefinition(ctx context.Context, bizID, subjectID int64) (domain.ABACObject, error) {
@@ -420,5 +418,4 @@ func (a *attributeValueRepository) setEnvVal(ctx context.Context, bizID int64) {
 		a.logger.Error("环境属性保存到local失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
 		return
 	}
-
 }

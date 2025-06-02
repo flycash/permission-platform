@@ -1,4 +1,4 @@
-package permission
+package internal
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 
 type baseCachedClient struct{}
 
-func (c *baseCachedClient) cacheKey(userID int64) string {
-	return fmt.Sprintf("client:userpermissions:userId:%d", userID)
+func (c *baseCachedClient) cacheKey(bizID, userID int64) string {
+	return fmt.Sprintf("client:userpermissions:bizId:%d:userId:%d", bizID, userID)
 }
 
 func (c *baseCachedClient) checkPermission(userPermission UserPermission, in *permissionv1.CheckPermissionRequest) (*permissionv1.CheckPermissionResponse, error) {

@@ -11,8 +11,6 @@ import (
 	"github.com/ecodeclub/ekit/slice"
 )
 
-var ErrKeyNotFound = errors.New("key不存在")
-
 type RolePermissionCache interface {
 	// Get 获取某个业务下的用户的全部权限
 	Get(ctx context.Context, bizID int64, roleIDs ...int64) ([]domain.RolePermission, error)
@@ -46,6 +44,7 @@ func (r *rolePermissionCache) Get(ctx context.Context, bizID int64, roleIDs ...i
 		permissions = slice.FilterDelete(permissions, func(_ int, src domain.RolePermission) bool {
 			return !slice.Contains(roleIDs, src.Role.ID)
 		})
+		// todo: slice.FilterDelete 过滤后 len(roleIDs) != len(permissions) 怎么办？
 	}
 	return permissions, err
 }

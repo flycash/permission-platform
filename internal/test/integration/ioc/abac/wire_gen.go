@@ -74,9 +74,9 @@ func initAbacAttribueValRepo(envDao dao.EnvironmentAttributeDAO,
 	resourceDao dao.ResourceAttributeValueDAO,
 	subjectDao dao.SubjectAttributeValueDAO,
 	definitionDao dao.AttributeDefinitionDAO,
-	client *redis.Client, lruCache *lru.Cache) repository.AttributeValueRepository {
+	client *redis.Client, lruCache *lru.Cache,
+) repository.AttributeValueRepository {
 	localCache := local.NewAbacAttributeValCache(lruCache)
 	redisCache := redisx.NewAbacAttributeValCache(client)
 	return repository.NewAttributeValueRepository(envDao, resourceDao, subjectDao, definitionDao, redisCache, localCache)
-
 }

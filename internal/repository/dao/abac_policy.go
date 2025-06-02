@@ -325,6 +325,7 @@ func (p *policyDAO) FindPolicyRulesByPolicyIDs(ctx context.Context, policyIDs []
 
 	return result, nil
 }
+
 func (p *policyDAO) FindPolicyRulesByBiz(ctx context.Context, bizID int64) (map[int64][]PolicyRule, error) {
 	var rules []PolicyRule
 	err := p.db.WithContext(ctx).

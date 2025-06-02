@@ -3,9 +3,10 @@ package integration
 import (
 	"context"
 	"encoding/json"
-	"gitee.com/flycash/permission-platform/internal/repository/cache/redisx"
 	"testing"
 	"time"
+
+	"gitee.com/flycash/permission-platform/internal/repository/cache/redisx"
 
 	"github.com/ecodeclub/ecache/memory/lru"
 	"github.com/ego-component/eetcd"

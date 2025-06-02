@@ -1,4 +1,4 @@
-package permission
+package internal
 
 type UserPermissionEvent struct {
 	// uid => 全部权限

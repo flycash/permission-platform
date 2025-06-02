@@ -34,12 +34,14 @@ func NewAttributeValueTask(repo repository.AttributeValueRepository, localCache 
 func (t *AttributeValueTask) StartResLoop(ctx context.Context) error {
 	return t.startLoop(ctx, t.resourceKey, t.updateResource)
 }
+
 func (t *AttributeValueTask) StartSubjectLoop(ctx context.Context) error {
 	return t.startLoop(ctx, t.subjectKey, t.updateSubject)
 }
 
 func (t *AttributeValueTask) startLoop(ctx context.Context, key string,
-	updateDataFunc func(ctx context.Context, val []byte) error) error {
+	updateDataFunc func(ctx context.Context, val []byte) error,
+) error {
 	watchChan := t.etcdClient.Watch(ctx, key)
 	for watchResp := range watchChan {
 		for _, event := range watchResp.Events {

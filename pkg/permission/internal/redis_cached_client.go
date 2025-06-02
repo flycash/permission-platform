@@ -1,4 +1,4 @@
-package permission
+package internal
 
 import (
 	"context"
@@ -15,7 +15,7 @@ var _ permissionv1.PermissionServiceClient = (*RedisCachedClient)(nil)
 
 type RedisCachedClient struct {
 	baseCachedClient
-	// 正常是 *Client
+	// 正常是 *AuthorizedClient
 	client permissionv1.PermissionServiceClient
 	// redis 缓存
 	rd redis.Cmdable
@@ -32,9 +32,13 @@ func NewRedisCachedClient(client permissionv1.PermissionServiceClient, rd redis.
 	}
 }
 
+func (c *RedisCachedClient) Name() string {
+	return "RedisCachedClient"
+}
+
 func (c *RedisCachedClient) CheckPermission(ctx context.Context, in *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	// 1. 从redis缓存取
-	userPermission, err := c.getFromCache(ctx, in.GetUid())
+	userPermission, err := c.getFromCache(ctx, in.GetPermission().GetBizId(), in.GetUid())
 	if err == nil {
 		resp, err1 := c.checkPermission(userPermission, in)
 		if err1 == nil {
@@ -52,8 +56,8 @@ func (c *RedisCachedClient) CheckPermission(ctx context.Context, in *permissionv
 	return resp, nil
 }
 
-func (c *RedisCachedClient) getFromCache(ctx context.Context, uid int64) (UserPermission, error) {
-	val, err := c.rd.Get(ctx, c.cacheKey(uid)).Result()
+func (c *RedisCachedClient) getFromCache(ctx context.Context, bizID, userID int64) (UserPermission, error) {
+	val, err := c.rd.Get(ctx, c.cacheKey(bizID, userID)).Result()
 	if err != nil {
 		return UserPermission{}, err
 	}
@@ -66,11 +70,12 @@ func (c *RedisCachedClient) getFromCache(ctx context.Context, uid int64) (UserPe
 }
 
 func (c *RedisCachedClient) setToCache(ctx context.Context, up UserPermission, in *permissionv1.CheckPermissionRequest) {
-	uid := in.GetUid()
+	userID := in.GetUid()
 	permission := in.GetPermission()
+	bizID := permission.GetBizId()
 	// 因为up可能是零值，也就是之前不再缓存中，所以需要设置一下bizID和userID
-	up.BizID = permission.GetBizId()
-	up.UserID = uid
+	up.BizID = bizID
+	up.UserID = userID
 	// 去掉与up中actions重合的部分
 	existedActions := slice.Map(up.Permissions, func(_ int, p PermissionV1) string {
 		return p.Action
@@ -90,5 +95,5 @@ func (c *RedisCachedClient) setToCache(ctx context.Context, up UserPermission, i
 		}
 	})...)
 	data, _ := json.Marshal(up)
-	c.rd.Set(ctx, c.cacheKey(uid), string(data), c.expiration)
+	c.rd.Set(ctx, c.cacheKey(bizID, userID), string(data), c.expiration)
 }

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+
 	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
 	"gitee.com/flycash/permission-platform/internal/api/grpc/interceptor/auth"
 	"gitee.com/flycash/permission-platform/internal/domain"
@@ -49,7 +50,6 @@ func (b *BatchPermissionServer) BatchCheckPermission(ctx context.Context, reques
 	return &permissionv1.BatchCheckPermissionResponse{
 		Allowed: res.AsSlice(),
 	}, nil
-
 }
 
 func (b *BatchPermissionServer) toSubAttrs(req map[string]string) domain.SubAttrs {

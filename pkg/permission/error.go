@@ -1,5 +1,5 @@
 package permission
 
-import "errors"
+import "gitee.com/flycash/permission-platform/pkg/permission/internal"
 
-var ErrUnknownPermissionAction = errors.New("未知的权限操作")
+var ErrUnknownPermissionAction = internal.ErrUnknownPermissionAction

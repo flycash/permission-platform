@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"gitee.com/flycash/permission-platform/internal/repository"
 	"gitee.com/flycash/permission-platform/internal/repository/cache"
 	"github.com/ego-component/eetcd"
-	"time"
 )
 
 type PolicyCron struct {
@@ -20,7 +21,8 @@ const (
 	hotPolicyName  = "hotPolicy"
 	defaultTimeout = 5 * time.Second
 )
-func NewPolicyCron(client *eetcd.Component,repo repository.PolicyRepo,ca cache.ABACPolicyCache) *PolicyCron {
+
+func NewPolicyCron(client *eetcd.Component, repo repository.PolicyRepo, ca cache.ABACPolicyCache) *PolicyCron {
 	return &PolicyCron{
 		client: client,
 		repo:   repo,
@@ -46,7 +48,7 @@ func (p *PolicyCron) Run(ctx context.Context) error {
 		return fmt.Errorf("序列化失败 %w", err)
 	}
 	for _, bizID := range bizIDs {
-		loopctx,loopcancel := context.WithTimeout(ctx,defaultTimeout)
+		loopctx, loopcancel := context.WithTimeout(ctx, defaultTimeout)
 		err = p.oneloop(loopctx, bizID)
 		loopcancel()
 		if err != nil {
@@ -56,9 +58,8 @@ func (p *PolicyCron) Run(ctx context.Context) error {
 	return nil
 }
 
-
 func (p *PolicyCron) oneloop(ctx context.Context, bizID int64) error {
-	policies,err := p.repo.FindBizPolicies(ctx, bizID)
+	policies, err := p.repo.FindBizPolicies(ctx, bizID)
 	if err != nil {
 		return err
 	}

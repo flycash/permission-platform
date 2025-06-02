@@ -8,6 +8,7 @@ package permissionv1
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -511,102 +512,135 @@ type UnimplementedRBACServiceServer struct{}
 func (UnimplementedRBACServiceServer) CreateBusinessConfig(context.Context, *CreateBusinessConfigRequest) (*CreateBusinessConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBusinessConfig not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetBusinessConfig(context.Context, *GetBusinessConfigRequest) (*GetBusinessConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBusinessConfig not implemented")
 }
+
 func (UnimplementedRBACServiceServer) UpdateBusinessConfig(context.Context, *UpdateBusinessConfigRequest) (*UpdateBusinessConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBusinessConfig not implemented")
 }
+
 func (UnimplementedRBACServiceServer) DeleteBusinessConfig(context.Context, *DeleteBusinessConfigRequest) (*DeleteBusinessConfigResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBusinessConfig not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListBusinessConfigs(context.Context, *ListBusinessConfigsRequest) (*ListBusinessConfigsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBusinessConfigs not implemented")
 }
+
 func (UnimplementedRBACServiceServer) CreateResource(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateResource not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetResource(context.Context, *GetResourceRequest) (*GetResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetResource not implemented")
 }
+
 func (UnimplementedRBACServiceServer) UpdateResource(context.Context, *UpdateResourceRequest) (*UpdateResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateResource not implemented")
 }
+
 func (UnimplementedRBACServiceServer) DeleteResource(context.Context, *DeleteResourceRequest) (*DeleteResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteResource not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListResources(context.Context, *ListResourcesRequest) (*ListResourcesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListResources not implemented")
 }
+
 func (UnimplementedRBACServiceServer) CreatePermission(context.Context, *CreatePermissionRequest) (*CreatePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetPermission(context.Context, *GetPermissionRequest) (*GetPermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) UpdatePermission(context.Context, *UpdatePermissionRequest) (*UpdatePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) DeletePermission(context.Context, *DeletePermissionRequest) (*DeletePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListPermissions(context.Context, *ListPermissionsRequest) (*ListPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPermissions not implemented")
 }
+
 func (UnimplementedRBACServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) UpdateRole(context.Context, *UpdateRoleRequest) (*UpdateRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRoles not implemented")
 }
+
 func (UnimplementedRBACServiceServer) CreateRoleInclusion(context.Context, *CreateRoleInclusionRequest) (*CreateRoleInclusionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRoleInclusion not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetRoleInclusion(context.Context, *GetRoleInclusionRequest) (*GetRoleInclusionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRoleInclusion not implemented")
 }
+
 func (UnimplementedRBACServiceServer) DeleteRoleInclusion(context.Context, *DeleteRoleInclusionRequest) (*DeleteRoleInclusionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRoleInclusion not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListRoleInclusions(context.Context, *ListRoleInclusionsRequest) (*ListRoleInclusionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRoleInclusions not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GrantRolePermission(context.Context, *GrantRolePermissionRequest) (*GrantRolePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantRolePermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) RevokeRolePermission(context.Context, *RevokeRolePermissionRequest) (*RevokeRolePermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokeRolePermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListRolePermissions(context.Context, *ListRolePermissionsRequest) (*ListRolePermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListRolePermissions not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GrantUserRole(context.Context, *GrantUserRoleRequest) (*GrantUserRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantUserRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) RevokeUserRole(context.Context, *RevokeUserRoleRequest) (*RevokeUserRoleResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserRole not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListUserRoles(context.Context, *ListUserRolesRequest) (*ListUserRolesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserRoles not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GrantUserPermission(context.Context, *GrantUserPermissionRequest) (*GrantUserPermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GrantUserPermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) RevokeUserPermission(context.Context, *RevokeUserPermissionRequest) (*RevokeUserPermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokeUserPermission not implemented")
 }
+
 func (UnimplementedRBACServiceServer) ListUserPermissions(context.Context, *ListUserPermissionsRequest) (*ListUserPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserPermissions not implemented")
 }
+
 func (UnimplementedRBACServiceServer) GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllPermissions not implemented")
 }

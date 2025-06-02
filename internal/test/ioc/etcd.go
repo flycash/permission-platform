@@ -13,5 +13,3 @@ func InitEtcdClient() *eetcd.Component {
 	})
 	return eetcd.Load("etcd").Build()
 }
-
-
