@@ -20,7 +20,7 @@ type AttributeValueTask struct {
 	etcdClient  *eetcd.Component
 }
 
-func NewAttributeValueTask(repo repository.AttributeValueRepository, localCache cache.ABACAttributeValCache, redisCache cache.ABACAttributeValCache, resourceKey string, subjectKey string, etcdClient *eetcd.Component) *AttributeValueTask {
+func NewAttributeValueTask(repo repository.AttributeValueRepository, localCache, redisCache cache.ABACAttributeValCache, resourceKey, subjectKey string, etcdClient *eetcd.Component) *AttributeValueTask {
 	return &AttributeValueTask{
 		repo:        repo,
 		localCache:  localCache,

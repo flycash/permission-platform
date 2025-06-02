@@ -73,7 +73,7 @@ type AttributeValue struct {
 
 // ABACObject ABAC 的对象
 type ABACObject struct {
-	BizID           int64 `json:"bizID"`
+	BizID           int64 `json:"bizId"`
 	ID              int64 `json:"id"`
 	AttributeValues []AttributeValue
 }

@@ -33,7 +33,7 @@ func (l *AggregatePermissionClient) Name() string {
 	return "AggregateClient"
 }
 
-func (l *AggregatePermissionClient) CheckPermission(ctx context.Context, in *permissionv1.CheckPermissionRequest, opts ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
+func (l *AggregatePermissionClient) CheckPermission(ctx context.Context, in *permissionv1.CheckPermissionRequest, _ ...grpc.CallOption) (*permissionv1.CheckPermissionResponse, error) {
 	req := &AggregateRequest{
 		Req:    in,
 		RespCh: make(chan *permissionv1.CheckPermissionResponse, 1),
@@ -45,6 +45,8 @@ func (l *AggregatePermissionClient) CheckPermission(ctx context.Context, in *per
 		return resp, nil
 	case err := <-req.ErrCh:
 		return nil, err
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }
 
@@ -79,7 +81,7 @@ func (l *AggregatePermissionClient) oneLoop(ctx context.Context) {
 
 // 发送
 func (l *AggregatePermissionClient) batchSend(ctx context.Context, reqs []*AggregateRequest) {
-	checkReqs := slice.Map(reqs, func(idx int, src *AggregateRequest) *permissionv1.CheckPermissionRequest {
+	checkReqs := slice.Map(reqs, func(_ int, src *AggregateRequest) *permissionv1.CheckPermissionRequest {
 		return src.Req
 	})
 	pCtx := context.WithValue(ctx, "Authorization", l.permissionToken)
@@ -101,5 +103,4 @@ func (l *AggregatePermissionClient) batchSend(ctx context.Context, reqs []*Aggre
 			Allowed: resp.Allowed[idx],
 		}
 	}
-	return
 }

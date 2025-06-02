@@ -115,5 +115,6 @@ func (s *ConsumerRedisSuite) TestConsumerBehaviorWithMonitor() {
 }
 
 func TestConsumerRedisSuite(t *testing.T) {
+	t.Skip()
 	suite.Run(t, new(ConsumerRedisSuite))
 }

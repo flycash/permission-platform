@@ -20,7 +20,7 @@ func NewAbacPolicy(redisClient redis.Cmdable) cache.ABACPolicyCache {
 	}
 }
 
-func (a *abacPolicy) DelPolicy(ctx context.Context, bizID int64, policyID int64) error {
+func (a *abacPolicy) DelPolicy(ctx context.Context, bizID, policyID int64) error {
 	return a.redisClient.HDel(ctx, a.tableKey(bizID), fmt.Sprintf("%d", policyID)).Err()
 }
 
@@ -31,7 +31,7 @@ func (a *abacPolicy) GetPolicies(ctx context.Context, bizID int64) ([]domain.Pol
 	}
 	policies := make([]domain.Policy, 0)
 	err = json.Unmarshal([]byte(v), &policies)
-	return policies, nil
+	return policies, err
 }
 
 func (a *abacPolicy) SetPolicy(ctx context.Context, bizID int64, policies []domain.Policy) error {

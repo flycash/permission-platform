@@ -21,7 +21,7 @@ type abacAttributeValCache struct {
 	client goredis.Cmdable
 }
 
-func (a *abacAttributeValCache) GetAttrResObj(ctx context.Context, bizID int64, id int64) (domain.ABACObject, error) {
+func (a *abacAttributeValCache) GetAttrResObj(ctx context.Context, bizID, id int64) (domain.ABACObject, error) {
 	return a.getAttrObj(ctx, a.key(resName, bizID, id))
 }
 
@@ -29,7 +29,7 @@ func (a *abacAttributeValCache) SetAttrResObj(ctx context.Context, objs []domain
 	return a.setAttrObj(ctx, resName, objs)
 }
 
-func (a *abacAttributeValCache) GetAttrSubObj(ctx context.Context, bizID int64, id int64) (domain.ABACObject, error) {
+func (a *abacAttributeValCache) GetAttrSubObj(ctx context.Context, bizID, id int64) (domain.ABACObject, error) {
 	return a.getAttrObj(ctx, a.key(subName, bizID, id))
 }
 
@@ -79,7 +79,7 @@ func (a *abacAttributeValCache) setAttrObj(ctx context.Context, typName string, 
 	return err
 }
 
-func (a *abacAttributeValCache) key(typName string, bizID int64, id int64) string {
+func (a *abacAttributeValCache) key(typName string, bizID, id int64) string {
 	switch typName {
 	case resName:
 		return fmt.Sprintf("abac:attr:%s:%d:%d", resName, bizID, id)

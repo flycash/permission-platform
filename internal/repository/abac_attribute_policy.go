@@ -88,7 +88,7 @@ func (p *policyRepo) SavePermissionPolicy(ctx context.Context, bizID, policyID, 
 	return err
 }
 
-func NewPolicyRepository(policyDAO dao.PolicyDAO, redisCache cache.ABACPolicyCache, localCache cache.ABACPolicyCache) PolicyRepo {
+func NewPolicyRepository(policyDAO dao.PolicyDAO, redisCache, localCache cache.ABACPolicyCache) PolicyRepo {
 	return &policyRepo{
 		policyDAO:  policyDAO,
 		logger:     elog.DefaultLogger,

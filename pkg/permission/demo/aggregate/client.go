@@ -2,7 +2,7 @@ package main
 
 import "gitee.com/flycash/permission-platform/pkg/permission/internal"
 
-func InitClient(addr string) internal.AggregatePermissionClient {
+func InitClient(_ string) internal.AggregatePermissionClient {
 	return internal.AggregatePermissionClient{}
 }
 

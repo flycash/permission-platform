@@ -56,7 +56,7 @@ func (a *abacPolicyLocalCache) SetPolicy(ctx context.Context, bizID int64, polic
 }
 
 // DelPolicy 不会使用，删除功能直接使用上面的全量替换即可
-func (a *abacPolicyLocalCache) DelPolicy(ctx context.Context, bizID int64, policyID int64) error {
+func (a *abacPolicyLocalCache) DelPolicy(_ context.Context, _, _ int64) error {
 	return nil
 }
 

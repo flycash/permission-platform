@@ -23,6 +23,7 @@ type GroupCachedClient struct {
 	cache *groupcache.Group
 }
 
+//nolint:gosec // 忽略
 func NewGroupCachedClient(
 	client permissionv1.PermissionServiceClient,
 	rbacClient permissionv1.RBACServiceClient,
@@ -41,7 +42,7 @@ func NewGroupCachedClient(
 	pool.Set(peerAddrs...)
 
 	// 注册 Group
-	groupcache.NewGroup(groupName, cacheSize, groupcache.GetterFunc(func(ctx context.Context, key string, dest groupcache.Sink) error {
+	groupcache.NewGroup(groupName, cacheSize, groupcache.GetterFunc(func(ctx context.Context, _ string, dest groupcache.Sink) error {
 		// 如何从远程获取
 		// 需要从key反解析出bizID和userID，再调用rbacClient获取该用户的全部权限，但是一旦拿到后后续不再可变，直到该用户的信息因为lru算法被剔除。
 		bizID, userID := int64(0), int64(0)
@@ -52,7 +53,7 @@ func NewGroupCachedClient(
 		if err != nil {
 			return err
 		}
-		up := slice.Map(resp.GetUserPermissions(), func(idx int, src *permissionv1.UserPermission) UserPermission {
+		up := slice.Map(resp.GetUserPermissions(), func(_ int, _ *permissionv1.UserPermission) UserPermission {
 			return UserPermission{}
 		})
 		data, _ := json.Marshal(up)

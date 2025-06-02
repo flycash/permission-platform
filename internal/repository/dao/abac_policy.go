@@ -34,24 +34,10 @@ func (p Policy) TableName() string {
 
 // PolicyRule 策略规则表模型
 type PolicyRule struct {
-	ID    int64 `gorm:"column:id;primaryKey;autoIncrement;"`
-	BizID int64 `gorm:"column:var rules []PolicyRule
-	err := p.db.WithContext(ctx).
-		Where(" policy_id IN ?", policyIDs).
-		Find(&rules).Error
-	if err != nil {
-		return nil, err
-	}
-
-	// 将规则按策略ID分组
-	result := make(map[int64][]PolicyRule)
-	for _, rule := range rules {
-		result[rule.PolicyID] = append(result[rule.PolicyID], rule)
-	}
-
-	return result, nil;index:idx_biz_id;comment:业务ID"`
+	ID        int64  `gorm:"column:id;primaryKey;autoIncrement;"`
+	BizID     int64  `gorm:"column:biz_id;index:idx_biz_id;comment:业务ID"`
 	PolicyID  int64  `gorm:"column:policy_id;not null;index:idx_policy_id;comment:策略ID"`
-	AttrDefID int64  `gorm:"column:attr_def_id;not null;index:idx_attribute_id;comment:属性定义ID"`
+	AttrDefID int64  `gorm:"column:attr_def_id;not null;index:idx_attr_def_id;comment:属性定义ID"`
 	Value     string `gorm:"column:value;type:text;comment:比较值，取决于类型"`
 	Left      int64  `gorm:"column:left;comment:左规则ID"`
 	Right     int64  `gorm:"column:right;comment:右规则ID"`

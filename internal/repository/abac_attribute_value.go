@@ -318,7 +318,7 @@ func (a *attributeValueRepository) toDomainEnvironmentAttributeValue(envVal dao.
 	}
 }
 
-func (a *attributeValueRepository) getResAttributeVal(ctx context.Context, bizID int64, id int64) (domain.ABACObject, error) {
+func (a *attributeValueRepository) getResAttributeVal(ctx context.Context, bizID, id int64) (domain.ABACObject, error) {
 	values, err := a.resourceDao.FindByResource(ctx, bizID, id)
 	if err != nil {
 		return domain.ABACObject{}, err
@@ -333,7 +333,7 @@ func (a *attributeValueRepository) getResAttributeVal(ctx context.Context, bizID
 	return result, nil
 }
 
-func (a *attributeValueRepository) getSubAttributeVal(ctx context.Context, bizID int64, id int64) (domain.ABACObject, error) {
+func (a *attributeValueRepository) getSubAttributeVal(ctx context.Context, bizID, id int64) (domain.ABACObject, error) {
 	values, err := a.subjectDao.FindBySubject(ctx, bizID, id)
 	if err != nil {
 		return domain.ABACObject{}, err
@@ -366,7 +366,8 @@ func (a *attributeValueRepository) getEnvVal(ctx context.Context, bizID int64,
 	}, nil
 }
 
-func (a *attributeValueRepository) setResAttributeVal(ctx context.Context, bizID int64, id int64) {
+//nolint:dupl // 忽略
+func (a *attributeValueRepository) setResAttributeVal(ctx context.Context, bizID, id int64) {
 	obj, err := a.getResAttributeVal(ctx, bizID, id)
 	if err != nil {
 		a.logger.Error("获取资源属性失败", elog.FieldErr(err), elog.Int64("bizID", bizID), elog.Int64("resID", id))
@@ -384,7 +385,8 @@ func (a *attributeValueRepository) setResAttributeVal(ctx context.Context, bizID
 	}
 }
 
-func (a *attributeValueRepository) setSubAttributeVal(ctx context.Context, bizID int64, id int64) {
+//nolint:dupl // 忽略
+func (a *attributeValueRepository) setSubAttributeVal(ctx context.Context, bizID, id int64) {
 	obj, err := a.getSubAttributeVal(ctx, bizID, id)
 	if err != nil {
 		a.logger.Error("获取主体属性失败", elog.FieldErr(err), elog.Int64("bizID", bizID), elog.Int64("resID", id))

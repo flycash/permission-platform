@@ -1,3 +1,5 @@
+//go:build e2e
+
 package internal
 
 import (
@@ -19,7 +21,7 @@ type MockServer struct {
 	permissionv1.UnimplementedBatchPermissionServiceServer
 }
 
-func (m *MockServer) BatchCheckPermission(ctx context.Context, request *permissionv1.BatchCheckPermissionRequest) (*permissionv1.BatchCheckPermissionResponse, error) {
+func (m *MockServer) BatchCheckPermission(_ context.Context, request *permissionv1.BatchCheckPermissionRequest) (*permissionv1.BatchCheckPermissionResponse, error) {
 	reqs := request.GetRequests()
 	ans := make([]bool, 0, len(reqs))
 	for _, req := range reqs {
@@ -54,7 +56,7 @@ func TestAggregatePermissionClient_CheckPermission(t *testing.T) {
 	}()
 	defer s.Stop()
 
-	ctx := context.Background()
+	ctx := t.Context()
 	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(bufDialer(lis)), grpc.WithInsecure())
 	assert.NoError(t, err)
 	defer conn.Close()
