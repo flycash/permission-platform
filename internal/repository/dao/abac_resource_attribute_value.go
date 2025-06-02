@@ -36,10 +36,28 @@ type ResourceAttributeValueDAO interface {
 	FindByResource(ctx context.Context, bizID int64, resourceID int64) ([]ResourceAttributeValue, error)
 	// 根据属性ID查询所有资源属性值
 	FindByAttribute(ctx context.Context, bizID int64, attributeID int64) ([]ResourceAttributeValue, error)
+	// 根据属性ids查询所有资源属性值
+	FindByResourceIDs(ctx context.Context, resourceIDs []int64) (map[int64][]ResourceAttributeValue, error)
 }
 
 type resourceAttributeValueDAO struct {
 	db *egorm.Component
+}
+
+func (r *resourceAttributeValueDAO) FindByResourceIDs(ctx context.Context, resourceIDs []int64) (map[int64][]ResourceAttributeValue, error) {
+	var values []ResourceAttributeValue
+	err := r.db.WithContext(ctx).
+		Where("resource_id IN ?", resourceIDs).
+		Find(&values).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[int64][]ResourceAttributeValue)
+	for _, value := range values {
+		result[value.ResourceID] = append(result[value.ResourceID], value)
+	}
+	return result, nil
 }
 
 // NewResourceAttributeValueDAO 创建资源属性值数据访问对象

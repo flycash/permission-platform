@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"gitee.com/flycash/permission-platform/internal/repository/cache"
 
 	"github.com/gotomicro/ego/core/elog"
 
@@ -21,14 +22,21 @@ type PolicyRepo interface {
 	FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionIDs []int64) ([]domain.Policy, error)
 	SavePermissionPolicy(ctx context.Context, bizID, policyID, permissionID int64, effect domain.Effect) error
 	FindPolicies(ctx context.Context, bizID int64, offset, limit int) (int64, []domain.Policy, error)
+	FindBizPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error)
 }
 
 type policyRepo struct {
-	policyDAO dao.PolicyDAO
-	local
-	logger    *elog.Component
+	policyDAO  dao.PolicyDAO
+	localCache cache.ABACPolicyCache
+	redisCache cache.ABACPolicyCache
+	logger     *elog.Component
 }
 
+func (p *policyRepo) FindBizPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error) {
+	return p.getPolicies(ctx, bizID)
+}
+
+// FindPolicies 后台操作不加缓存了
 func (p *policyRepo) FindPolicies(ctx context.Context, bizID int64, offset, limit int) (int64, []domain.Policy, error) {
 	var (
 		count int64
@@ -46,7 +54,7 @@ func (p *policyRepo) FindPolicies(ctx context.Context, bizID int64, offset, limi
 			return err
 		}
 		res = slice.Map(list, func(_ int, src dao.Policy) domain.Policy {
-			return p.toPolicyDomain(src, []dao.PolicyRule{}, map[int64]dao.PermissionPolicy{})
+			return p.toPolicyDomain(src, []dao.PolicyRule{}, map[int64][]dao.PermissionPolicy{})
 		})
 		return nil
 	})
@@ -74,14 +82,17 @@ func (p *policyRepo) SavePermissionPolicy(ctx context.Context, bizID, policyID, 
 			elog.Any("policyID", policyID),
 			elog.Any("permissionID", permissionID),
 			elog.Any("effect", effect))
+		p.setPolicyToCacheByBizID(ctx, bizID)
 	}
 	return err
 }
 
-func NewPolicyRepository(policyDAO dao.PolicyDAO) PolicyRepo {
+func NewPolicyRepository(policyDAO dao.PolicyDAO, redisCache cache.ABACPolicyCache, localCache cache.ABACPolicyCache) PolicyRepo {
 	return &policyRepo{
-		policyDAO: policyDAO,
-		logger:    elog.DefaultLogger,
+		policyDAO:  policyDAO,
+		logger:     elog.DefaultLogger,
+		localCache: localCache,
+		redisCache: redisCache,
 	}
 }
 
@@ -106,11 +117,10 @@ func (p *policyRepo) Save(ctx context.Context, policy domain.Policy) (int64, err
 		p.logger.Info("添加策略",
 			elog.Int64("bizId", policy.BizID),
 			elog.Any("policy", policy))
+		p.setPolicyToCacheByBizID(ctx, policy.BizID)
 	}
 	return id, err
 }
-
-
 
 func (p *policyRepo) Delete(ctx context.Context, bizID, id int64) error {
 	// 删除策略及其关联数据
@@ -124,6 +134,7 @@ func (p *policyRepo) Delete(ctx context.Context, bizID, id int64) error {
 		p.logger.Info("删除策略",
 			elog.Int64("bizId", bizID),
 			elog.Int64("policyId", id))
+		p.setPolicyToCacheByBizID(ctx, bizID)
 	}
 	return err
 }
@@ -148,7 +159,7 @@ func (p *policyRepo) First(ctx context.Context, bizID, id int64) (domain.Policy,
 	if err := eg.Wait(); err != nil {
 		return domain.Policy{}, err
 	}
-	return p.toPolicyDomain(policy, rules, map[int64]dao.PermissionPolicy{}), nil
+	return p.toPolicyDomain(policy, rules, map[int64][]dao.PermissionPolicy{}), nil
 }
 
 func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule domain.PolicyRule) (int64, error) {
@@ -181,6 +192,7 @@ func (p *policyRepo) SaveRule(ctx context.Context, bizID, policyID int64, rule d
 			elog.Int64("policyId", policyID),
 			elog.Any("rule", rule),
 		)
+		p.setPolicyToCacheByBizID(ctx, bizID)
 	}
 	return id, err
 }
@@ -198,47 +210,97 @@ func (p *policyRepo) DeleteRule(ctx context.Context, bizID, ruleID int64) error 
 			elog.Int64("bizId", bizID),
 			elog.Any("ruleID", ruleID),
 		)
+		p.setPolicyToCacheByBizID(ctx, bizID)
 	}
 	return err
 }
 
 func (p *policyRepo) FindPoliciesByPermissionIDs(ctx context.Context, bizID int64, permissionID []int64) ([]domain.Policy, error) {
-	policyPermissions, err := p.policyDAO.FindPoliciesByPermission(ctx, bizID, permissionID)
+	// 从本地缓存中获取
+	policies, err := p.localCache.GetPolicies(ctx, bizID)
+	if err == nil {
+		return p.getPolicyByPermissionID(policies, permissionID), nil
+	}
+	// 从redis缓存中获取
+	policies, err = p.redisCache.GetPolicies(ctx, bizID)
+	if err == nil {
+		return p.getPolicyByPermissionID(policies, permissionID), nil
+	}
+	// 都没找到去db中找
+	policies, err = p.getPolicies(ctx, bizID)
 	if err != nil {
 		return nil, err
 	}
-	policyIds := slice.Map(policyPermissions, func(_ int, src dao.PermissionPolicy) int64 {
-		return src.PolicyID
-	})
-	permissionPolicyMap := make(map[int64]dao.PermissionPolicy, len(policyIds))
-	for idx := range policyPermissions {
-		policyPermission := policyPermissions[idx]
-		permissionPolicyMap[policyPermission.PolicyID] = policyPermission
-	}
-	var eg errgroup.Group
-	var policies []dao.Policy
-	var rules map[int64][]dao.PolicyRule
+	p.setPolicyToRedisCache(ctx, bizID, policies)
+	return p.getPolicyByPermissionID(policies, permissionID), nil
+}
+
+func (p *policyRepo) getPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error) {
+	var (
+		eg                    errgroup.Group
+		daoPolicies           []dao.Policy
+		daoPolicyRules        map[int64][]dao.PolicyRule
+		daoPermissionPolicies map[int64][]dao.PermissionPolicy
+	)
 	eg.Go(func() error {
 		var eerr error
-		policies, eerr = p.policyDAO.FindPoliciesByIDs(ctx, policyIds)
+		daoPermissionPolicies, eerr = p.policyDAO.FindPermissionPolicy(ctx, bizID)
 		return eerr
 	})
 	eg.Go(func() error {
 		var eerr error
-		rules, eerr = p.policyDAO.FindPolicyRulesByPolicyIDs(ctx, policyIds)
+		daoPolicyRules, eerr = p.policyDAO.FindPolicyRulesByBiz(ctx, bizID)
+		return eerr
+	})
+	eg.Go(func() error {
+		var eerr error
+		daoPolicies, eerr = p.policyDAO.FindPoliciesByBiz(ctx, bizID)
 		return eerr
 	})
 	if err := eg.Wait(); err != nil {
 		return nil, err
 	}
-	res := make([]domain.Policy, 0, len(policies))
-	for idx := range policies {
-		res = append(res, p.toPolicyDomain(policies[idx], rules[policies[idx].ID], permissionPolicyMap))
+	res := make([]domain.Policy, 0, len(daoPolicies))
+
+	for idx := range daoPolicies {
+		daoPolicy := daoPolicies[idx]
+		rules := daoPolicyRules[daoPolicy.ID]
+		res = append(res, p.toPolicyDomain(daoPolicy, rules, daoPermissionPolicies))
 	}
 	return res, nil
 }
 
-func (p *policyRepo) toPolicyDomain(policy dao.Policy, rules []dao.PolicyRule, permissionPolicyMap map[int64]dao.PermissionPolicy) domain.Policy {
+func (p *policyRepo) setPolicyToCacheByBizID(ctx context.Context, bizID int64) {
+	policies, err := p.getPolicies(ctx, bizID)
+	if err != nil {
+		p.logger.Error("获取policy失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
+		return
+	}
+	p.setPolicyToCache(ctx, bizID, policies)
+}
+
+func (p *policyRepo) setPolicyToRedisCache(ctx context.Context, bizID int64, policies []domain.Policy) {
+	err := p.redisCache.SetPolicy(ctx, bizID, policies)
+	if err != nil {
+		p.logger.Error("保存到redis缓存失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
+		return
+	}
+}
+
+func (p *policyRepo) setPolicyToCache(ctx context.Context, bizID int64, policies []domain.Policy) {
+	err := p.localCache.SetPolicy(ctx, bizID, policies)
+	if err != nil {
+		p.logger.Error("保存到本地缓存失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
+		return
+	}
+	err = p.redisCache.SetPolicy(ctx, bizID, policies)
+	if err != nil {
+		p.logger.Error("保存到redis缓存失败", elog.FieldErr(err), elog.Int64("bizID", bizID))
+		return
+	}
+}
+
+func (p *policyRepo) toPolicyDomain(policy dao.Policy, rules []dao.PolicyRule, permissionPolicyMap map[int64][]dao.PermissionPolicy) domain.Policy {
 	domainPolicy := domain.Policy{
 		ID:          policy.ID,
 		BizID:       policy.BizID,
@@ -248,8 +310,28 @@ func (p *policyRepo) toPolicyDomain(policy dao.Policy, rules []dao.PolicyRule, p
 		Status:      domain.PolicyStatus(policy.Status),
 		Rules:       genDomainPolicyRules(rules),
 	}
-	if permissionPolicy, ok := permissionPolicyMap[policy.ID]; ok {
-		domainPolicy.Effect = domain.Effect(permissionPolicy.Effect)
+	if permissionPolicies, ok := permissionPolicyMap[policy.ID]; ok {
+		for idx := range permissionPolicies {
+			permissionPolicy := permissionPolicies[idx]
+			domainPolicy.Permissions = append(domainPolicy.Permissions, domain.UserPermission{
+				BizID: permissionPolicy.BizID,
+				Permission: domain.Permission{
+					ID: permissionPolicy.PermissionID,
+				},
+				Effect: domain.Effect(permissionPolicy.Effect),
+			})
+		}
 	}
 	return domainPolicy
+}
+
+func (p *policyRepo) getPolicyByPermissionID(policies []domain.Policy, permissionIDs []int64) []domain.Policy {
+	res := make([]domain.Policy, 0, len(policies))
+	for idx := range policies {
+		policy := policies[idx]
+		if policy.ContainsAnyPermissions(permissionIDs) {
+			res = append(res, policy)
+		}
+	}
+	return res
 }

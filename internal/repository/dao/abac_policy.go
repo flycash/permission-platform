@@ -34,8 +34,22 @@ func (p Policy) TableName() string {
 
 // PolicyRule 策略规则表模型
 type PolicyRule struct {
-	ID        int64  `gorm:"column:id;primaryKey;autoIncrement;"`
-	BizID     int64  `gorm:"column:biz_id;index:idx_biz_id;comment:业务ID"`
+	ID    int64 `gorm:"column:id;primaryKey;autoIncrement;"`
+	BizID int64 `gorm:"column:var rules []PolicyRule
+	err := p.db.WithContext(ctx).
+		Where(" policy_id IN ?", policyIDs).
+		Find(&rules).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 将规则按策略ID分组
+	result := make(map[int64][]PolicyRule)
+	for _, rule := range rules {
+		result[rule.PolicyID] = append(result[rule.PolicyID], rule)
+	}
+
+	return result, nil;index:idx_biz_id;comment:业务ID"`
 	PolicyID  int64  `gorm:"column:policy_id;not null;index:idx_policy_id;comment:策略ID"`
 	AttrDefID int64  `gorm:"column:attr_def_id;not null;index:idx_attribute_id;comment:属性定义ID"`
 	Value     string `gorm:"column:value;type:text;comment:比较值，取决于类型"`
@@ -80,6 +94,7 @@ type PolicyDAO interface {
 	FindPoliciesByBiz(ctx context.Context, bizID int64) ([]Policy, error)
 	PolicyList(ctx context.Context, bizID int64, offset, limit int) ([]Policy, error)
 	PolicyListCount(ctx context.Context, bizID int64) (int64, error)
+	FindPoliciesByBizIDs(ctx context.Context, bizIDs []int64) (map[int64][]Policy, error)
 
 	// PolicyRule 相关方法
 	SavePolicyRule(ctx context.Context, rule PolicyRule) (int64, error)
@@ -87,15 +102,73 @@ type PolicyDAO interface {
 	FindPolicyRule(ctx context.Context, id int64) (PolicyRule, error)
 	FindPolicyRulesByPolicyID(ctx context.Context, bizID, policyID int64) ([]PolicyRule, error)
 	FindPolicyRulesByPolicyIDs(ctx context.Context, policyIDs []int64) (map[int64][]PolicyRule, error)
+	FindPolicyRulesByBiz(ctx context.Context, bizID int64) (map[int64][]PolicyRule, error)
+	FindPoliciesRulesByBizIDs(ctx context.Context, bizIDs []int64) (map[int64]map[int64][]PolicyRule, error)
 
 	// PermissionPolicy 相关方法
 	SavePermissionPolicy(ctx context.Context, permissionPolicy PermissionPolicy) error
 	DeletePermissionPolicy(ctx context.Context, bizID int64, permissionID int64, policyID int64) error
 	FindPoliciesByPermission(ctx context.Context, bizID int64, permissionIDs []int64) ([]PermissionPolicy, error)
+	FindPermissionPolicy(ctx context.Context, bizID int64) (map[int64][]PermissionPolicy, error)
+	FindPermissionPolicyByBizIDs(ctx context.Context, bizIDs []int64) (map[int64]map[int64][]PermissionPolicy, error)
 }
 
 type policyDAO struct {
 	db *egorm.Component
+}
+
+func (p *policyDAO) FindPoliciesByBizIDs(ctx context.Context, bizIDs []int64) (map[int64][]Policy, error) {
+	var policies []Policy
+	err := p.db.WithContext(ctx).Model(&Policy{}).Where("biz_id IN ?", bizIDs).Find(&policies).Error
+	if err != nil {
+		return nil, err
+	}
+	result := make(map[int64][]Policy, len(policies))
+	for _, policy := range policies {
+		result[policy.BizID] = append(result[policy.BizID], policy)
+	}
+	return result, nil
+}
+
+func (p *policyDAO) FindPoliciesRulesByBizIDs(ctx context.Context, bizIDs []int64) (map[int64]map[int64][]PolicyRule, error) {
+	var rules []PolicyRule
+	err := p.db.WithContext(ctx).
+		Where("biz_id IN ?", bizIDs).
+		Find(&rules).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[int64]map[int64][]PolicyRule)
+	for _, rule := range rules {
+		if _, exists := result[rule.BizID]; !exists {
+			result[rule.BizID] = make(map[int64][]PolicyRule)
+		}
+		result[rule.BizID][rule.PolicyID] = append(result[rule.BizID][rule.PolicyID], rule)
+	}
+
+	return result, nil
+}
+
+func (p *policyDAO) FindPermissionPolicyByBizIDs(ctx context.Context, bizIDs []int64) (map[int64]map[int64][]PermissionPolicy, error) {
+	var policies []PermissionPolicy
+	err := p.db.WithContext(ctx).
+		Where("biz_id in ?", bizIDs).
+		Find(&policies).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a nested map: bizID -> policyID -> []PermissionPolicy
+	result := make(map[int64]map[int64][]PermissionPolicy)
+	for _, policy := range policies {
+		if _, exists := result[policy.BizID]; !exists {
+			result[policy.BizID] = make(map[int64][]PermissionPolicy)
+		}
+		result[policy.BizID][policy.PolicyID] = append(result[policy.BizID][policy.PolicyID], policy)
+	}
+
+	return result, nil
 }
 
 func (p *policyDAO) PolicyList(ctx context.Context, bizID int64, offset, limit int) ([]Policy, error) {
@@ -111,6 +184,20 @@ func (p *policyDAO) PolicyListCount(ctx context.Context, bizID int64) (int64, er
 		Model(&Policy{}).
 		Where("biz_id = ?", bizID).Count(&count).Error
 	return count, err
+}
+
+func (p *policyDAO) FindPermissionPolicy(ctx context.Context, bizID int64) (map[int64][]PermissionPolicy, error) {
+	var list []PermissionPolicy
+	err := p.db.WithContext(ctx).
+		Model(&PermissionPolicy{}).
+		Where("biz_id = ?", bizID).
+		Find(&list).Error
+	result := make(map[int64][]PermissionPolicy)
+	for idx := range list {
+		permissionPolicy := list[idx]
+		result[permissionPolicy.PolicyID] = append(result[permissionPolicy.PolicyID], permissionPolicy)
+	}
+	return result, err
 }
 
 // NewPolicyDAO 创建综合策略数据访问对象
@@ -201,7 +288,7 @@ func (p *policyDAO) SavePolicyRule(ctx context.Context, rule PolicyRule) (int64,
 
 func (p *policyDAO) DeletePolicyRule(ctx context.Context, bizID, id int64) error {
 	return p.db.WithContext(ctx).
-		Where("id = ? AND biz_id", id, bizID).
+		Where("id = ? AND biz_id = ?", id, bizID).
 		Delete(&PolicyRule{}).Error
 }
 
@@ -236,6 +323,21 @@ func (p *policyDAO) FindPolicyRulesByPolicyIDs(ctx context.Context, policyIDs []
 		result[rule.PolicyID] = append(result[rule.PolicyID], rule)
 	}
 
+	return result, nil
+}
+func (p *policyDAO) FindPolicyRulesByBiz(ctx context.Context, bizID int64) (map[int64][]PolicyRule, error) {
+	var rules []PolicyRule
+	err := p.db.WithContext(ctx).
+		Where(" biz_id = ?", bizID).
+		Find(&rules).Error
+	if err != nil {
+		return nil, err
+	}
+	// 将规则按策略ID分组
+	result := make(map[int64][]PolicyRule)
+	for _, rule := range rules {
+		result[rule.PolicyID] = append(result[rule.PolicyID], rule)
+	}
 	return result, nil
 }
 

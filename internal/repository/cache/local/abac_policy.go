@@ -4,54 +4,56 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gitee.com/flycash/permission-platform/internal/domain"
-	"gitee.com/flycash/permission-platform/pkg/cache"
+	"gitee.com/flycash/permission-platform/internal/repository/cache"
+	"github.com/ecodeclub/ecache"
 	"time"
+
+	"gitee.com/flycash/permission-platform/internal/domain"
 )
 
 var defaultTimeOut = 48 * time.Hour
 
 type abacPolicyLocalCache struct {
-	cache cache.Cache
+	cache ecache.Cache
 }
-
-func (a *abacPolicyLocalCache) GetPolicies(ctx context.Context, bizID int64, permissionIDs []int64) (map[int64]domain.Policy, error) {
-	val := a.cache.Get(ctx, a.tableKey(bizID))
-	if val.KeyNotFound() {
-		return map[int64]domain.Policy{}, nil
+func NewAbacPolicy(ca ecache.Cache) cache.ABACPolicyCache {
+	return &abacPolicyLocalCache{
+		cache: ca,
 	}
-	var bizPolicyMap map[int64]domain.Policy
-	err := val.JSONScan(&bizPolicyMap)
+}
+func (a *abacPolicyLocalCache) GetPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error) {
+	key := a.tableKey(bizID)
+	val := a.cache.Get(ctx, key)
+	if val.Err != nil {
+		return nil, val.Err
+	}
+	if val.KeyNotFound() {
+		return nil, cache.ErrKeyNotFound
+	}
+	var policies []domain.Policy
+	err := val.JSONScan(&policies)
 	if err != nil {
 		return nil, err
 	}
-	resPolicyMap := make(map[int64]domain.Policy,len(permissionIDs))
-	for idx := range permissionIDs {
-		permissionID := permissionIDs[idx]
-		if v,ok := bizPolicyMap[permissionID]; ok {
-			resPolicyMap[permissionID] = v
-		}
-	}
-	return resPolicyMap, nil
+	return policies, nil
 }
 
 // SetPolicy 本地缓存默认全部替换
 func (a *abacPolicyLocalCache) SetPolicy(ctx context.Context, bizID int64, policies []domain.Policy) error {
-	policyMap := make(map[int64]domain.Policy)
-	for idx := range policies {
-		policy := policies[idx]
-		policyMap[policy.ID] = policy
-	}
-	policyByte, err := json.Marshal(policyMap)
+	key := a.tableKey(bizID)
+	policyByte, err := json.Marshal(policies)
 	if err != nil {
-		return fmt.Errorf("序列化失败: %w", err)
+		return err
 	}
-	err = a.cache.Set(ctx, a.tableKey(bizID), string(policyByte), defaultTimeOut)
-	return err
+	err = a.cache.Set(ctx, key, string(policyByte), defaultTimeOut)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // DelPolicy 不会使用，删除功能直接使用上面的全量替换即可
-func (a *abacPolicyLocalCache) DelPolicy(ctx context.Context, bizID int64, permissionID int64) error {
+func (a *abacPolicyLocalCache) DelPolicy(ctx context.Context, bizID int64, policyID int64) error {
 	return nil
 }
 

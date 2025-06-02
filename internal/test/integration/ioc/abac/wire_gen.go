@@ -26,12 +26,12 @@ func Init(db *egorm.Component, redisClient *redis.Client, lruCache *lru.Cache) *
 	resourceDAO := dao.NewResourceDAO(db)
 	resourceRepository := repository.NewResourceRepository(resourceDAO)
 	policyDAO := dao.NewPolicyDAO(db)
-	policyRepo := repository.NewPolicyRepository(policyDAO)
+	policyRepo := initAbacPolicyRepo(policyDAO, redisClient, lruCache)
 	environmentAttributeDAO := dao.NewEnvironmentAttributeDAO(db)
 	resourceAttributeValueDAO := dao.NewResourceAttributeValueDAO(db)
 	subjectAttributeValueDAO := dao.NewSubjectAttributeValueDAO(db)
 	attributeDefinitionDAO := dao.NewAttributeDefinitionDAO(db)
-	attributeValueRepository := repository.NewAttributeValueRepository(environmentAttributeDAO, resourceAttributeValueDAO, subjectAttributeValueDAO, attributeDefinitionDAO)
+	attributeValueRepository := initAbacAttribueValRepo(environmentAttributeDAO, resourceAttributeValueDAO, subjectAttributeValueDAO, attributeDefinitionDAO, redisClient, lruCache)
 	attributeDefinitionRepository := initAbacDefinitionLocalCache(attributeDefinitionDAO, redisClient, lruCache)
 	selector := evaluator.NewSelector()
 	policyExecutor := abac.NewPolicyExecutor(selector)
@@ -62,4 +62,21 @@ func initAbacDefinitionLocalCache(attrdao dao.AttributeDefinitionDAO, client *re
 	localCache := local.NewAbacDefLocalCache(lruCache, client)
 	redisCache := redisx.NewAbacDefCache(client)
 	return repository.NewAttributeDefinitionRepository(attrdao, localCache, redisCache)
+}
+
+func initAbacPolicyRepo(attrdao dao.PolicyDAO, client *redis.Client, lruCache *lru.Cache) repository.PolicyRepo {
+	localCache := local.NewAbacPolicy(lruCache)
+	redisCache := redisx.NewAbacPolicy(client)
+	return repository.NewPolicyRepository(attrdao, localCache, redisCache)
+}
+
+func initAbacAttribueValRepo(envDao dao.EnvironmentAttributeDAO,
+	resourceDao dao.ResourceAttributeValueDAO,
+	subjectDao dao.SubjectAttributeValueDAO,
+	definitionDao dao.AttributeDefinitionDAO,
+	client *redis.Client, lruCache *lru.Cache) repository.AttributeValueRepository {
+	localCache := local.NewAbacAttributeValCache(lruCache)
+	redisCache := redisx.NewAbacAttributeValCache(client)
+	return repository.NewAttributeValueRepository(envDao, resourceDao, subjectDao, definitionDao, redisCache, localCache)
+
 }

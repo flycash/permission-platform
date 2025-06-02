@@ -7,10 +7,23 @@ type Policy struct {
 	Description string
 	ExecuteType ExecuteType
 	Status      PolicyStatus
-	Effect      Effect
+	Permissions []UserPermission
 	Rules       []PolicyRule
 	Ctime       int64
 	Utime       int64
+}
+
+func (p Policy) ContainsAnyPermissions(permissionIDs []int64) bool {
+	for idx := range permissionIDs {
+		permissionID := permissionIDs[idx]
+		for jdx := range p.Permissions {
+			permission := p.Permissions[jdx]
+			if permission.ID == permissionID {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 type ExecuteType string

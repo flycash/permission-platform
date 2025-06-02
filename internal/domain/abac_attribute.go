@@ -73,10 +73,12 @@ type AttributeValue struct {
 
 // ABACObject ABAC 的对象
 type ABACObject struct {
-	BizID           int64
-	ID              int64
+	BizID           int64 `json:"bizID"`
+	ID              int64 `json:"id"`
 	AttributeValues []AttributeValue
 }
+
+
 
 func (s *ABACObject) ValuesMap() map[int64]AttributeValue {
 	return slice.ToMapV(s.AttributeValues, func(element AttributeValue) (int64, AttributeValue) {

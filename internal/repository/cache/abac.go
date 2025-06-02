@@ -14,12 +14,18 @@ type ABACDefinitionCache interface {
 }
 
 type ABACPolicyCache interface {
-	GetPolicies(ctx context.Context, bizID int64, policyIds []int64) (map[int64]domain.Policy, error)
+	GetPolicies(ctx context.Context, bizID int64) ([]domain.Policy, error)
 	SetPolicy(ctx context.Context, bizID int64, policies []domain.Policy) error
-	DelPolicy(ctx context.Context, bizID int64, permissionID int64) error
+	DelPolicy(ctx context.Context, bizID int64, policyID int64) error
+}
 
-	GetPermissionPolicy(ctx context.Context, bizID int64, permissionIDs []int64) ([]domain.Policy, error)
-	SetPermissionPolicy(ctx context.Context, bizID int64, reqs []SetPermissionPolicyReq) error
+type ABACAttributeValCache interface {
+	GetAttrResObj(ctx context.Context, bizID int64, ids int64) (domain.ABACObject, error)
+	SetAttrResObj(ctx context.Context,objs []domain.ABACObject) error
+	GetAttrSubObj(ctx context.Context, bizID int64, ids int64) (domain.ABACObject, error)
+	SetAttrSubObj(ctx context.Context,objs []domain.ABACObject) error
+	GetAttrEnvObj(ctx context.Context, bizID int64) (domain.ABACObject, error)
+	SetAttrEnvObj(ctx context.Context,objs []domain.ABACObject) error
 }
 
 type SetPermissionPolicyReq struct {

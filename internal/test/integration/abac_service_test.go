@@ -26,6 +26,13 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const (
+	resName = "resource"
+	subName = "subject"
+	envName = "env"
+	number0 = 0
+)
+
 type AbacServiceSuite struct {
 	suite.Suite
 	valRepo        repository.AttributeValueRepository
@@ -64,6 +71,8 @@ func (s *AbacServiceSuite) clearBizVal(bizId int64) {
 	s.db.WithContext(t.Context()).Where("biz_id = ?", bizId).Delete(&dao.Permission{})
 	s.db.WithContext(t.Context()).Where("biz_id = ?", bizId).Delete(&dao.AttributeDefinition{})
 	s.db.WithContext(t.Context()).Where("biz_id = ?", bizId).Delete(&dao.Resource{})
+	s.redisClient.Del(s.T().Context(), fmt.Sprintf("abac:policy:%d", bizId))
+	s.lruCache.Delete(s.T().Context(), fmt.Sprintf("abac:policy:%d", bizId))
 }
 
 func (s *AbacServiceSuite) TestAttributeDefinition_Save() {
@@ -396,6 +405,18 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 				s.Len(subjectObj.AttributeValues, 1)
 				s.Equal("25", subjectObj.AttributeValues[0].Value)
 				s.Equal(defID, subjectObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -424,6 +445,18 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 				s.Len(subjectObj.AttributeValues, 1)
 				s.Equal("30", subjectObj.AttributeValues[0].Value)
 				s.Equal(defID, subjectObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -452,6 +485,18 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Save() {
 				s.Len(subjectObj.AttributeValues, 1)
 				s.Equal("25", subjectObj.AttributeValues[0].Value) // 应该保持原来的值
 				s.Equal(defID, subjectObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 	}
@@ -503,10 +548,14 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Delete() {
 	}
 	id, err := s.valRepo.SaveSubjectValue(ctx, bizID, subjectID, val)
 	s.NoError(err)
-	s.Greater(id, int64(0))
-
+	val = domain.AttributeValue{
+		Definition: def,
+		Value:      "26",
+	}
+	_, err = s.valRepo.SaveSubjectValue(ctx, bizID, subjectID, val)
+	s.NoError(err)
 	// 测试删除存在的属性值
-	err = s.valRepo.DeleteSubjectValue(ctx, id)
+	err = s.valRepo.DeleteSubjectValue(ctx, bizID, id)
 	s.NoError(err)
 
 	// 验证属性值已被删除
@@ -514,15 +563,22 @@ func (s *AbacServiceSuite) TestAttributeSubjectValue_Delete() {
 	err = s.db.WithContext(ctx).
 		Where("id = ?", id).First(&res).Error
 	assert.Equal(s.T(), gorm.ErrRecordNotFound, err)
-	subjectObj, err := s.valRepo.FindSubjectValue(ctx, bizID, subjectID)
+
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
 	s.NoError(err)
-	s.Equal(subjectID, subjectObj.ID)
-	s.Equal(bizID, subjectObj.BizID)
-	s.Empty(subjectObj.AttributeValues)
+	s.NotEmpty(redisVal)
 
 	// 测试删除不存在的属性值
-	err = s.valRepo.DeleteSubjectValue(ctx, 999999)
-	s.NoError(err) // 删除不存在的记录应该不返回错误
+	err = s.valRepo.DeleteSubjectValue(ctx, bizID, 999999)
+	s.NoError(err)
 }
 
 func (s *AbacServiceSuite) TestAttributeSubjectValue_FindWithDefinition() {
@@ -650,6 +706,18 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 				s.Len(resourceObj.AttributeValues, 1)
 				s.Equal("1024", resourceObj.AttributeValues[0].Value)
 				s.Equal(defID, resourceObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -677,6 +745,18 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 				s.Len(resourceObj.AttributeValues, 1)
 				s.Equal("2048", resourceObj.AttributeValues[0].Value)
 				s.Equal(defID, resourceObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -704,6 +784,18 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Save() {
 				s.Len(resourceObj.AttributeValues, 1)
 				s.Equal("1024", resourceObj.AttributeValues[0].Value) // 应该保持原来的值
 				s.Equal(defID, resourceObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 	}
@@ -755,7 +847,7 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Delete() {
 	s.NoError(err)
 
 	// 测试删除存在的属性值
-	err = s.valRepo.DeleteResourceValue(ctx, id)
+	err = s.valRepo.DeleteResourceValue(ctx, bizID, id)
 	s.NoError(err)
 
 	// 验证属性值已被删除
@@ -764,8 +856,20 @@ func (s *AbacServiceSuite) TestAttributeResourceValue_Delete() {
 		Where("id = ?", id).First(&res).Error
 	assert.Equal(s.T(), gorm.ErrRecordNotFound, err)
 
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+
 	// 测试删除不存在的属性值
-	err = s.valRepo.DeleteResourceValue(ctx, 999999)
+	err = s.valRepo.DeleteResourceValue(ctx, bizID, 999999)
 	s.NoError(err)
 }
 
@@ -871,7 +975,7 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Delete() {
 	s.NoError(err)
 
 	// 测试删除存在的属性值
-	err = s.valRepo.DeleteEnvironmentValue(ctx, id)
+	err = s.valRepo.DeleteEnvironmentValue(ctx, bizID, id)
 	s.NoError(err)
 
 	// 验证属性值已被删除
@@ -880,8 +984,20 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Delete() {
 		Where("id = ?", id).First(&res).Error
 	assert.Equal(s.T(), gorm.ErrRecordNotFound, err)
 
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+
 	// 测试删除不存在的属性值
-	err = s.valRepo.DeleteEnvironmentValue(ctx, 999999)
+	err = s.valRepo.DeleteEnvironmentValue(ctx, bizID, 999999)
 	s.NoError(err)
 }
 
@@ -1002,6 +1118,18 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 				s.Len(envObj.AttributeValues, 1)
 				s.Equal("2024-01-01", envObj.AttributeValues[0].Value)
 				s.Equal(defID, envObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -1028,6 +1156,18 @@ func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Save() {
 				s.Len(envObj.AttributeValues, 1)
 				s.Equal("2024-01-02", envObj.AttributeValues[0].Value)
 				s.Equal(defID, envObj.AttributeValues[0].Definition.ID)
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 	}
@@ -1085,6 +1225,18 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 				s.Equal("测试策略", savedPolicy.Name)
 				s.Equal("这是一个测试策略", savedPolicy.Description)
 				s.Equal("priority", string(savedPolicy.ExecuteType))
+
+				// 验证本地缓存
+				localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存
+				redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 		{
@@ -1111,6 +1263,18 @@ func (s *AbacServiceSuite) TestPolicy_Save() {
 				s.Equal(bizID, savedPolicy.BizID)
 				s.Equal("测试策略1", savedPolicy.Name)             // 名称保持不变
 				s.Equal("这是更新后的策略描述", savedPolicy.Description) // 描述已更新
+
+				// 验证本地缓存已更新
+				localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+				localVal := s.lruCache.Get(ctx, localCacheKey)
+				s.False(localVal.KeyNotFound())
+				s.NotNil(localVal)
+
+				// 验证Redis缓存已更新
+				redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+				redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+				s.NoError(err)
+				s.NotEmpty(redisVal)
 			},
 		},
 	}
@@ -1202,6 +1366,18 @@ func (s *AbacServiceSuite) TestPolicy_Delete() {
 		First(&policyRule).Error
 	s.Equal(gorm.ErrRecordNotFound, err)
 
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+
 	// 测试删除不存在的策略
 	err = s.policyRepo.Delete(ctx, bizID, 999999)
 	s.NoError(err) // 删除不存在的记录应该不返回错误
@@ -1232,6 +1408,18 @@ func (s *AbacServiceSuite) TestPolicy_SavePermissionPolicy() {
 	err = s.db.WithContext(ctx).Where("biz_id = ? AND policy_id = ?", bizID, id).First(&res).Error
 	require.NoError(s.T(), err)
 	s.Equal(string(domain.EffectAllow), res.Effect)
+
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
 }
 
 func (s *AbacServiceSuite) TestPolicy_FindPolicies() {
@@ -1331,6 +1519,261 @@ func (s *AbacServiceSuite) TestPolicy_First() {
 		First(&permissionPolicy).Error
 	s.NoError(err)
 	s.Equal(string(domain.EffectAllow), permissionPolicy.Effect)
+}
+
+func (s *AbacServiceSuite) TestPolicy_SaveRule() {
+	ctx := s.T().Context()
+	bizID := int64(23)
+	defer s.clearBizVal(bizID)
+
+	// 创建测试策略
+	policy := domain.Policy{
+		BizID:       bizID,
+		Name:        "测试策略",
+		Description: "这是一个测试策略",
+	}
+	policyID, err := s.policyRepo.Save(ctx, policy)
+	s.NoError(err)
+	s.Greater(policyID, int64(0))
+
+	// 创建属性定义
+	def := domain.AttributeDefinition{
+		Name:           "age",
+		Description:    "用户年龄",
+		DataType:       domain.DataTypeNumber,
+		EntityType:     domain.EntityTypeSubject,
+		ValidationRule: "^[0-9]+$",
+	}
+	defID, err := s.definitionRepo.Save(ctx, bizID, def)
+	s.NoError(err)
+	s.Greater(defID, int64(0))
+
+	// 测试保存规则
+	rule := domain.PolicyRule{
+		AttrDef: domain.AttributeDefinition{
+			ID: defID,
+		},
+		Operator: ">",
+		Value:    "18",
+	}
+	ruleID, err := s.policyRepo.SaveRule(ctx, bizID, policyID, rule)
+	s.NoError(err)
+	s.Greater(ruleID, int64(0))
+
+	// 验证规则已保存
+	foundPolicy, err := s.policyRepo.First(ctx, bizID, policyID)
+	s.NoError(err)
+	s.Len(foundPolicy.Rules, 1)
+	s.Equal(ruleID, foundPolicy.Rules[0].ID)
+	s.Equal(defID, foundPolicy.Rules[0].AttrDef.ID)
+	s.Equal(domain.RuleOperator(">"), foundPolicy.Rules[0].Operator)
+	s.Equal("18", foundPolicy.Rules[0].Value)
+
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+}
+
+func (s *AbacServiceSuite) TestPolicy_DeleteRule() {
+	ctx := s.T().Context()
+	bizID := int64(24)
+	defer s.clearBizVal(bizID)
+
+	// 创建测试策略
+	policy := domain.Policy{
+		BizID:       bizID,
+		Name:        "测试策略",
+		Description: "这是一个测试策略",
+	}
+	policyID, err := s.policyRepo.Save(ctx, policy)
+	s.NoError(err)
+	s.Greater(policyID, int64(0))
+
+	// 创建属性定义
+	def := domain.AttributeDefinition{
+		Name:           "age",
+		Description:    "用户年龄",
+		DataType:       domain.DataTypeNumber,
+		EntityType:     domain.EntityTypeSubject,
+		ValidationRule: "^[0-9]+$",
+	}
+	defID, err := s.definitionRepo.Save(ctx, bizID, def)
+	s.NoError(err)
+	s.Greater(defID, int64(0))
+
+	// 保存规则
+	rule := domain.PolicyRule{
+		AttrDef: domain.AttributeDefinition{
+			ID: defID,
+		},
+		Operator: ">",
+		Value:    "18",
+	}
+	ruleID, err := s.policyRepo.SaveRule(ctx, bizID, policyID, rule)
+	s.NoError(err)
+	s.Greater(ruleID, int64(0))
+
+	// 测试删除规则
+	err = s.policyRepo.DeleteRule(ctx, bizID, ruleID)
+	s.NoError(err)
+
+	// 验证规则已被删除
+	foundPolicy, err := s.policyRepo.First(ctx, bizID, policyID)
+	s.NoError(err)
+	s.Empty(foundPolicy.Rules)
+
+	// 验证本地缓存已更新
+	localCacheKey := fmt.Sprintf("abac:policy:%d", bizID)
+	localVal := s.lruCache.Get(ctx, localCacheKey)
+	s.False(localVal.KeyNotFound())
+	s.NotNil(localVal)
+
+	// 验证Redis缓存已更新
+	redisKey := fmt.Sprintf("abac:policy:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+
+	// 测试删除不存在的规则
+	err = s.policyRepo.DeleteRule(ctx, bizID, 999999)
+	s.NoError(err) // 删除不存在的记录应该不返回错误
+}
+
+func (s *AbacServiceSuite) TestAttributeSubjectValue_Cache() {
+	ctx := context.Background()
+	bizID := int64(25)
+	subjectID := int64(1004)
+	defer s.clearBizVal(bizID)
+
+	// 创建属性定义
+	def := domain.AttributeDefinition{
+		Name:           "age",
+		Description:    "用户年龄",
+		DataType:       domain.DataTypeNumber,
+		EntityType:     domain.EntityTypeSubject,
+		ValidationRule: "^[0-9]+$",
+	}
+	defID, err := s.definitionRepo.Save(ctx, bizID, def)
+	s.NoError(err)
+	s.Greater(defID, int64(0))
+	def.ID = defID
+
+	// 直接通过数据库添加属性值
+	daoVal := dao.SubjectAttributeValue{
+		BizID:     bizID,
+		SubjectID: subjectID,
+		AttrDefID: defID,
+		Value:     "25",
+	}
+	err = s.db.WithContext(ctx).Create(&daoVal).Error
+	s.NoError(err)
+
+	// 测试查询并验证缓存
+	obj, err := s.valRepo.FindSubjectValue(ctx, bizID, subjectID)
+	s.NoError(err)
+	s.Equal(subjectID, obj.ID)
+	s.Equal(bizID, obj.BizID)
+	s.Len(obj.AttributeValues, 1)
+	s.Equal("25", obj.AttributeValues[0].Value)
+
+	// 验证Redis缓存
+	redisKey := fmt.Sprintf("abac:attr:subject:%d:%d", bizID, subjectID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+}
+
+func (s *AbacServiceSuite) TestAttributeResourceValue_Cache() {
+	ctx := context.Background()
+	bizID := int64(26)
+	resourceID := int64(2004)
+	defer s.clearBizVal(bizID)
+
+	// 创建属性定义
+	def := domain.AttributeDefinition{
+		Name:           "size",
+		Description:    "文件大小",
+		DataType:       domain.DataTypeNumber,
+		EntityType:     domain.EntityTypeResource,
+		ValidationRule: "^[0-9]+$",
+	}
+	defID, err := s.definitionRepo.Save(ctx, bizID, def)
+	s.NoError(err)
+	s.Greater(defID, int64(0))
+	def.ID = defID
+
+	// 直接通过数据库添加属性值
+	daoVal := dao.ResourceAttributeValue{
+		BizID:      bizID,
+		ResourceID: resourceID,
+		AttrDefID:  defID,
+		Value:      "1024",
+	}
+	err = s.db.WithContext(ctx).Create(&daoVal).Error
+	s.NoError(err)
+
+	// 测试查询并验证缓存
+	obj, err := s.valRepo.FindResourceValue(ctx, bizID, resourceID)
+	s.NoError(err)
+	s.Equal(resourceID, obj.ID)
+	s.Equal(bizID, obj.BizID)
+	s.Len(obj.AttributeValues, 1)
+	s.Equal("1024", obj.AttributeValues[0].Value)
+
+	// 验证Redis缓存
+	redisKey := fmt.Sprintf("abac:attr:resource:%d:%d", bizID, resourceID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
+}
+
+func (s *AbacServiceSuite) TestAttributeEnvironmentValue_Cache() {
+	ctx := context.Background()
+	bizID := int64(27)
+	defer s.clearBizVal(bizID)
+
+	// 创建属性定义
+	def := domain.AttributeDefinition{
+		Name:           "time",
+		Description:    "访问时间",
+		DataType:       domain.DataTypeString,
+		EntityType:     domain.EntityTypeEnvironment,
+		ValidationRule: ".*",
+	}
+	defID, err := s.definitionRepo.Save(ctx, bizID, def)
+	s.NoError(err)
+	s.Greater(defID, int64(0))
+	def.ID = defID
+
+	// 直接通过数据库添加属性值
+	daoVal := dao.EnvironmentAttributeValue{
+		BizID:     bizID,
+		AttrDefID: defID,
+		Value:     "2024-01-01",
+	}
+	err = s.db.WithContext(ctx).Create(&daoVal).Error
+	s.NoError(err)
+
+	// 测试查询并验证缓存
+	obj, err := s.valRepo.FindEnvironmentValue(ctx, bizID)
+	s.NoError(err)
+	s.Equal(bizID, obj.BizID)
+	s.Len(obj.AttributeValues, 1)
+	s.Equal("2024-01-01", obj.AttributeValues[0].Value)
+
+	// 验证Redis缓存
+	redisKey := fmt.Sprintf("abac:attr:env:%d", bizID)
+	redisVal, err := s.redisClient.Get(ctx, redisKey).Result()
+	s.NoError(err)
+	s.NotEmpty(redisVal)
 }
 
 func TestAbacServiceSuite(t *testing.T) {
