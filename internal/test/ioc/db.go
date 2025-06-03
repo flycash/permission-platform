@@ -3,10 +3,10 @@ package ioc
 import (
 	"context"
 	"database/sql"
+	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"sync"
 	"time"
 
-	"gitee.com/flycash/permission-platform/internal/repository/dao"
 	"github.com/ecodeclub/ekit/retry"
 	"github.com/ego-component/egorm"
 	"github.com/gotomicro/ego/core/econf"
@@ -67,7 +67,7 @@ func InitDBAndTablesWithConfig(mysqlConfig map[string]any) *egorm.Component {
 		econf.Set("mysql", mysqlConfig)
 		WaitForDBSetup(econf.GetStringMapString("mysql")["dsn"])
 		db = egorm.Load("mysql").Build()
-
+		time.Sleep(2 * time.Second)
 		if err := dao.InitTables(db); err != nil {
 			panic(err)
 		}
