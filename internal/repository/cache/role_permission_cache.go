@@ -44,7 +44,6 @@ func (r *rolePermissionCache) Get(ctx context.Context, bizID int64, roleIDs ...i
 		permissions = slice.FilterDelete(permissions, func(_ int, src domain.RolePermission) bool {
 			return !slice.Contains(roleIDs, src.Role.ID)
 		})
-		// todo: slice.FilterDelete 过滤后 len(roleIDs) != len(permissions) 怎么办？
 	}
 	return permissions, err
 }

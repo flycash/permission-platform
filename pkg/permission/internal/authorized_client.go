@@ -11,14 +11,13 @@ import (
 
 var _ permissionv1.PermissionServiceClient = (*AuthorizedClient)(nil)
 
-// AuthorizedClient
 type AuthorizedClient struct {
 	client permissionv1.PermissionServiceClient
 	token  string
 }
 
-// NewGRPCClient 根据传入的地址创建GRPC客户端，你需要再调用下方的 NewClient
-func NewGRPCClient(addr string) (permissionv1.PermissionServiceClient, error) {
+// NewPermissionGRPCClient 根据传入的地址创建GRPC客户端，你需要再调用下方的 NewAuthorizedClient
+func NewPermissionGRPCClient(addr string) (permissionv1.PermissionServiceClient, error) {
 	conn, err := grpc.NewClient(
 		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -31,8 +30,8 @@ func NewGRPCClient(addr string) (permissionv1.PermissionServiceClient, error) {
 	return permissionv1.NewPermissionServiceClient(conn), nil
 }
 
-// NewClient 根据传入的GRPC客户端和认证token创建客户端
-func NewClient(client permissionv1.PermissionServiceClient, token string) *AuthorizedClient {
+// NewAuthorizedClient 根据传入的GRPC客户端和认证token创建客户端
+func NewAuthorizedClient(client permissionv1.PermissionServiceClient, token string) *AuthorizedClient {
 	return &AuthorizedClient{
 		client: client,
 		token:  token,

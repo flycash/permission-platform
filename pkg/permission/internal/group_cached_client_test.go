@@ -3,209 +3,132 @@
 package internal
 
 import (
-	"bufio"
-	"bytes"
-	"context"
-	"fmt"
-	"io"
-	"log"
-	"net/http"
+	"log/slog"
 	"os"
-	"os/exec"
-	"strconv"
-	"strings"
 	"testing"
 	"time"
 
-	"github.com/golang/groupcache"
+	permissionv1 "gitee.com/flycash/permission-platform/api/proto/gen/permission/v1"
+	"gitee.com/flycash/permission-platform/pkg/permission/internal/mocks"
+	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 )
 
-/*****************************************************************
- *                      子进程代码                               *
- *  用 GO_WANT_HELPER_PROCESS 环境变量把同一 test 二进制当作“节点”
- *****************************************************************/
-func TestHelperProcess(*testing.T) {
-	if os.Getenv("GO_WANT_HELPER_PROCESS") != "1" {
-		return // 不是 helper 模式，直接返回让 go test 正常流程继续
-	}
+const (
+	groupName = "test"
+)
 
-	addr := os.Getenv("ADDR") // 本节点地址，如 http://127.0.0.1:8301
-	peers := strings.Split(os.Getenv("PEERS"), ",")
-	key := os.Getenv("KEY") // 本节点周期查询的 key
+/*
+1. 在goland中使用 Run xxx With Coverage 启动 TestNode2，因为其中有time.Sleep所以会卡住
+2. 此时立即再次使用 Run xxx With Coverage 启动 TestNode1，因为其中的grpc客户端都传递的是null，所以要通过测试只能通过group cache分布式特性来获取数据
+3. 最终的结果是，TestNode1先结束并通过测试；TestNode2后结束也通过测试。
+4. 数据获取流程：
+   1. TestNode2 启动并睡眠
+   2. TestNode1 启动并立即调用 CheckPermission，先从本地缓存取发现没有，
+      group cache在内部利用一致性哈希算法计算得知这个key的所有者应该是 TestNode2，所以向TestNode2发送HTTP请求要数据
+   3. TestNode2 虽然扔睡眠，但是内部的HTTP监听协程收到了 TestNode1 的请求，执行groupcache.GetterFunc中的代码——调用rbacClient获取数据，
+      并将结果通过HTTP接口返回给 TestNode1，与此同时保留一份数据在TestNode2本地。
+   4. TestNode1 收到 TestNode2 返回的数据，保存在本地，继续执行流程，最终验证通过。
+   5. TestNode2 结束睡眠继续执行 CheckPermission，先从本地缓存中取，发现本地缓存中已经有数据了（步骤3中保存的）继续执行流程，最终验证通过。
+      注意：这里TestNode2中rbacClient被断言了只调用一次Times(1)，足以证明 TestNode2 中调用 CheckPermission 时，group cache直接从本地缓存中获取，而不是再次调用groupcache.GetterFunc
+*/
 
-	/* ---------- 1. 初始化 HTTPPool & Group ---------- */
-	pool := groupcache.NewHTTPPool(addr)
-	pool.Set(peers...)
+func TestNode2(t *testing.T) {
+	t.Parallel()
 
-	groupcache.NewGroup("square", 16<<20, groupcache.GetterFunc(
-		func(_ context.Context, k string, dest groupcache.Sink) error {
-			n, _ := strconv.ParseInt(k, 10, 64)
-			return dest.SetString(strconv.FormatInt(n*n, 10))
-		}))
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	// 权限grpc客户端，测试中不会用到仅用来占位
+	permissionClient := mocks.NewMockPermissionServiceClient(ctrl)
 
-	/* ---------- 2. 启动 HTTPServer ------------------ */
-	go func() {
-		if err := http.ListenAndServe(addr[len("http://"):], pool); err != nil {
-			log.Fatalf("listen %s: %v", addr, err)
-		}
-	}()
+	// rbac服务grpc客户端，在缓存未命中的时候，要被调用
+	rbacClient := mocks.NewMockRBACServiceClient(ctrl)
+	rbacClient.EXPECT().GetAllPermissions(gomock.Any(), &permissionv1.GetAllPermissionsRequest{
+		BizId:  3,
+		UserId: 1,
+	}).Return(&permissionv1.GetAllPermissionsResponse{
+		UserPermissions: []*permissionv1.UserPermission{
+			{
+				BizId:            3,
+				UserId:           1,
+				PermissionId:     2,
+				PermissionName:   "test-permission-2",
+				ResourceType:     "resource-type-4",
+				ResourceKey:      "resource-key-4",
+				PermissionAction: "read",
+				Effect:           "allow",
+			},
+			{
+				BizId:            3,
+				UserId:           1,
+				PermissionId:     2,
+				PermissionName:   "test-permission-2",
+				ResourceType:     "resource-type-4",
+				ResourceKey:      "resource-key-4",
+				PermissionAction: "write",
+				Effect:           "allow",
+			},
+		},
+	}, nil).Times(1)
 
-	// 向父进程发送“READY”信号
-	fmt.Println("READY")
-	os.Stdout.Sync()
+	// 初始化GroupCachedClient
+	c := NewGroupCachedClient(
+		permissionClient,
+		rbacClient,
+		1<<20,
+		groupName,
+		"http://localhost:7072", // 当前进程监听的http地址
+		[]string{"http://localhost:7071", "http://localhost:7072"}, // 分布式缓存集群中节点的完整地址
+		slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
-	/* ---------- 3. 业务循环，证明自己也是客户端 -------- */
-	g := groupcache.GetGroup("square")
-	for {
-		var v string
-		_ = g.Get(context.Background(), key, groupcache.StringSink(&v))
-		time.Sleep(2 * time.Second)
-	}
+	// 等待15秒，让你有手动启动 TestNode1 测试的机会
+	time.Sleep(15 * time.Second)
+
+	// 验证
+	permission, err := c.CheckPermission(t.Context(), &permissionv1.CheckPermissionRequest{
+		Uid: 1,
+		Permission: &permissionv1.Permission{
+			Id:           2,
+			BizId:        3,
+			Name:         "test-permission-2",
+			Description:  "",
+			ResourceId:   4,
+			ResourceType: "resource-type-4",
+			ResourceKey:  "resource-key-4",
+			Actions:      []string{"read", "write"},
+		},
+	})
+	assert.NoError(t, err)
+	assert.True(t, permission.GetAllowed())
 }
 
-/*****************************************************************
- *                         父进程                                *
- *****************************************************************/
-func TestClusterWithProcesses(t *testing.T) {
-	peerAddrs := []string{
-		"http://127.0.0.1:8301",
-		"http://127.0.0.1:8302",
-		"http://127.0.0.1:8303",
-	}
-	keys := []string{"2", "5", "9"} // 三个节点各自查询的 key，随意
+func TestNode1(t *testing.T) {
+	t.Parallel()
 
-	readyCh := make(chan struct{}, len(peerAddrs))
-	var procs []*exec.Cmd
+	// 初始化GroupCachedClient，其内部不会调用两个grpc客户端所以直接传递null
+	c := NewGroupCachedClient(
+		nil,
+		nil,
+		1<<20,
+		groupName,
+		"http://localhost:7071", // 当前进程监听的http地址
+		[]string{"http://localhost:7071", "http://localhost:7072"}, // 分布式缓存集群中节点的完整地址
+		slog.New(slog.NewTextHandler(os.Stdout, nil)))
 
-	/* ---------- 1. 启动 3 个子进程 ------------------- */
-	for i, addr := range peerAddrs {
-		cmd := exec.Command(os.Args[0], "-test.run=TestHelperProcess")
-		cmd.Env = append(os.Environ(),
-			"GO_WANT_HELPER_PROCESS=1",
-			"ADDR="+addr,
-			"PEERS="+strings.Join(peerAddrs, ","),
-			"KEY="+keys[i],
-		)
-
-		stdout, _ := cmd.StdoutPipe()
-		stderr, _ := cmd.StderrPipe()
-
-		if err := cmd.Start(); err != nil {
-			t.Fatalf("start %s: %v", addr, err)
-		}
-		procs = append(procs, cmd)
-
-		// 读取子进程 stdout，遇到 READY 就发信号
-		go func(a string, r io.Reader) {
-			sc := bufio.NewScanner(r)
-			for sc.Scan() {
-				if strings.Contains(sc.Text(), "READY") {
-					fmt.Printf("[%s] ready\n", a)
-					readyCh <- struct{}{}
-					// 只要收到一次 READY 就够了，后续输出忽略
-				}
-			}
-		}(addr, stdout)
-
-		// stderr 直接透传，方便调试
-		go io.Copy(os.Stderr, stderr)
-	}
-
-	/* ---------- 2. 等待全部节点就绪 ------------------ */
-	for i := 0; i < len(peerAddrs); i++ {
-		<-readyCh
-	}
-	time.Sleep(200 * time.Millisecond) // 给 listener 最后一点缓冲时间
-
-	/* ---------- 3. 父进程自身做一次 Get -------------- */
-	clientPool := groupcache.NewHTTPPool("http://tester")
-	clientPool.Set(peerAddrs...)
-
-	// 注册一个同名 Group（子进程注册的是各自的，不会冲突）
-	g := groupcache.GetGroup("square")
-	if g == nil {
-		g = groupcache.NewGroup("square", 16<<20, groupcache.GetterFunc(
-			func(_ context.Context, k string, dest groupcache.Sink) error {
-				return dest.SetString("unused")
-			}))
-	}
-
-	var res string
-	if err := g.Get(context.Background(), "12", groupcache.StringSink(&res)); err != nil {
-		t.Fatalf("parent Get error: %v", err)
-	}
-	if res != "144" {
-		t.Fatalf("expect 144, got %s", res)
-	}
-	t.Logf("parent square(12)=%s", res)
-
-	/* ---------- 4. 结束子进程，收尾 ------------------ */
-	for _, p := range procs {
-		_ = p.Process.Kill()
-		_ = p.Wait()
-	}
-}
-
-func TestMultiGroupIndependence(t *testing.T) {
-	g1 := groupcache.NewGroup("user-name", 8<<20, groupcache.GetterFunc(
-		func(_ context.Context, key string, dest groupcache.Sink) error {
-			return dest.SetString("user:" + key)
-		}))
-
-	g2 := groupcache.NewGroup("user-age", 8<<20, groupcache.GetterFunc(
-		func(_ context.Context, key string, dest groupcache.Sink) error {
-			return dest.SetString(strconv.FormatInt(int64(len(key)), 10))
-		}))
-
-	var name string
-	if err := g1.Get(nil, "alice", groupcache.StringSink(&name)); err != nil {
-		t.Fatal(err)
-	}
-	if name != "user:alice" {
-		t.Fatal("unexpected")
-	}
-
-	var age []byte
-	if err := g2.Get(nil, "alice", groupcache.AllocatingByteSliceSink(&age)); err != nil {
-		t.Fatal(err)
-	}
-	if string(age) != "5" {
-		t.Fatal("unexpected")
-	}
-}
-
-func TestModifyReturnedBytes(t *testing.T) {
-	g := groupcache.NewGroup("blob", 32<<20, groupcache.GetterFunc(
-		func(_ context.Context, key string, dest groupcache.Sink) error {
-			return dest.SetBytes(bytes.Repeat([]byte{1}, 10))
-		}))
-
-	var b []byte
-	if err := g.Get(nil, "a", groupcache.AllocatingByteSliceSink(&b)); err != nil {
-		t.Fatal(err)
-	}
-	b[0] = 42 // 修改副本 OK
-
-	var again []byte
-	_ = g.Get(nil, "a", groupcache.AllocatingByteSliceSink(&again))
-	if again[0] == 42 {
-		t.Fatal("should not be mutated")
-	}
-}
-
-func TestStats(t *testing.T) {
-	g := groupcache.NewGroup("stats", 1<<20, groupcache.GetterFunc(
-		func(_ context.Context, key string, dest groupcache.Sink) error {
-			return dest.SetString("x")
-		}))
-	for i := 0; i < 100; i++ {
-		var s string
-		_ = g.Get(context.Background(), "k", groupcache.StringSink(&s))
-	}
-	st := g.Stats
-	if int64(st.CacheHits) == int64(99) {
-		t.Log("stats OK")
-	} else {
-		t.Fatalf("%+v", st)
-	}
+	// 验证
+	permission, err := c.CheckPermission(t.Context(), &permissionv1.CheckPermissionRequest{
+		Uid: 1,
+		Permission: &permissionv1.Permission{
+			Id:           2,
+			BizId:        3,
+			Name:         "test-permission-2",
+			Description:  "",
+			ResourceId:   4,
+			ResourceType: "resource-type-4",
+			ResourceKey:  "resource-key-4",
+			Actions:      []string{"read", "write"},
+		},
+	})
+	assert.NoError(t, err)
+	assert.True(t, permission.GetAllowed())
 }

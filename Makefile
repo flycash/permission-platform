@@ -27,7 +27,7 @@ lint:
 # 单元测试
 .PHONY: ut
 ut:
-	@go test -race -shuffle=on -short -failfast -tags=unit ./...
+	@go test -race -shuffle=on -short -failfast -tags=unit -count=1 ./...
 
 # 集成测试
 .PHONY: e2e_up
@@ -42,7 +42,7 @@ e2e_down:
 e2e:
 	@$(MAKE) e2e_down
 	@$(MAKE) e2e_up
-	@go test -race -shuffle=on -failfast -tags=e2e ./...
+	@go test -race -shuffle=on -failfast -tags=e2e -count=1 ./...
 	@$(MAKE) e2e_down
 
 # 基准测试

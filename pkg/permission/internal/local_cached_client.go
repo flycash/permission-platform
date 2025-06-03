@@ -55,13 +55,14 @@ func NewLocalCachedClient(
 			}
 		}
 	}()
+	c.Timeout.Store(defaultTimeout)
 	return c, nil
 }
 
 func (c *LocalCachedClient) Consume(ctx context.Context) error {
 	// 获取消息
-	const defaultTimeout = time.Second * 15
-	msg, err := c.consumer.ReadMessage(ctx, defaultTimeout)
+	duration, _ := c.Timeout.Load().(time.Duration)
+	msg, err := c.consumer.ReadMessage(ctx, duration)
 	if err != nil {
 		return fmt.Errorf("获取消息失败: %w", err)
 	}
@@ -103,7 +104,7 @@ func (c *LocalCachedClient) CheckPermission(ctx context.Context, in *permissionv
 		up, _ := val.(UserPermission)
 		// 假定这里得到的up是与数据库中一致的，因为会有异步协程消费消息存入本地缓存，那么可以直接
 		return c.checkPermission(up, in)
-		// 如果假设不成立即up与数据库中不一致，那么需要，先走client再回填，注意看client_redis_cached.go中 CheckPermission 的实现
+		// 如果假设不成立即up与数据库中不一致，那么需要，先走client再回填，注意看redis_cached_client.go中 CheckPermission 的实现
 		// resp, err1 := c.checkPermission(up, in)
 		// if err1 == nil {
 		// 	return resp, nil

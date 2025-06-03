@@ -51,7 +51,7 @@ func (c *RedisCachedClient) CheckPermission(ctx context.Context, in *permissionv
 		return nil, err
 	}
 	if resp.Allowed {
-		c.setToCache(ctx, userPermission, in)
+		c.setToCache(ctx, in)
 	}
 	return resp, nil
 }
@@ -69,31 +69,22 @@ func (c *RedisCachedClient) getFromCache(ctx context.Context, bizID, userID int6
 	return userPermission, nil
 }
 
-func (c *RedisCachedClient) setToCache(ctx context.Context, up UserPermission, in *permissionv1.CheckPermissionRequest) {
-	userID := in.GetUid()
-	permission := in.GetPermission()
-	bizID := permission.GetBizId()
-	// 因为up可能是零值，也就是之前不再缓存中，所以需要设置一下bizID和userID
-	up.BizID = bizID
-	up.UserID = userID
-	// 去掉与up中actions重合的部分
-	existedActions := slice.Map(up.Permissions, func(_ int, p PermissionV1) string {
-		return p.Action
-	})
-	actions := slice.FilterDelete(permission.GetActions(), func(_ int, action string) bool {
-		return slice.Contains(existedActions, action)
-	})
-	// 添加新增的 PermissionV1
-	up.Permissions = append(up.Permissions, slice.Map(actions, func(_ int, src string) PermissionV1 {
-		return PermissionV1{
-			Resource: Resource{
-				Key:  permission.GetResourceKey(),
-				Type: permission.GetResourceType(),
-			},
-			Action: src,
-			Effect: "allow",
-		}
-	})...)
+func (c *RedisCachedClient) setToCache(ctx context.Context, in *permissionv1.CheckPermissionRequest) {
+	perm := in.GetPermission()
+	up := UserPermission{
+		UserID: in.GetUid(),
+		BizID:  perm.GetBizId(),
+		Permissions: slice.Map(perm.GetActions(), func(_ int, src string) PermissionV1 {
+			return PermissionV1{
+				Resource: Resource{
+					Key:  perm.GetResourceKey(),
+					Type: perm.GetResourceType(),
+				},
+				Action: src,
+				Effect: "allow",
+			}
+		}),
+	}
 	data, _ := json.Marshal(up)
-	c.rd.Set(ctx, c.cacheKey(bizID, userID), string(data), c.expiration)
+	c.rd.Set(ctx, c.cacheKey(perm.GetBizId(), in.GetUid()), string(data), c.expiration)
 }
