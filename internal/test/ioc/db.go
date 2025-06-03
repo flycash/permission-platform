@@ -67,7 +67,6 @@ func InitDBAndTablesWithConfig(mysqlConfig map[string]any) *egorm.Component {
 		econf.Set("mysql", mysqlConfig)
 		WaitForDBSetup(econf.GetStringMapString("mysql")["dsn"])
 		db = egorm.Load("mysql").Build()
-		time.Sleep(2 * time.Second)
 		if err := dao.InitTables(db); err != nil {
 			panic(err)
 		}

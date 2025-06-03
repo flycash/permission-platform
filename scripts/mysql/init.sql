@@ -220,6 +220,7 @@ CREATE TABLE `policies` (
   `name` varchar(100) NOT NULL COMMENT '策略名称',
   `description` text COMMENT '策略描述',
   `status` enum('active','inactive') NOT NULL DEFAULT 'active' COMMENT '策略状态',
+  `execute_type` varchar(255) NOT NULL DEFAULT 'logic' COMMENT '策略执行类型',
   `ctime` bigint DEFAULT NULL COMMENT '创建时间',
   `utime` bigint DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
