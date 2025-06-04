@@ -21,7 +21,7 @@ type MultiLevelCacheV1 struct {
 	redisCrashDetector     *bitring.BitRing // 错误检测器
 }
 
-func NewMultiLevelCacheV2(local ecache.Cache,
+func NewMultiLevelCacheV1(local ecache.Cache,
 	redisHealthCheckPeriod time.Duration,
 	redisPingTimeout time.Duration,
 	redisCrashDetector *bitring.BitRing,

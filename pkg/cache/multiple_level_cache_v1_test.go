@@ -60,7 +60,7 @@ func TestMultiLevelCacheV2_Set_RedisAvailable(t *testing.T) {
 			tc.setupMocks(redisCmdMock, localCacheMock)
 
 			// 创建MultiLevelCache实例
-			mlc := NewMultiLevelCacheV2(
+			mlc := NewMultiLevelCacheV1(
 				localCacheMock,
 				time.Hour,
 				time.Second,
@@ -105,7 +105,7 @@ func TestMultiLevelCacheV2_Set_RedisUnavailable(t *testing.T) {
 	crashDetector := bitring.NewBitRing(1, 1.0, 1)
 
 	// 创建MultiLevelCache实例
-	mlc := NewMultiLevelCacheV2(
+	mlc := NewMultiLevelCacheV1(
 		localCacheMock,
 		time.Hour,
 		time.Second,
@@ -183,7 +183,7 @@ func TestMultiLevelCacheV2_Get_Redis(t *testing.T) {
 			// 设置测试的mock预期
 			tc.setupMocks(redisCmdMock, localCacheMock)
 			// 创建MultiLevelCache实例
-			mlc := NewMultiLevelCacheV2(
+			mlc := NewMultiLevelCacheV1(
 				localCacheMock,
 				time.Hour,
 				time.Second,
@@ -261,7 +261,7 @@ func TestMultiLevelCacheV2_RedisCrashAndRecovery(t *testing.T) {
 	recoveredSetCmd.SetVal("OK")
 	redisCmdMock.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(recoveredSetCmd).AnyTimes()
 
-	mlc := NewMultiLevelCacheV2(
+	mlc := NewMultiLevelCacheV1(
 		localCacheMock,
 		time.Millisecond*50, // 设置较短的刷新周期
 		time.Millisecond*10, // 设置较短的ping超时

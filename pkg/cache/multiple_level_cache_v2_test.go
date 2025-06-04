@@ -79,7 +79,7 @@ func TestMultiLevelCache_Set_RedisAvailable(t *testing.T) {
 			}
 
 			// 创建MultiLevelCache实例
-			mlc := cache.NewMultiLevelCache(
+			mlc := cache.NewMultiLevelCacheV2(
 				redisCmdMock,
 				localCacheMock,
 				dataLoader,
@@ -133,7 +133,7 @@ func TestMultiLevelCache_Set_RedisUnavailable(t *testing.T) {
 	}
 
 	// 创建MultiLevelCache实例
-	mlc := cache.NewMultiLevelCache(
+	mlc := cache.NewMultiLevelCacheV2(
 		redisCmdMock,
 		localCacheMock,
 		dataLoader,
@@ -218,7 +218,7 @@ func TestMultiLevelCache_Get_Redis(t *testing.T) {
 			}
 
 			// 创建MultiLevelCache实例
-			mlc := cache.NewMultiLevelCache(
+			mlc := cache.NewMultiLevelCacheV2(
 				redisCmdMock,
 				localCacheMock,
 				dataLoader,
@@ -312,7 +312,7 @@ func TestMultiLevelCache_RedisCrashAndRecovery(t *testing.T) {
 	}
 
 	// 创建MultiLevelCache实例
-	mlc := cache.NewMultiLevelCache(
+	mlc := cache.NewMultiLevelCacheV2(
 		redisCmdMock,
 		localCacheMock,
 		dataLoader,
@@ -383,7 +383,7 @@ func TestMultiLevelCache_DataLoaderError(t *testing.T) {
 	}
 
 	// 创建MultiLevelCache实例
-	mlc := cache.NewMultiLevelCache(
+	mlc := cache.NewMultiLevelCacheV2(
 		redisCmdMock,
 		localCacheMock,
 		dataLoader,

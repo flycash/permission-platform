@@ -109,7 +109,7 @@ func InitMultipleLevelCache(
 		}
 	}()
 
-	return cache.NewMultiLevelCache(r,
+	return cache.NewMultiLevelCacheV2(r,
 		local,
 		// loadFunc, // 函数式写法
 		hotUserLoader.LoadUserPermissionsFromDB, // 结构体封装写法

@@ -42,8 +42,8 @@ type MultiLevelCacheV2 struct {
 	logger *elog.Component
 }
 
-// NewMultiLevelCache 创建一个新的多级缓存
-func NewMultiLevelCache(
+// NewMultiLevelCacheV2 创建一个新的多级缓存
+func NewMultiLevelCacheV2(
 	rd redis.Cmdable,
 	local ecache.Cache,
 	dataLoader DataLoader,
