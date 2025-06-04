@@ -102,11 +102,14 @@ func (p *permissionSvc) Check(ctx context.Context, bizID, uid int64, resource do
 	for idx := range policies {
 		policy := policies[idx]
 		if p.parser.Check(policy, subObj, resObj, envObj) {
-			if policy.Effect == domain.EffectAllow {
-				hasPermit = true
-			}
-			if policy.Effect == domain.EffectDeny {
-				hasDeny = true
+			for jdx := range policy.Permissions {
+				perm := policy.Permissions[jdx]
+				if perm.Effect == domain.EffectAllow {
+					hasPermit = true
+				}
+				if perm.Effect == domain.EffectDeny {
+					hasDeny = true
+				}
 			}
 		}
 	}

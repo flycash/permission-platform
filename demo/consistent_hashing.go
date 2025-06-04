@@ -25,6 +25,7 @@ type ConsistentHash struct {
 
 func NewConsistentHash(virtualNodes int) *ConsistentHash {
 	return &ConsistentHash{
+		mu:            &sync.RWMutex{},
 		hashFunc:      crc32.ChecksumIEEE,
 		virtualNodes:  virtualNodes,
 		nodeMap:       make(map[uint32]Node),

@@ -24,28 +24,28 @@ import (
 // Injectors from wire.go:
 
 func InitApp() *ioc.App {
-	db := ioc.InitDB()
-	businessConfigDAO := dao.NewBusinessConfigDAO(db)
+	v := ioc.InitDB()
+	businessConfigDAO := dao.NewBusinessConfigDAO(v)
 	businessConfigRepository := repository.NewBusinessConfigRepository(businessConfigDAO)
-	resourceDAO := dao.NewResourceDAO(db)
+	resourceDAO := dao.NewResourceDAO(v)
 	resourceRepository := repository.NewResourceRepository(resourceDAO)
-	permissionDAO := dao.NewPermissionDAO(db)
+	permissionDAO := dao.NewPermissionDAO(v)
 	permissionRepository := repository.NewPermissionRepository(permissionDAO)
-	roleDAO := dao.NewRoleDAO(db)
+	roleDAO := dao.NewRoleDAO(v)
 	roleRepository := repository.NewRoleRepository(roleDAO)
-	roleInclusionDAO := dao.NewRoleInclusionDAO(db)
+	roleInclusionDAO := dao.NewRoleInclusionDAO(v)
 	roleInclusionDefaultRepository := repository.NewRoleInclusionDefaultRepository(roleInclusionDAO)
-	userRoleDAO := dao.NewUserRoleDAO(db)
+	userRoleDAO := dao.NewUserRoleDAO(v)
 	userRoleDefaultRepository := repository.NewUserRoleDefaultRepository(userRoleDAO)
-	rolePermissionDAO := dao.NewRolePermissionDAO(db)
-	userPermissionDAO := dao.NewUserPermissionDAO(db)
+	rolePermissionDAO := dao.NewRolePermissionDAO(v)
+	userPermissionDAO := dao.NewUserPermissionDAO(v)
 	userPermissionDefaultRepository := repository.NewUserPermissionDefaultRepository(roleInclusionDAO, rolePermissionDAO, userRoleDAO, userPermissionDAO)
 	cmdable := ioc.InitRedisCmd()
 	ecacheCache := ioc.InitLocalCache()
 	component := ioc.InitEtcdClient()
-	v := ioc.InitCacheKeyFunc()
-	cacheCache := ioc.InitMultipleLevelCache(cmdable, ecacheCache, userPermissionDefaultRepository, component, v)
-	userPermissionCache := cache.NewUserPermissionCache(cacheCache, v)
+	v2 := ioc.InitCacheKeyFunc()
+	cacheCache := ioc.InitMultipleLevelCache(cmdable, ecacheCache, userPermissionDefaultRepository, component, v2)
+	userPermissionCache := cache.NewUserPermissionCache(cacheCache, v2)
 	producer := ioc.InitKafkaProducer()
 	userPermissionEventProducer := initUserPermissionEventProducer(producer)
 	userPermissionCachedRepository := repository.NewUserPermissionCachedRepository(userPermissionDefaultRepository, userPermissionCache, userPermissionEventProducer)
@@ -58,14 +58,14 @@ func InitApp() *ioc.App {
 	server := rbac2.NewServer(service)
 	permissionService := rbac.NewPermissionService(userPermissionCachedRepository)
 	permissionServiceServer := rbac2.NewPermissionServiceServer(permissionService)
-	operationLogDAO := audit.NewOperationLogDAO(db)
-	v2 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
-	userRoleLogDAO := audit.NewUserRoleLogDAO(db)
+	operationLogDAO := audit.NewOperationLogDAO(v)
+	v3 := ioc.InitGRPC(server, permissionServiceServer, token, operationLogDAO)
+	userRoleLogDAO := audit.NewUserRoleLogDAO(v)
 	userRoleBinlogEventConsumer := initUserRoleBinlogEventConsumer(userRoleLogDAO)
-	v3 := ioc.InitTasks(userRoleBinlogEventConsumer)
+	v4 := ioc.InitTasks(userRoleBinlogEventConsumer)
 	app := &ioc.App{
-		GrpcServers: v2,
-		Tasks:       v3,
+		GrpcServers: v3,
+		Tasks:       v4,
 	}
 	return app
 }

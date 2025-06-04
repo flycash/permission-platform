@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"gitee.com/flycash/permission-platform/internal/domain"
@@ -36,6 +37,9 @@ func NewUserPermissionCache(c cache.Cache, cacheKeyFunc func(bizID, userID int64
 func (r *userPermissionCache) Get(ctx context.Context, bizID, userID int64) ([]domain.UserPermission, error) {
 	val := r.c.Get(ctx, r.cacheKeyFunc(bizID, userID))
 	if val.Err != nil {
+		if val.KeyNotFound() {
+			return nil, fmt.Errorf("%w", ErrKeyNotFound)
+		}
 		return nil, val.Err
 	}
 	var res []domain.UserPermission

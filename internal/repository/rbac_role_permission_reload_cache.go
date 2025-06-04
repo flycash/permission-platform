@@ -5,6 +5,8 @@ import (
 
 	"gitee.com/flycash/permission-platform/internal/domain"
 	"gitee.com/flycash/permission-platform/internal/repository/dao"
+	"github.com/ecodeclub/ekit/mapx"
+	"github.com/ecodeclub/ekit/slice"
 	"github.com/gotomicro/ego/core/elog"
 )
 
@@ -52,12 +54,43 @@ func (r *RolePermissionReloadCacheRepository) Create(ctx context.Context, rolePe
 }
 
 func (r *RolePermissionReloadCacheRepository) getAffectedUsers(ctx context.Context, bizID, includedRoleID int64) []domain.User {
-	_, err := r.roleInclusionDAO.FindByBizIDAndIncludedRoleIDs(ctx, bizID, []int64{includedRoleID})
+	roleIDs, err := r.getAffectedRoleIDs(ctx, bizID, includedRoleID)
 	if err != nil {
 		return nil
 	}
-	const id = 2
-	return []domain.User{{ID: id}}
+	userRoles, err := r.userRoleDAO.FindByBizIDAndRoleIDs(ctx, bizID, roleIDs)
+	if err != nil {
+		return nil
+	}
+	return slice.Map(userRoles, func(_ int, src dao.UserRole) domain.User {
+		return domain.User{
+			ID:    src.ID,
+			BizID: src.BizID,
+		}
+	})
+}
+
+func (r *RolePermissionReloadCacheRepository) getAffectedRoleIDs(ctx context.Context, bizID, includedRoleID int64) ([]int64, error) {
+	allRoleIDs := make(map[int64]any)
+	allRoleIDs[includedRoleID] = struct{}{}
+
+	includedIDs := []int64{includedRoleID}
+	for {
+		inclusions, err := r.roleInclusionDAO.FindByBizIDAndIncludedRoleIDs(ctx, bizID, includedIDs)
+		if err != nil {
+			return nil, err
+		}
+		if len(inclusions) == 0 {
+			break
+		}
+		// 沿着包含关系链，逆向查找
+		// A->B->C, 当C添加了权限，此时IncludedRoleID=C，然后要沿着与之关联的 IncludingRoleID 逆向查找 —— 找到B，再找到A
+		includedIDs = slice.Map(inclusions, func(_ int, src dao.RoleInclusion) int64 {
+			allRoleIDs[src.IncludingRoleID] = struct{}{}
+			return src.IncludingRoleID
+		})
+	}
+	return mapx.Keys(allRoleIDs), nil
 }
 
 func (r *RolePermissionReloadCacheRepository) FindByBizIDAndRoleIDs(ctx context.Context, bizID int64, roleIDs []int64) ([]domain.RolePermission, error) {

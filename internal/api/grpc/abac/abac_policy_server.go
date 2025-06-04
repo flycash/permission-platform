@@ -126,20 +126,29 @@ func convertToDomainPolicy(p *permissionpb.Policy) domain.Policy {
 		Name:        p.Name,
 		Description: p.Description,
 		Status:      convertToDomainPolicyStatus(p.Status),
-		Effect:      convertToDomainEffect(p.Effect),
-		Rules:       convertToDomainPolicyRules(p.Rules),
-		Ctime:       p.Ctime,
-		Utime:       p.Utime,
+		Permissions: []domain.UserPermission{
+			{
+				Effect: domain.Effect(p.Effect),
+			},
+		},
+
+		Rules: convertToDomainPolicyRules(p.Rules),
+		Ctime: p.Ctime,
+		Utime: p.Utime,
 	}
 }
 
 func convertToProtoPolicy(p domain.Policy) *permissionpb.Policy {
+	var effect domain.Effect
+	if len(p.Permissions) > 0 {
+		effect = p.Permissions[0].Effect
+	}
 	return &permissionpb.Policy{
 		Id:          p.ID,
 		Name:        p.Name,
 		Description: p.Description,
 		Status:      convertToProtoPolicyStatus(p.Status),
-		Effect:      convertToProtoEffect(p.Effect),
+		Effect:      convertToProtoEffect(effect),
 		Rules:       convertToProtoPolicyRules(p.Rules),
 		Ctime:       p.Ctime,
 		Utime:       p.Utime,

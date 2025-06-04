@@ -47,7 +47,7 @@ userRoleBinlogEvent:
     groupId: "user_roles_binlog_consumer_group"
 
 userPermissionEvent:
-  topic: "user_permission_events"
+  topic: "user-permission-events"
 
 cache:
   local:

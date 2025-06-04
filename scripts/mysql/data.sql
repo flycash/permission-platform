@@ -95,12 +95,12 @@ DROP TABLE IF EXISTS `environment_attribute_values`;
 CREATE TABLE `environment_attribute_values` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `biz_id` bigint DEFAULT NULL COMMENT '业务ID',
-  `attribute_id` bigint NOT NULL COMMENT '属性定义ID',
+  `attr_def_id` bigint NOT NULL COMMENT '属性定义ID',
   `value` text COMMENT '属性值，取决于 data_type',
   `ctime` bigint DEFAULT NULL COMMENT '创建时间',
   `utime` bigint DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_biz_attribute` (`biz_id`,`attribute_id`)
+  UNIQUE KEY `idx_biz_attribute` (`biz_id`,`attr_def_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,6 +195,7 @@ CREATE TABLE `policies` (
   `biz_id` bigint DEFAULT NULL COMMENT '业务ID',
   `name` varchar(100) NOT NULL COMMENT '策略名称',
   `description` text COMMENT '策略描述',
+  `execute_type` varchar(255) NOT NULL DEFAULT 'logic' COMMENT '策略执行类型',
   `status` enum('active','inactive') NOT NULL DEFAULT 'active' COMMENT '策略状态',
   `ctime` bigint DEFAULT NULL COMMENT '创建时间',
   `utime` bigint DEFAULT NULL COMMENT '更新时间',
@@ -225,7 +226,7 @@ CREATE TABLE `policy_rules` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `biz_id` bigint DEFAULT NULL COMMENT '业务ID',
   `policy_id` bigint NOT NULL COMMENT '策略ID',
-  `attribute_id` bigint NOT NULL COMMENT '属性定义ID',
+  `attr_def_id` bigint NOT NULL COMMENT '属性定义ID',
   `value` text COMMENT '比较值，取决于类型',
   `left` bigint DEFAULT NULL COMMENT '左规则ID',
   `right` bigint DEFAULT NULL COMMENT '右规则ID',
@@ -233,7 +234,7 @@ CREATE TABLE `policy_rules` (
   `ctime` bigint DEFAULT NULL COMMENT '创建时间',
   `utime` bigint DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  KEY `idx_attribute_id` (`attribute_id`),
+  KEY `idx_attr_def_id` (`attr_def_id`),
   KEY `idx_biz_id` (`biz_id`),
   KEY `idx_policy_id` (`policy_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -259,14 +260,14 @@ CREATE TABLE `resource_attribute_values` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `biz_id` bigint DEFAULT NULL COMMENT 'biz_id + resource_key + attr_id 唯一索引',
   `resource_id` bigint NOT NULL COMMENT '资源ID',
-  `attribute_id` bigint NOT NULL COMMENT '属性定义ID',
+  `attr_def_id` bigint NOT NULL COMMENT '属性定义ID',
   `value` text NOT NULL COMMENT '属性值，取决于 data_type',
   `ctime` bigint DEFAULT NULL,
   `utime` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_biz_resource_attr` (`biz_id`,`resource_id`,`attribute_id`),
+  UNIQUE KEY `idx_biz_resource_attr` (`biz_id`,`resource_id`,`attr_def_id`),
   KEY `idx_resource_id` (`resource_id`),
-  KEY `idx_attribute_id` (`attribute_id`)
+  KEY `idx_attr_def_id` (`attr_def_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -431,14 +432,14 @@ CREATE TABLE `subject_attribute_values` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `biz_id` bigint DEFAULT NULL COMMENT 'biz_id + subject_id + attr_id 唯一索引',
   `subject_id` bigint NOT NULL COMMENT '主体ID，通常是用户ID',
-  `attribute_id` bigint NOT NULL COMMENT '属性定义ID',
+  `attr_def_id` bigint NOT NULL COMMENT '属性定义ID',
   `value` text NOT NULL COMMENT '属性值，取决于 data_type',
   `ctime` bigint DEFAULT NULL,
   `utime` bigint DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_biz_subject_attr` (`biz_id`,`subject_id`,`attribute_id`),
+  UNIQUE KEY `idx_biz_subject_attr` (`biz_id`,`subject_id`,`attr_def_id`),
   KEY `idx_subject_id` (`subject_id`),
-  KEY `idx_attribute_id` (`attribute_id`)
+  KEY `idx_attr_def_id` (`attr_def_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

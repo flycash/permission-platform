@@ -13,7 +13,7 @@ type ResourceAttributeValue struct {
 	ID         int64  `gorm:"column:id;primaryKey;autoIncrement;"`
 	BizID      int64  `gorm:"column:biz_id;uniqueIndex:idx_biz_resource_attr;comment:biz_id + resource_key + attr_id 唯一索引"`
 	ResourceID int64  `gorm:"column:resource_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_resource_id;comment:资源ID"`
-	AttrDefID  int64  `gorm:"column:attr_def_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_attribute_id;comment:属性定义ID"`
+	AttrDefID  int64  `gorm:"column:attr_def_id;not null;uniqueIndex:idx_biz_resource_attr;index:idx_attr_def_id;comment:属性定义ID"`
 	Value      string `gorm:"column:value;type:text;not null;comment:属性值，取决于 data_type"`
 	Ctime      int64  `gorm:"column:ctime;"`
 	Utime      int64  `gorm:"column:utime;"`
@@ -36,10 +36,28 @@ type ResourceAttributeValueDAO interface {
 	FindByResource(ctx context.Context, bizID int64, resourceID int64) ([]ResourceAttributeValue, error)
 	// 根据属性ID查询所有资源属性值
 	FindByAttribute(ctx context.Context, bizID int64, attributeID int64) ([]ResourceAttributeValue, error)
+	// 根据属性ids查询所有资源属性值
+	FindByResourceIDs(ctx context.Context, resourceIDs []int64) (map[int64][]ResourceAttributeValue, error)
 }
 
 type resourceAttributeValueDAO struct {
 	db *egorm.Component
+}
+
+func (r *resourceAttributeValueDAO) FindByResourceIDs(ctx context.Context, resourceIDs []int64) (map[int64][]ResourceAttributeValue, error) {
+	var values []ResourceAttributeValue
+	err := r.db.WithContext(ctx).
+		Where("resource_id IN ?", resourceIDs).
+		Find(&values).Error
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[int64][]ResourceAttributeValue)
+	for _, value := range values {
+		result[value.ResourceID] = append(result[value.ResourceID], value)
+	}
+	return result, nil
 }
 
 // NewResourceAttributeValueDAO 创建资源属性值数据访问对象

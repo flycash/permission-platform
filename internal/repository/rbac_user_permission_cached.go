@@ -46,7 +46,7 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 		return domain.UserPermission{}, err
 	}
 	if err1 := r.Reload(ctx, []domain.User{{ID: created.UserID, BizID: created.BizID}}); err1 != nil {
-		r.logger.Warn("创建用户权限成功后重新加载缓存失败",
+		r.logger.Warn("创建用户权限成功后，重新加载缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", created.BizID),
 			elog.Any("userID", created.UserID),
@@ -58,6 +58,7 @@ func (r *UserPermissionCachedRepository) Create(ctx context.Context, userPermiss
 func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []domain.User) error {
 	var evt permissionevt.UserPermissionEvent
 	evt.Permissions = make(map[int64]permissionevt.UserPermission)
+
 	for i := range users {
 		perms, err := r.repo.GetAll(ctx, users[i].BizID, users[i].ID)
 		if err != nil {
@@ -88,11 +89,13 @@ func (r *UserPermissionCachedRepository) Reload(ctx context.Context, users []dom
 			}
 		}
 	}
-	if err := r.producer.Produce(ctx, evt); err != nil {
-		r.logger.Warn("发送用户权限事件失败",
-			elog.FieldErr(err),
-			elog.Any("evt", evt),
-		)
+	if len(evt.Permissions) > 0 {
+		if err := r.producer.Produce(ctx, evt); err != nil {
+			r.logger.Warn("发送用户权限事件失败",
+				elog.FieldErr(err),
+				elog.Any("evt", evt),
+			)
+		}
 	}
 	return nil
 }
@@ -111,13 +114,13 @@ func (r *UserPermissionCachedRepository) FindByBizIDAndUserID(ctx context.Contex
 		return nil, err
 	}
 	if err1 := r.cache.Set(ctx, perms); err1 != nil {
-		r.logger.Warn("查找用户权限成功后重新设置缓存失败",
+		r.logger.Warn("查找用户权限成功后，重新设置缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", bizID),
 			elog.Any("userID", userID),
 		)
 	}
-	return perms, err
+	return perms, nil
 }
 
 func (r *UserPermissionCachedRepository) DeleteByBizIDAndID(ctx context.Context, bizID, id int64) error {
@@ -130,7 +133,7 @@ func (r *UserPermissionCachedRepository) DeleteByBizIDAndID(ctx context.Context,
 		return err
 	}
 	if err1 := r.Reload(ctx, []domain.User{{ID: deleted.UserID, BizID: deleted.BizID}}); err1 != nil {
-		r.logger.Warn("删除用户权限成功后重新加载缓存失败",
+		r.logger.Warn("删除用户权限成功后，重新加载缓存失败",
 			elog.FieldErr(err1),
 			elog.Any("bizID", bizID),
 			elog.Any("userID", deleted.UserID),
@@ -162,5 +165,5 @@ func (r *UserPermissionCachedRepository) GetAll(ctx context.Context, bizID, user
 			elog.Any("userID", userID),
 		)
 	}
-	return perms, err
+	return perms, nil
 }

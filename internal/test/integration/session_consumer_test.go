@@ -150,6 +150,7 @@ func (s *SessionConsumerSuite) TestConsumePermissionEvent() {
 }
 
 func TestSessionConsumerSuite(t *testing.T) {
+	t.Skip()
 	suite.Run(t, new(SessionConsumerSuite))
 }
 

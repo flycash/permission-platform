@@ -38,7 +38,11 @@ func (a *ABACAttributeValServer) SaveSubjectValue(ctx context.Context, request *
 }
 
 func (a *ABACAttributeValServer) DeleteSubjectValue(ctx context.Context, request *permissionpb.AttributeValueServiceDeleteSubjectValueRequest) (*permissionpb.AttributeValueServiceDeleteSubjectValueResponse, error) {
-	err := a.svc.DeleteSubjectValue(ctx, request.Id)
+	bizID, err := a.getBizIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = a.svc.DeleteSubjectValue(ctx, bizID, request.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +87,11 @@ func (a *ABACAttributeValServer) SaveResourceValue(ctx context.Context, request 
 }
 
 func (a *ABACAttributeValServer) DeleteResourceValue(ctx context.Context, request *permissionpb.AttributeValueServiceDeleteResourceValueRequest) (*permissionpb.AttributeValueServiceDeleteResourceValueResponse, error) {
-	err := a.svc.DeleteResourceValue(ctx, request.Id)
+	bizID, err := a.getBizIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = a.svc.DeleteResourceValue(ctx, bizID, request.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +136,11 @@ func (a *ABACAttributeValServer) SaveEnvironmentValue(ctx context.Context, reque
 }
 
 func (a *ABACAttributeValServer) DeleteEnvironmentValue(ctx context.Context, request *permissionpb.AttributeValueServiceDeleteEnvironmentValueRequest) (*permissionpb.AttributeValueServiceDeleteEnvironmentValueResponse, error) {
-	err := a.svc.DeleteEnvironmentValue(ctx, request.Id)
+	bizID, err := a.getBizIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	err = a.svc.DeleteEnvironmentValue(ctx, bizID, request.Id)
 	if err != nil {
 		return nil, err
 	}
