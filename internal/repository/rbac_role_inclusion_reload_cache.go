@@ -60,7 +60,7 @@ func (r *RoleInclusionReloadCacheRepository) getAffectedUsers(ctx context.Contex
 	}
 	return slice.Map(userRoles, func(_ int, src domain.UserRole) domain.User {
 		return domain.User{
-			ID:    src.ID,
+			ID:    src.UserID,
 			BizID: src.BizID,
 		}
 	})
